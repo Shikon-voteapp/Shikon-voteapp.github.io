@@ -1,17 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
-    
-    scanner.addListener("scan", function(content) {
-        console.log("Scanned UUID: ", content);
-        localStorage.setItem("uuid", content);
-        window.location.href = "confirm.html"; // 確認画面へ
-    });
+    const scanner = new Html5Qrcode("reader");
 
-    Instascan.Camera.getCameras().then(cameras => {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]);
-        } else {
-            alert("カメラが見つかりません");
-        }
-    }).catch(err => console.error(err));
+    function onScanSuccess(decodedText) {
+        localStorage.setItem("uuid", decodedText);
+        scanner.stop().then(() => {
+            window.location.href = "vote.html"; // 投票画面へ移動
+        }).catch(err => console.error(err));
+    }
+
+    function onScanFailure(error) {
+        console.warn(error);
+    }
+
+    scanner.start(
+        { facingMode: "environment" }, // 背面カメラ
+        { fps: 10, qrbox: 250 },
+        onScanSuccess,
+        onScanFailure
+    );
 });

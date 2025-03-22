@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文化祭投票</title>
+    <title>バーコードスキャン</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>投票したい団体を選んでください</h1>
-    <div id="vote-options"></div>
-    <button id="confirm-btn" disabled>次へ</button>
+    <h1>バーコードをスキャン</h1>
+    <div id="reader"></div>
+    <p id="status">バーコードをスキャンしてください</p>
 
-    <script src="script.js"></script>
+    <script src="scanner.js"></script>
 </body>
 </html>
