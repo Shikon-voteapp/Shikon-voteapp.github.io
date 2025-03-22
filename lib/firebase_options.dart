@@ -46,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '897950724981',
     projectId: 'shikonfes-voteapp',
     authDomain: 'shikonfes-voteapp.firebaseapp.com',
+    databaseURL: 'https://shikonfes-voteapp-default-rtdb.firebaseio.com',
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     measurementId: 'G-LM3TTXQ8BV',
   );
@@ -55,6 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:897950724981:android:6c02557f023f1bf8ab993c',
     messagingSenderId: '897950724981',
     projectId: 'shikonfes-voteapp',
+    databaseURL: 'https://shikonfes-voteapp-default-rtdb.firebaseio.com',
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
   );
 
@@ -63,6 +65,7 @@ class DefaultFirebaseOptions {
     appId: '1:897950724981:ios:9e604467ef302e1eab993c',
     messagingSenderId: '897950724981',
     projectId: 'shikonfes-voteapp',
+    databaseURL: 'https://shikonfes-voteapp-default-rtdb.firebaseio.com',
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     iosBundleId: 'com.example.shikonVoteapp',
   );
@@ -72,6 +75,7 @@ class DefaultFirebaseOptions {
     appId: '1:897950724981:ios:9e604467ef302e1eab993c',
     messagingSenderId: '897950724981',
     projectId: 'shikonfes-voteapp',
+    databaseURL: 'https://shikonfes-voteapp-default-rtdb.firebaseio.com',
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     iosBundleId: 'com.example.shikonVoteapp',
   );
@@ -82,6 +86,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '897950724981',
     projectId: 'shikonfes-voteapp',
     authDomain: 'shikonfes-voteapp.firebaseapp.com',
+    databaseURL: 'https://shikonfes-voteapp-default-rtdb.firebaseio.com',
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     measurementId: 'G-G7HEGGSSVN',
   );

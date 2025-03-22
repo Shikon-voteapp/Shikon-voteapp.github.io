@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "897950724981",
+    "firebase_url": "https://shikonfes-voteapp-default-rtdb.firebaseio.com",
     "project_id": "shikonfes-voteapp",
     "storage_bucket": "shikonfes-voteapp.firebasestorage.app"
   },
