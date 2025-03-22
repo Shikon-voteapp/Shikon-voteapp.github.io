@@ -1,20 +1,23 @@
+// main.dart
 import 'package:flutter/material.dart';
-import 'scanner_page.dart';
-import 'vote_page.dart';
+import 'screens/scanner_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(VoteApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class VoteApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '文化祭投票',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: ScannerPage(),
+      title: '文化祭投票アプリ',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'IBM Plex Sans JP',
+      ),
+      home: ScannerScreen(),
     );
   }
 }
