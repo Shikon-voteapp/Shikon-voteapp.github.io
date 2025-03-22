@@ -15,35 +15,35 @@ final List<VoteCategory> voteCategories = [
         id: '01',
         name: '団体A',
         description: '※これはテスト用の団体名です。',
-        imagePath: '../assets/images/group.jpg', // 画像パス
+        imagePath: '../assets/group.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
         id: '02',
         name: '団体B',
         description: 'ここに説明文',
-        imagePath: '../assets/images/groupb.jpg',
+        imagePath: '../assets/groupb.jpg',
         floor: 1,
       ),
       Group(
         id: '03',
         name: '団体C',
         description: 'ここに説明文',
-        imagePath: '../assets/images/groupc.jpg',
+        imagePath: '../assets/groupc.jpg',
         floor: 1,
       ),
       Group(
         id: '04',
         name: '団体D',
         description: 'ここに説明文',
-        imagePath: '../assets/images/groupd.jpg',
+        imagePath: '../assets/groupd.jpg',
         floor: 1,
       ),
       Group(
         id: '05',
         name: '団体D',
         description: '複数階設定できます',
-        imagePath: '../assets/images/groupd.jpg',
+        imagePath: '../assets/groupd.jpg',
         floor: 2,
       ),
       // 他の団体を追加...
@@ -58,14 +58,14 @@ final List<VoteCategory> voteCategories = [
         id: 'group_jh1',
         name: '1年',
         description: 'ここに説明文',
-        imagePath: '../assets/images/groupd.jpg', // 画像パス
+        imagePath: '../assets/groupd.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
         id: 'group_jh2',
         name: '2年',
         description: 'ここに説明文',
-        imagePath: '../assets/images/groupb.jpg',
+        imagePath: '../assets/groupb.jpg',
         floor: 1,
       ),
       // 他の団体を追加...
