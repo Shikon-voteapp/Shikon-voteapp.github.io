@@ -24,21 +24,6 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width to determine grid columns
-    final screenWidth = MediaQuery.of(context).size.width;
-    // Left menu is 140px wide, so calculate available width
-    final availableWidth = screenWidth - 140;
-
-    // Determine number of columns based on available width
-    // For wider screens show more columns
-    int crossAxisCount = 2; // Default for smaller screens
-
-    if (availableWidth >= 900) {
-      crossAxisCount = 4; // Very large screens
-    } else if (availableWidth >= 600) {
-      crossAxisCount = 3; // Medium to large screens
-    }
-
     // フロアでフィルタリングした団体のリスト
     List<Group> filteredGroups =
         widget.category.groups
@@ -49,11 +34,26 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
     Set<int> allFloors =
         widget.category.groups.map((group) => group.floor).toSet();
 
+    // 画面の幅を取得
+    final screenWidth = MediaQuery.of(context).size.width;
+    // 左側のフロア選択メニューの幅
+    final menuWidth = 140.0;
+    // 利用可能な幅からメニュー幅を引く
+    final availableWidth = screenWidth - menuWidth;
+
+    // 1アイテムの最小幅（500px）
+    const minItemWidth = 500.0;
+
+    // グリッドの列数を計算（利用可能な幅をminItemWidthで割って切り捨て）
+    int crossAxisCount = (availableWidth ~/ minItemWidth);
+    // 最低でも1列は表示
+    crossAxisCount = crossAxisCount > 0 ? crossAxisCount : 1;
+
     return Row(
       children: [
         // 左側のフロア選択メニュー
         Container(
-          width: 140,
+          width: menuWidth,
           color: Color(0xFFEEEEEE),
           child: Column(
             children: [
@@ -61,13 +61,6 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
               ...allFloors
                   .map((floor) => _buildFloorButton('${floor}階フロア', floor))
                   .toList(),
-
-              /*if (widget.category.groups.any((g) => g.floor == 0))
-                _buildStageButton('ステージ団体', 0),
-
-              Spacer(),
-              _buildNavButton('団体名から選ぶ', Icons.arrow_forward),
-              _buildNavButton('パンフレットから選ぶ', Icons.arrow_forward),*/
             ],
           ),
         ),
@@ -76,22 +69,23 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
         Expanded(
           child: Container(
             color: Colors.white,
-            child: GridView.count(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: 1.5,
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 1.5,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+              ),
               padding: EdgeInsets.all(16),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              children:
-                  filteredGroups
-                      .map(
-                        (group) => GroupTile(
-                          group: group,
-                          isSelected: group.id == widget.selectedGroupId,
-                          onSelect: () => widget.onSelect(group.id),
-                        ),
-                      )
-                      .toList(),
+              itemCount: filteredGroups.length,
+              itemBuilder: (context, index) {
+                final group = filteredGroups[index];
+                return GroupTile(
+                  group: group,
+                  isSelected: group.id == widget.selectedGroupId,
+                  onSelect: () => widget.onSelect(group.id),
+                );
+              },
             ),
           ),
         ),
