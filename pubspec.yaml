@@ -117,7 +117,7 @@ flutter:
         weight: 700
         
   assets:
-  - assets/group.jpg
-  - assets/groupb.jpg
-  - assets/groupc.jpg
-  - assets/groupd.jpg
+    - assets/group.jpg
+    - assets/groupb.jpg
+    - assets/groupc.jpg
+    - assets/groupd.jpg
