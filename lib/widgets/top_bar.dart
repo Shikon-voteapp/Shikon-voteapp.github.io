@@ -32,7 +32,7 @@ class TopBar extends StatelessWidget {
                     Icon(Icons.arrow_back, color: Colors.black),
                     SizedBox(width: 8),
                     Text(
-                      '最初からやりなおす',
+                      '最初から',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -58,26 +58,6 @@ class TopBar extends StatelessWidget {
               ),
 
             // 係員を呼ぶボタン
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  Icon(Icons.warning, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    '係員を呼ぶ',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),

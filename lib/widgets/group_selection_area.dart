@@ -24,6 +24,21 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width to determine grid columns
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Left menu is 140px wide, so calculate available width
+    final availableWidth = screenWidth - 140;
+
+    // Determine number of columns based on available width
+    // For wider screens show more columns
+    int crossAxisCount = 2; // Default for smaller screens
+
+    if (availableWidth >= 900) {
+      crossAxisCount = 4; // Very large screens
+    } else if (availableWidth >= 600) {
+      crossAxisCount = 3; // Medium to large screens
+    }
+
     // フロアでフィルタリングした団体のリスト
     List<Group> filteredGroups =
         widget.category.groups
@@ -62,7 +77,7 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
           child: Container(
             color: Colors.white,
             child: GridView.count(
-              crossAxisCount: 2,
+              crossAxisCount: crossAxisCount,
               childAspectRatio: 1.5,
               padding: EdgeInsets.all(16),
               mainAxisSpacing: 16,
@@ -112,6 +127,4 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
       ),
     );
   }
-
-  // 他のウィジェットメソッドは以前と同様...
 }

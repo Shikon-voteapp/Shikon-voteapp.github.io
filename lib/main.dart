@@ -1,8 +1,13 @@
-// main.dart
+// lib/main.dart (updated)
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'screens/scanner_screen.dart';
+import 'screens/admin_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(VoteApp());
 }
 
@@ -17,7 +22,11 @@ class VoteApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         fontFamily: 'IBM Plex Sans JP',
       ),
-      home: ScannerScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => ScannerScreen(),
+        '/admin': (context) => AdminScreen(),
+      },
     );
   }
 }

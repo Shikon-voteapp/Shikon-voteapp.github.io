@@ -49,8 +49,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
           MessageArea(
             message:
                 _showManualInput
-                    ? 'コードを直接入力してください'
+                    ? '6桁の数字コードを入力してください'
                     : 'バーコードをカメラにかざしてください \n カメラ映像が表示されない場合は、右下のボタンを押してください。',
+            title: "",
           ),
           Expanded(
             child: _showManualInput ? _buildManualInputUI() : _buildScannerUI(),
@@ -107,18 +108,26 @@ class _ScannerScreenState extends State<ScannerScreen> {
             controller: _manualCodeController,
             decoration: InputDecoration(
               labelText: 'バーコード番号',
-              hintText: '数字またはUUIDを入力',
+              hintText: '6桁の数字を入力',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.dialpad),
             ),
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.number, // 数字キーボードを表示
+            // 入力を数字のみに制限
             autofocus: true,
+            maxLength: 6, // 6桁に制限
           ),
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               if (_manualCodeController.text.isNotEmpty) {
-                _processBarcode(_manualCodeController.text);
+                if (_manualCodeController.text.length == 6) {
+                  _processBarcode(_manualCodeController.text);
+                } else {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('6桁の数字を入力してください')));
+                }
               } else {
                 ScaffoldMessenger.of(
                   context,

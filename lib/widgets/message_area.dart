@@ -1,15 +1,17 @@
 // widgets/message_area.dart
 import 'package:flutter/material.dart';
 
+var MainTitle = "紫紺祭";
+
 class MessageArea extends StatelessWidget {
   final String message;
-  final String? title;
+  final String title;
   final Color? titleColor;
   final IconData? icon;
 
   MessageArea({
     required this.message,
-    this.title = '紫紺賞',
+    required this.title,
     this.titleColor = const Color(0xFF483D8B),
     this.icon,
   });

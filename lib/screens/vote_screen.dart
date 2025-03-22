@@ -48,7 +48,7 @@ class _VoteScreenState extends State<VoteScreen> {
       body: Column(
         children: [
           TopBar(title: '投票画面 ${currentCategoryIndex + 1}/4'),
-          MessageArea(message: category.description),
+          MessageArea(message: category.description, title: category.name),
           Expanded(
             child: GroupSelectionArea(
               category: category,

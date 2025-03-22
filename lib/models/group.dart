@@ -14,6 +14,8 @@ class Group {
     required this.imagePath,
     required this.floor,
   });
+
+  get options => null;
 }
 
 // models/vote_category.dart

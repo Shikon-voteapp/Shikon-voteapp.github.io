@@ -1,6 +1,6 @@
-// widgets/bottom_bar.dart
+// widgets/bottom_bar.dart (updated)
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'admin_access.dart';
 
 class BottomBar extends StatelessWidget {
   final String uuid;
@@ -34,6 +34,9 @@ class BottomBar extends StatelessWidget {
               ),
               SizedBox(width: 16),
               Text(timeStr, style: TextStyle(color: Colors.white)),
+              SizedBox(width: 16),
+              // 管理者アクセスボタン
+              AdminAccessButton(),
             ],
           ),
           if (showNextButton)

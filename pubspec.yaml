@@ -39,6 +39,11 @@ dependencies:
   provider: ^6.0.5
   firebase_core: ^3.12.1
   cloud_firestore: ^5.6.5
+  fl_chart: ^0.70.2
+  collection: ^1.19.1
+  flutter_secure_storage: ^9.2.4
+  crypto: ^3.0.6
+  flutter_charts: ^0.5.2
 
 dev_dependencies:
   flutter_test:
