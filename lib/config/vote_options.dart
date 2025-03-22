@@ -58,14 +58,14 @@ final List<VoteCategory> voteCategories = [
         id: 'group_jh1',
         name: '1年',
         description: 'ここに説明文',
-        imagePath: '../assets/groupd.jpg', // 画像パス
+        imagePath: '/assets/groupd.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
         id: 'group_jh2',
         name: '2年',
         description: 'ここに説明文',
-        imagePath: '../assets/groupb.jpg',
+        imagePath: '/assets/groupb.jpg',
         floor: 1,
       ),
       // 他の団体を追加...
