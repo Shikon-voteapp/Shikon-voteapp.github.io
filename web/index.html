@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="https://mamouna-inori.github.io/Shikon_Voteapp/build/web/">
-  <base href="/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="shikon_voteapp">
+  <meta name="apple-mobile-web-app-title" content="your_app_name">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-  <script src="https://unpkg.com/@zxing/library@0.19.1" type="application/javascript"></script>
 
-  <title>shikon_voteapp</title>
-  <script src="firebase-options.js"></script>
+  <title>Your App Title</title>
   <link rel="manifest" href="manifest.json">
-  <!-- Firebase Core JS SDK の読み込み順序を確認 -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-<!-- 各サービスのSDKは Core の後に読み込む -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
-<!-- 必要に応じて他のFirebaseサービスを追加 -->
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var flutter_service_worker_version = null;
+  </script>
+  <!-- This is the script for Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <script src="firebase-config.js"></script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+    <!--<base href="https://mamouna-inori.github.io/Shikon_Voteapp/build/web/">-->
+    <base href="/">
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _FlutterLoader.load({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
