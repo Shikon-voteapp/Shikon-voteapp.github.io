@@ -1,10 +1,10 @@
 // services/uuid_service.dart
-import 'package:uuid/uuid.dart';
+import 'dart:math';
 import 'database_service.dart';
 
 class UuidService {
   final DatabaseService _dbService = DatabaseService();
-  final Uuid _uuid = Uuid();
+  final Random _random = Random();
 
   // UUIDが有効かどうか（既に投票済みでないか）をチェック
   Future<bool> validateUuid(String uuid) async {
@@ -22,18 +22,17 @@ class UuidService {
     }
   }
 
-  // 正しいUUID形式かをチェック
+  // 正しいUUID形式かをチェック（6桁の数字）
   bool _isValidUuidFormat(String uuid) {
-    // 簡易的なチェック - 実際のアプリではもっと厳密に
-    RegExp uuidRegex = RegExp(
-      r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-      caseSensitive: false,
-    );
+    // 6桁の数字かどうかチェック
+    RegExp uuidRegex = RegExp(r'^[0-9]{6}$');
     return uuidRegex.hasMatch(uuid);
   }
 
-  // デモ用：新しいUUIDを生成
+  // 6桁の数字IDを生成
   String generateUuid() {
-    return _uuid.v4();
+    // 100000から999999までの範囲でランダムな数字を生成
+    int number = 100000 + _random.nextInt(900000);
+    return number.toString();
   }
 }
