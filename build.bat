@@ -1,2 +1,2 @@
-flutter build web --base-href "/"
+flutter build web --base-href "/build/web/"
 pause
