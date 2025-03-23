@@ -12,30 +12,38 @@ class ScannerScreen extends StatefulWidget {
   _ScannerScreenState createState() => _ScannerScreenState();
 }
 
-class _ScannerScreenState extends State<ScannerScreen> {
+class _ScannerScreenState extends State<ScannerScreen>
+    with WidgetsBindingObserver {
   final UuidService _uuidService = UuidService();
   final TextEditingController _manualCodeController = TextEditingController();
   bool _showManualInput = false;
-  MobileScannerController? _cameraController;
+  MobileScannerController _cameraController = MobileScannerController();
+  bool _isProcessingCode = false;
 
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    WidgetsBinding.instance.addObserver(this);
   }
 
-  void _initCamera() {
-    _cameraController = MobileScannerController();
-  }
-
-  void _disposeCamera() {
-    _cameraController?.dispose();
-    _cameraController = null;
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // アプリのライフサイクル状態が変更されたときにカメラを管理
+    if (state == AppLifecycleState.resumed) {
+      if (!_showManualInput && _cameraController.isStarting != true) {
+        _cameraController.start();
+      }
+    } else if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _cameraController.stop();
+    }
   }
 
   @override
   void dispose() {
-    _disposeCamera();
+    WidgetsBinding.instance.removeObserver(this);
+    _cameraController.dispose();
     _manualCodeController.dispose();
     super.dispose();
   }
@@ -65,9 +73,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
             _showManualInput = !_showManualInput;
             if (!_showManualInput) {
               _manualCodeController.clear();
-              if (_cameraController == null) {
-                _initCamera();
-              }
+              // カメラを再開
+              _cameraController.start();
+            } else {
+              // 手動入力モードではカメラを停止
+              _cameraController.stop();
             }
           });
         },
@@ -78,23 +88,55 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   Widget _buildScannerUI() {
-    // カメラコントローラーがない場合は初期化
-    if (_cameraController == null) {
-      _initCamera();
-    }
+    // カメラUIを構築
+    return Stack(
+      children: [
+        MobileScanner(
+          controller: _cameraController,
+          onDetect: (capture) {
+            if (_isProcessingCode) return; // 既に処理中なら無視
 
-    return MobileScanner(
-      controller: _cameraController,
-      onDetect: (capture) {
-        final List<Barcode> barcodes = capture.barcodes;
-        for (final barcode in barcodes) {
-          final String? code = barcode.rawValue;
-          if (code != null) {
-            _processBarcode(code);
-            break;
-          }
-        }
-      },
+            final List<Barcode> barcodes = capture.barcodes;
+            for (final barcode in barcodes) {
+              final String? code = barcode.rawValue;
+              if (code != null) {
+                _processBarcode(code);
+                break;
+              }
+            }
+          },
+          overlay: Center(
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.green, width: 2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ),
+        // カメラの状態表示
+        Positioned(
+          bottom: 10,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: ValueListenableBuilder(
+              valueListenable: _cameraController.torchState,
+              builder: (context, state, child) {
+                return IconButton(
+                  icon: Icon(
+                    state == TorchState.on ? Icons.flash_on : Icons.flash_off,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => _cameraController.toggleTorch(),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -113,7 +155,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
               prefixIcon: Icon(Icons.dialpad),
             ),
             keyboardType: TextInputType.number, // 数字キーボードを表示
-            // 入力を数字のみに制限
             autofocus: true,
             maxLength: 6, // 6桁に制限
           ),
@@ -148,8 +189,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   void _processBarcode(String code) async {
-    // 重複処理を防止するためカメラを一時的に破棄
-    _disposeCamera();
+    // 処理中フラグをセット
+    setState(() {
+      _isProcessingCode = true;
+    });
+
+    // スキャナーを一時停止
+    _cameraController.stop();
 
     bool isValid = await _uuidService.validateUuid(code);
     if (isValid) {
@@ -163,17 +209,19 @@ class _ScannerScreenState extends State<ScannerScreen> {
         // カメラを再初期化して画面を更新
         if (mounted) {
           setState(() {
+            _isProcessingCode = false;
             if (!_showManualInput) {
-              _initCamera();
+              _cameraController.start();
             }
           });
         }
       });
     } else {
-      // 無効なコードの場合、カメラを再初期化
+      // 無効なコードの場合、カメラを再開
       setState(() {
+        _isProcessingCode = false;
         if (!_showManualInput) {
-          _initCamera();
+          _cameraController.start();
         }
       });
 
