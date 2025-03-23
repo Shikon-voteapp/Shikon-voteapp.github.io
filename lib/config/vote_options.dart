@@ -29,56 +29,56 @@ final List<VoteCategory> voteCategories = [
         name: 'ステージ団体A',
         description: '',
         imagePath: 'assets/Stage/Stage01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '02',
         name: 'ステージ団体B',
         description: '',
         imagePath: 'assets/Stage/Stage02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '03',
         name: 'ステージ団体C',
         description: '',
         imagePath: 'assets/Stage/Stage03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '04',
         name: 'ステージ団体D',
         description: '',
         imagePath: 'assets/Stage/Stage04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '05',
         name: 'ステージ団体E',
         description: '',
         imagePath: 'assets/Stage/Stage05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '06',
         name: 'ステージ団体F',
         description: '',
         imagePath: 'assets/Stage/Stage06.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '07',
         name: 'ステージ団体G',
         description: '',
         imagePath: 'assets/Stage/Stage07.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '08',
         name: 'ステージ団体H',
         description: '',
         imagePath: 'assets/Stage/Stage08.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       /*
       Group(
@@ -86,77 +86,77 @@ final List<VoteCategory> voteCategories = [
         name: 'バンドA',
         description: '',
         imagePath: 'assets/Stage/Band01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '10',
         name: 'バンドB',
         description: '',
         imagePath: 'assets/Stage/Band02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '11',
         name: 'バンドC',
         description: '',
         imagePath: 'assets/Stage/Band03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '12',
         name: 'バンドD',
         description: '',
         imagePath: 'assets/Stage/Band04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '13',
         name: 'バンドE',
         description: '',
         imagePath: 'assets/Stage/Band05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '14',
         name: 'バンドF',
         description: '',
         imagePath: 'assets/Stage/Band06.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '15',
         name: 'パフォA',
         description: '',
         imagePath: 'assets/Stage/Performance01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '16',
         name: 'パフォB',
         description: '',
         imagePath: 'assets/Stage/Performance02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '17',
         name: 'パフォC',
         description: '',
         imagePath: 'assets/Stage/Performance03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '16',
         name: 'パフォD',
         description: '',
         imagePath: 'assets/Stage/Performance04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '17',
         name: 'パフォE',
         description: '',
         imagePath: 'assets/Stage/Performance05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),*/
       //ここまでステージ団体
       //ここから1階フロア
@@ -189,7 +189,7 @@ final List<VoteCategory> voteCategories = [
         floor: 1, // フロア番号
       ),
       Group(
-        id: 'S101',
+        id: 'S105',
         name: 'S105教室',
         description: 'S棟1階 S105教室',
         imagePath: 'assets/First/S105.jpg', // 画像パス
@@ -670,7 +670,7 @@ final List<VoteCategory> voteCategories = [
         floor: 1, // フロア番号
       ),
       Group(
-        id: 'S101',
+        id: 'S105',
         name: 'S105教室',
         description: 'S棟1階 S105教室',
         imagePath: 'assets/First/S105.jpg', // 画像パス
@@ -1176,7 +1176,7 @@ final List<VoteCategory> voteCategories = [
         floor: 1, // フロア番号
       ),
       Group(
-        id: 'S101',
+        id: 'S105',
         name: 'S105教室',
         description: 'S棟1階 S105教室',
         imagePath: 'assets/First/S105.jpg', // 画像パス
@@ -1629,56 +1629,56 @@ final List<VoteCategory> voteCategories = [
         name: 'ステージ団体A',
         description: '',
         imagePath: 'assets/Stage/Stage01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '02',
         name: 'ステージ団体B',
         description: '',
         imagePath: 'assets/Stage/Stage02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '03',
         name: 'ステージ団体C',
         description: '',
         imagePath: 'assets/Stage/Stage03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '04',
         name: 'ステージ団体D',
         description: '',
         imagePath: 'assets/Stage/Stage04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '05',
         name: 'ステージ団体E',
         description: '',
         imagePath: 'assets/Stage/Stage05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '06',
         name: 'ステージ団体F',
         description: '',
         imagePath: 'assets/Stage/Stage06.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '07',
         name: 'ステージ団体G',
         description: '',
         imagePath: 'assets/Stage/Stage07.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '08',
         name: 'ステージ団体H',
         description: '',
         imagePath: 'assets/Stage/Stage08.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
     ],
   ),
@@ -1692,42 +1692,42 @@ final List<VoteCategory> voteCategories = [
         name: 'バンドA',
         description: '',
         imagePath: 'assets/Stage/Band01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '10',
         name: 'バンドB',
         description: '',
         imagePath: 'assets/Stage/Band02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '11',
         name: 'バンドC',
         description: '',
         imagePath: 'assets/Stage/Band03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '12',
         name: 'バンドD',
         description: '',
         imagePath: 'assets/Stage/Band04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '13',
         name: 'バンドE',
         description: '',
         imagePath: 'assets/Stage/Band05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '14',
         name: 'バンドF',
         description: '',
         imagePath: 'assets/Stage/Band06.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
     ],
   ),
@@ -1783,35 +1783,35 @@ final List<VoteCategory> voteCategories = [
         name: 'パフォA',
         description: '',
         imagePath: 'assets/Stage/Performance01.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '16',
         name: 'パフォB',
         description: '',
         imagePath: 'assets/Stage/Performance02.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
         id: '17',
         name: 'パフォC',
         description: '',
         imagePath: 'assets/Stage/Performance03.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
-        id: '16',
+        id: '18',
         name: 'パフォD',
         description: '',
         imagePath: 'assets/Stage/Performance04.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
       Group(
-        id: '17',
+        id: '19',
         name: 'パフォE',
         description: '',
         imagePath: 'assets/Stage/Performance05.jpg', // 画像パス
-        floor: 4, // フロア番号
+        floor: 0, // フロア番号
       ),
     ],
   ),

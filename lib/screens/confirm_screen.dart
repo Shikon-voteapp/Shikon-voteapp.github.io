@@ -28,7 +28,7 @@ class ConfirmScreen extends StatelessWidget {
           MessageArea(
             title: '確認',
             titleColor: Colors.green,
-            message: '以下の内容で投票します。よろしければ「投票する」を押してください。',
+            message: '以下の内容で投票します。よろしければ「投票する」を押してください。\n投票後の修正はできません。',
             icon: Icons.check_circle,
           ),
           Expanded(

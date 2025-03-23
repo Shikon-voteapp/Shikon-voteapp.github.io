@@ -1,1 +1,2 @@
-flutter build web --base-href "https://mamouna-inori.github.io/Shikon_Voteapp/build/web/"
+flutter build web --base-href "/"
+pause

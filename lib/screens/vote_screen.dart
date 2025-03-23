@@ -67,7 +67,23 @@ class _VoteScreenState extends State<VoteScreen> {
             showNextButton: selectedGroupId != null,
             showBackButton: true,
             onBack: () {
-              Navigator.pop(context);
+              // 最初のカテゴリーの場合は単に前の画面に戻る
+              if (currentCategoryIndex == 0) {
+                Navigator.pop(context);
+              } else {
+                // 前のカテゴリーに戻る
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VoteScreen(
+                          uuid: widget.uuid,
+                          categoryIndex: currentCategoryIndex - 1,
+                          selections: currentSelections,
+                        ),
+                  ),
+                );
+              }
             },
             onNext: () {
               _saveAndProceed();
