@@ -1,6 +1,6 @@
 // lib/screens/admin_screen.dart
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart';
 import '../widgets/admin_category_results.dart';
@@ -12,7 +12,9 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final DatabaseReference _database = FirebaseDatabase.instance.ref().child(
+    'votes',
+  );
   List<Vote>? _votes;
   bool _isLoading = true;
   int _selectedCategoryIndex = 0;
@@ -29,24 +31,50 @@ class _AdminScreenState extends State<AdminScreen> {
     });
 
     try {
-      // Firebase からデータを取得
-      final snapshot = await _firestore.collection('votes').get();
-      final votes =
-          snapshot.docs.map((doc) {
-            // Firestore のデータを Vote オブジェクトに変換
-            final data = doc.data();
-            return Vote(
-              id: doc.id,
-              userId: data['userId'] ?? '',
-              timestamp: (data['timestamp'] as Timestamp).toDate(),
-              selections: Map<String, String>.from(data['selections'] ?? {}),
-            );
-          }).toList();
+      // RTDBからデータを取得
+      final snapshot = await _database.get();
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        List<Vote> votes = [];
 
-      setState(() {
-        _votes = votes;
-        _isLoading = false;
-      });
+        data.forEach((key, value) {
+          // RTDBのデータをVoteオブジェクトに変換
+          Map<String, String> selections = {};
+
+          if (value['selections'] != null) {
+            (value['selections'] as Map<dynamic, dynamic>).forEach((k, v) {
+              selections[k.toString()] = v.toString();
+            });
+          }
+
+          // タイムスタンプを処理（文字列からDateTime）
+          DateTime timestamp;
+          try {
+            timestamp = DateTime.parse(value['timestamp'] ?? '');
+          } catch (e) {
+            timestamp = DateTime.now(); // フォールバック
+          }
+
+          votes.add(
+            Vote(
+              id: key.toString(),
+              userId: value['uuid']?.toString() ?? '',
+              timestamp: timestamp,
+              selections: selections,
+            ),
+          );
+        });
+
+        setState(() {
+          _votes = votes;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _votes = [];
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       print('投票データ読み込みエラー: $e');
       setState(() {
@@ -219,20 +247,8 @@ class _AdminScreenState extends State<AdminScreen> {
 
   Future<void> _clearAllVotes() async {
     try {
-      // Get all vote documents
-      final snapshot = await _firestore.collection('votes').get();
-
-      // Create a batch to efficiently delete multiple documents
-      final batch = _firestore.batch();
-
-      // Add delete operations to the batch
-      for (var doc in snapshot.docs) {
-        batch.delete(doc.reference);
-      }
-
-      // Commit the batch
-      await batch.commit();
-
+      // RTDBでの削除操作は単純に親ノードを空にする
+      await _database.remove();
       print('すべての投票が削除されました');
     } catch (e) {
       print('投票削除エラー: $e');
