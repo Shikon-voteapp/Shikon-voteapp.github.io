@@ -3,6 +3,8 @@ import '../models/group.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
+import '../firebase_options.dart';
 
 class DatabaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;

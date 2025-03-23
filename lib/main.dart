@@ -1,4 +1,4 @@
-import 'package:firebase_database/firebase_database.dart';
+/*import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/scanner_screen.dart';
@@ -9,15 +9,31 @@ import 'services/database_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase の初期化
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(VoteApp());
+}
 
-  // オフライン対応設定
-  FirebaseDatabase.instance.setPersistenceEnabled(true);
+class VoteApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: '文化祭投票アプリ',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'IBM Plex Sans JP',
+      ),
+      home: ScannerScreen(),
+    );
+  }
+}*/
 
-  // アプリ起動時にデータベース同期
-  final dbService = DatabaseService();
-  await dbService.syncFromFirebase();
+// main.dart
+import 'package:flutter/material.dart';
+import 'screens/scanner_screen.dart';
+
+void main() {
   runApp(VoteApp());
 }
 
