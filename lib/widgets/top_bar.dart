@@ -1,6 +1,12 @@
 // widgets/top_bar.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../screens/scanner_screen.dart';
+import 'dart:html' as html;
+
+void reloadPage() {
+  html.window.location.reload();
+}
 
 class TopBar extends StatelessWidget {
   final String title;
@@ -81,11 +87,18 @@ class TopBar extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => ScannerScreen()),
-                    (route) => false,
-                  );
+                  // webアプリの場合
+                  if (kIsWeb) {
+                    html.window.location.reload();
+                  }
+                  // ネイティブアプリの場合
+                  else {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => ScannerScreen()),
+                      (route) => false,
+                    );
+                  }
                 },
                 child: Text('はい'),
               ),
