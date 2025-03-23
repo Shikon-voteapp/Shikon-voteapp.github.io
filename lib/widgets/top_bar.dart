@@ -87,18 +87,8 @@ class TopBar extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // webアプリの場合
-                  if (kIsWeb) {
-                    html.window.location.reload();
-                  }
-                  // ネイティブアプリの場合
-                  else {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => ScannerScreen()),
-                      (route) => false,
-                    );
-                  }
+                  // 既存の関数を呼び出す
+                  reloadPage();
                 },
                 child: Text('はい'),
               ),
