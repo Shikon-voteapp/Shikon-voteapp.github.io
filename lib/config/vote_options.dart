@@ -217,13 +217,6 @@ final List<VoteCategory> voteCategories = [
         floor: 1, // フロア番号
       ),
       Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
         id: 'N104',
         name: 'N104教室',
         description: 'N棟1階 N104教室',
@@ -645,8 +638,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Kyoshitsu_Tenji', // システム内部で使用するID
     name: '教室展示賞', // 表示名
-    description:
-        '教室展示のなかで、「最後にもう一回行くならこれだ！」という展示を選んでください。\n何も表示されない場合は左側のフロアを押してください。', // 説明文
+    description: '教室展示のなかで、「最後にもう一回行くならこれだ！」という展示を選んでください。', // 説明文
     groups: [
       //ここから1階フロア
       Group(
@@ -696,13 +688,6 @@ final List<VoteCategory> voteCategories = [
         name: 'N102教室',
         description: 'N棟1階 N102教室',
         imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
@@ -1131,8 +1116,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Gakunen_Tenji',
     name: '学年展示賞',
-    description:
-        '学年展示のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '学年展示のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。',
     groups: [
       Group(
         id: 'S305',
@@ -1160,8 +1144,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Kyoshitsu_Moyoshi',
     name: '教室催し物賞',
-    description:
-        '教室催し物のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '教室催し物のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。',
     groups: [
       //ここから1階フロア
       Group(
@@ -1211,13 +1194,6 @@ final List<VoteCategory> voteCategories = [
         name: 'N102教室',
         description: 'N棟1階 N102教室',
         imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
@@ -1646,8 +1622,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Stage',
     name: '部活ステージ賞',
-    description:
-        '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージを選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージを選んでください。',
     groups: [
       Group(
         id: '01',
@@ -1710,8 +1685,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Band',
     name: 'バンド賞',
-    description:
-        '「もう一度行きたい、見たい！」と思える最も盛り上がったバンドを選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったバンドを選んでください。',
     groups: [
       Group(
         id: '09',
@@ -1760,8 +1734,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Roten',
     name: '露店賞',
-    description:
-        '露店の装飾が魅力的で接客における笑顔が最も素敵であった露店を選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった露店を選んでください。',
     groups: [
       Group(
         id: 'N101',
@@ -1775,13 +1748,6 @@ final List<VoteCategory> voteCategories = [
         name: 'N102教室',
         description: 'N棟1階 N102教室',
         imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
         floor: 1, // フロア番号
       ),
       Group(
@@ -1810,8 +1776,7 @@ final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Performance',
     name: 'パフォーマンス賞',
-    description:
-        '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を選んでください。\n何も表示されない場合は左側のフロアを押してください。',
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を選んでください。',
     groups: [
       Group(
         id: '15',

@@ -193,7 +193,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 vertical: 12.0,
                 horizontal: 24.0,
               ),
-              child: Text('送信', style: TextStyle(fontSize: 18)),
+              child: Text('ログイン', style: TextStyle(fontSize: 18)),
             ),
           ),
         ],

@@ -65,6 +65,10 @@ class _VoteScreenState extends State<VoteScreen> {
           BottomBar(
             uuid: widget.uuid,
             showNextButton: selectedGroupId != null,
+            showBackButton: true,
+            onBack: () {
+              Navigator.pop(context);
+            },
             onNext: () {
               _saveAndProceed();
             },

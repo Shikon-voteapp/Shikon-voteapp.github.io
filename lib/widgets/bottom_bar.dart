@@ -1,13 +1,21 @@
-// widgets/bottom_bar.dart (updated)
+// widgets/bottom_bar.dart (with back button)
 import 'package:flutter/material.dart';
 import 'admin_access.dart';
 
 class BottomBar extends StatelessWidget {
   final String uuid;
   final bool showNextButton;
+  final bool showBackButton; // New property for back button
   final VoidCallback? onNext;
+  final VoidCallback? onBack; // New callback for back button
 
-  BottomBar({required this.uuid, this.showNextButton = true, this.onNext});
+  BottomBar({
+    required this.uuid,
+    this.showNextButton = true,
+    this.showBackButton = false, // Default to false
+    this.onNext,
+    this.onBack,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,29 +47,59 @@ class BottomBar extends StatelessWidget {
               AdminAccessButton(),
             ],
           ),
-          if (showNextButton)
-            GestureDetector(
-              onTap: onNext,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '次へ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+          Row(
+            children: [
+              // 戻るボタン
+              if (showBackButton)
+                GestureDetector(
+                  onTap: onBack,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    Icon(Icons.arrow_forward, color: Colors.white),
-                  ],
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    margin: EdgeInsets.only(right: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_back, color: Colors.white),
+                        Text(
+                          '前に戻る',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              // 次へボタン
+              if (showNextButton)
+                GestureDetector(
+                  onTap: onNext,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        Text(
+                          '次へ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );

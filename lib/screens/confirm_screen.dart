@@ -1,5 +1,7 @@
 // screens/confirm_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shikon_voteapp/screens/vote_screen.dart';
+import 'package:uuid/uuid.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart';
 //import '../models/vote_category.dart'; // Vote モデルのインポートを追加
@@ -8,6 +10,7 @@ import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'complete_screen.dart';
+import 'scanner_screen.dart';
 
 class ConfirmScreen extends StatelessWidget {
   final String uuid;
@@ -141,7 +144,15 @@ class ConfirmScreen extends StatelessWidget {
               ),
             ),
           ),
-          BottomBar(uuid: uuid, showNextButton: false),
+          BottomBar(
+            uuid: uuid,
+            showNextButton: false,
+            showBackButton: false,
+            onBack: () {
+              // Handle back navigation here
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );

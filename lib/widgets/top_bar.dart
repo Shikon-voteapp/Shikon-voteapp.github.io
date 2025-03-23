@@ -35,7 +35,7 @@ class TopBar extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(
                   children: [
-                    Icon(Icons.arrow_back, color: Colors.black),
+                    Icon(Icons.delete_forever, color: Colors.black),
                     SizedBox(width: 8),
                     Text(
                       '最初から',

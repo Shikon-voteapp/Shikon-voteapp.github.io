@@ -20,10 +20,23 @@ class GroupSelectionArea extends StatefulWidget {
 }
 
 class _GroupSelectionAreaState extends State<GroupSelectionArea> {
-  int selectedFloor = 1;
+  late int selectedFloor;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the minimum floor value from all groups
+    selectedFloor =
+        widget.category.groups.isNotEmpty
+            ? widget.category.groups
+                .map((group) => group.floor)
+                .reduce((a, b) => a < b ? a : b)
+            : 1; // Default to 1 if there are no groups
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Rest of the code remains the same...
     // フロアでフィルタリングした団体のリスト
     List<Group> filteredGroups =
         widget.category.groups
