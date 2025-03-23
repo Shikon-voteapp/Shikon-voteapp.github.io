@@ -1,9 +1,8 @@
 // lib/screens/admin_screen.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../config/vote_options.dart';
-import '../services/database_service.dart';
 import '../models/group.dart';
-import '../widgets/top_bar.dart';
 import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
 
@@ -13,7 +12,7 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  final DatabaseService _dbService = DatabaseService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Vote>? _votes;
   bool _isLoading = true;
   int _selectedCategoryIndex = 0;
@@ -30,7 +29,20 @@ class _AdminScreenState extends State<AdminScreen> {
     });
 
     try {
-      final votes = await _dbService.getAllVotes();
+      // Firebase からデータを取得
+      final snapshot = await _firestore.collection('votes').get();
+      final votes =
+          snapshot.docs.map((doc) {
+            // Firestore のデータを Vote オブジェクトに変換
+            final data = doc.data();
+            return Vote(
+              id: doc.id,
+              userId: data['userId'] ?? '',
+              timestamp: (data['timestamp'] as Timestamp).toDate(),
+              selections: Map<String, String>.from(data['selections'] ?? {}),
+            );
+          }).toList();
+
       setState(() {
         _votes = votes;
         _isLoading = false;
@@ -195,7 +207,7 @@ class _AdminScreenState extends State<AdminScreen> {
               TextButton(
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  await _dbService.clearAllVotes();
+                  await _clearAllVotes();
                   _loadVotes();
                 },
                 child: Text('削除する', style: TextStyle(color: Colors.red)),
@@ -204,4 +216,42 @@ class _AdminScreenState extends State<AdminScreen> {
           ),
     );
   }
+
+  Future<void> _clearAllVotes() async {
+    try {
+      // Get all vote documents
+      final snapshot = await _firestore.collection('votes').get();
+
+      // Create a batch to efficiently delete multiple documents
+      final batch = _firestore.batch();
+
+      // Add delete operations to the batch
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      // Commit the batch
+      await batch.commit();
+
+      print('すべての投票が削除されました');
+    } catch (e) {
+      print('投票削除エラー: $e');
+    }
+  }
+}
+
+// Vote model - これが models/vote.dart にあるべきかもしれませんが、
+// 現在のコードに適合させるためここに定義しています
+class Vote {
+  final String id;
+  final String userId;
+  final DateTime timestamp;
+  final Map<String, String> selections;
+
+  Vote({
+    required this.id,
+    required this.userId,
+    required this.timestamp,
+    required this.selections,
+  });
 }
