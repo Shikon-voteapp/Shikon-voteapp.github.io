@@ -45,12 +45,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
     return Scaffold(
       body: Column(
         children: [
-          TopBar(title: '投票券を読み取らせてください'),
+          TopBar(title: '投票券読み取り'),
           MessageArea(
             message:
                 _showManualInput
                     ? '6桁の数字コードを入力してください'
-                    : 'バーコードをカメラにかざしてください \n カメラ映像が表示されない場合は、右下のボタンを押してください。',
+                    : '投票券のQRコードをカメラにかざしてください \n 読み取れない場合は、右下のボタンを押してください。',
             title: "",
           ),
           Expanded(
