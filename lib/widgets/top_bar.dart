@@ -76,7 +76,7 @@ class TopBar extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('キャンセル'),
+                child: Text('いいえ'),
               ),
               TextButton(
                 onPressed: () {
@@ -87,7 +87,7 @@ class TopBar extends StatelessWidget {
                     (route) => false,
                   );
                 },
-                child: Text('はい、やりなおします'),
+                child: Text('はい'),
               ),
             ],
           ),

@@ -5,6 +5,11 @@ import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'scanner_screen.dart';
+import 'dart:html' as html;
+
+void reloadPage() {
+  html.window.location.reload();
+}
 
 class CompleteScreen extends StatefulWidget {
   final String uuid;
@@ -30,7 +35,8 @@ class _CompleteScreenState extends State<CompleteScreen> {
           _countdown--;
         } else {
           _timer.cancel();
-          _resetToScannerScreen();
+          //_resetToScannerScreen();
+          reloadPage();
         }
       });
     });
@@ -84,7 +90,8 @@ class _CompleteScreenState extends State<CompleteScreen> {
                   ),
                   SizedBox(height: 32),
                   ElevatedButton(
-                    onPressed: _resetToScannerScreen,
+                    /*onPressed: _resetToScannerScreen,*/
+                    onPressed: reloadPage,
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
                         horizontal: 32,

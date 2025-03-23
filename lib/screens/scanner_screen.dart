@@ -17,26 +17,39 @@ class _ScannerScreenState extends State<ScannerScreen>
   final UuidService _uuidService = UuidService();
   final TextEditingController _manualCodeController = TextEditingController();
   bool _showManualInput = false;
-  MobileScannerController _cameraController = MobileScannerController();
+  late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _initCameraController();
+  }
+
+  void _initCameraController() {
+    _cameraController = MobileScannerController();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // アプリのライフサイクル状態が変更されたときにカメラを管理
     if (state == AppLifecycleState.resumed) {
-      if (!_showManualInput && _cameraController.isStarting != true) {
-        _cameraController.start();
+      if (!_showManualInput && !_isProcessingCode) {
+        _resetCameraController();
       }
     } else if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _cameraController.stop();
+    }
+  }
+
+  void _resetCameraController() {
+    _cameraController.dispose();
+    _initCameraController();
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -74,7 +87,7 @@ class _ScannerScreenState extends State<ScannerScreen>
             if (!_showManualInput) {
               _manualCodeController.clear();
               // カメラを再開
-              _cameraController.start();
+              _resetCameraController();
             } else {
               // 手動入力モードではカメラを停止
               _cameraController.stop();
@@ -211,7 +224,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           setState(() {
             _isProcessingCode = false;
             if (!_showManualInput) {
-              _cameraController.start();
+              _resetCameraController();
             }
           });
         }
@@ -221,7 +234,7 @@ class _ScannerScreenState extends State<ScannerScreen>
       setState(() {
         _isProcessingCode = false;
         if (!_showManualInput) {
-          _cameraController.start();
+          _resetCameraController();
         }
       });
 
