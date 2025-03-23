@@ -1,32 +1,11 @@
 name: shikon_voteapp
-description: "A new Flutter project."
+description: "A flutter project that provides voting service on the Shikon Fes."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
-
 environment:
   sdk: ^3.7.2
-
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
@@ -48,59 +27,8 @@ dependencies:
   connectivity_plus: ^6.1.3
   firebase_data_connect: ^0.1.0
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^5.0.0
-  barcode_scan2: any
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
   fonts:
   - family: IBM Plex Sans JP
     fonts:
@@ -120,8 +48,97 @@ flutter:
         weight: 700
         
   assets:
-    - assets/
-    - assets/group.jpg
-    - assets/groupb.jpg
-    - assets/groupc.jpg
-    - assets/groupd.jpg
+  #ステージ団体
+    - assets/Stage/
+    - assets/Stage/Stage01.jpg
+    - assets/Stage/Stage02.jpg
+    - assets/Stage/Stage03.jpg
+    - assets/Stage/Stage04.jpg
+    - assets/Stage/Stage05.jpg
+    - assets/Stage/Stage06.jpg
+    - assets/Stage/Stage07.jpg
+    - assets/Stage/Stage08.jpg
+    - assets/Stage/Band01.jpg
+    - assets/Stage/Band02.jpg
+    - assets/Stage/Band03.jpg
+    - assets/Stage/Band04.jpg
+    - assets/Stage/Band05.jpg
+    - assets/Stage/Band06.jpg
+    - assets/Stage/Performance01.jpg
+    - assets/Stage/Performance02.jpg
+    - assets/Stage/Performance03.jpg
+    - assets/Stage/Performance04.jpg
+    - assets/Stage/Performance05.jpg
+  #1階
+    - assets/First/
+    - assets/First/S101.jpg
+    - assets/First/S102.jpg
+    - assets/First/S103.jpg
+    - assets/First/S104.jpg
+    - assets/First/S105.jpg
+    - assets/First/N101.jpg
+    - assets/First/N102.jpg
+    - assets/First/N103.jpg
+    - assets/First/N104.jpg
+    - assets/First/N105.jpg
+    - assets/First/T101.jpg
+    - assets/First/T102.jpg
+    - assets/First/Music_Room.jpg
+    - assets/First/Technology_Room.jpg
+    - assets/First/Art_Room_1.jpg
+    - assets/First/Art_Room_2.jpg
+    - assets/First/Hifuku_Room.jpg
+    - assets/First/Chori_Room.jpg
+  #2階
+    - assets/Second/
+    - assets/Second/S201.jpg
+    - assets/Second/S202.jpg
+    - assets/Second/S203.jpg
+    - assets/Second/S204.jpg
+    - assets/Second/S205.jpg
+    - assets/Second/S206.jpg
+    - assets/Second/S207.jpg
+    - assets/Second/N201.jpg
+    - assets/Second/N202.jpg
+    - assets/Second/N203.jpg
+    - assets/Second/N204.jpg
+    - assets/Second/N205.jpg 
+    - assets/Second/T201.jpg
+    - assets/Second/T202.jpg
+    - assets/Second/Computer_Room_1.jpg
+    - assets/Second/Computer_Room_2.jpg
+    - assets/Second/CALL_1.jpg
+    - assets/Second/CALL_2.jpg
+    - assets/Second/lib.jpg
+  #3階
+    - assets/Third/
+    - assets/Third/S301.jpg
+    - assets/Third/S302.jpg
+    - assets/Third/S303.jpg
+    - assets/Third/S304.jpg
+    - assets/Third/S305.jpg
+    - assets/Third/S306.jpg
+    - assets/Third/S307.jpg
+    - assets/Third/N301.jpg
+    - assets/Third/N302.jpg
+    - assets/Third/N303.jpg
+    - assets/Third/N304.jpg
+    - assets/Third/N305.jpg
+    - assets/Third/N306.jpg
+    - assets/Third/N307.jpg
+    - assets/Third/T301.jpg
+    - assets/Third/T302.jpg
+    - assets/Third/T303.jpg
+    - assets/Third/T304.jpg
+    - assets/Third/T305.jpg
+    - assets/Third/T306.jpg
+    - assets/Third/T307.jpg
+    - assets/Third/T308.jpg
+    - assets/Third/Tokusho_1_2_3.jpg
+    - assets/Third/Tokusho_4_5.jpg
+    - assets/Third/Seibutsu_Experiment.jpg
+    - assets/Third/Kyotsu_Experiment.jpg
+    - assets/Third/Kagaku_Experiment.jpg
+    - assets/Third/Butsuri_Experiment.jpg
+    - assets/Third/Saho.jpg
+    - assets/Third/Daikaigi.jpg

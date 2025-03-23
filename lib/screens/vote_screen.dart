@@ -47,7 +47,9 @@ class _VoteScreenState extends State<VoteScreen> {
     return Scaffold(
       body: Column(
         children: [
-          TopBar(title: '投票画面 ${currentCategoryIndex + 1}/4'),
+          TopBar(
+            title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
+          ),
           MessageArea(message: category.description, title: category.name),
           Expanded(
             child: GroupSelectionArea(

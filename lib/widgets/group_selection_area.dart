@@ -59,7 +59,12 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
             children: [
               // フロアボタンの動的生成
               ...allFloors
-                  .map((floor) => _buildFloorButton('${floor}階フロア', floor))
+                  .map(
+                    (floor) =>
+                        (floor == 4)
+                            ? _buildFloorButton('ステージ・バンド等', floor)
+                            : _buildFloorButton('${floor}階フロア', floor),
+                  )
                   .toList(),
             ],
           ),
