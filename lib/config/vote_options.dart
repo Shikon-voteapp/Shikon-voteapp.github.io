@@ -3,1817 +3,673 @@ import 'package:shikon_voteapp/models/group.dart';
 // config/vote_options.dart
 /*
 =======投票先一覧を設定する設定ファイル=======
-VoteCategory(),を一つの投票カテゴリとして設定されています。
-VoteCategoryのパラメータ
-- id: '',　→投票カテゴリのID。他のカテゴリと被らない名前を用いてください。
-- name: '', →投票カテゴリの名前。ここで設定した名前が投票画面に表示されます。
-- description: '', →投票カテゴリの説明。こちらも投票画面に表示されます。\nを用いて改行できます。
-groups: []以下はこのカテゴリに含める団体を書く。Group(),で一つのまとまり。
-- id: '', →投票先のID。　2025年では教室番号を指定しています。
-- name: '', →投票先の名前。　ここで設定した名前が投票画面に表示されます。
-- description: '', →投票先の説明。　あまり長いものにしないことを推奨します。\mを用いて改行できます。
-- imagePath: '', →投票先の画像。画像パスを変えるときは、assets/以下に配置した上でここに相対パスを入力、pubspec.yamlに追記したうえでflutter pub getを刷る必要があるため、パス自体の変更は非推奨。同じ教室番号は同じ名前の画像ファイルで差し替え。100MB未満、jpgファイル。
-- floor: <int>, →その団体が属するフロアを「半角数字で」入力。ステージ団体は4を指定。
-詳しくは、メール【mamouna.inori@outlook.jp】まで。
-不要な教室は、/*と*/で挟むことでコメントアウトできます。
+
 */
+// すべての団体のリスト
+final List<Group> allGroups = [
+  /*
+  Group(
+    id: 'H',
+    name: '文化祭準備委員会本部室',
+    description: '紫紺祭の運営を担う文化祭準備委員会の本部室です。何かお困りのことがあったらこちらまでお越しください。',
+    imagePath: 'assets/First/S101.jpg',
+    floor: 1,
+    categories: [GroupCategory.other],
+  ),
+  */
+  Group(
+    id: '01',
+    name: '明治藩校歴研館～紫紺に染まれ～',
+    description: '歴研といえば藩校！明治といえば紫紺！紫紺の藩校で学べ！！',
+    imagePath: 'assets/First/S102.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '02',
+    name: '高校山岳部',
+    description: '山岳部が登った山を紹介します。キャンプの様子やキャンプ飯も必見です！登山用具を試すこともできます。',
+    imagePath: 'assets/First/S103.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '03',
+    name: 'いしざんまい！',
+    description: '地学部自慢の鉱物や化石をお楽しみください！合宿をまとめたポスターも展示しています！',
+    imagePath: 'assets/First/S104.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '04',
+    name: '北海道「函館＋江差」',
+    description: '北海道の函館と江差の街並み景観とまちづくり、伝統的見地奥物の保全について展示しています。地理研クイズも用意しています。',
+    imagePath: 'assets/First/S105.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '05',
+    name: '空想上の動物',
+    description:
+        '今年は、アジアの世界観をベースに空想上の動物を描いてみました。作品展示だけでなく、体験やおみくじもやっていますので、ぜひ来てください～！',
+    imagePath: 'assets/First/Art_Room_1.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '06',
+    name: '料研の森',
+    description: '研究の発表や作品の展示を行います！魅惑の料理があなたを待ってる・・・！',
+    imagePath: 'assets/First/Chori_Room.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '43',
+    name: '電車でGO！',
+    description: '鉄道模型の体験運転、発車メロディ体験、運転シミュレーターなどができます！ぜひお越しください！',
+    imagePath: 'assets/First/Technology_Room.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '07',
+    name: '書道の衝動',
+    description: 'たくさんの個性豊かな作品展示をしています！衝動で見に来ないか？！お土産もあるよ',
+    imagePath: 'assets/First/Music_Room.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '08',
+    name: 'ゲームフェスティバル',
+    description: '対戦ゲーも音ゲーも！新たなゲームとの出会いがあるかも...！？キミだけの楽しみ方を見つけよう！',
+    imagePath: 'assets/First/T101.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '09',
+    name: 'Re:KPEX',
+    description: '天下分け目の大合戦、武器は刀じゃなくて銃！？令和番関ケ原の戦いぜひお越しください！',
+    imagePath: 'assets/First/N101.jpg',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '10',
+    name: '3Death',
+    description: '廃校に棲みついた妖怪を退治しろ！他とは違う新しい"お化け探し"･･･今年の肝試しはN棟1階で決まり！',
+    imagePath: 'assets/First/N102.jpg',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '11',
+    name: '客恋慕',
+    description: '「私とかくれんぼしよ。」明治1最恐の空間へようこそ。#贈り物あり',
+    imagePath: 'assets/First/N103.jpg',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '12',
+    name: '僕らの小宇宙戦争',
+    description: 'トロッコに乗って制限時間内に宇宙人を倒せ！得点をかせいで覇者明治になろう！１',
+    imagePath: 'assets/First/N104.jpg',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '13',
+    name: 'B女とBスト',
+    description: '舞台は森の中の館。しかしそこはなんとBストの館だった！バラを集めて無事に脱出することはできるのか！？',
+    imagePath: 'assets/First/N105.jpg',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '14',
+    name: 'ばんこchanの萌え²きゅん♡',
+    description: '日々の疲れを癒します！あなたの心に萌え萌えきゅん♡',
+    imagePath: 'assets/Second/S201.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '15',
+    name: 'vsYUDAI星人',
+    description: 'YUDAI星から未知の生物がやってきた！ベスト"ショット"を狙って"バズ"らせろ！！',
+    imagePath: 'assets/Second/S202.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '16',
+    name: '背筋ルーブルブル美術館',
+    description: 'この美術館から宝を盗み出せるかな？正解のカイトウを導き脱出せよ！怪盗だけにね！',
+    imagePath: 'assets/Second/S203.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '17',
+    name: '不思議な国のユキ',
+    description: '物語の世界に入ったような演出や装飾の中で宝探し、射的、クロッケーをポイント制で楽しんでもらう。',
+    imagePath: 'assets/Second/S204.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '18',
+    name: '班会',
+    description: '班の活動報告、紹介動画やユニフォーム展示を行います。授業風景動画も放送します。是非見に来てください！',
+    imagePath: 'assets/Second/S205.jpg',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '19',
+    name: 'Global Meiji',
+    description:
+        '歴史、食べ物、流行など、アメリカという国を知るうえで欠かせないことを紹介します！また、昨年に引き続き調布市の英語観光ガイドマップも展示します。',
+    imagePath: 'assets/Second/S206.jpg',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '20',
+    name: '図書班',
+    description: '今年のテーマは「物語の中に入るなら･･･？！」新たな発見や驚きが待っているかも１',
+    imagePath: 'assets/Second/S207.jpg',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '21',
+    name: 'フェアトレード商品の販売',
+    description:
+        'フェアトレード商品(バングラデシュやネパールなど)と東北支援商品(桃ジュースやおからかりんとう)を販売しています(現金)。国際貢献ならびに国内貢献のために、まずは見に来てください。2日目のみ開店します。',
+    imagePath: 'assets/Second/T202.jpg',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '22',
+    name: 'under of ⅡA’ s',
+    description: '至る所に潜む怪物を迎え撃て！高ⅡAがお届けする鬼ごっこ×トロッコアドベンチャー！',
+    imagePath: 'assets/Second/N201.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '23',
+    name: 'CASINO HARASSY',
+    description: 'ラスベガスなカジノでハラハラドキドキ！？チップの数で豪華景品も！Chase the Chance‼',
+    imagePath: 'assets/Second/N202.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '24',
+    name: '人形供養',
+    description: 'なくなった夫婦の霊が愛する人形を探しているのです 帰る時、人のままかはあなた次第、、',
+    imagePath: 'assets/Second/N203.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '25',
+    name: '日本の果てまでイッテG',
+    description: 'トロッコで日本一周しながら道中のミニゲームをクリアしよう！ポイント稼いで目指せ1位！',
+    imagePath: 'assets/Second/N204.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '26',
+    name: 'Bトdeカート',
+    description: '「廊下を走っちゃいけません」でも俺らは走るで？？「教室で」カートに乗って教室を駆け抜けよう‼',
+    imagePath: 'assets/Second/N205.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '30',
+    name: '注文の多い舞踏会',
+    description: 'あなたに招待状が。選ばれた人だけの舞踏会がコーヒーカップで行われるらしい･･･って条件が多すぎる？！',
+    imagePath: 'assets/Third/S301.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '31',
+    name: '明治の覇者は世界の覇者',
+    description: 'あなたは世界一になったことがありますか？ここは本当の世界の王者を決める場所。さあ、あなたもEarthの果てまでイッテQ！',
+    imagePath: 'assets/Third/S302.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '32',
+    name: '変なサーカス',
+    description: 'ホラーが苦手な方や心臓が弱い方は控えてください。途中退出不可。あらかじめご了承ください。',
+    imagePath: 'assets/Third/S303.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '33',
+    name: 'The wheel of fotune',
+    description: 'カジノの本場、ラスベガスを感じさせる雰囲気で、いろいろな賭け事を楽しめます！1度は行かなきゃもったいない！！',
+    imagePath: 'assets/Third/S304.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '34',
+    name: 'GメンさせてGomen',
+    description:
+        '私たちが経営するコンビニで、皆様には万引き犯を捕まえるGメンを演じていただきます。提示された特徴を元にターゲットを捕まえられたら、Gメンの一員として認定されます！',
+    imagePath: 'assets/Third/S305.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '35',
+    name: '脱出ゲーム～天国と地獄～',
+    description: 'あなたは天使に会えるのか･･･それとも悪魔と会うのか･･･',
+    imagePath: 'assets/Third/S306.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '36',
+    name: '明大迷路(めいだいめいじ)',
+    description: '食中毒で死んだ客がクリームソーダの妖精となり追いかけてくる！迷宮にあるクリームソーダを集めゴールしよう！',
+    imagePath: 'assets/Third/S307.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: '27',
+    name: 'お点前と作法室の見学',
+    description: '初日21日のみ部員がお点前を披露します。作法室には茶道についての展示もありますので是非お越しください。',
+    imagePath: 'assets/Third/Daikaigi.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '28',
+    name: 'おとぎの国の漫研',
+    description: '今年のテーマは「おとぎ話」！オリジナル漫画の短編集やイラスト集がゲットできるかも？！',
+    imagePath: 'assets/Third/Tokusho_1_2_3.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '29',
+    name: 'Cinema Meiji',
+    description: '映画部がお送りする本格的な自主製作映画を絶賛公開中！劇場でお待ちしています！',
+    imagePath: 'assets/Third/T304.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '37',
+    name: '生物部',
+    description: '生物部で飼育している生物の展示、身近な微生物を顕微鏡で観察、葉っぱを使った実験を行います！',
+    imagePath: 'assets/Third/Seibutsu_Experiment.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '38',
+    name: 'わくわく！化学実験',
+    description: '来てくださった方が驚くような実験を行います。スライムの制作実験もできます。',
+    imagePath: 'assets/Third/Kagaku_Experiment.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '39',
+    name: '物理部',
+    description: '部員が制作した制作物や、部の備品などを展示しています。一部の展示品は触ることができますので、ぜひ来てください。',
+    imagePath: 'assets/Third/Butsuri_Experiment.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: '40',
+    name: '中1学年展示',
+    description: '明治に入学したてのフレッシュな中学1年生の学年展示です！ぜひお越しください！',
+    imagePath: 'assets/Third/N301.jpg',
+    floor: 3,
+    categories: [GroupCategory.Gakunen],
+  ),
+  Group(
+    id: '41',
+    name: '中2学年展示',
+    description: '明治中学校のいいところや、中2学年がどんな学年かを伝えます！体験ブースでは中2の気持ちが味わえます！ぜひお越しください！',
+    imagePath: 'assets/Third/N302.jpg',
+    floor: 3,
+    categories: [GroupCategory.Gakunen],
+  ),
+  Group(
+    id: '42',
+    name: '中3学年展示',
+    description: 'それいけ！ぼくらの集大成 中学三年間の集大成と成長を知ることができる中3最後の学年展示',
+    imagePath: 'assets/Third/N303.jpg',
+    floor: 3,
+    categories: [GroupCategory.Gakunen],
+  ),
+  Group(
+    id: 'Roten_a',
+    name: '面あり！メンチカツバーガー【剣道部】',
+    description: 'あのまい泉が露店に！一緒に食べて元気100倍で文化祭を楽しみましょう！',
+    imagePath: 'assets/Stage/Roten_a.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_b',
+    name: 'ソフトなヒレカツサンド【ソフトテニス部】',
+    description: '大盛り上がりでお腹のすく紫紺祭にぴったりのヒレカツサンド売ってます！ぜひ買いに来てください！',
+    imagePath: 'assets/Stage/Roten_b.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_c',
+    name: '本日、庭球日。【硬式テニス部】',
+    description: '文化祭の王道といえばチュロス！！3種類の味を選べるよ！甘いものが食べたくなったら、ぜひ！',
+    imagePath: 'assets/Stage/Roten_c.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_d',
+    name: 'スキーシューで涼まない？【スキー部】',
+    description: 'あつーい季節にシューアイスはどう！？1個100円で4種類の味売ってます！！',
+    imagePath: 'assets/Stage/Roten_d.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_e',
+    name: 'ぷかぷかベーグル【水泳部】',
+    description: 'プールといえばうきわ！うきわといえばベーグル！！美味しい4種のベーグル売ってます！',
+    imagePath: 'assets/Stage/Roten_e.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_f',
+    name: 'Badmin Robbins【バドミントン部】',
+    description: '今年はバドミントン部ではあつ～い夏にピッタリなアイスクリームを販売します！ぜひ買いに来てください！',
+    imagePath: 'assets/Stage/Roten_f.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'Roten_g',
+    name: 'DONUT and FIELD【陸上競技部】',
+    description: '1つ100円！サクサクドーナツ！売り切れる前にぜひ！',
+    imagePath: 'assets/Stage/Roten_g.jpg',
+    floor: 3,
+    categories: [GroupCategory.Roten],
+  ),
+  /*
+  Group(
+    id: 'Stage_01',
+    name: '吹奏楽班',
+    description:'誰もが楽しめるポップス曲を演奏します！ぜひ聴きに来てください♪',
+    imagePath: 'assets/Stage/Stage01.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_04',
+    name: '応援指導班',
+    description:'総勢53名で創る最高なステージで皆様に笑顔を届けます！',
+    imagePath: 'assets/Stage/Stage04.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  */
+  Group(
+    id: 'Stage_02',
+    name: 'ダンス部',
+    description: '総勢54人の部員で踊ります！盛り上がること間違いなしです！鵜澤ホールで待っています！',
+    imagePath: 'assets/Stage/Stage02.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_03',
+    name: 'マンドリン部',
+    description:
+        '私たちが得意とするクラシック曲から、楽しいポップス曲まで、ここでしか聴けないスペシャルステージをお届けします！ぜひお越しください！',
+    imagePath: 'assets/Stage/Stage03.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_05',
+    name: '書道部',
+    description: '総勢30人での大迫力の完璧で究極のパフォーマンス！見ないなんて損だ',
+    imagePath: 'assets/Stage/Stage04.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_06',
+    name: '有志演劇部',
+    description: '短編、長編それぞれ1本ずつの「コメディー」を大会議室にて上演します！とくとご覧あれ‼',
+    imagePath: 'assets/Stage/Stage06.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_07',
+    name: '【公開練習】サッカー部',
+    description: '恵まれた環境の元、目標達成に向け日々練習に取り組んでいます。',
+    imagePath: 'assets/Stage/Stage07.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_08',
+    name: '【公開練習】バスケ部',
+    description: 'チーム一丸となって練習しています。普段の姿を見に来てください。',
+    imagePath: 'assets/Stage/Stage08.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Stage_09',
+    name: '【公開練習】バレー部',
+    description: '時代とともに古豪と化した明治。今復活の一途を辿る練習が始まる。この感動を見逃すな！',
+    imagePath: 'assets/Stage/Stage09.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'Band_01',
+    name: 'Soullerfly',
+    description: '今年結成した高一のガールズバンドです！蝶は魂の象徴、その魂に響く音楽を届けます！',
+    imagePath: 'assets/Stage/Band01.jpg',
+    floor: 4,
+    categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'Band_02',
+    name: 'HELLOSUNDAY',
+    description: '男女のツインボーカルが特徴なので、その利点を最大限活かしてバンドメンバーと最高の曲を仕上げたいと思っています！',
+    imagePath: 'assets/Stage/Band02.jpg',
+    floor: 4,
+    categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'Band_03',
+    name: 'Fleurette',
+    description: 'バンドが大好きなメンバーで楽しく最高の演奏をします！高1女子バンドの本気をご覧ください！',
+    imagePath: 'assets/Stage/Band03.jpg',
+    floor: 4,
+    categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'Band_04',
+    name: '&Ronely',
+    description: '廊下に集いし者たちのバンドです。あの日の憧れは形を変えて走り出す。',
+    imagePath: 'assets/Stage/Band04.jpg',
+    floor: 4,
+    categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'Band_05',
+    name: 'ぐらふぃてぃ',
+    description: '高3の4人組によるナイスな演奏で、あなたの心にビブラート。仲良いあの子も気になるあの子もどうせみんな、ウチらの虜。',
+    imagePath: 'assets/Stage/Band02.jpg',
+    floor: 4,
+    categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'Peformance_A',
+    name: 'Kaikamahi Hula',
+    description: '私たちが踊るフラダンスはハワイで生まれた民族舞踊です。みなさんが知っている曲も踊るので、ぜひ見に来てください。',
+    imagePath: 'assets/Stage/Peformance01.jpg',
+    floor: 4,
+    categories: [GroupCategory.Peformance],
+  ),
+  Group(
+    id: 'Peformance_B',
+    name: 'MinChO',
+    description: '流行りの曲に合わせて5人で楽しく踊ります！一緒に盛り上がる準備はできてますかー？！',
+    imagePath: 'assets/Stage/Peformance02.jpg',
+    floor: 4,
+    categories: [GroupCategory.Peformance],
+  ),
+  Group(
+    id: 'Peformance_C',
+    name: 'おなごっぽん',
+    description: 'おなごっぽんです！4人の女子(おなご)が踊ります！応援よろしくお願いします♡',
+    imagePath: 'assets/Stage/Peformance03.jpg',
+    floor: 4,
+    categories: [GroupCategory.Peformance],
+  ),
+  Group(
+    id: 'Peformance_D',
+    name: '#Ⅰf',
+    description: '5人全員元高ⅠF組！再結集してラスト文化祭楽しむぞ！ダンスなどでみんなに青春、お届けします！',
+    imagePath: 'assets/Stage/Peformance04.jpg',
+    floor: 4,
+    categories: [GroupCategory.Peformance],
+  ),
+  Group(
+    id: 'Peformance_E',
+    name: 'ボケっとモンスター',
+    description: 'どこからか現れた謎の4人！このモンスターはボケタイプ？ツッコミタイプ？仮面の下に現れたものは、、？',
+    imagePath: 'assets/Stage/Peformance05.jpg',
+    floor: 4,
+    categories: [GroupCategory.Peformance],
+  ),
+];
+
 final List<VoteCategory> voteCategories = [
   VoteCategory(
-    id: 'Shikon_award', // システム内部で使用するID
-    name: '紫紺賞', // 表示名
-    description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。', // 説明文
-    groups: [
-      //ここからステージ団体
-      Group(
-        id: '01',
-        name: 'ステージ団体A',
-        description: '',
-        imagePath: 'assets/Stage/Stage01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '02',
-        name: 'ステージ団体B',
-        description: '',
-        imagePath: 'assets/Stage/Stage02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '03',
-        name: 'ステージ団体C',
-        description: '',
-        imagePath: 'assets/Stage/Stage03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '04',
-        name: 'ステージ団体D',
-        description: '',
-        imagePath: 'assets/Stage/Stage04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '05',
-        name: 'ステージ団体E',
-        description: '',
-        imagePath: 'assets/Stage/Stage05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '06',
-        name: 'ステージ団体F',
-        description: '',
-        imagePath: 'assets/Stage/Stage06.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '07',
-        name: 'ステージ団体G',
-        description: '',
-        imagePath: 'assets/Stage/Stage07.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '08',
-        name: 'ステージ団体H',
-        description: '',
-        imagePath: 'assets/Stage/Stage08.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      /*
-      Group(
-        id: '09',
-        name: 'バンドA',
-        description: '',
-        imagePath: 'assets/Stage/Band01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '10',
-        name: 'バンドB',
-        description: '',
-        imagePath: 'assets/Stage/Band02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '11',
-        name: 'バンドC',
-        description: '',
-        imagePath: 'assets/Stage/Band03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '12',
-        name: 'バンドD',
-        description: '',
-        imagePath: 'assets/Stage/Band04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '13',
-        name: 'バンドE',
-        description: '',
-        imagePath: 'assets/Stage/Band05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '14',
-        name: 'バンドF',
-        description: '',
-        imagePath: 'assets/Stage/Band06.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '15',
-        name: 'パフォA',
-        description: '',
-        imagePath: 'assets/Stage/Performance01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '16',
-        name: 'パフォB',
-        description: '',
-        imagePath: 'assets/Stage/Performance02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '17',
-        name: 'パフォC',
-        description: '',
-        imagePath: 'assets/Stage/Performance03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '16',
-        name: 'パフォD',
-        description: '',
-        imagePath: 'assets/Stage/Performance04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '17',
-        name: 'パフォE',
-        description: '',
-        imagePath: 'assets/Stage/Performance05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),*/
-      //ここまでステージ団体
-      //ここから1階フロア
-      Group(
-        id: 'S101',
-        name: 'S101教室',
-        description: 'S棟1階 S101教室',
-        imagePath: 'assets/First/S101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S102',
-        name: 'S102教室',
-        description: 'S棟1階 S102教室',
-        imagePath: 'assets/First/S102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S103',
-        name: 'S103教室',
-        description: 'S棟1階 S103教室',
-        imagePath: 'assets/First/S103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S104',
-        name: 'S104教室',
-        description: 'S棟1階 S104教室',
-        imagePath: 'assets/First/S104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S105',
-        name: 'S105教室',
-        description: 'S棟1階 S105教室',
-        imagePath: 'assets/First/S105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N101',
-        name: 'N101教室',
-        description: 'N棟1階 N101教室',
-        imagePath: 'assets/First/N101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N102',
-        name: 'N102教室',
-        description: 'N棟1階 N102教室',
-        imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N104',
-        name: 'N104教室',
-        description: 'N棟1階 N104教室',
-        imagePath: 'assets/First/N104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N105',
-        name: 'N105教室',
-        description: 'N棟1階 N105教室',
-        imagePath: 'assets/First/N105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T101',
-        name: 'T101教室',
-        description: 'N棟1階 T101教室(特別教室1)',
-        imagePath: 'assets/First/T101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T102',
-        name: 'T102教室',
-        description: 'N棟1階 T102教室(特別教室2)',
-        imagePath: 'assets/First/T102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Music_Room',
-        name: '音楽室',
-        description: 'S棟1階 音楽室',
-        imagePath: 'assets/First/Music_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Technology_Room',
-        name: '技術室',
-        description: 'S棟1階 技術室',
-        imagePath: 'assets/First/Technology_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_1',
-        name: '美術室1',
-        description: 'S棟1階 美術室1',
-        imagePath: 'assets/First/Art_Room_1.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_2',
-        name: '美術室2',
-        description: 'S棟1階 美術室2',
-        imagePath: 'assets/First/Art_Room_2.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Hifuku_Room',
-        name: '家庭科被服室',
-        description: 'S棟1階 家庭科被服室',
-        imagePath: 'assets/First/Hifuku_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Chori_Room',
-        name: '家庭科調理室',
-        description: 'S棟1階 家庭科調理室',
-        imagePath: 'assets/First/Chori_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      //ここまで1階フロア
-      //ここから2階フロア
-      Group(
-        id: 'S201',
-        name: 'S201教室',
-        description: 'S棟2階 S201教室',
-        imagePath: 'assets/Second/S201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S202',
-        name: 'S202教室',
-        description: 'S棟2階 S202教室',
-        imagePath: 'assets/Second/S202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S203',
-        name: 'S203教室',
-        description: 'S棟2階 S203教室',
-        imagePath: 'assets/Second/S203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S204',
-        name: 'S204教室',
-        description: 'S棟2階 S204教室',
-        imagePath: 'assets/Second/S204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S205',
-        name: 'S205教室',
-        description: 'S棟2階 S205教室',
-        imagePath: 'assets/Second/S205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S206',
-        name: 'S206教室',
-        description: 'S棟2階 S206教室',
-        imagePath: 'assets/Second/S206.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S207',
-        name: 'S207教室',
-        description: 'S棟2階 S207教室',
-        imagePath: 'assets/Second/S207.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N201',
-        name: 'N201教室',
-        description: 'N棟2階 S201教室',
-        imagePath: 'assets/Second/N201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N202',
-        name: 'N202教室',
-        description: 'N棟2階 S202教室',
-        imagePath: 'assets/Second/N202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N203',
-        name: 'N203教室',
-        description: 'N棟2階 S203教室',
-        imagePath: 'assets/Second/N203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N204',
-        name: 'N204教室',
-        description: 'N棟2階 S204教室',
-        imagePath: 'assets/Second/N204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N205',
-        name: 'N205教室',
-        description: 'N棟2階 S205教室',
-        imagePath: 'assets/Second/N205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T201',
-        name: 'T201教室',
-        description: 'S棟2階 T201教室(特別教室3)',
-        imagePath: 'assets/Second/T201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T202',
-        name: 'T202教室',
-        description: 'N棟2階 T202教室(特別教室4)',
-        imagePath: 'assets/Second/T202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_1',
-        name: 'コンピュータ教室1',
-        description: 'S棟2階 コンピュータ教室1',
-        imagePath: 'assets/Second/Computer_Room_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_2',
-        name: 'コンピュータ教室2',
-        description: 'S棟2階 コンピュータ教室2',
-        imagePath: 'assets/Second/Computer_Room_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_1',
-        name: 'CALL教室1',
-        description: 'S棟2階 CALL教室1',
-        imagePath: 'assets/Second/CALL_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_2',
-        name: 'CALL教室2',
-        description: 'S棟2階 CALL教室2',
-        imagePath: 'assets/Second/CALL_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'lib',
-        name: '図書館',
-        description: '2階 図書館',
-        imagePath: 'assets/Second/lib.jpg',
-        floor: 2,
-      ),
-      //ここまで2階フロア
-      //ここから3階フロア
-      Group(
-        id: 'S301',
-        name: 'S301教室',
-        description: 'S棟3階 S301教室',
-        imagePath: 'assets/Third/S301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S302',
-        name: 'S302教室',
-        description: 'S棟3階 S302教室',
-        imagePath: 'assets/Third/S302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S304',
-        name: 'S304教室',
-        description: 'S棟3階 S304教室',
-        imagePath: 'assets/Third/S304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S305',
-        name: 'S305教室',
-        description: 'S棟3階 S305教室',
-        imagePath: 'assets/Third/S305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S306',
-        name: 'S306教室',
-        description: 'S棟3階 S306教室',
-        imagePath: 'assets/Third/S306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S307',
-        name: 'S307教室',
-        description: 'S棟3階 S307教室',
-        imagePath: 'assets/Third/S307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N301',
-        name: 'N301教室',
-        description: 'N棟3階 N301教室',
-        imagePath: 'assets/Third/N301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N302',
-        name: 'N302教室',
-        description: 'N棟3階 N302教室',
-        imagePath: 'assets/Third/N302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N303',
-        name: 'N303教室',
-        description: 'N棟3階 N303教室',
-        imagePath: 'assets/Third/N303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N304',
-        name: 'N304教室',
-        description: 'N棟3階 N304教室',
-        imagePath: 'assets/Third/N304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N305',
-        name: 'N305教室',
-        description: 'N棟3階 N305教室',
-        imagePath: 'assets/Third/N305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N306',
-        name: 'N306教室',
-        description: 'N棟3階 N306教室',
-        imagePath: 'assets/Third/N306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N307',
-        name: 'N307教室',
-        description: 'N棟3階 N307教室',
-        imagePath: 'assets/Third/N307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //特小1～3を別々に扱うコード
-      /*Group(
-        id: 'T301',
-        name: 'T301教室',
-        description: 'S棟3階 T301教室(特別小教室1)',
-        imagePath: 'assets/Third/T301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T302',
-        name: 'T302教室',
-        description: 'S棟3階 T302教室(特別小教室2)',
-        imagePath: 'assets/Third/T302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T303',
-        name: 'T303教室',
-        description: 'S棟3階 T303教室(特別小教室3)',
-        imagePath: 'assets/Third/T303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      */
-      //特小1～3をまとめて扱うコード
-      Group(
-        id: 'Tokusho_1_2_3',
-        name: 'T301・T302・T303教室',
-        description: 'S棟3階 T301教室(特別小教室1)\nS棟3階 T302教室(特別小教室2)\nS棟3階(特別小教室3)',
-        imagePath: 'assets/Third/Tokusho_1_2_3.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T304',
-        name: 'T304教室',
-        description: 'S棟3階 T304教室(特別教室5)',
-        imagePath: 'assets/Third/T304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Tokusho_4_5',
-        name: 'T305・T306教室',
-        description: 'N棟3階 T305教室(特別小教室4)\nN棟3階 T306教室(特別小教室5)',
-        imagePath: 'assets/Third/Tokusho_4_5.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T307',
-        name: 'T307教室',
-        description: 'N棟3階 T307教室(特別小教室6)',
-        imagePath: 'assets/Third/T307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T308',
-        name: 'T308教室',
-        description: 'N棟3階 T308教室(特別小教室7)',
-        imagePath: 'assets/Third/T308.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Seibutsu_Experiment',
-        name: '生物実験室',
-        description: 'S棟3階 生物実験室',
-        imagePath: 'assets/Third/Seibutsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kyotsu_Experiment',
-        name: '理科共通実験室',
-        description: 'S棟3階 理科共通実験室',
-        imagePath: 'assets/Third/Kyotsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kagaku_Experiment',
-        name: '化学実験室',
-        description: 'S棟3階 化学実験室',
-        imagePath: 'assets/Third/Kagaku_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Butsuri_Experiment',
-        name: '物理実験室',
-        description: 'S棟3階 物理実験室',
-        imagePath: 'assets/Third/Butsuri_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Saho',
-        name: '作法室',
-        description: 'S棟3階 作法室',
-        imagePath: 'assets/Third/Saho.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Daikaigi',
-        name: '大会議室',
-        description: 'S棟3階 大会議室',
-        imagePath: 'assets/Third/Daikaigi.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //ここまで3階フロア
-
-      // 他の団体を追加...
-    ],
-  ),
-  //ここまで紫紺賞
-  VoteCategory(
-    id: 'Kyoshitsu_Tenji', // システム内部で使用するID
-    name: '教室展示賞', // 表示名
-    description: '教室展示のなかで、「最後にもう一回行くならこれだ！」という展示を選んでください。', // 説明文
-    groups: [
-      //ここから1階フロア
-      Group(
-        id: 'S101',
-        name: 'S101教室',
-        description: 'S棟1階 S101教室',
-        imagePath: 'assets/First/S101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S102',
-        name: 'S102教室',
-        description: 'S棟1階 S102教室',
-        imagePath: 'assets/First/S102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S103',
-        name: 'S103教室',
-        description: 'S棟1階 S103教室',
-        imagePath: 'assets/First/S103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S104',
-        name: 'S104教室',
-        description: 'S棟1階 S104教室',
-        imagePath: 'assets/First/S104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S105',
-        name: 'S105教室',
-        description: 'S棟1階 S105教室',
-        imagePath: 'assets/First/S105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N101',
-        name: 'N101教室',
-        description: 'N棟1階 N101教室',
-        imagePath: 'assets/First/N101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N102',
-        name: 'N102教室',
-        description: 'N棟1階 N102教室',
-        imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N104',
-        name: 'N104教室',
-        description: 'N棟1階 N104教室',
-        imagePath: 'assets/First/N104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N105',
-        name: 'N105教室',
-        description: 'N棟1階 N105教室',
-        imagePath: 'assets/First/N105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T101',
-        name: 'T101教室',
-        description: 'N棟1階 T101教室(特別教室1)',
-        imagePath: 'assets/First/T101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T102',
-        name: 'T102教室',
-        description: 'N棟1階 T102教室(特別教室2)',
-        imagePath: 'assets/First/T102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Music_Room',
-        name: '音楽室',
-        description: 'S棟1階 音楽室',
-        imagePath: 'assets/First/Music_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Technology_Room',
-        name: '技術室',
-        description: 'S棟1階 技術室',
-        imagePath: 'assets/First/Technology_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_1',
-        name: '美術室1',
-        description: 'S棟1階 美術室1',
-        imagePath: 'assets/First/Art_Room_1.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_2',
-        name: '美術室2',
-        description: 'S棟1階 美術室2',
-        imagePath: 'assets/First/Art_Room_2.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Hifuku_Room',
-        name: '家庭科被服室',
-        description: 'S棟1階 家庭科被服室',
-        imagePath: 'assets/First/Hifuku_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Chori_Room',
-        name: '家庭科調理室',
-        description: 'S棟1階 家庭科調理室',
-        imagePath: 'assets/First/Chori_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      //ここまで1階フロア
-      //ここから2階フロア
-      Group(
-        id: 'S201',
-        name: 'S201教室',
-        description: 'S棟2階 S201教室',
-        imagePath: 'assets/Second/S201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S202',
-        name: 'S202教室',
-        description: 'S棟2階 S202教室',
-        imagePath: 'assets/Second/S202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S203',
-        name: 'S203教室',
-        description: 'S棟2階 S203教室',
-        imagePath: 'assets/Second/S203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S204',
-        name: 'S204教室',
-        description: 'S棟2階 S204教室',
-        imagePath: 'assets/Second/S204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S205',
-        name: 'S205教室',
-        description: 'S棟2階 S205教室',
-        imagePath: 'assets/Second/S205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S206',
-        name: 'S206教室',
-        description: 'S棟2階 S206教室',
-        imagePath: 'assets/Second/S206.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S207',
-        name: 'S207教室',
-        description: 'S棟2階 S207教室',
-        imagePath: 'assets/Second/S207.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N201',
-        name: 'N201教室',
-        description: 'N棟2階 S201教室',
-        imagePath: 'assets/Second/N201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N202',
-        name: 'N202教室',
-        description: 'N棟2階 S202教室',
-        imagePath: 'assets/Second/N202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N203',
-        name: 'N203教室',
-        description: 'N棟2階 S203教室',
-        imagePath: 'assets/Second/N203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N204',
-        name: 'N204教室',
-        description: 'N棟2階 S204教室',
-        imagePath: 'assets/Second/N204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N205',
-        name: 'N205教室',
-        description: 'N棟2階 S205教室',
-        imagePath: 'assets/Second/N205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T201',
-        name: 'T201教室',
-        description: 'S棟2階 T201教室(特別教室3)',
-        imagePath: 'assets/Second/T201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T202',
-        name: 'T202教室',
-        description: 'N棟2階 T202教室(特別教室4)',
-        imagePath: 'assets/Second/T202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_1',
-        name: 'コンピュータ教室1',
-        description: 'S棟2階 コンピュータ教室1',
-        imagePath: 'assets/Second/Computer_Room_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_2',
-        name: 'コンピュータ教室2',
-        description: 'S棟2階 コンピュータ教室2',
-        imagePath: 'assets/Second/Computer_Room_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_1',
-        name: 'CALL教室1',
-        description: 'S棟2階 CALL教室1',
-        imagePath: 'assets/Second/CALL_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_2',
-        name: 'CALL教室2',
-        description: 'S棟2階 CALL教室2',
-        imagePath: 'assets/Second/CALL_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'lib',
-        name: '図書館',
-        description: '2階 図書館',
-        imagePath: 'assets/Second/lib.jpg',
-        floor: 2,
-      ),
-      //ここまで2階フロア
-      //ここから3階フロア
-      Group(
-        id: 'S301',
-        name: 'S301教室',
-        description: 'S棟3階 S301教室',
-        imagePath: 'assets/Third/S301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S302',
-        name: 'S302教室',
-        description: 'S棟3階 S302教室',
-        imagePath: 'assets/Third/S302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S304',
-        name: 'S304教室',
-        description: 'S棟3階 S304教室',
-        imagePath: 'assets/Third/S304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S305',
-        name: 'S305教室',
-        description: 'S棟3階 S305教室',
-        imagePath: 'assets/Third/S305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S306',
-        name: 'S306教室',
-        description: 'S棟3階 S306教室',
-        imagePath: 'assets/Third/S306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S307',
-        name: 'S307教室',
-        description: 'S棟3階 S307教室',
-        imagePath: 'assets/Third/S307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N301',
-        name: 'N301教室',
-        description: 'N棟3階 N301教室',
-        imagePath: 'assets/Third/N301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N302',
-        name: 'N302教室',
-        description: 'N棟3階 N302教室',
-        imagePath: 'assets/Third/N302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N303',
-        name: 'N303教室',
-        description: 'N棟3階 N303教室',
-        imagePath: 'assets/Third/N303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N304',
-        name: 'N304教室',
-        description: 'N棟3階 N304教室',
-        imagePath: 'assets/Third/N304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N305',
-        name: 'N305教室',
-        description: 'N棟3階 N305教室',
-        imagePath: 'assets/Third/N305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N306',
-        name: 'N306教室',
-        description: 'N棟3階 N306教室',
-        imagePath: 'assets/Third/N306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N307',
-        name: 'N307教室',
-        description: 'N棟3階 N307教室',
-        imagePath: 'assets/Third/N307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //特小1～3を別々に扱うコード
-      /*Group(
-        id: 'T301',
-        name: 'T301教室',
-        description: 'S棟3階 T301教室(特別小教室1)',
-        imagePath: 'assets/Third/T301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T302',
-        name: 'T302教室',
-        description: 'S棟3階 T302教室(特別小教室2)',
-        imagePath: 'assets/Third/T302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T303',
-        name: 'T303教室',
-        description: 'S棟3階 T303教室(特別小教室3)',
-        imagePath: 'assets/Third/T303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      */
-      //特小1～3をまとめて扱うコード
-      Group(
-        id: 'Tokusho_1_2_3',
-        name: 'T301・T302・T303教室',
-        description: 'S棟3階 T301教室(特別小教室1)\nS棟3階 T302教室(特別小教室2)\nS棟3階(特別小教室3)',
-        imagePath: 'assets/Third/Tokusho_1_2_3.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T304',
-        name: 'T304教室',
-        description: 'S棟3階 T304教室(特別教室5)',
-        imagePath: 'assets/Third/T304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Tokusho_4_5',
-        name: 'T305・T306教室',
-        description: 'N棟3階 T305教室(特別小教室4)\nN棟3階 T306教室(特別小教室5)',
-        imagePath: 'assets/Third/Tokusho_4_5.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T307',
-        name: 'T307教室',
-        description: 'N棟3階 T307教室(特別小教室6)',
-        imagePath: 'assets/Third/T307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T308',
-        name: 'T308教室',
-        description: 'N棟3階 T308教室(特別小教室7)',
-        imagePath: 'assets/Third/T308.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Seibutsu_Experiment',
-        name: '生物実験室',
-        description: 'S棟3階 生物実験室',
-        imagePath: 'assets/Third/Seibutsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kyotsu_Experiment',
-        name: '理科共通実験室',
-        description: 'S棟3階 理科共通実験室',
-        imagePath: 'assets/Third/Kyotsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kagaku_Experiment',
-        name: '化学実験室',
-        description: 'S棟3階 化学実験室',
-        imagePath: 'assets/Third/Kagaku_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Butsuri_Experiment',
-        name: '物理実験室',
-        description: 'S棟3階 物理実験室',
-        imagePath: 'assets/Third/Butsuri_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Saho',
-        name: '作法室',
-        description: 'S棟3階 作法室',
-        imagePath: 'assets/Third/Saho.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Daikaigi',
-        name: '大会議室',
-        description: 'S棟3階 大会議室',
-        imagePath: 'assets/Third/Daikaigi.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //ここまで3階フロア
+    id: 'Shikon_award',
+    name: '紫紺賞',
+    description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where(
+              (group) =>
+                  group.hasCategory(GroupCategory.Tenji) ||
+                  group.hasCategory(GroupCategory.Moyoshi) ||
+                  group.hasCategory(GroupCategory.Gakunen) ||
+                  group.hasCategory(GroupCategory.Roten) ||
+                  group.hasCategory(GroupCategory.Stage),
+            )
+            .toList(),
+    eligibleCategories: [
+      GroupCategory.Tenji,
+      GroupCategory.Moyoshi,
+      GroupCategory.Gakunen,
+      GroupCategory.Roten,
+      GroupCategory.Stage,
     ],
   ),
   VoteCategory(
-    id: 'Gakunen_Tenji',
+    id: 'Tenji',
+    name: '教室展示賞',
+    description: '教室展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Tenji))
+            .toList(),
+    eligibleCategories: [GroupCategory.Tenji],
+  ),
+  VoteCategory(
+    id: 'Gakunen',
     name: '学年展示賞',
-    description: '学年展示のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。',
-    groups: [
-      Group(
-        id: 'S305',
-        name: '中学1年',
-        description: 'S棟3階 S305教室(この教室番号はダミーです。)',
-        imagePath: 'assets/Third/S305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S306',
-        name: '中学2年',
-        description: 'S棟3階 S306教室',
-        imagePath: 'assets/Third/S306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S307',
-        name: '中学3年',
-        description: 'S棟3階 S307教室',
-        imagePath: 'assets/Third/S307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-    ],
+    description: '学年展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Gakunen))
+            .toList(),
+    eligibleCategories: [GroupCategory.Gakunen],
   ),
   VoteCategory(
-    id: 'Kyoshitsu_Moyoshi',
+    id: 'Moyoshi',
     name: '教室催し物賞',
-    description: '教室催し物のなかで、「最後にもう一回行くならこれだ！」という学年を選んでください。',
-    groups: [
-      //ここから1階フロア
-      Group(
-        id: 'S101',
-        name: 'S101教室',
-        description: 'S棟1階 S101教室',
-        imagePath: 'assets/First/S101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S102',
-        name: 'S102教室',
-        description: 'S棟1階 S102教室',
-        imagePath: 'assets/First/S102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S103',
-        name: 'S103教室',
-        description: 'S棟1階 S103教室',
-        imagePath: 'assets/First/S103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S104',
-        name: 'S104教室',
-        description: 'S棟1階 S104教室',
-        imagePath: 'assets/First/S104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'S105',
-        name: 'S105教室',
-        description: 'S棟1階 S105教室',
-        imagePath: 'assets/First/S105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N101',
-        name: 'N101教室',
-        description: 'N棟1階 N101教室',
-        imagePath: 'assets/First/N101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N102',
-        name: 'N102教室',
-        description: 'N棟1階 N102教室',
-        imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N104',
-        name: 'N104教室',
-        description: 'N棟1階 N104教室',
-        imagePath: 'assets/First/N104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N105',
-        name: 'N105教室',
-        description: 'N棟1階 N105教室',
-        imagePath: 'assets/First/N105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T101',
-        name: 'T101教室',
-        description: 'N棟1階 T101教室(特別教室1)',
-        imagePath: 'assets/First/T101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'T102',
-        name: 'T102教室',
-        description: 'N棟1階 T102教室(特別教室2)',
-        imagePath: 'assets/First/T102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Music_Room',
-        name: '音楽室',
-        description: 'S棟1階 音楽室',
-        imagePath: 'assets/First/Music_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Technology_Room',
-        name: '技術室',
-        description: 'S棟1階 技術室',
-        imagePath: 'assets/First/Technology_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_1',
-        name: '美術室1',
-        description: 'S棟1階 美術室1',
-        imagePath: 'assets/First/Art_Room_1.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Art_Room_2',
-        name: '美術室2',
-        description: 'S棟1階 美術室2',
-        imagePath: 'assets/First/Art_Room_2.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Hifuku_Room',
-        name: '家庭科被服室',
-        description: 'S棟1階 家庭科被服室',
-        imagePath: 'assets/First/Hifuku_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'Chori_Room',
-        name: '家庭科調理室',
-        description: 'S棟1階 家庭科調理室',
-        imagePath: 'assets/First/Chori_Room.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      //ここまで1階フロア
-      //ここから2階フロア
-      Group(
-        id: 'S201',
-        name: 'S201教室',
-        description: 'S棟2階 S201教室',
-        imagePath: 'assets/Second/S201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S202',
-        name: 'S202教室',
-        description: 'S棟2階 S202教室',
-        imagePath: 'assets/Second/S202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S203',
-        name: 'S203教室',
-        description: 'S棟2階 S203教室',
-        imagePath: 'assets/Second/S203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S204',
-        name: 'S204教室',
-        description: 'S棟2階 S204教室',
-        imagePath: 'assets/Second/S204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S205',
-        name: 'S205教室',
-        description: 'S棟2階 S205教室',
-        imagePath: 'assets/Second/S205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S206',
-        name: 'S206教室',
-        description: 'S棟2階 S206教室',
-        imagePath: 'assets/Second/S206.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'S207',
-        name: 'S207教室',
-        description: 'S棟2階 S207教室',
-        imagePath: 'assets/Second/S207.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N201',
-        name: 'N201教室',
-        description: 'N棟2階 S201教室',
-        imagePath: 'assets/Second/N201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N202',
-        name: 'N202教室',
-        description: 'N棟2階 S202教室',
-        imagePath: 'assets/Second/N202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N203',
-        name: 'N203教室',
-        description: 'N棟2階 S203教室',
-        imagePath: 'assets/Second/N203.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N204',
-        name: 'N204教室',
-        description: 'N棟2階 S204教室',
-        imagePath: 'assets/Second/N204.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'N205',
-        name: 'N205教室',
-        description: 'N棟2階 S205教室',
-        imagePath: 'assets/Second/N205.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T201',
-        name: 'T201教室',
-        description: 'S棟2階 T201教室(特別教室3)',
-        imagePath: 'assets/Second/T201.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'T202',
-        name: 'T202教室',
-        description: 'N棟2階 T202教室(特別教室4)',
-        imagePath: 'assets/Second/T202.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_1',
-        name: 'コンピュータ教室1',
-        description: 'S棟2階 コンピュータ教室1',
-        imagePath: 'assets/Second/Computer_Room_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'Computer_Room_2',
-        name: 'コンピュータ教室2',
-        description: 'S棟2階 コンピュータ教室2',
-        imagePath: 'assets/Second/Computer_Room_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_1',
-        name: 'CALL教室1',
-        description: 'S棟2階 CALL教室1',
-        imagePath: 'assets/Second/CALL_1.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'CALL_2',
-        name: 'CALL教室2',
-        description: 'S棟2階 CALL教室2',
-        imagePath: 'assets/Second/CALL_2.jpg', // 画像パス
-        floor: 2, // フロア番号
-      ),
-      Group(
-        id: 'lib',
-        name: '図書館',
-        description: '2階 図書館',
-        imagePath: 'assets/Second/lib.jpg',
-        floor: 2,
-      ),
-      //ここまで2階フロア
-      //ここから3階フロア
-      Group(
-        id: 'S301',
-        name: 'S301教室',
-        description: 'S棟3階 S301教室',
-        imagePath: 'assets/Third/S301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S302',
-        name: 'S302教室',
-        description: 'S棟3階 S302教室',
-        imagePath: 'assets/Third/S302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S303',
-        name: 'S303教室',
-        description: 'S棟3階 S303教室',
-        imagePath: 'assets/Third/S303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S304',
-        name: 'S304教室',
-        description: 'S棟3階 S304教室',
-        imagePath: 'assets/Third/S304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S305',
-        name: 'S305教室',
-        description: 'S棟3階 S305教室',
-        imagePath: 'assets/Third/S305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S306',
-        name: 'S306教室',
-        description: 'S棟3階 S306教室',
-        imagePath: 'assets/Third/S306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'S307',
-        name: 'S307教室',
-        description: 'S棟3階 S307教室',
-        imagePath: 'assets/Third/S307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N301',
-        name: 'N301教室',
-        description: 'N棟3階 N301教室',
-        imagePath: 'assets/Third/N301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N302',
-        name: 'N302教室',
-        description: 'N棟3階 N302教室',
-        imagePath: 'assets/Third/N302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N303',
-        name: 'N303教室',
-        description: 'N棟3階 N303教室',
-        imagePath: 'assets/Third/N303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N304',
-        name: 'N304教室',
-        description: 'N棟3階 N304教室',
-        imagePath: 'assets/Third/N304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N305',
-        name: 'N305教室',
-        description: 'N棟3階 N305教室',
-        imagePath: 'assets/Third/N305.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N306',
-        name: 'N306教室',
-        description: 'N棟3階 N306教室',
-        imagePath: 'assets/Third/N306.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'N307',
-        name: 'N307教室',
-        description: 'N棟3階 N307教室',
-        imagePath: 'assets/Third/N307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //特小1～3を別々に扱うコード
-      /*Group(
-        id: 'T301',
-        name: 'T301教室',
-        description: 'S棟3階 T301教室(特別小教室1)',
-        imagePath: 'assets/Third/T301.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T302',
-        name: 'T302教室',
-        description: 'S棟3階 T302教室(特別小教室2)',
-        imagePath: 'assets/Third/T302.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T303',
-        name: 'T303教室',
-        description: 'S棟3階 T303教室(特別小教室3)',
-        imagePath: 'assets/Third/T303.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      */
-      //特小1～3をまとめて扱うコード
-      Group(
-        id: 'Tokusho_1_2_3',
-        name: 'T301・T302・T303教室',
-        description: 'S棟3階 T301教室(特別小教室1)\nS棟3階 T302教室(特別小教室2)\nS棟3階(特別小教室3)',
-        imagePath: 'assets/Third/Tokusho_1_2_3.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T304',
-        name: 'T304教室',
-        description: 'S棟3階 T304教室(特別教室5)',
-        imagePath: 'assets/Third/T304.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Tokusho_4_5',
-        name: 'T305・T306教室',
-        description: 'N棟3階 T305教室(特別小教室4)\nN棟3階 T306教室(特別小教室5)',
-        imagePath: 'assets/Third/Tokusho_4_5.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T307',
-        name: 'T307教室',
-        description: 'N棟3階 T307教室(特別小教室6)',
-        imagePath: 'assets/Third/T307.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'T308',
-        name: 'T308教室',
-        description: 'N棟3階 T308教室(特別小教室7)',
-        imagePath: 'assets/Third/T308.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Seibutsu_Experiment',
-        name: '生物実験室',
-        description: 'S棟3階 生物実験室',
-        imagePath: 'assets/Third/Seibutsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kyotsu_Experiment',
-        name: '理科共通実験室',
-        description: 'S棟3階 理科共通実験室',
-        imagePath: 'assets/Third/Kyotsu_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Kagaku_Experiment',
-        name: '化学実験室',
-        description: 'S棟3階 化学実験室',
-        imagePath: 'assets/Third/Kagaku_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Butsuri_Experiment',
-        name: '物理実験室',
-        description: 'S棟3階 物理実験室',
-        imagePath: 'assets/Third/Butsuri_Experiment.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Saho',
-        name: '作法室',
-        description: 'S棟3階 作法室',
-        imagePath: 'assets/Third/Saho.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      Group(
-        id: 'Daikaigi',
-        name: '大会議室',
-        description: 'S棟3階 大会議室',
-        imagePath: 'assets/Third/Daikaigi.jpg', // 画像パス
-        floor: 3, // フロア番号
-      ),
-      //ここまで3階フロア
-    ],
+    description: '教室催し物の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Moyoshi))
+            .toList(),
+    eligibleCategories: [GroupCategory.Moyoshi],
   ),
   VoteCategory(
     id: 'Stage',
     name: '部活ステージ賞',
-    description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージを選んでください。',
-    groups: [
-      Group(
-        id: '01',
-        name: 'ステージ団体A',
-        description: '',
-        imagePath: 'assets/Stage/Stage01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '02',
-        name: 'ステージ団体B',
-        description: '',
-        imagePath: 'assets/Stage/Stage02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '03',
-        name: 'ステージ団体C',
-        description: '',
-        imagePath: 'assets/Stage/Stage03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '04',
-        name: 'ステージ団体D',
-        description: '',
-        imagePath: 'assets/Stage/Stage04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '05',
-        name: 'ステージ団体E',
-        description: '',
-        imagePath: 'assets/Stage/Stage05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '06',
-        name: 'ステージ団体F',
-        description: '',
-        imagePath: 'assets/Stage/Stage06.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '07',
-        name: 'ステージ団体G',
-        description: '',
-        imagePath: 'assets/Stage/Stage07.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '08',
-        name: 'ステージ団体H',
-        description: '',
-        imagePath: 'assets/Stage/Stage08.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-    ],
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージ団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Stage))
+            .toList(),
+    eligibleCategories: [GroupCategory.Stage],
   ),
   VoteCategory(
     id: 'Band',
     name: 'バンド賞',
-    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったバンドを選んでください。',
-    groups: [
-      Group(
-        id: '09',
-        name: 'バンドA',
-        description: '',
-        imagePath: 'assets/Stage/Band01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '10',
-        name: 'バンドB',
-        description: '',
-        imagePath: 'assets/Stage/Band02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '11',
-        name: 'バンドC',
-        description: '',
-        imagePath: 'assets/Stage/Band03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '12',
-        name: 'バンドD',
-        description: '',
-        imagePath: 'assets/Stage/Band04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '13',
-        name: 'バンドE',
-        description: '',
-        imagePath: 'assets/Stage/Band05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '14',
-        name: 'バンドF',
-        description: '',
-        imagePath: 'assets/Stage/Band06.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-    ],
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったバンド団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Band))
+            .toList(),
+    eligibleCategories: [GroupCategory.Band],
+  ),
+  VoteCategory(
+    id: 'Peformance',
+    name: 'パフォーマンス賞',
+    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Peformance))
+            .toList(),
+    eligibleCategories: [GroupCategory.Peformance],
   ),
   VoteCategory(
     id: 'Roten',
     name: '露店賞',
-    description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった露店を選んでください。',
-    groups: [
-      Group(
-        id: 'N101',
-        name: 'N101教室',
-        description: 'N棟1階 N101教室(教室番号はダミーです。)',
-        imagePath: 'assets/First/N101.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N102',
-        name: 'N102教室',
-        description: 'N棟1階 N102教室',
-        imagePath: 'assets/First/N102.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N103',
-        name: 'N103教室',
-        description: 'N棟1階 N103教室',
-        imagePath: 'assets/First/N103.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N104',
-        name: 'N104教室',
-        description: 'N棟1階 N104教室',
-        imagePath: 'assets/First/N104.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-      Group(
-        id: 'N105',
-        name: 'N105教室',
-        description: 'N棟1階 N105教室',
-        imagePath: 'assets/First/N105.jpg', // 画像パス
-        floor: 1, // フロア番号
-      ),
-    ],
+    description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった団体を1つ選択してください。',
+    groups:
+        allGroups
+            .where((group) => group.hasCategory(GroupCategory.Roten))
+            .toList(),
+    eligibleCategories: [GroupCategory.Roten],
   ),
-  VoteCategory(
-    id: 'Performance',
-    name: 'パフォーマンス賞',
-    description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を選んでください。',
-    groups: [
-      Group(
-        id: '15',
-        name: 'パフォA',
-        description: '',
-        imagePath: 'assets/Stage/Performance01.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '16',
-        name: 'パフォB',
-        description: '',
-        imagePath: 'assets/Stage/Performance02.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '17',
-        name: 'パフォC',
-        description: '',
-        imagePath: 'assets/Stage/Performance03.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '18',
-        name: 'パフォD',
-        description: '',
-        imagePath: 'assets/Stage/Performance04.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-      Group(
-        id: '19',
-        name: 'パフォE',
-        description: '',
-        imagePath: 'assets/Stage/Performance05.jpg', // 画像パス
-        floor: 0, // フロア番号
-      ),
-    ],
-  ),
-  // 他のカテゴリーを追加...
 ];

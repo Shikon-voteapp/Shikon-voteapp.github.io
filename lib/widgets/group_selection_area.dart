@@ -74,7 +74,7 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
               ...allFloors
                   .map(
                     (floor) =>
-                        (floor == 0)
+                        (floor == 4)
                             ? _buildFloorButton('ステージ・バンド等', floor)
                             : _buildFloorButton('${floor}階フロア', floor),
                   )

@@ -58,6 +58,7 @@ flutter:
     - assets/Stage/Stage06.jpg
     - assets/Stage/Stage07.jpg
     - assets/Stage/Stage08.jpg
+    - assets/Stage/Stage09.jpg
     - assets/Stage/Band01.jpg
     - assets/Stage/Band02.jpg
     - assets/Stage/Band03.jpg
@@ -70,6 +71,14 @@ flutter:
     - assets/Stage/Performance04.jpg
     - assets/Stage/Performance05.jpg
     - assets/Stage/No Select.jpg
+    - assets/Stage/Roten_a.jpg
+    - assets/Stage/Roten_b.jpg
+    - assets/Stage/Roten_c.jpg
+    - assets/Stage/Roten_d.jpg
+    - assets/Stage/Roten_e.jpg
+    - assets/Stage/Roten_f.jpg
+    - assets/Stage/Roten_g.jpg
+    - assets/Stage/Roten_h.jpg
   #1階
     - assets/First/
     - assets/First/S101.jpg
