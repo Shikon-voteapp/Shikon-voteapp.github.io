@@ -5,8 +5,10 @@ import 'firebase_options.dart';
 import 'screens/admin_screen.dart';
 import 'dart:html' as html;
 import 'dart:async';
+import 'config/data_range_service.dart';
 
 void main() async {
+  DateRangeService().initialize();
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(

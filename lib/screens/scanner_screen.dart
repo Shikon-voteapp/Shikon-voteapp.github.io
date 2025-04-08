@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
+import '../config/data_range_service.dart'; // 有効期間を管理するサービス
 import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'vote_screen.dart';
+import 'out_of_period_screen.dart'; // 有効期間外画面
 
 class ScannerScreen extends StatefulWidget {
   @override
@@ -15,10 +17,12 @@ class ScannerScreen extends StatefulWidget {
 class _ScannerScreenState extends State<ScannerScreen>
     with WidgetsBindingObserver {
   final UuidService _uuidService = UuidService();
+  final DateRangeService _dateRangeService = DateRangeService(); // 有効期間サービス
   final TextEditingController _manualCodeController = TextEditingController();
   bool _showManualInput = false;
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
+  CameraFacing _currentCamera = CameraFacing.front; // デフォルトはインカメラ
 
   @override
   void initState() {
@@ -28,7 +32,20 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   void _initCameraController() {
-    _cameraController = MobileScannerController();
+    // 現在選択されているカメラで初期化
+    _cameraController = MobileScannerController(
+      facing: _currentCamera,
+      torchEnabled: false,
+    );
+  }
+
+  // カメラを切り替える
+  void _switchCamera() {
+    _currentCamera =
+        _currentCamera == CameraFacing.front
+            ? CameraFacing.back
+            : CameraFacing.front;
+    _resetCameraController();
   }
 
   @override
@@ -101,7 +118,6 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Widget _buildScannerUI() {
-    // カメラUIを構築
     return Stack(
       children: [
         MobileScanner(
@@ -129,24 +145,42 @@ class _ScannerScreenState extends State<ScannerScreen>
             ),
           ),
         ),
-        // カメラの状態表示
+        // カメラ操作ボタン
         Positioned(
           bottom: 10,
           left: 0,
           right: 0,
-          child: Center(
-            child: ValueListenableBuilder(
-              valueListenable: _cameraController.torchState,
-              builder: (context, state, child) {
-                return IconButton(
-                  icon: Icon(
-                    state == TorchState.on ? Icons.flash_on : Icons.flash_off,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => _cameraController.toggleTorch(),
-                );
-              },
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // カメラ切り替えボタン
+              IconButton(
+                icon: Icon(Icons.flip_camera_ios, color: Colors.white),
+                onPressed: _switchCamera,
+                tooltip: 'カメラ切り替え',
+              ),
+              SizedBox(width: 20),
+              // フラッシュ切り替えボタン (アウトカメラ時のみ有効)
+              ValueListenableBuilder(
+                valueListenable: _cameraController.torchState,
+                builder: (context, state, child) {
+                  return IconButton(
+                    icon: Icon(
+                      state == TorchState.on ? Icons.flash_on : Icons.flash_off,
+                      color:
+                          _currentCamera == CameraFacing.back
+                              ? Colors.white
+                              : Colors.grey,
+                    ),
+                    onPressed:
+                        _currentCamera == CameraFacing.back
+                            ? () => _cameraController.toggleTorch()
+                            : null,
+                    tooltip: 'フラッシュ',
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ],
@@ -201,6 +235,85 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
+  // Permission deniedエラーダイアログを表示
+  void _showPermissionDeniedDialog() {
+    // すでに表示されているダイアログを閉じる
+    Navigator.of(
+      context,
+      rootNavigator: true,
+    ).popUntil((route) => route.isFirst);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.red),
+                SizedBox(width: 10),
+                Text('アクセス権限エラー'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('投票データへのアクセス権限がありません。'),
+                SizedBox(height: 8),
+                Text('このコードを使用する権限がないか、データベースのアクセス設定に問題があります。'),
+                SizedBox(height: 16),
+                Text(
+                  '管理者にお問い合わせください。',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('キャンセル'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  // カメラを再開するか手動入力に戻る
+                  setState(() {
+                    _isProcessingCode = false;
+                    if (!_showManualInput) {
+                      _resetCameraController();
+                    }
+                  });
+                },
+              ),
+              ElevatedButton(
+                child: Text('再試行'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  // 再試行処理
+                  if (_showManualInput) {
+                    if (_manualCodeController.text.isNotEmpty) {
+                      _processBarcode(_manualCodeController.text);
+                    }
+                  } else {
+                    setState(() {
+                      _isProcessingCode = false;
+                      _resetCameraController();
+                    });
+                  }
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  // 現在の日時が有効期間内かチェック
+  bool _isWithinValidPeriod() {
+    DateTime now = DateTime.now();
+    return _dateRangeService.isWithinVotingPeriod(now);
+  }
+
   void _processBarcode(String code) async {
     // 処理中フラグをセット
     setState(() {
@@ -210,16 +323,20 @@ class _ScannerScreenState extends State<ScannerScreen>
     // スキャナーを一時停止
     _cameraController.stop();
 
-    bool isValid = await _uuidService.validateUuid(code);
-    if (isValid) {
+    // 有効期間内かチェック
+    if (!_isWithinValidPeriod()) {
+      // 有効期間外の場合、専用画面に遷移
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
+          builder:
+              (context) => OutOfPeriodScreen(
+                startDate: _dateRangeService.startDate,
+                endDate: _dateRangeService.endDate,
+              ),
         ),
       ).then((_) {
-        // complete_screenから戻ってきたら、
-        // カメラを再初期化して画面を更新
+        // 画面から戻ってきたら処理を再開
         if (mounted) {
           setState(() {
             _isProcessingCode = false;
@@ -229,18 +346,61 @@ class _ScannerScreenState extends State<ScannerScreen>
           });
         }
       });
-    } else {
-      // 無効なコードの場合、カメラを再開
-      setState(() {
-        _isProcessingCode = false;
-        if (!_showManualInput) {
-          _resetCameraController();
-        }
-      });
+      return;
+    }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('このコードはすでに投票済みか、正しくない形式です')));
+    try {
+      bool isValid = await _uuidService.validateUuid(code);
+      if (isValid) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
+          ),
+        ).then((_) {
+          // complete_screenから戻ってきたら、
+          // カメラを再初期化して画面を更新
+          if (mounted) {
+            setState(() {
+              _isProcessingCode = false;
+              if (!_showManualInput) {
+                _resetCameraController();
+              }
+            });
+          }
+        });
+      } else {
+        // 無効なコードの場合、カメラを再開
+        setState(() {
+          _isProcessingCode = false;
+          if (!_showManualInput) {
+            _resetCameraController();
+          }
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('このコードはすでに投票済みか、正しくない形式です')));
+      }
+    } catch (e) {
+      print('エラー発生: $e');
+
+      // Permission deniedエラーの場合のみダイアログを表示
+      if (e.toString().toLowerCase().contains('permission denied')) {
+        _showPermissionDeniedDialog();
+      } else {
+        // その他のエラーの場合はスナックバーで通知
+        setState(() {
+          _isProcessingCode = false;
+          if (!_showManualInput) {
+            _resetCameraController();
+          }
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('エラーが発生しました。もう一度お試しください。')));
+      }
     }
   }
 }
