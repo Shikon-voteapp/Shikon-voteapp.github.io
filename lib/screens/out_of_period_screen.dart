@@ -72,15 +72,13 @@ class OutOfPeriodScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 40),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: (reloadPage),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12.0,
                         horizontal: 24.0,
                       ),
-                      child: Text('戻る', style: TextStyle(fontSize: 18)),
+                      child: Text('再読み込み', style: TextStyle(fontSize: 18)),
                     ),
                   ),
                 ],

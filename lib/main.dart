@@ -6,15 +6,18 @@ import 'screens/admin_screen.dart';
 import 'dart:html' as html;
 import 'dart:async';
 import 'config/data_range_service.dart';
+import 'screens/out_of_period_screen.dart';
 
 void main() async {
-  DateRangeService().initialize();
   WidgetsFlutterBinding.ensureInitialized();
+  final dateRangeService = DateRangeService();
+  await dateRangeService.initialize();
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    runApp(VoteApp());
+    runApp(VoteApp(dateRangeService: dateRangeService));
   } catch (e) {
     print('Firebase初期化エラー: $e');
     runApp(MaterialApp(home: ErrorScreen(error: e.toString())));
@@ -22,6 +25,10 @@ void main() async {
 }
 
 class VoteApp extends StatelessWidget {
+  final DateRangeService dateRangeService;
+
+  const VoteApp({Key? key, required this.dateRangeService}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,7 +40,7 @@ class VoteApp extends StatelessWidget {
         fontFamily: 'IBM Plex Sans JP',
         useMaterial3: false,
       ),
-      home: SplashScreen(),
+      home: SplashScreen(dateRangeService: dateRangeService),
       routes: {
         '/scanner':
             (context) => CameraPermissionWrapper(child: ScannerScreen()),
@@ -44,6 +51,11 @@ class VoteApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
+  final DateRangeService dateRangeService;
+
+  const SplashScreen({Key? key, required this.dateRangeService})
+    : super(key: key);
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -54,12 +66,34 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // スプラッシュスクリーンを表示する時間（ミリ秒）
     Timer(Duration(milliseconds: 2000), () {
+      _checkVotingPeriod();
+    });
+  }
+
+  void _checkVotingPeriod() {
+    // 現在時刻が投票期間内かをチェック
+    final DateTime now = DateTime.now();
+    final bool isInPeriod = widget.dateRangeService.isWithinVotingPeriod(now);
+
+    if (isInPeriod) {
+      // 投票期間内の場合はカメラ権限確認へ
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
         ),
       );
-    });
+    } else {
+      // 投票期間外の場合は期間外画面へ
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder:
+              (context) => OutOfPeriodScreen(
+                startDate: widget.dateRangeService.startDate,
+                endDate: widget.dateRangeService.endDate,
+              ),
+        ),
+      );
+    }
   }
 
   @override
@@ -303,7 +337,11 @@ class ErrorScreen extends StatelessWidget {
                 // Restart app or retry initialization
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => VoteApp()),
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            VoteApp(dateRangeService: DateRangeService()),
+                  ),
                 );
               },
               child: Text('再試行'),
