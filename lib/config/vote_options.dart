@@ -537,44 +537,44 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Band],
   ),
   Group(
-    id: 'Peformance_A',
+    id: 'Performance_A',
     name: 'Kaikamahi Hula',
     description: '私たちが踊るフラダンスはハワイで生まれた民族舞踊です。みなさんが知っている曲も踊るので、ぜひ見に来てください。',
-    imagePath: 'assets/Stage/Peformance01.jpg',
+    imagePath: 'assets/Stage/Performance01.jpg',
     floor: 4,
-    categories: [GroupCategory.Peformance],
+    categories: [GroupCategory.Performance],
   ),
   Group(
-    id: 'Peformance_B',
+    id: 'Performance_B',
     name: 'MinChO',
     description: '流行りの曲に合わせて5人で楽しく踊ります！一緒に盛り上がる準備はできてますかー？！',
-    imagePath: 'assets/Stage/Peformance02.jpg',
+    imagePath: 'assets/Stage/Performance02.jpg',
     floor: 4,
-    categories: [GroupCategory.Peformance],
+    categories: [GroupCategory.Performance],
   ),
   Group(
-    id: 'Peformance_C',
+    id: 'Performance_C',
     name: 'おなごっぽん',
     description: 'おなごっぽんです！4人の女子(おなご)が踊ります！応援よろしくお願いします♡',
-    imagePath: 'assets/Stage/Peformance03.jpg',
+    imagePath: 'assets/Stage/Performance03.jpg',
     floor: 4,
-    categories: [GroupCategory.Peformance],
+    categories: [GroupCategory.Performance],
   ),
   Group(
-    id: 'Peformance_D',
+    id: 'Performance_D',
     name: '#Ⅰf',
     description: '5人全員元高ⅠF組！再結集してラスト文化祭楽しむぞ！ダンスなどでみんなに青春、お届けします！',
-    imagePath: 'assets/Stage/Peformance04.jpg',
+    imagePath: 'assets/Stage/Performance04.jpg',
     floor: 4,
-    categories: [GroupCategory.Peformance],
+    categories: [GroupCategory.Performance],
   ),
   Group(
-    id: 'Peformance_E',
+    id: 'Performance_E',
     name: 'ボケっとモンスター',
     description: 'どこからか現れた謎の4人！このモンスターはボケタイプ？ツッコミタイプ？仮面の下に現れたものは、、？',
-    imagePath: 'assets/Stage/Peformance05.jpg',
+    imagePath: 'assets/Stage/Performance05.jpg',
     floor: 4,
-    categories: [GroupCategory.Peformance],
+    categories: [GroupCategory.Performance],
   ),
 ];
 
@@ -653,14 +653,14 @@ final List<VoteCategory> voteCategories = [
     eligibleCategories: [GroupCategory.Band],
   ),
   VoteCategory(
-    id: 'Peformance',
+    id: 'Performance',
     name: 'パフォーマンス賞',
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Peformance))
+            .where((group) => group.hasCategory(GroupCategory.Performance))
             .toList(),
-    eligibleCategories: [GroupCategory.Peformance],
+    eligibleCategories: [GroupCategory.Performance],
   ),
   VoteCategory(
     id: 'Roten',

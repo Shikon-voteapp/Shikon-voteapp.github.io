@@ -4,7 +4,7 @@ enum GroupCategory {
   Gakunen, //学年展示
   Roten, //露店
   Stage, //部活ステージ・公開練習
-  Peformance, //パフォーマンス
+  Performance, //パフォーマンス
   Band, //バンド
   other, // その他
 }
