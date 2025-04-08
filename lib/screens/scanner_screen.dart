@@ -130,7 +130,7 @@ class _ScannerScreenState extends State<ScannerScreen>
               final String? code = barcode.rawValue;
               if (code != null) {
                 _processBarcode(code);
-                break;
+                //                break;
               }
             }
           },

@@ -83983,9 +83983,8 @@ A.ao7.prototype={
 $1(a){var s,r,q,p,o=this.a
 if(o.x)return
 s=a.a
-for(r=s.length,q=0;q<r;++q){p=s[q].z
-if(p!=null){o.oz(p)
-break}}},
+for(r=s.length,q=0;q<s.length;s.length===r||(0,A.M)(s),++q){p=s[q].z
+if(p!=null)o.oz(p)}},
 $S:530}
 A.ao6.prototype={
 $0(){var s=null,r=this.a,q=r.f.a.a,p=q.length
