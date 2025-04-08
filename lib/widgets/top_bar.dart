@@ -1,7 +1,4 @@
-// widgets/top_bar.dart
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../screens/scanner_screen.dart';
 import 'dart:html' as html;
 
 void reloadPage() {
@@ -10,9 +7,7 @@ void reloadPage() {
 
 class TopBar extends StatelessWidget {
   final String title;
-
   TopBar({this.title = ''});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,7 +17,6 @@ class TopBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 戻るボタン
             GestureDetector(
               onTap: () {
                 _showResetConfirmation(context);
@@ -48,7 +42,6 @@ class TopBar extends StatelessWidget {
                 ),
               ),
             ),
-
             if (title.isNotEmpty)
               Expanded(
                 child: Center(
@@ -62,8 +55,6 @@ class TopBar extends StatelessWidget {
                   ),
                 ),
               ),
-
-            // 係員を呼ぶボタン
           ],
         ),
       ),
@@ -87,7 +78,6 @@ class TopBar extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  // 既存の関数を呼び出す
                   reloadPage();
                 },
                 child: Text('はい'),

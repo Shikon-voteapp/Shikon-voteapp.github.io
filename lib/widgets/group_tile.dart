@@ -1,4 +1,3 @@
-// widgets/group_tile.dart
 import 'package:flutter/material.dart';
 import '../models/group.dart';
 
@@ -6,13 +5,11 @@ class GroupTile extends StatelessWidget {
   final Group group;
   final bool isSelected;
   final VoidCallback onSelect;
-
   GroupTile({
     required this.group,
     required this.isSelected,
     required this.onSelect,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
