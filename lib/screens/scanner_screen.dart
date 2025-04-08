@@ -88,7 +88,7 @@ class _ScannerScreenState extends State<ScannerScreen>
             message:
                 _showManualInput
                     ? '6桁の数字コードを入力してください'
-                    : '投票券のQRコードをカメラにかざしてください \n 読み取れない場合は、右下のボタンを押してください。',
+                    : '投票券のQRコードをカメラにかざしてください \n 何も表示されない場合は、右下のボタンを押して手動で入力してください。',
             title: "",
           ),
           Expanded(
@@ -101,14 +101,14 @@ class _ScannerScreenState extends State<ScannerScreen>
         onPressed: () {
           setState(() {
             _showManualInput = !_showManualInput;
-            if (!_showManualInput) {
+            /*if (!_showManualInput) {
               _manualCodeController.clear();
               // カメラを再開
               _resetCameraController();
             } else {
               // 手動入力モードではカメラを停止
               _cameraController.stop();
-            }
+            }*/
           });
         },
         child: Icon(_showManualInput ? Icons.qr_code_scanner : Icons.keyboard),
@@ -146,11 +146,11 @@ class _ScannerScreenState extends State<ScannerScreen>
           ),
         ),
         // カメラ操作ボタン
-        Positioned(
+        /*Positioned(
           bottom: 10,
           left: 0,
           right: 0,
-          child: Row(
+          /*child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // カメラ切り替えボタン
@@ -181,8 +181,8 @@ class _ScannerScreenState extends State<ScannerScreen>
                 },
               ),
             ],
-          ),
-        ),
+          ),*/
+        ),*/
       ],
     );
   }
