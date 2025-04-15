@@ -3,7 +3,6 @@ import '../config/uuid_range.dart';
 
 class UuidService {
   final DatabaseService _dbService = DatabaseService();
-
   final UuidRangeService _rangeService = UuidRangeService();
 
   Future<bool> validateUuid(String uuid) async {
@@ -19,13 +18,6 @@ class UuidService {
       }
 
       // 3. 既に投票済みかチェック
-
-  Future<bool> validateUuid(String uuid) async {
-    try {
-      if (!_isValidUuidFormat(uuid)) {
-        return false;
-      }
-
       bool hasVoted = await _dbService.hasVoted(uuid);
       return !hasVoted;
     } catch (e) {
@@ -38,6 +30,7 @@ class UuidService {
     RegExp uuidRegex = RegExp(r'^[0-9]{6}$');
     return uuidRegex.hasMatch(uuid);
   }
+
   // 必要に応じて範囲を動的に設定できるメソッドを追加
   void setValidRanges(List<UuidRange> ranges) {
     _rangeService.clearRanges();
