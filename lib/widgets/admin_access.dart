@@ -1,4 +1,3 @@
-// lib/widgets/admin_access.dart
 import 'package:flutter/material.dart';
 
 class AdminAccessButton extends StatelessWidget {
@@ -23,7 +22,7 @@ class AdminAccessButton extends StatelessWidget {
 
   void _showAdminLoginDialog(BuildContext context) {
     final TextEditingController passwordController = TextEditingController();
-    final adminPassword = 'Shikon2025'; // パスワード
+    final adminPassword = 'Shikon2025';
 
     showDialog(
       context: context,

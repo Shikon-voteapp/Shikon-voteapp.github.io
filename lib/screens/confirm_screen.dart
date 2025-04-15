@@ -1,16 +1,11 @@
-// screens/confirm_screen.dart
 import 'package:flutter/material.dart';
-import 'package:shikon_voteapp/screens/vote_screen.dart';
-import 'package:uuid/uuid.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart';
-//import '../models/vote_category.dart'; // Vote モデルのインポートを追加
 import '../services/database_service.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'complete_screen.dart';
-import 'scanner_screen.dart';
 
 class ConfirmScreen extends StatelessWidget {
   final String uuid;
@@ -39,8 +34,6 @@ class ConfirmScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   String categoryId = selections.keys.elementAt(index);
                   String groupId = selections[categoryId]!;
-
-                  // カテゴリーと団体の情報を取得
                   VoteCategory category = voteCategories.firstWhere(
                     (c) => c.id == categoryId,
                     orElse:
@@ -51,7 +44,6 @@ class ConfirmScreen extends StatelessWidget {
                           groups: [],
                         ),
                   );
-
                   var group = category.groups.firstWhere(
                     (g) => g.id == groupId,
                     orElse:
@@ -63,7 +55,6 @@ class ConfirmScreen extends StatelessWidget {
                           floor: 0,
                         ),
                   );
-
                   return Card(
                     margin: EdgeInsets.only(bottom: 16),
                     child: Padding(
@@ -71,7 +62,6 @@ class ConfirmScreen extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // 選択した団体の画像
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.asset(
@@ -160,7 +150,6 @@ class ConfirmScreen extends StatelessWidget {
 
   void _submitVote(BuildContext context) async {
     try {
-      // チェック: 既に投票済みでないか確認
       bool hasAlreadyVoted = await _dbService.hasVoted(uuid);
       if (hasAlreadyVoted) {
         ScaffoldMessenger.of(
@@ -168,24 +157,17 @@ class ConfirmScreen extends StatelessWidget {
         ).showSnackBar(SnackBar(content: Text('すでに投票済みです。')));
         return;
       }
-
-      // 投票データの作成
       Vote vote = Vote(
         uuid: uuid,
         selections: selections,
         timestamp: DateTime.now(),
       );
-
-      // データベースに保存
       await _dbService.saveVote(vote);
-
-      // 完了画面へ遷移
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => CompleteScreen(uuid: uuid)),
       );
     } catch (e) {
-      // エラー表示
       print('投票処理中にエラーが発生しました: $e');
       ScaffoldMessenger.of(
         context,

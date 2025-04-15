@@ -1,7 +1,5 @@
-// widgets/group_selection_area.dart
 import 'package:flutter/material.dart';
 import '../models/group.dart';
-//import '../models/vote_category.dart';
 import 'group_tile.dart';
 
 class GroupSelectionArea extends StatefulWidget {
@@ -25,52 +23,36 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
   @override
   void initState() {
     super.initState();
-    // Get the minimum floor value from all groups
     selectedFloor =
         widget.category.groups.isNotEmpty
             ? widget.category.groups
                 .map((group) => group.floor)
                 .reduce((a, b) => a < b ? a : b)
-            : 1; // Default to 1 if there are no groups
+            : 1;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Rest of the code remains the same...
-    // フロアでフィルタリングした団体のリスト
     List<Group> filteredGroups =
         widget.category.groups
             .where((group) => group.floor == selectedFloor)
             .toList();
-
-    // 全フロアの取得（重複なし）
     Set<int> allFloors =
         widget.category.groups.map((group) => group.floor).toSet();
-
-    // 画面の幅を取得
     final screenWidth = MediaQuery.of(context).size.width;
-    // 左側のフロア選択メニューの幅
     final menuWidth = 140.0;
-    // 利用可能な幅からメニュー幅を引く
     final availableWidth = screenWidth - menuWidth;
-
-    // 1アイテムの最小幅（500px）
     const minItemWidth = 500.0;
-
-    // グリッドの列数を計算（利用可能な幅をminItemWidthで割って切り捨て）
     int crossAxisCount = (availableWidth ~/ minItemWidth);
-    // 最低でも1列は表示
     crossAxisCount = crossAxisCount > 0 ? crossAxisCount : 1;
 
     return Row(
       children: [
-        // 左側のフロア選択メニュー
         Container(
           width: menuWidth,
           color: Color(0xFFEEEEEE),
           child: Column(
             children: [
-              // フロアボタンの動的生成
               ...allFloors
                   .map(
                     (floor) =>
@@ -82,8 +64,6 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
             ],
           ),
         ),
-
-        // 右側の団体選択グリッド
         Expanded(
           child: Container(
             color: Colors.white,

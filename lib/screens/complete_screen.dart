@@ -1,10 +1,8 @@
-// screens/complete_screen.dart
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
-import 'scanner_screen.dart';
 import 'dart:html' as html;
 
 void reloadPage() {
@@ -21,21 +19,17 @@ class CompleteScreen extends StatefulWidget {
 }
 
 class _CompleteScreenState extends State<CompleteScreen> {
-  int _countdown = 10; // 10秒カウントダウン
+  int _countdown = 10;
   late Timer _timer;
-
   @override
   void initState() {
     super.initState();
-
-    // カウントダウンタイマー開始
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_countdown > 0) {
           _countdown--;
         } else {
           _timer.cancel();
-          //_resetToScannerScreen();
           reloadPage();
         }
       });
@@ -46,14 +40,6 @@ class _CompleteScreenState extends State<CompleteScreen> {
   void dispose() {
     _timer.cancel();
     super.dispose();
-  }
-
-  void _resetToScannerScreen() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => ScannerScreen()),
-      (route) => false,
-    );
   }
 
   @override

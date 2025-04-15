@@ -1,4 +1,3 @@
-// lib/widgets/admin_category_results.dart
 import 'package:flutter/material.dart';
 import '../models/group.dart';
 
@@ -17,7 +16,6 @@ class AdminCategoryResults extends StatelessWidget {
         ),
         SizedBox(height: 16),
 
-        // トップ3の結果表示
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -62,9 +60,9 @@ class AdminCategoryResults extends StatelessWidget {
 
   Widget _buildRankBadge(int rank) {
     final colors = [
-      Colors.amber, // Gold for 1st
-      Colors.blueGrey.shade300, // Silver for 2nd
-      Colors.brown.shade300, // Bronze for 3rd
+      Colors.amber,
+      Colors.blueGrey.shade300,
+      Colors.brown.shade300,
     ];
 
     return Container(

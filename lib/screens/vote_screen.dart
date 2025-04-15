@@ -1,4 +1,3 @@
-// screens/vote_screen.dart
 import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
 import '../widgets/top_bar.dart';
@@ -32,8 +31,6 @@ class _VoteScreenState extends State<VoteScreen> {
     super.initState();
     currentSelections = Map.from(widget.selections);
     currentCategoryIndex = widget.categoryIndex;
-
-    // 既に選択済みの場合は復元
     String categoryId = voteCategories[currentCategoryIndex].id;
     if (currentSelections.containsKey(categoryId)) {
       selectedGroupId = currentSelections[categoryId];
@@ -67,11 +64,9 @@ class _VoteScreenState extends State<VoteScreen> {
             showNextButton: selectedGroupId != null,
             showBackButton: true,
             onBack: () {
-              // 最初のカテゴリーの場合は単に前の画面に戻る
               if (currentCategoryIndex == 0) {
                 Navigator.pop(context);
               } else {
-                // 前のカテゴリーに戻る
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -95,11 +90,8 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   void _saveAndProceed() {
-    // 現在の選択を保存
     currentSelections[voteCategories[currentCategoryIndex].id] =
         selectedGroupId!;
-
-    // 次のカテゴリーがあれば次へ、なければ確認画面へ
     if (currentCategoryIndex < voteCategories.length - 1) {
       Navigator.pushReplacement(
         context,

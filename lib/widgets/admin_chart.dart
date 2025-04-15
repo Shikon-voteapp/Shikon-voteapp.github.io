@@ -1,4 +1,3 @@
-// lib/widgets/admin_chart.dart
 import 'package:flutter/material.dart';
 import '../models/group.dart';
 
@@ -9,7 +8,6 @@ class AdminChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 合計票数を計算
     int totalVotes = results.fold(0, (sum, entry) => sum + entry.value);
 
     return Column(
@@ -31,7 +29,6 @@ class AdminChart extends StatelessWidget {
   }
 
   Widget _buildBarChart() {
-    // 最大票数を取得
     int maxVotes =
         results.isNotEmpty
             ? results.map((e) => e.value).reduce((a, b) => a > b ? a : b)
@@ -45,8 +42,6 @@ class AdminChart extends StatelessWidget {
           final entry = results[index];
           final group = entry.key;
           final voteCount = entry.value;
-
-          // 投票割合を計算
           double percentage = maxVotes > 0 ? voteCount / maxVotes : 0;
 
           return Padding(
@@ -62,7 +57,6 @@ class AdminChart extends StatelessWidget {
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    // 棒グラフの棒
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
@@ -77,7 +71,6 @@ class AdminChart extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8),
-                    // 票数表示
                     Text(
                       '$voteCount票',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -93,12 +86,10 @@ class AdminChart extends StatelessWidget {
   }
 
   Color _getBarColor(int index) {
-    // トップ3には特別な色を使用
     if (index == 0) return Colors.blue;
     if (index == 1) return Colors.green;
     if (index == 2) return Colors.purple;
 
-    // それ以外は標準色
     return Colors.grey.shade600;
   }
 }

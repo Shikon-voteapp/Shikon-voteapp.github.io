@@ -1,4 +1,3 @@
-// widgets/message_area.dart
 import 'package:flutter/material.dart';
 
 var MainTitle = "紫紺祭";

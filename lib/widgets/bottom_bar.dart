@@ -1,25 +1,23 @@
-// widgets/bottom_bar.dart (with back button)
 import 'package:flutter/material.dart';
 import 'admin_access.dart';
 
 class BottomBar extends StatelessWidget {
   final String uuid;
   final bool showNextButton;
-  final bool showBackButton; // New property for back button
+  final bool showBackButton;
   final VoidCallback? onNext;
-  final VoidCallback? onBack; // New callback for back button
+  final VoidCallback? onBack;
 
   BottomBar({
     required this.uuid,
     this.showNextButton = true,
-    this.showBackButton = false, // Default to false
+    this.showBackButton = false,
     this.onNext,
     this.onBack,
   });
 
   @override
   Widget build(BuildContext context) {
-    // 現在の日時を取得
     final now = DateTime.now();
     final dateStr = '${now.year}年${now.month}月${now.day}日';
     final timeStr =
@@ -43,13 +41,11 @@ class BottomBar extends StatelessWidget {
               SizedBox(width: 16),
               Text(timeStr, style: TextStyle(color: Colors.white)),
               SizedBox(width: 16),
-              // 管理者アクセスボタン
               AdminAccessButton(),
             ],
           ),
           Row(
             children: [
-              // 戻るボタン
               if (showBackButton)
                 GestureDetector(
                   onTap: onBack,
@@ -74,7 +70,6 @@ class BottomBar extends StatelessWidget {
                     ),
                   ),
                 ),
-              // 次へボタン
               if (showNextButton)
                 GestureDetector(
                   onTap: onNext,

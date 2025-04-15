@@ -1,13 +1,12 @@
-// screens/scanner_screen.dart
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
-import '../config/data_range_service.dart'; // 有効期間を管理するサービス
+import '../config/data_range_service.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'vote_screen.dart';
-import 'out_of_period_screen.dart'; // 有効期間外画面
+import 'out_of_period_screen.dart';
 
 class ScannerScreen extends StatefulWidget {
   @override
@@ -17,12 +16,12 @@ class ScannerScreen extends StatefulWidget {
 class _ScannerScreenState extends State<ScannerScreen>
     with WidgetsBindingObserver {
   final UuidService _uuidService = UuidService();
-  final DateRangeService _dateRangeService = DateRangeService(); // 有効期間サービス
+  final DateRangeService _dateRangeService = DateRangeService();
   final TextEditingController _manualCodeController = TextEditingController();
   bool _showManualInput = false;
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
-  CameraFacing _currentCamera = CameraFacing.front; // デフォルトはインカメラ
+  CameraFacing _currentCamera = CameraFacing.front;
 
   @override
   void initState() {
@@ -32,14 +31,12 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   void _initCameraController() {
-    // 現在選択されているカメラで初期化
     _cameraController = MobileScannerController(
       facing: _currentCamera,
       torchEnabled: false,
     );
   }
 
-  // カメラを切り替える
   void _switchCamera() {
     _currentCamera =
         _currentCamera == CameraFacing.front
@@ -50,7 +47,6 @@ class _ScannerScreenState extends State<ScannerScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // アプリのライフサイクル状態が変更されたときにカメラを管理
     if (state == AppLifecycleState.resumed) {
       if (!_showManualInput && !_isProcessingCode) {
         _resetCameraController();
@@ -101,14 +97,6 @@ class _ScannerScreenState extends State<ScannerScreen>
         onPressed: () {
           setState(() {
             _showManualInput = !_showManualInput;
-            /*if (!_showManualInput) {
-              _manualCodeController.clear();
-              // カメラを再開
-              _resetCameraController();
-            } else {
-              // 手動入力モードではカメラを停止
-              _cameraController.stop();
-            }*/
           });
         },
         child: Icon(_showManualInput ? Icons.qr_code_scanner : Icons.keyboard),
@@ -123,7 +111,7 @@ class _ScannerScreenState extends State<ScannerScreen>
         MobileScanner(
           controller: _cameraController,
           onDetect: (capture) {
-            if (_isProcessingCode) return; // 既に処理中なら無視
+            if (_isProcessingCode) return;
 
             final List<Barcode> barcodes = capture.barcodes;
             for (final barcode in barcodes) {
@@ -145,44 +133,6 @@ class _ScannerScreenState extends State<ScannerScreen>
             ),
           ),
         ),
-        // カメラ操作ボタン
-        /*Positioned(
-          bottom: 10,
-          left: 0,
-          right: 0,
-          /*child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // カメラ切り替えボタン
-              IconButton(
-                icon: Icon(Icons.flip_camera_ios, color: Colors.white),
-                onPressed: _switchCamera,
-                tooltip: 'カメラ切り替え',
-              ),
-              SizedBox(width: 20),
-              // フラッシュ切り替えボタン (アウトカメラ時のみ有効)
-              ValueListenableBuilder(
-                valueListenable: _cameraController.torchState,
-                builder: (context, state, child) {
-                  return IconButton(
-                    icon: Icon(
-                      state == TorchState.on ? Icons.flash_on : Icons.flash_off,
-                      color:
-                          _currentCamera == CameraFacing.back
-                              ? Colors.white
-                              : Colors.grey,
-                    ),
-                    onPressed:
-                        _currentCamera == CameraFacing.back
-                            ? () => _cameraController.toggleTorch()
-                            : null,
-                    tooltip: 'フラッシュ',
-                  );
-                },
-              ),
-            ],
-          ),*/
-        ),*/
       ],
     );
   }
@@ -201,9 +151,9 @@ class _ScannerScreenState extends State<ScannerScreen>
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.dialpad),
             ),
-            keyboardType: TextInputType.number, // 数字キーボードを表示
+            keyboardType: TextInputType.number,
             autofocus: true,
-            maxLength: 6, // 6桁に制限
+            maxLength: 6,
           ),
           SizedBox(height: 20),
           ElevatedButton(
@@ -235,9 +185,7 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
-  // Permission deniedエラーダイアログを表示
   void _showPermissionDeniedDialog() {
-    // すでに表示されているダイアログを閉じる
     Navigator.of(
       context,
       rootNavigator: true,
@@ -275,7 +223,6 @@ class _ScannerScreenState extends State<ScannerScreen>
                 child: Text('キャンセル'),
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
-                  // カメラを再開するか手動入力に戻る
                   setState(() {
                     _isProcessingCode = false;
                     if (!_showManualInput) {
@@ -288,7 +235,6 @@ class _ScannerScreenState extends State<ScannerScreen>
                 child: Text('再試行'),
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
-                  // 再試行処理
                   if (_showManualInput) {
                     if (_manualCodeController.text.isNotEmpty) {
                       _processBarcode(_manualCodeController.text);
@@ -308,24 +254,17 @@ class _ScannerScreenState extends State<ScannerScreen>
     });
   }
 
-  // 現在の日時が有効期間内かチェック
   bool _isWithinValidPeriod() {
     DateTime now = DateTime.now();
     return _dateRangeService.isWithinVotingPeriod(now);
   }
 
   void _processBarcode(String code) async {
-    // 処理中フラグをセット
     setState(() {
       _isProcessingCode = true;
     });
-
-    // スキャナーを一時停止
     _cameraController.stop();
-
-    // 有効期間内かチェック
     if (!_isWithinValidPeriod()) {
-      // 有効期間外の場合、専用画面に遷移
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -336,7 +275,6 @@ class _ScannerScreenState extends State<ScannerScreen>
               ),
         ),
       ).then((_) {
-        // 画面から戻ってきたら処理を再開
         if (mounted) {
           setState(() {
             _isProcessingCode = false;
@@ -358,8 +296,6 @@ class _ScannerScreenState extends State<ScannerScreen>
             builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
           ),
         ).then((_) {
-          // complete_screenから戻ってきたら、
-          // カメラを再初期化して画面を更新
           if (mounted) {
             setState(() {
               _isProcessingCode = false;
@@ -370,7 +306,6 @@ class _ScannerScreenState extends State<ScannerScreen>
           }
         });
       } else {
-        // 無効なコードの場合、カメラを再開
         setState(() {
           _isProcessingCode = false;
           if (!_showManualInput) {
@@ -385,11 +320,9 @@ class _ScannerScreenState extends State<ScannerScreen>
     } catch (e) {
       print('エラー発生: $e');
 
-      // Permission deniedエラーの場合のみダイアログを表示
       if (e.toString().toLowerCase().contains('permission denied')) {
         _showPermissionDeniedDialog();
       } else {
-        // その他のエラーの場合はスナックバーで通知
         setState(() {
           _isProcessingCode = false;
           if (!_showManualInput) {

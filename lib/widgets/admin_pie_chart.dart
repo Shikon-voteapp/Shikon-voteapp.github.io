@@ -1,18 +1,16 @@
-// lib/widgets/admin_pie_chart.dart
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../models/group.dart';
 
 class AdminPieChart extends StatelessWidget {
   final List<MapEntry<Group, int>> results;
-  
+
   AdminPieChart({required this.results});
-  
+
   @override
   Widget build(BuildContext context) {
-    // 合計票数を計算
     int totalVotes = results.fold(0, (sum, entry) => sum + entry.value);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,33 +20,29 @@ class AdminPieChart extends StatelessWidget {
         ),
         SizedBox(height: 16),
         Expanded(
-          child: totalVotes == 0
-              ? Center(child: Text('投票データがありません'))
-              : Row(
-                  children: [
-                    // 円グラフ
-                    Expanded(
-                      flex: 3,
-                      child: CustomPaint(
-                        painter: PieChartPainter(results, totalVotes),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: double.infinity,
+          child:
+              totalVotes == 0
+                  ? Center(child: Text('投票データがありません'))
+                  : Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: CustomPaint(
+                          painter: PieChartPainter(results, totalVotes),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
                         ),
                       ),
-                    ),
-                    // 凡例
-                    Expanded(
-                      flex: 2,
-                      child: _buildLegend(totalVotes),
-                    ),
-                  ],
-                ),
+                      Expanded(flex: 2, child: _buildLegend(totalVotes)),
+                    ],
+                  ),
         ),
       ],
     );
   }
-  
+
   Widget _buildLegend(int totalVotes) {
     return ListView.builder(
       itemCount: results.length,
@@ -56,25 +50,19 @@ class AdminPieChart extends StatelessWidget {
         final entry = results[index];
         final group = entry.key;
         final voteCount = entry.value;
-        final percentage = totalVotes > 0 
-            ? (voteCount / totalVotes * 100).toStringAsFixed(1) 
-            : '0.0';
-        
+        final percentage =
+            totalVotes > 0
+                ? (voteCount / totalVotes * 100).toStringAsFixed(1)
+                : '0.0';
+
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             children: [
-              Container(
-                width: 16,
-                height: 16,
-                color: _getColorForIndex(index),
-              ),
+              Container(width: 16, height: 16, color: _getColorForIndex(index)),
               SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  group.name,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(group.name, overflow: TextOverflow.ellipsis),
               ),
               Text('$voteCount票 ($percentage%)'),
             ],
@@ -83,7 +71,7 @@ class AdminPieChart extends StatelessWidget {
       },
     );
   }
-  
+
   Color _getColorForIndex(int index) {
     final colors = [
       Colors.blue,
@@ -97,7 +85,7 @@ class AdminPieChart extends StatelessWidget {
       Colors.pink,
       Colors.cyan,
     ];
-    
+
     return colors[index % colors.length];
   }
 }
@@ -105,26 +93,27 @@ class AdminPieChart extends StatelessWidget {
 class PieChartPainter extends CustomPainter {
   final List<MapEntry<Group, int>> results;
   final int totalVotes;
-  
+
   PieChartPainter(this.results, this.totalVotes);
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = min(size.width, size.height) / 2 * 0.8;
-    
+
     var startAngle = -pi / 2; // Start from top
-    
+
     for (int i = 0; i < results.length; i++) {
       final voteCount = results[i].value;
       if (voteCount <= 0) continue;
-      
+
       final sweepAngle = 2 * pi * voteCount / totalVotes;
-      
-      final paint = Paint()
-        ..color = _getColorForIndex(i)
-        ..style = PaintingStyle.fill;
-      
+
+      final paint =
+          Paint()
+            ..color = _getColorForIndex(i)
+            ..style = PaintingStyle.fill;
+
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         startAngle,
@@ -132,14 +121,14 @@ class PieChartPainter extends CustomPainter {
         true,
         paint,
       );
-      
+
       // Draw labels if segment is large enough
       if (sweepAngle > 0.2) {
         final midAngle = startAngle + sweepAngle / 2;
         final labelRadius = radius * 0.7;
         final x = center.dx + labelRadius * cos(midAngle);
         final y = center.dy + labelRadius * sin(midAngle);
-        
+
         final textPainter = TextPainter(
           text: TextSpan(
             text: '${((voteCount / totalVotes) * 100).toStringAsFixed(1)}%',
@@ -151,18 +140,18 @@ class PieChartPainter extends CustomPainter {
           ),
           textDirection: TextDirection.ltr,
         );
-        
+
         textPainter.layout();
-        textPainter.paint(canvas, Offset(
-          x - textPainter.width / 2,
-          y - textPainter.height / 2,
-        ));
+        textPainter.paint(
+          canvas,
+          Offset(x - textPainter.width / 2, y - textPainter.height / 2),
+        );
       }
-      
+
       startAngle += sweepAngle;
     }
   }
-  
+
   Color _getColorForIndex(int index) {
     final colors = [
       Colors.blue,
@@ -176,10 +165,10 @@ class PieChartPainter extends CustomPainter {
       Colors.pink,
       Colors.cyan,
     ];
-    
+
     return colors[index % colors.length];
   }
-  
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

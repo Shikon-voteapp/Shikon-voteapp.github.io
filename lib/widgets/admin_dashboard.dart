@@ -1,4 +1,3 @@
-// lib/widgets/admin_dashboard.dart
 import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart';
@@ -87,7 +86,6 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  // 特定のカテゴリーの集計結果を取得
   Map<String, int> _getCategoryResults(String categoryId) {
     Map<String, int> results = {};
 
@@ -101,7 +99,6 @@ class AdminDashboard extends StatelessWidget {
     return results;
   }
 
-  // 1位のグループを取得
   Group? _getTopGroup(VoteCategory category, Map<String, int> results) {
     if (results.isEmpty) return null;
 
@@ -124,7 +121,6 @@ class AdminDashboard extends StatelessWidget {
     }
   }
 
-  // カテゴリーの投票総数を取得
   int _getTotalVotesForCategory(String categoryId) {
     int total = 0;
     for (var vote in votes) {
