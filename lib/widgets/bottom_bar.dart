@@ -34,12 +34,12 @@ class BottomBar extends StatelessWidget {
             children: [
               Text(dateStr, style: TextStyle(color: Colors.white)),
               SizedBox(width: 16),
+              Text(timeStr, style: TextStyle(color: Colors.white)),
+              SizedBox(width: 16),
               Text(
-                'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 6)}',
+                'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 10)}',
                 style: TextStyle(color: Colors.white),
               ),
-              SizedBox(width: 16),
-              Text(timeStr, style: TextStyle(color: Colors.white)),
               SizedBox(width: 16),
               AdminAccessButton(),
             ],

@@ -18,7 +18,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   final UuidService _uuidService = UuidService();
   final DateRangeService _dateRangeService = DateRangeService();
   final TextEditingController _manualCodeController = TextEditingController();
-  bool _showManualInput = false;
+  bool _showManualInput = true; // Show manual input first
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
   CameraFacing _currentCamera = CameraFacing.front;
@@ -83,7 +83,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           MessageArea(
             message:
                 _showManualInput
-                    ? '6桁の数字コードを入力してください'
+                    ? '10桁の数字コードを入力してください\n投票券のQRコードを使用する場合は、右下のボタンを押してカメラを起動させてください。'
                     : '投票券のQRコードをカメラにかざしてください \n 何も表示されない場合は、右下のボタンを押して手動で入力してください。',
             title: "",
           ),
@@ -100,7 +100,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           });
         },
         child: Icon(_showManualInput ? Icons.qr_code_scanner : Icons.keyboard),
-        tooltip: _showManualInput ? 'スキャナーに戻る' : '手動入力に切り替え',
+        tooltip: _showManualInput ? 'スキャナーに切り替え' : '手動入力に戻る',
       ),
     );
   }
@@ -147,24 +147,24 @@ class _ScannerScreenState extends State<ScannerScreen>
             controller: _manualCodeController,
             decoration: InputDecoration(
               labelText: 'バーコード番号',
-              hintText: '6桁の数字を入力',
+              hintText: '10桁の数字を入力',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.dialpad),
             ),
             keyboardType: TextInputType.number,
             autofocus: true,
-            maxLength: 6,
+            maxLength: 10,
           ),
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               if (_manualCodeController.text.isNotEmpty) {
-                if (_manualCodeController.text.length == 6) {
+                if (_manualCodeController.text.length == 10) {
                   _processBarcode(_manualCodeController.text);
                 } else {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text('6桁の数字を入力してください')));
+                  ).showSnackBar(SnackBar(content: Text('10桁の数字を入力してください')));
                 }
               } else {
                 ScaffoldMessenger.of(
@@ -263,7 +263,12 @@ class _ScannerScreenState extends State<ScannerScreen>
     setState(() {
       _isProcessingCode = true;
     });
-    _cameraController.stop();
+
+    // Only stop camera if we're in scanner mode
+    if (!_showManualInput) {
+      _cameraController.stop();
+    }
+
     if (!_isWithinValidPeriod()) {
       Navigator.push(
         context,

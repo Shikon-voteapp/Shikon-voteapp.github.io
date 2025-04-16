@@ -15,9 +15,7 @@ class UuidRangeService {
   UuidRangeService() {
     // 初期設定として有効なUUID範囲を追加
 
-    addRange(100000, 199999);
-    addRange(300000, 399999);
-    addRange(900000, 999999);
+    addRange(1000000000, 9999999999);
   }
 
   // 範囲を追加するメソッド

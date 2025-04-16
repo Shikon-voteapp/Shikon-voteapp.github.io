@@ -27,7 +27,7 @@ class UuidService {
   }
 
   bool _isValidUuidFormat(String uuid) {
-    RegExp uuidRegex = RegExp(r'^[0-9]{6}$');
+    RegExp uuidRegex = RegExp(r'^[0-9]{10}$');
     return uuidRegex.hasMatch(uuid);
   }
 
