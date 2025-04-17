@@ -30,6 +30,10 @@ dependencies:
   csv: ^5.0.2
   path_provider: ^2.1.0
   share_plus: ^7.1.0
+  google_sign_in: any
+  flutter_facebook_auth: any
+  twitter_login: any
+
 
 flutter:
   uses-material-design: true
