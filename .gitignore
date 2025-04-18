@@ -47,3 +47,5 @@ app.*.map.json
 /android/app/release
 
 firebase_cpp_sdk/
+Electron/node_modules/
+Electron/electron-win32-x64/
