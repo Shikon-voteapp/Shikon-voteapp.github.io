@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'platform_utils_web.dart'
-    if (dart.library.io) 'platform/platform_utils_desktop.dart';
+    if (dart.library.io) 'platform_utils_desktop.dart';
 
 class PermissionResult {
   final bool granted;
