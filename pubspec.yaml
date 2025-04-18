@@ -28,11 +28,13 @@ dependencies:
   firebase_data_connect: ^0.1.0
   excel: ^2.1.0
   csv: ^5.0.2
-  path_provider: ^2.1.0
   share_plus: ^7.1.0
   google_sign_in: any
   flutter_facebook_auth: any
   twitter_login: any
+  camera: ^0.10.5+4
+  path_provider: ^2.1.1
+
 
 
 flutter:

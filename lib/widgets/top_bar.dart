@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
-
-void reloadPage() {
-  html.window.location.reload();
-}
+import '../platform/platform_utils.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
   TopBar({this.title = ''});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -78,7 +75,7 @@ class TopBar extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  reloadPage();
+                  PlatformUtils.reloadApp();
                 },
                 child: Text('はい'),
               ),

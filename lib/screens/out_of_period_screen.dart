@@ -70,7 +70,7 @@ class OutOfPeriodScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40),
+                  /*SizedBox(height: 40),
                   ElevatedButton(
                     onPressed: (reloadPage),
                     child: Padding(
@@ -80,7 +80,7 @@ class OutOfPeriodScreen extends StatelessWidget {
                       ),
                       child: Text('再読み込み', style: TextStyle(fontSize: 18)),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),

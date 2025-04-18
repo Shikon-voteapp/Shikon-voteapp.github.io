@@ -3,11 +3,7 @@ import 'dart:async';
 import '../widgets/top_bar.dart';
 import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
-import 'dart:html' as html;
-
-void reloadPage() {
-  html.window.location.reload();
-}
+import '../platform/platform_utils.dart';
 
 class CompleteScreen extends StatefulWidget {
   final String uuid;
@@ -21,6 +17,7 @@ class CompleteScreen extends StatefulWidget {
 class _CompleteScreenState extends State<CompleteScreen> {
   int _countdown = 10;
   late Timer _timer;
+
   @override
   void initState() {
     super.initState();
@@ -30,10 +27,14 @@ class _CompleteScreenState extends State<CompleteScreen> {
           _countdown--;
         } else {
           _timer.cancel();
-          reloadPage();
+          _resetApplication();
         }
       });
     });
+  }
+
+  void _resetApplication() {
+    PlatformUtils.reloadApp();
   }
 
   @override
@@ -76,8 +77,7 @@ class _CompleteScreenState extends State<CompleteScreen> {
                   ),
                   SizedBox(height: 32),
                   ElevatedButton(
-                    /*onPressed: _resetToScannerScreen,*/
-                    onPressed: reloadPage,
+                    onPressed: _resetApplication,
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
                         horizontal: 32,

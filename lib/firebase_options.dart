@@ -90,4 +90,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     measurementId: 'G-G7HEGGSSVN',
   );
+
 }
