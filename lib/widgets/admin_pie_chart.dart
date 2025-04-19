@@ -101,7 +101,7 @@ class PieChartPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = min(size.width, size.height) / 2 * 0.8;
 
-    var startAngle = -pi / 2; // Start from top
+    var startAngle = -pi / 2;
 
     for (int i = 0; i < results.length; i++) {
       final voteCount = results[i].value;
@@ -122,7 +122,6 @@ class PieChartPainter extends CustomPainter {
         paint,
       );
 
-      // Draw labels if segment is large enough
       if (sweepAngle > 0.2) {
         final midAngle = startAngle + sweepAngle / 2;
         final labelRadius = radius * 0.7;

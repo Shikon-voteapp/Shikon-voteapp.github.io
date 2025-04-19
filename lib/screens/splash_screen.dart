@@ -19,26 +19,26 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // スプラッシュスクリーンを表示する時間（ミリ秒）
+    // スプラッシュスクリーンを表示する時間
     Timer(Duration(milliseconds: 2000), () {
       _checkVotingPeriod();
     });
   }
 
   void _checkVotingPeriod() {
-    // 現在時刻が投票期間内かをチェック
+    // 投票期間をチェック
     final DateTime now = DateTime.now();
     final bool isInPeriod = widget.dateRangeService.isWithinVotingPeriod(now);
 
     if (isInPeriod) {
-      // 投票期間内の場合はカメラ権限確認へ
+      // 投票期間内の場合
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
         ),
       );
     } else {
-      // 投票期間外の場合は期間外画面へ
+      // 投票期間外の場合
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder:

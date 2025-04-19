@@ -1,4 +1,3 @@
-// services/database_service.dart
 import '../models/group.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';

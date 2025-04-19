@@ -18,7 +18,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   final UuidService _uuidService = UuidService();
   final DateRangeService _dateRangeService = DateRangeService();
   final TextEditingController _manualCodeController = TextEditingController();
-  bool _showManualInput = true; // Show manual input first
+  bool _showManualInput = true;
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
   CameraFacing _currentCamera = CameraFacing.front;
@@ -118,7 +118,6 @@ class _ScannerScreenState extends State<ScannerScreen>
               final String? code = barcode.rawValue;
               if (code != null) {
                 _processBarcode(code);
-                //                break;
               }
             }
           },
@@ -264,7 +263,6 @@ class _ScannerScreenState extends State<ScannerScreen>
       _isProcessingCode = true;
     });
 
-    // Only stop camera if we're in scanner mode
     if (!_showManualInput) {
       _cameraController.stop();
     }

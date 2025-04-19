@@ -1,4 +1,3 @@
-// screens/out_of_period_screen.dart
 import 'package:flutter/material.dart';
 import '../widgets/top_bar.dart';
 

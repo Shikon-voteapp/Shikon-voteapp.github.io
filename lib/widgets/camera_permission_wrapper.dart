@@ -25,7 +25,6 @@ class _CameraPermissionWrapperState extends State<CameraPermissionWrapper> {
 
   Future<void> _checkCameraPermission() async {
     try {
-      // Use platform-specific implementation
       final permissionResult = await PlatformUtils.requestCameraPermission();
 
       setState(() {

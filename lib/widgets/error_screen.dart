@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../config/data_range_service.dart';
 import '../platform/platform_utils.dart';
 
 class ErrorScreen extends StatelessWidget {

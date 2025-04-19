@@ -1,4 +1,3 @@
-// lib/screens/admin_screen.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -297,7 +296,7 @@ class _AdminScreenState extends State<AdminScreen>
     );
   }
 
-  // ユーザー管理タブの構築
+  // ユーザー管理タブ
   Widget _buildUserManagementTab() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -538,7 +537,7 @@ class _AdminScreenState extends State<AdminScreen>
   // 投票データをすべて削除
   Future<void> _clearAllVotes() async {
     try {
-      // RTDBでの削除操作は単純に親ノードを空にする
+      // 親ノードを空に
       await _database.remove();
       print('すべての投票が削除されました');
     } catch (e) {
@@ -590,9 +589,6 @@ class _AdminScreenState extends State<AdminScreen>
         return;
       }
 
-      // Admin SDKが必要なため、Cloud Functionsを使用するのが一般的
-      // ここでは簡易的に実装
-
       // Firestoreからユーザー情報を削除
       await _firestore.collection('admin_users').doc(user.uid).delete();
 
@@ -611,7 +607,6 @@ class _AdminScreenState extends State<AdminScreen>
   }
 }
 
-// Vote model
 class Vote {
   final String id;
   final String userId;
@@ -626,7 +621,6 @@ class Vote {
   });
 }
 
-// 管理者ユーザーのデータモデル
 class UserData {
   final String uid;
   final String email;

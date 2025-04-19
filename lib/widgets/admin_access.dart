@@ -94,17 +94,14 @@ class AdminAccessButton extends StatelessWidget {
                                 });
 
                                 try {
-                                  // Firebase認証でサインイン
                                   UserCredential userCredential = await _auth
                                       .signInWithEmailAndPassword(
                                         email: emailController.text.trim(),
                                         password: passwordController.text,
                                       );
 
-                                  // ログイン成功
                                   Navigator.of(context).pop();
 
-                                  // 管理者画面に遷移
                                   Navigator.pushNamed(context, '/admin');
                                 } on FirebaseAuthException catch (e) {
                                   String message;
