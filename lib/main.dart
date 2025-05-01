@@ -1,9 +1,11 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/scanner_screen.dart';
 import 'firebase_options.dart';
 import 'screens/admin_screen.dart';
 import 'config/data_range_service.dart';
+import 'config/student_map_init.dart';
 import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
 import 'widgets/camera_permission_wrapper.dart';
@@ -21,6 +23,11 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // 学生マッピングの初期化
+    final studentMappingInitializer = StudentMappingInitializer();
+    await studentMappingInitializer.initializeMappings();
+
     runApp(VoteApp(dateRangeService: dateRangeService));
   } catch (e) {
     print('Firebase初期化エラー: $e');

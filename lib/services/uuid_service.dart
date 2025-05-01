@@ -1,3 +1,4 @@
+// lib/services/uuid_service.dart
 import 'database_service.dart';
 import '../config/uuid_range.dart';
 
@@ -26,6 +27,11 @@ class UuidService {
   bool _isValidUuidFormat(String uuid) {
     RegExp uuidRegex = RegExp(r'^[0-9]{10}$');
     return uuidRegex.hasMatch(uuid);
+  }
+
+  // 学生検証が必要かどうかを確認
+  bool requiresStudentVerification(String uuid) {
+    return _rangeService.requiresStudentVerification(uuid);
   }
 
   void setValidRanges(List<UuidRange> ranges) {

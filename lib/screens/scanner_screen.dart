@@ -7,6 +7,7 @@ import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'vote_screen.dart';
 import 'out_of_period_screen.dart';
+import 'student_verification_screen.dart';
 
 class ScannerScreen extends StatefulWidget {
   @override
@@ -22,7 +23,6 @@ class _ScannerScreenState extends State<ScannerScreen>
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
   CameraFacing _currentCamera = CameraFacing.front;
-
   @override
   void initState() {
     super.initState();
@@ -35,14 +35,6 @@ class _ScannerScreenState extends State<ScannerScreen>
       facing: _currentCamera,
       torchEnabled: false,
     );
-  }
-
-  void _switchCamera() {
-    _currentCamera =
-        _currentCamera == CameraFacing.front
-            ? CameraFacing.back
-            : CameraFacing.front;
-    _resetCameraController();
   }
 
   @override
@@ -293,21 +285,41 @@ class _ScannerScreenState extends State<ScannerScreen>
     try {
       bool isValid = await _uuidService.validateUuid(code);
       if (isValid) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
-          ),
-        ).then((_) {
-          if (mounted) {
-            setState(() {
-              _isProcessingCode = false;
-              if (!_showManualInput) {
-                _resetCameraController();
-              }
-            });
-          }
-        });
+        // 学生検証が必要かどうかチェック (2000000000～2000002000)
+        if (_uuidService.requiresStudentVerification(code)) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StudentVerificationScreen(uuid: code),
+            ),
+          ).then((_) {
+            if (mounted) {
+              setState(() {
+                _isProcessingCode = false;
+                if (!_showManualInput) {
+                  _resetCameraController();
+                }
+              });
+            }
+          });
+        } else {
+          // 学生検証が不要な場合は直接投票画面へ
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
+            ),
+          ).then((_) {
+            if (mounted) {
+              setState(() {
+                _isProcessingCode = false;
+                if (!_showManualInput) {
+                  _resetCameraController();
+                }
+              });
+            }
+          });
+        }
       } else {
         setState(() {
           _isProcessingCode = false;

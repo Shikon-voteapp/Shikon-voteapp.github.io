@@ -1,3 +1,4 @@
+// lib/config/uuid_range.dart
 class UuidRange {
   final int start;
   final int end;
@@ -14,7 +15,6 @@ class UuidRangeService {
 
   UuidRangeService() {
     // 初期設定として有効なUUID範囲を追加
-
     addRange(1000000000, 9999999999);
   }
 
@@ -43,6 +43,17 @@ class UuidRangeService {
     } catch (e) {
       // 数値変換エラーの場合はfalse
       print('UUID範囲チェックエラー: $e');
+      return false;
+    }
+  }
+
+  // 学生検証が必要なUUID範囲かチェック (2000000000～2000002000)
+  bool requiresStudentVerification(String uuidStr) {
+    try {
+      int uuid = int.parse(uuidStr);
+      return uuid >= 2000000000 && uuid <= 2000002000;
+    } catch (e) {
+      print('学生検証範囲チェックエラー: $e');
       return false;
     }
   }
