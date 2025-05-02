@@ -34,7 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
       // 投票期間内の場合
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
+          //builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
+          builder: (context) => ScannerScreen(),
         ),
       );
     } else {

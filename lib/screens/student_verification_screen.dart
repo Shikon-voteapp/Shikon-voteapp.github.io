@@ -21,9 +21,9 @@ class StudentVerificationScreen extends StatefulWidget {
 class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
   final StudentVerificationService _verificationService =
       StudentVerificationService();
-  final List<String> _grades = ['中1', '中2', '中3', '高1', '高2', '高3'];
+  final List<String> _grades = ['中1', '中2', '中3', '高Ⅰ', '高Ⅱ', '高Ⅲ'];
   final List<String> _classes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-  final List<int> _numbers = List.generate(41, (index) => index + 1);
+  final List<int> _numbers = List.generate(45, (index) => index + 1);
 
   String? _selectedGrade;
   String? _selectedClass;
@@ -36,7 +36,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     return Scaffold(
       body: Column(
         children: [
-          TopBar(title: '学生情報確認'),
+          TopBar(title: '追加認証'),
           MessageArea(
             message: '学年、クラス、出席番号を選択してください。\n正しい情報を入力しないと投票できません。',
             title: '',
@@ -210,7 +210,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
         );
       } else {
         setState(() {
-          _errorMessage = '学生情報が一致しません。正しい情報を入力してください。';
+          _errorMessage = '認証情報が一致しません。正しい情報を入力してください。';
           _isVerifying = false;
         });
       }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../platform/platform_utils.dart';
+import '../screens/scanner_screen.dart';
 
 class CameraPermissionWrapper extends StatefulWidget {
   final Widget child;
@@ -143,8 +144,8 @@ class CameraPermissionDeniedScreen extends StatelessWidget {
               SizedBox(height: 24),
               ElevatedButton.icon(
                 icon: Icon(Icons.refresh),
-                label: Text('再試行'),
-                onPressed: onRetry,
+                label: Text('制限された機能で実行'),
+                onPressed: null,
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
