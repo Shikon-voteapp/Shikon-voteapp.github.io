@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:io' show Platform;
 import 'platform_utils.dart';
 
 // Navigator key that needs to be added to main.dart

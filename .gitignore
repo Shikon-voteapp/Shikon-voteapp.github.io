@@ -49,3 +49,4 @@ app.*.map.json
 firebase_cpp_sdk/
 Electron/node_modules/
 Electron/electron-win32-x64/
+deploy/node_modules/

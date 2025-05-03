@@ -32,9 +32,9 @@ class BottomBar extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(dateStr, style: TextStyle(color: Colors.white)),
+              /*Text(dateStr, style: TextStyle(color: Colors.white)),
               SizedBox(width: 16),
-              Text(timeStr, style: TextStyle(color: Colors.white)),
+              Text(timeStr, style: TextStyle(color: Colors.white)),*/
               SizedBox(width: 16),
               Text(
                 'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 10)}',

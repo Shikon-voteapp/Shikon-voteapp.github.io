@@ -3,7 +3,6 @@ import 'dart:async';
 import '../config/data_range_service.dart';
 import 'out_of_period_screen.dart';
 import 'scanner_screen.dart';
-import '../widgets/camera_permission_wrapper.dart';
 
 class SplashScreen extends StatefulWidget {
   final DateRangeService dateRangeService;

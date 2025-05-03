@@ -1,4 +1,6 @@
 // lib/config/uuid_range.dart
+import 'valid_uuids.dart';
+
 class UuidRange {
   final int start;
   final int end;
@@ -14,54 +16,64 @@ class UuidRangeService {
   final List<UuidRange> _validRanges = [];
 
   UuidRangeService() {
-    // 初期設定として有効なUUID範囲を追加
-    addRange(1000000000, 9999999999);
+    _loadRangesFromUuidList(validUuids);
   }
 
-  // 範囲を追加するメソッド
   void addRange(int start, int end) {
     if (start <= end && start >= 0) {
       _validRanges.add(UuidRange(start, end));
     }
   }
 
-  // 指定されたUUIDが有効な範囲内にあるかチェック
+  void _loadRangesFromUuidList(List<int> uuids) {
+    if (uuids.isEmpty) return;
+
+    final sortedUuids = uuids.toSet().toList()..sort();
+
+    int? start;
+    int? previous;
+
+    for (final uuid in sortedUuids) {
+      if (start == null) {
+        start = uuid;
+        previous = uuid;
+      } else if (uuid == previous! + 1) {
+        previous = uuid;
+      } else {
+        addRange(start, previous);
+        start = uuid;
+        previous = uuid;
+      }
+    }
+
+    // 最後の範囲を追加
+    if (start != null && previous != null) {
+      addRange(start, previous);
+    }
+  }
+
   bool isInValidRange(String uuidStr) {
     try {
-      // 文字列をintに変換
       int uuid = int.parse(uuidStr);
-
-      // いずれかの範囲に含まれていればtrue
-      for (var range in _validRanges) {
-        if (range.contains(uuid)) {
-          return true;
-        }
-      }
-
-      // どの範囲にも含まれていなければfalse
-      return false;
+      return _validRanges.any((range) => range.contains(uuid));
     } catch (e) {
-      // 数値変換エラーの場合はfalse
       print('UUID範囲チェックエラー: $e');
       return false;
     }
   }
 
-  // 学生検証が必要なUUID範囲かチェック (2000000000～2000002000)
   bool requiresStudentVerification(String uuidStr) {
     try {
       int uuid = int.parse(uuidStr);
-      return uuid >= 2000000000 && uuid <= 2000002000;
+      return uuid >= 2000000000 && uuid <= 2999999999;
     } catch (e) {
       print('学生検証範囲チェックエラー: $e');
       return false;
     }
   }
 
-  // 現在設定されている有効範囲のリストを取得
   List<UuidRange> get validRanges => List.unmodifiable(_validRanges);
 
-  // 範囲をクリアするメソッド
   void clearRanges() {
     _validRanges.clear();
   }

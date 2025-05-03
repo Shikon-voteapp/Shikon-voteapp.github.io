@@ -285,7 +285,6 @@ class _ScannerScreenState extends State<ScannerScreen>
     try {
       bool isValid = await _uuidService.validateUuid(code);
       if (isValid) {
-        // 学生検証が必要かどうかチェック (2000000000～2000002000)
         if (_uuidService.requiresStudentVerification(code)) {
           Navigator.push(
             context,
@@ -303,7 +302,6 @@ class _ScannerScreenState extends State<ScannerScreen>
             }
           });
         } else {
-          // 学生検証が不要な場合は直接投票画面へ
           Navigator.push(
             context,
             MaterialPageRoute(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../platform/platform_utils.dart';
-import '../screens/scanner_screen.dart';
 
 class CameraPermissionWrapper extends StatefulWidget {
   final Widget child;

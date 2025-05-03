@@ -71,13 +71,13 @@ class VoteCategory {
 
   // 任意のカテゴリセットに基づいて対象団体を動的に取得するメソッド
   List<Group> getFilteredGroups() {
-    if (_eligibleCategories == null || _eligibleCategories!.isEmpty) {
+    if (_eligibleCategories == null || _eligibleCategories.isEmpty) {
       return groups; // カテゴリ指定がなければ全団体を返す
     }
 
     // 指定されたカテゴリのいずれかに該当する団体をフィルタリング
     return groups.where((group) {
-      for (final category in _eligibleCategories!) {
+      for (final category in _eligibleCategories) {
         if (group.hasCategory(category)) {
           return true;
         }

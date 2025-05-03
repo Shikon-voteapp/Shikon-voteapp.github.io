@@ -36,11 +36,8 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     return Scaffold(
       body: Column(
         children: [
-          TopBar(title: '追加認証'),
-          MessageArea(
-            message: '学年、クラス、出席番号を選択してください。\n正しい情報を入力しないと投票できません。',
-            title: '',
-          ),
+          TopBar(title: ''),
+          MessageArea(message: '学年、クラス、出席番号を選択してください。', title: ''),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
