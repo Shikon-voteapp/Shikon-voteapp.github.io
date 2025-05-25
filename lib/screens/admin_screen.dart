@@ -6,6 +6,8 @@ import '../config/vote_options.dart';
 import '../models/group.dart';
 import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
+import '../screens/vote_options_editor_screen.dart';
+import 'dart:html' as html;
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -30,7 +32,7 @@ class _AdminScreenState extends State<AdminScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _loadVotes();
     _loadAdminUsers();
   }
@@ -161,67 +163,83 @@ class _AdminScreenState extends State<AdminScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('管理画面'),
-        backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
+    return WillPopScope(
+      onWillPop: () async {
+        html.window.location.href = '/#/';
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('管理画面'),
+          backgroundColor: Colors.black,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
-              _loadVotes();
-              _loadAdminUsers();
+              html.window.location.href = '/#/';
             },
           ),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await _auth.signOut();
-              Navigator.of(context).pop(); // 管理画面を閉じる
-            },
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                _loadVotes();
+                _loadAdminUsers();
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                await _auth.signOut();
+                html.window.location.href = '/#/';
+              },
+            ),
+          ],
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: '投票結果', icon: Icon(Icons.poll)),
+              Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
+              Tab(text: '投票オプション管理', icon: Icon(Icons.settings)),
+            ],
           ),
-        ],
-        bottom: TabBar(
+        ),
+        body: TabBarView(
           controller: _tabController,
-          tabs: [
-            Tab(text: '投票結果', icon: Icon(Icons.poll)),
-            Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
+          children: [
+            // 投票結果タブ
+            _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                  children: [
+                    _buildCategoryTabs(),
+                    Expanded(
+                      child:
+                          _votes == null || _votes!.isEmpty
+                              ? Center(child: Text('投票データがありません'))
+                              : _buildCategoryResults(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.delete),
+                        label: Text('投票データをクリア'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: _showClearConfirmation,
+                      ),
+                    ),
+                  ],
+                ),
+
+            // ユーザー管理タブ
+            _buildUserManagementTab(),
+
+            // 投票オプション管理タブ
+            VoteOptionsEditorScreen(),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // 投票結果タブ
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Column(
-                children: [
-                  _buildCategoryTabs(),
-                  Expanded(
-                    child:
-                        _votes == null || _votes!.isEmpty
-                            ? Center(child: Text('投票データがありません'))
-                            : _buildCategoryResults(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton.icon(
-                      icon: Icon(Icons.delete),
-                      label: Text('投票データをクリア'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: _showClearConfirmation,
-                    ),
-                  ),
-                ],
-              ),
-
-          // ユーザー管理タブ
-          _buildUserManagementTab(),
-        ],
       ),
     );
   }

@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=C:\Users\Mamouna_inori\Flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\Mamouna_inori\Shikon_Voteapp"
+export "FLUTTER_APPLICATION_PATH=C:\Users\Mamouna_inori\Mamouna-inori.github.io"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"

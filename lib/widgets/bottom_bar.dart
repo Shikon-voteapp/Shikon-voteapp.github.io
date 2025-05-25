@@ -30,21 +30,26 @@ class BottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              /*Text(dateStr, style: TextStyle(color: Colors.white)),
-              SizedBox(width: 16),
-              Text(timeStr, style: TextStyle(color: Colors.white)),*/
-              SizedBox(width: 16),
-              Text(
-                'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 10)}',
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox(width: 16),
-              AdminAccessButton(),
-            ],
+          Flexible(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(width: 16),
+                Flexible(
+                  child: Text(
+                    'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 10)}',
+                    style: TextStyle(color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
+                SizedBox(width: 16),
+                AdminAccessButton(),
+              ],
+            ),
           ),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               if (showBackButton)
                 GestureDetector(

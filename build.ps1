@@ -21,5 +21,11 @@ if (!(Test-Path $targetDir)) {
 Write-Host "Copying files to $targetDir..."
 Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
 
+# deploy.cmdを実行
+Write-Host "Executing deploy.cmd..."
+Set-Location -Path "deploy"
+.\deploy.cmd
+
 Write-Host "=== Build and Copy Complete ==="
+
 Pause

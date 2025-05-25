@@ -3,11 +3,10 @@ import 'package:shikon_voteapp/models/group.dart';
 // config/vote_options.dart
 /*
 =======投票先一覧を設定する設定ファイル=======
-
 */
+
 // すべての団体のリスト
 final List<Group> allGroups = [
-  /*
   Group(
     id: 'H',
     name: '文化祭準備委員会本部室',
@@ -16,7 +15,6 @@ final List<Group> allGroups = [
     floor: 1,
     categories: [GroupCategory.other],
   ),
-  */
   Group(
     id: '01',
     name: '明治藩校歴研館～紫紺に染まれ～',
@@ -46,15 +44,6 @@ final List<Group> allGroups = [
     name: '北海道「函館＋江差」',
     description: '北海道の函館と江差の街並み景観とまちづくり、伝統的見地奥物の保全について展示しています。地理研クイズも用意しています。',
     imagePath: 'assets/First/S105.jpg',
-    floor: 1,
-    categories: [GroupCategory.Tenji],
-  ),
-  Group(
-    id: '05',
-    name: '空想上の動物',
-    description:
-        '今年は、アジアの世界観をベースに空想上の動物を描いてみました。作品展示だけでなく、体験やおみくじもやっていますので、ぜひ来てください～！',
-    imagePath: 'assets/First/Art_Room_1.jpg',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
@@ -171,15 +160,6 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Tenji],
   ),
   Group(
-    id: '19',
-    name: 'Global Meiji',
-    description:
-        '歴史、食べ物、流行など、アメリカという国を知るうえで欠かせないことを紹介します！また、昨年に引き続き調布市の英語観光ガイドマップも展示します。',
-    imagePath: 'assets/Second/S206.jpg',
-    floor: 2,
-    categories: [GroupCategory.Tenji],
-  ),
-  Group(
     id: '20',
     name: '図書班',
     description: '今年のテーマは「物語の中に入るなら･･･？！」新たな発見や驚きが待っているかも１',
@@ -188,17 +168,8 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Tenji],
   ),
   Group(
-    id: '21',
-    name: 'フェアトレード商品の販売',
-    description:
-        'フェアトレード商品(バングラデシュやネパールなど)と東北支援商品(桃ジュースやおからかりんとう)を販売しています(現金)。国際貢献ならびに国内貢献のために、まずは見に来てください。2日目のみ開店します。',
-    imagePath: 'assets/Second/T202.jpg',
-    floor: 2,
-    categories: [GroupCategory.Tenji],
-  ),
-  Group(
     id: '22',
-    name: 'under of ⅡA’ s',
+    name: "under of ⅡA's",
     description: '至る所に潜む怪物を迎え撃て！高ⅡAがお届けする鬼ごっこ×トロッコアドベンチャー！',
     imagePath: 'assets/Second/N201.jpg',
     floor: 2,
@@ -265,15 +236,6 @@ final List<Group> allGroups = [
     name: 'The wheel of fotune',
     description: 'カジノの本場、ラスベガスを感じさせる雰囲気で、いろいろな賭け事を楽しめます！1度は行かなきゃもったいない！！',
     imagePath: 'assets/Third/S304.jpg',
-    floor: 3,
-    categories: [GroupCategory.Moyoshi],
-  ),
-  Group(
-    id: '34',
-    name: 'GメンさせてGomen',
-    description:
-        '私たちが経営するコンビニで、皆様には万引き犯を捕まえるGメンを演じていただきます。提示された特徴を元にターゲットを捕まえられたら、Gメンの一員として認定されます！',
-    imagePath: 'assets/Third/S305.jpg',
     floor: 3,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -421,38 +383,11 @@ final List<Group> allGroups = [
     floor: 3,
     categories: [GroupCategory.Roten],
   ),
-  /*
-  Group(
-    id: 'Stage_01',
-    name: '吹奏楽班',
-    description:'誰もが楽しめるポップス曲を演奏します！ぜひ聴きに来てください♪',
-    imagePath: 'assets/Stage/Stage01.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  Group(
-    id: 'Stage_04',
-    name: '応援指導班',
-    description:'総勢53名で創る最高なステージで皆様に笑顔を届けます！',
-    imagePath: 'assets/Stage/Stage04.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  */
   Group(
     id: 'Stage_02',
     name: 'ダンス部',
     description: '総勢54人の部員で踊ります！盛り上がること間違いなしです！鵜澤ホールで待っています！',
     imagePath: 'assets/Stage/Stage02.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  Group(
-    id: 'Stage_03',
-    name: 'マンドリン部',
-    description:
-        '私たちが得意とするクラシック曲から、楽しいポップス曲まで、ここでしか聴けないスペシャルステージをお届けします！ぜひお越しください！',
-    imagePath: 'assets/Stage/Stage03.jpg',
     floor: 4,
     categories: [GroupCategory.Stage],
   ),
@@ -587,11 +522,11 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where(
               (group) =>
-                  group.hasCategory(GroupCategory.Tenji) ||
-                  group.hasCategory(GroupCategory.Moyoshi) ||
-                  group.hasCategory(GroupCategory.Gakunen) ||
-                  group.hasCategory(GroupCategory.Roten) ||
-                  group.hasCategory(GroupCategory.Stage),
+                  group.categories.contains(GroupCategory.Tenji) ||
+                  group.categories.contains(GroupCategory.Moyoshi) ||
+                  group.categories.contains(GroupCategory.Gakunen) ||
+                  group.categories.contains(GroupCategory.Roten) ||
+                  group.categories.contains(GroupCategory.Stage),
             )
             .toList(),
     eligibleCategories: [
@@ -608,7 +543,7 @@ final List<VoteCategory> voteCategories = [
     description: '教室展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Tenji))
+            .where((group) => group.categories.contains(GroupCategory.Tenji))
             .toList(),
     eligibleCategories: [GroupCategory.Tenji],
   ),
@@ -618,7 +553,7 @@ final List<VoteCategory> voteCategories = [
     description: '学年展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Gakunen))
+            .where((group) => group.categories.contains(GroupCategory.Gakunen))
             .toList(),
     eligibleCategories: [GroupCategory.Gakunen],
   ),
@@ -628,7 +563,7 @@ final List<VoteCategory> voteCategories = [
     description: '教室催し物の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Moyoshi))
+            .where((group) => group.categories.contains(GroupCategory.Moyoshi))
             .toList(),
     eligibleCategories: [GroupCategory.Moyoshi],
   ),
@@ -638,7 +573,7 @@ final List<VoteCategory> voteCategories = [
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージ団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Stage))
+            .where((group) => group.categories.contains(GroupCategory.Stage))
             .toList(),
     eligibleCategories: [GroupCategory.Stage],
   ),
@@ -648,9 +583,10 @@ final List<VoteCategory> voteCategories = [
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がったバンド団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Band))
+            .where((group) => group.categories.contains(GroupCategory.Band))
             .toList(),
     eligibleCategories: [GroupCategory.Band],
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Performance',
@@ -658,9 +594,12 @@ final List<VoteCategory> voteCategories = [
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Performance))
+            .where(
+              (group) => group.categories.contains(GroupCategory.Performance),
+            )
             .toList(),
     eligibleCategories: [GroupCategory.Performance],
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Roten',
@@ -668,7 +607,7 @@ final List<VoteCategory> voteCategories = [
     description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった団体を1つ選択してください。',
     groups:
         allGroups
-            .where((group) => group.hasCategory(GroupCategory.Roten))
+            .where((group) => group.categories.contains(GroupCategory.Roten))
             .toList(),
     eligibleCategories: [GroupCategory.Roten],
   ),

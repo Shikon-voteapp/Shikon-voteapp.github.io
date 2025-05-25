@@ -40,6 +40,7 @@ class _VoteScreenState extends State<VoteScreen> {
   @override
   Widget build(BuildContext context) {
     final category = voteCategories[currentCategoryIndex];
+    final bool canProceed = selectedGroupId != null || category.canSkip;
 
     return Scaffold(
       body: Column(
@@ -52,6 +53,7 @@ class _VoteScreenState extends State<VoteScreen> {
             child: GroupSelectionArea(
               category: category,
               selectedGroupId: selectedGroupId,
+              isVoted: selectedGroupId != null,
               onSelect: (String groupId) {
                 setState(() {
                   selectedGroupId = groupId;
@@ -61,7 +63,7 @@ class _VoteScreenState extends State<VoteScreen> {
           ),
           BottomBar(
             uuid: widget.uuid,
-            showNextButton: selectedGroupId != null,
+            showNextButton: canProceed,
             showBackButton: true,
             onBack: () {
               if (currentCategoryIndex == 0) {
@@ -90,8 +92,19 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   void _saveAndProceed() {
-    currentSelections[voteCategories[currentCategoryIndex].id] =
-        selectedGroupId!;
+    final category = voteCategories[currentCategoryIndex];
+    if (selectedGroupId == null && !category.canSkip) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('エラー：投票先が選択されていません。')));
+      return;
+    }
+    if (selectedGroupId != null) {
+      currentSelections[category.id] = selectedGroupId!;
+    } else if (currentSelections.containsKey(category.id)) {
+      currentSelections.remove(category.id);
+    }
+
     if (currentCategoryIndex < voteCategories.length - 1) {
       Navigator.pushReplacement(
         context,

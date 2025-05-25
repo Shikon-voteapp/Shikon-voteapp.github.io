@@ -6,11 +6,13 @@ class VoteCategory {
   final String name;
   final String description;
   final List<Group> groups;
+  final bool canSkip;
 
   VoteCategory({
     required this.id,
     required this.name,
     required this.description,
     required this.groups,
+    this.canSkip = false,
   });
 }

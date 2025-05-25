@@ -55,6 +55,7 @@ class VoteCategory {
   final String description;
   final List<Group> groups;
   final List<GroupCategory>? _eligibleCategories; // 内部用: 対象カテゴリのリスト
+  final bool canSkip; // スキップ可能かどうかのフラグを追加
 
   VoteCategory({
     required this.id,
@@ -62,7 +63,11 @@ class VoteCategory {
     required this.description,
     required this.groups,
     List<GroupCategory>? eligibleCategories,
+    this.canSkip = false, // デフォルトは false (スキップ不可)
   }) : _eligibleCategories = eligibleCategories;
+
+  // eligibleCategoriesのゲッターを追加
+  List<GroupCategory>? get eligibleCategories => _eligibleCategories;
 
   // 特定のカテゴリに所属する団体だけを取得するメソッド
   List<Group> getGroupsByCategory(GroupCategory category) {
