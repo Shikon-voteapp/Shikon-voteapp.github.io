@@ -28002,7 +28002,7 @@ return r},
 al4:function al4(){},
 al5:function al5(a){this.a=a},
 aAo:function aAo(a){this.a=a},
-aHl(){return new A.a5e(A.aHm(2025,4,1,9,0),A.aHm(2025,5,30,15,0))},
+aHl(){return new A.a5e(A.aHm(2025,4,1,9,0),A.aHm(2025,9,21,15,0))},
 a5e:function a5e(a,b){this.a=a
 this.b=b},
 alY:function alY(a){this.a=a},
@@ -92925,7 +92925,7 @@ A.aBX.prototype={
 $1(a){return B.b.n(a.f,B.bt)},
 $S:24}
 A.SG.prototype={
-J(a){var s=$.aRe(),r=A.oG(null,null,"IBM Plex Sans JP",B.uA,B.j,!1)
+J(a){var s=$.aRe(),r=A.oG(null,null,"A-OTF-UDShinGoPr6N",B.uA,B.j,!1)
 return A.aJ8(!1,null,"/",s,A.as(["/",new A.anW(this),"/scanner",new A.anX(),"/admin",new A.anY()],t.N,t.Ab),r,"\u7d2b\u7d3a\u796d\u6295\u7968\u30a2\u30d7\u30ea")}}
 A.anW.prototype={
 $1(a){return new A.rK(this.a.c,null)},

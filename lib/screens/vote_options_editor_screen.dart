@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:html' as html;
 import '../config/vote_options.dart';
 import '../models/group.dart';

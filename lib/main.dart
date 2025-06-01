@@ -49,7 +49,7 @@ class VoteApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'IBM Plex Sans JP',
+        fontFamily: 'A-OTF-UDShinGoPr6N',
         useMaterial3: false,
       ),
       initialRoute: '/',

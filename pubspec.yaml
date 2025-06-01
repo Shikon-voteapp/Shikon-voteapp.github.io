@@ -56,6 +56,18 @@ flutter:
         weight: 600
       - asset: assets/IBMPlexSansJP-Bold.ttf
         weight: 700
+  - family: A-OTF-UDShinGoPr6N
+    fonts:
+      - asset: assets/A-OTF-UDShinGoPr6N-Light.otf
+        weight: 300
+      - asset: assets/A-OTF-UDShinGoPr6N-Regular.otf
+        weight: 400
+      - asset: assets/A-OTF-UDShinGoPr6N-Medium.otf
+        weight: 500
+      - asset: assets/A-OTF-UDShinGoPr6N-DeBold.otf
+        weight: 600
+      - asset: assets/A-OTF-UDShinGoPr6N-Bold.otf
+        weight: 700
         
   assets:
   #ステージ団体

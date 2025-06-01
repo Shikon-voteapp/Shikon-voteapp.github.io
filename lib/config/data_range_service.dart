@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DateRangeService {
   // ここだけ編集する
   DateTime _startDate = DateTime(2025, 4, 1, 9, 0); // 開始時間(年,月,日,時,分)
-  DateTime _endDate = DateTime(2025, 5, 30, 15, 0); // 終了時間(年,月,日,時,分)
+  DateTime _endDate = DateTime(2025, 9, 21, 15, 0); // 終了時間(年,月,日,時,分)
 
   // ゲッター
   DateTime get startDate => _startDate;
