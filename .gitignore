@@ -50,3 +50,10 @@ firebase_cpp_sdk/
 Electron/node_modules/
 Electron/electron-win32-x64/
 deploy/node_modules/
+# Firebase関連のシークレットキー
+.env
+google-services.json
+GoogleService-Info.plist
+firebase-adminsdk.json
+serviceAccountKey.json
+.firebase/*.cache
