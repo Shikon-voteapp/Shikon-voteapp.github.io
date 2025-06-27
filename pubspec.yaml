@@ -34,41 +34,10 @@ dependencies:
   twitter_login: any
   camera: ^0.10.5+4
   path_provider: ^2.1.1
-
-
+  google_fonts: ^6.1.0
 
 flutter:
   uses-material-design: true
-  fonts:
-  - family: IBM Plex Sans JP
-    fonts:
-      - asset: assets/IBMPlexSansJP-Thin.ttf
-        weight: 100
-      - asset: assets/IBMPlexSansJP-ExtraLight.ttf
-        weight: 200
-      - asset: assets/IBMPlexSansJP-Light.ttf
-        weight: 300
-      - asset: assets/IBMPlexSansJP-Regular.ttf
-        weight: 400
-      - asset: assets/IBMPlexSansJP-Medium.ttf
-        weight: 500
-      - asset: assets/IBMPlexSansJP-SemiBold.ttf
-        weight: 600
-      - asset: assets/IBMPlexSansJP-Bold.ttf
-        weight: 700
-  - family: A-OTF-UDShinGoPr6N
-    fonts:
-      - asset: assets/A-OTF-UDShinGoPr6N-Light.otf
-        weight: 300
-      - asset: assets/A-OTF-UDShinGoPr6N-Regular.otf
-        weight: 400
-      - asset: assets/A-OTF-UDShinGoPr6N-Medium.otf
-        weight: 500
-      - asset: assets/A-OTF-UDShinGoPr6N-DeBold.otf
-        weight: 600
-      - asset: assets/A-OTF-UDShinGoPr6N-Bold.otf
-        weight: 700
-        
   assets:
   #ステージ団体
     - assets/Stage/

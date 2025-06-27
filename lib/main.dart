@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/scanner_screen.dart';
 import 'firebase_options.dart';
 import 'screens/admin_screen.dart';
@@ -49,7 +50,7 @@ class VoteApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         scaffoldBackgroundColor: Colors.white,
-        fontFamily: 'A-OTF-UDShinGoPr6N',
+        textTheme: GoogleFonts.notoSansJpTextTheme(Theme.of(context).textTheme),
         useMaterial3: false,
       ),
       initialRoute: '/',

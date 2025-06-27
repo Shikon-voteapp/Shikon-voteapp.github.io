@@ -7,12 +7,19 @@ import '../widgets/message_area.dart';
 import '../widgets/bottom_bar.dart';
 import 'complete_screen.dart';
 
-class ConfirmScreen extends StatelessWidget {
+class ConfirmScreen extends StatefulWidget {
   final String uuid;
   final Map<String, String> selections;
-  final DatabaseService _dbService = DatabaseService();
 
   ConfirmScreen({required this.uuid, required this.selections});
+
+  @override
+  State<ConfirmScreen> createState() => _ConfirmScreenState();
+}
+
+class _ConfirmScreenState extends State<ConfirmScreen> {
+  final DatabaseService _dbService = DatabaseService();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +37,10 @@ class ConfirmScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(16),
               child: ListView.builder(
-                itemCount: selections.length,
+                itemCount: widget.selections.length,
                 itemBuilder: (context, index) {
-                  String categoryId = selections.keys.elementAt(index);
-                  String groupId = selections[categoryId]!;
+                  String categoryId = widget.selections.keys.elementAt(index);
+                  String groupId = widget.selections[categoryId]!;
                   VoteCategory category = voteCategories.firstWhere(
                     (c) => c.id == categoryId,
                     orElse:
@@ -120,7 +127,7 @@ class ConfirmScreen extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.all(16),
             child: ElevatedButton(
-              onPressed: () => _submitVote(context),
+              onPressed: _isLoading ? null : () => _submitVote(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 padding: EdgeInsets.symmetric(vertical: 16),
@@ -128,14 +135,27 @@ class ConfirmScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                '投票する',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Text(
+                        '投票する',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
             ),
           ),
           BottomBar(
-            uuid: uuid,
+            uuid: widget.uuid,
             showNextButton: false,
             showBackButton: false,
             onBack: () {
@@ -149,29 +169,48 @@ class ConfirmScreen extends StatelessWidget {
   }
 
   void _submitVote(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      bool hasAlreadyVoted = await _dbService.hasVoted(uuid);
+      bool hasAlreadyVoted = await _dbService.hasVoted(widget.uuid);
       if (hasAlreadyVoted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('すでに投票済みです。')));
+        setState(() {
+          _isLoading = false;
+        });
         return;
       }
+
       Vote vote = Vote(
-        uuid: uuid,
-        selections: selections,
+        uuid: widget.uuid,
+        selections: widget.selections,
         timestamp: DateTime.now(),
       );
+
       await _dbService.saveVote(vote);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => CompleteScreen(uuid: uuid)),
-      );
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CompleteScreen(uuid: widget.uuid),
+          ),
+        );
+      }
     } catch (e) {
       print('投票処理中にエラーが発生しました: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('投票の保存に失敗しました。もう一度お試しください。')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('投票の保存に失敗しました。もう一度お試しください。')));
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }
