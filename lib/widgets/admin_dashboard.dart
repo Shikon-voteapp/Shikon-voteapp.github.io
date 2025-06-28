@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
-import '../models/group.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../models/vote_category.dart';
 
 class AdminDashboard extends StatelessWidget {
   final List<Vote> votes;

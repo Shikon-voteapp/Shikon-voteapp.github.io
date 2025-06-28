@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import '../widgets/top_bar.dart';
+import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
-import '../widgets/bottom_bar.dart';
 import '../platform/platform_utils.dart';
 
 class CompleteScreen extends StatefulWidget {
@@ -45,10 +44,11 @@ class _CompleteScreenState extends State<CompleteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return MainLayout(
+      title: '投票完了',
+      onHome: _resetApplication,
+      child: Column(
         children: [
-          TopBar(title: '投票完了'),
           MessageArea(
             title: '完了',
             titleColor: Colors.green,
@@ -90,7 +90,6 @@ class _CompleteScreenState extends State<CompleteScreen> {
               ),
             ),
           ),
-          BottomBar(uuid: widget.uuid, showNextButton: false),
         ],
       ),
     );

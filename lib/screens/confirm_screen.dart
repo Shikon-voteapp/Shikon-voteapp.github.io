@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
-import '../models/group.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../models/vote_category.dart';
+import '../platform/platform_utils.dart';
 import '../services/database_service.dart';
-import '../widgets/top_bar.dart';
+import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
-import '../widgets/bottom_bar.dart';
 import 'complete_screen.dart';
 
 class ConfirmScreen extends StatefulWidget {
@@ -23,10 +24,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return MainLayout(
+      title: '投票内容の確認',
+      onHome: () => PlatformUtils.reloadApp(),
+      onBack: () => Navigator.pop(context),
+      child: Column(
         children: [
-          TopBar(title: '投票内容の確認'),
           MessageArea(
             title: '確認',
             titleColor: Colors.green,
@@ -153,15 +156,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                         ),
                       ),
             ),
-          ),
-          BottomBar(
-            uuid: widget.uuid,
-            showNextButton: false,
-            showBackButton: false,
-            onBack: () {
-              // Handle back navigation here
-              Navigator.pop(context);
-            },
           ),
         ],
       ),

@@ -1,7 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'screens/scanner_screen.dart';
 import 'firebase_options.dart';
 import 'screens/admin_screen.dart';
@@ -10,6 +9,7 @@ import 'config/student_map_init.dart';
 import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
 import 'widgets/camera_permission_wrapper.dart';
+import 'theme.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_desktop.dart'
@@ -47,12 +47,7 @@ class VoteApp extends StatelessWidget {
       navigatorKey: navigatorKey, // Add navigator key for app state management
       title: '紫紺祭投票アプリ',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        scaffoldBackgroundColor: Colors.white,
-        textTheme: GoogleFonts.notoSansJpTextTheme(Theme.of(context).textTheme),
-        useMaterial3: false,
-      ),
+      theme: AppTheme.themeData,
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(dateRangeService: dateRangeService),

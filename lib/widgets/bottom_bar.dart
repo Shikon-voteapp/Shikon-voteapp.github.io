@@ -1,107 +1,135 @@
 import 'package:flutter/material.dart';
-import 'admin_access.dart';
+import 'package:shikon_voteapp/platform/platform_utils.dart';
+import 'package:shikon_voteapp/screens/help_screen.dart';
+import '../theme.dart';
+import 'custom_dialog.dart';
 
 class BottomBar extends StatelessWidget {
-  final String uuid;
-  final bool showNextButton;
-  final bool showBackButton;
-  final VoidCallback? onNext;
   final VoidCallback? onBack;
+  final VoidCallback? onNext;
+  final String? helpUrl;
 
-  BottomBar({
-    required this.uuid,
-    this.showNextButton = true,
-    this.showBackButton = false,
-    this.onNext,
-    this.onBack,
-  });
+  const BottomBar({Key? key, this.onBack, this.onNext, this.helpUrl})
+    : super(key: key);
+
+  void _showHelp(BuildContext context) {
+    if (helpUrl != null && helpUrl!.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => HelpScreen(url: helpUrl!)),
+      );
+    } else {
+      _showErrorDialog(context);
+    }
+  }
+
+  void _showCantGoBackDialog(BuildContext context) {
+    showCustomDialog(
+      context: context,
+      title: 'これ以上戻れません',
+      content: 'この画面が最初の画面です。',
+      closeButtonText: 'OK',
+    );
+  }
+
+  void _showErrorDialog(BuildContext context) {
+    showCustomDialog(
+      context: context,
+      title: 'エラー',
+      content: 'ヘルプ情報を読み込めませんでした。',
+      closeButtonText: 'OK',
+    );
+  }
+
+  void _showReloadConfirmDialog(BuildContext context) {
+    showCustomDialog(
+      context: context,
+      title: '再読み込みしますか？',
+      content: '入力中の内容は保存されません。',
+      primaryActionText: '再読み込み',
+      onPrimaryAction: () {
+        Navigator.of(context).pop(); // Close dialog
+        PlatformUtils.reloadApp();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
-    final dateStr = '${now.year}年${now.month}月${now.day}日';
-    final timeStr =
-        '${now.hour.toString().padLeft(2, '0')}:'
-        '${now.minute.toString().padLeft(2, '0')}';
-
-    return Container(
-      color: Colors.black,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Flexible(
+          // Left side navigation
+          Container(
+            height: 56.0,
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            decoration: BoxDecoration(
+              color: AppTheme.widgetBackgroundColor,
+              borderRadius: BorderRadius.circular(28.0),
+            ),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(width: 16),
-                Flexible(
-                  child: Text(
-                    'ID:${uuid.isEmpty ? '-----' : uuid.substring(0, 10)}',
-                    style: TextStyle(color: Colors.white),
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                  ),
+                _buildIconButton(
+                  Icons.home_outlined,
+                  () => _showReloadConfirmDialog(context),
                 ),
-                SizedBox(width: 16),
-                AdminAccessButton(),
+                _buildDivider(),
+                _buildIconButton(Icons.help_outline, () => _showHelp(context)),
+                _buildDivider(),
+                _buildIconButton(
+                  Icons.admin_panel_settings_outlined,
+                  () => showAdminLoginDialog(context: context),
+                ),
+                _buildDivider(),
+                _buildIconButton(
+                  Icons.arrow_back_ios_new,
+                  onBack ?? () => _showCantGoBackDialog(context),
+                ),
               ],
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (showBackButton)
-                GestureDetector(
-                  onTap: onBack,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    margin: EdgeInsets.only(right: 16),
-                    child: Row(
-                      children: [
-                        Icon(Icons.arrow_back, color: Colors.white),
-                        Text(
-                          '前に戻る',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+          // Right side navigation
+          if (onNext != null)
+            SizedBox(
+              height: 56.0,
+              child: ElevatedButton(
+                onPressed: onNext,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28.0),
                   ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 ),
-              if (showNextButton)
-                GestureDetector(
-                  onTap: onNext,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      children: [
-                        Text(
-                          '次へ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(Icons.arrow_forward, color: Colors.white),
-                      ],
-                    ),
-                  ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('次へ', style: TextStyle(fontSize: 16)),
+                    SizedBox(width: 8),
+                    Icon(Icons.arrow_forward_ios, size: 16),
+                  ],
                 ),
-            ],
-          ),
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  Widget _buildIconButton(IconData icon, VoidCallback? onPressed) {
+    return IconButton(
+      icon: Icon(icon, color: AppTheme.primaryColor, size: 24.0),
+      onPressed: onPressed,
+      splashRadius: 24.0,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(height: 24, width: 1, color: Colors.grey.shade300);
   }
 }

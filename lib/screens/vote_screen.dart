@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
-import '../widgets/top_bar.dart';
+import '../platform/platform_utils.dart';
+import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
 import '../widgets/group_selection_area.dart';
-import '../widgets/bottom_bar.dart';
 import 'confirm_screen.dart';
+import '../widgets/custom_dialog.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -42,12 +43,29 @@ class _VoteScreenState extends State<VoteScreen> {
     final category = voteCategories[currentCategoryIndex];
     final bool canProceed = selectedGroupId != null || category.canSkip;
 
-    return Scaffold(
-      body: Column(
+    return MainLayout(
+      title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
+      helpUrl: category.helpUrl,
+      onHome: () => PlatformUtils.reloadApp(),
+      onBack:
+          currentCategoryIndex == 0
+              ? null
+              : () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VoteScreen(
+                          uuid: widget.uuid,
+                          categoryIndex: currentCategoryIndex - 1,
+                          selections: currentSelections,
+                        ),
+                  ),
+                );
+              },
+      onNext: canProceed ? () => _saveAndProceed() : null,
+      child: Column(
         children: [
-          TopBar(
-            title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
-          ),
           MessageArea(message: category.description, title: category.name),
           Expanded(
             child: GroupSelectionArea(
@@ -61,31 +79,6 @@ class _VoteScreenState extends State<VoteScreen> {
               },
             ),
           ),
-          BottomBar(
-            uuid: widget.uuid,
-            showNextButton: canProceed,
-            showBackButton: true,
-            onBack: () {
-              if (currentCategoryIndex == 0) {
-                Navigator.pop(context);
-              } else {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => VoteScreen(
-                          uuid: widget.uuid,
-                          categoryIndex: currentCategoryIndex - 1,
-                          selections: currentSelections,
-                        ),
-                  ),
-                );
-              }
-            },
-            onNext: () {
-              _saveAndProceed();
-            },
-          ),
         ],
       ),
     );
@@ -94,9 +87,11 @@ class _VoteScreenState extends State<VoteScreen> {
   void _saveAndProceed() {
     final category = voteCategories[currentCategoryIndex];
     if (selectedGroupId == null && !category.canSkip) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('エラー：投票先が選択されていません。')));
+      showCustomDialog(
+        context: context,
+        title: '選択エラー',
+        content: '投票先が選択されていません。',
+      );
       return;
     }
     if (selectedGroupId != null) {

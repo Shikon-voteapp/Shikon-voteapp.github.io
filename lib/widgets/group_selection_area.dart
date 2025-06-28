@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/group.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../models/vote_category.dart';
 import 'group_tile.dart';
 
 enum DisplayMode { grid, list }

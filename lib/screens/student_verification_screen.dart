@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import '../services/student_verification_service.dart';
 import '../models/student.dart';
-import '../widgets/top_bar.dart';
+import '../platform/platform_utils.dart';
+import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
-import '../widgets/bottom_bar.dart';
 import 'vote_screen.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
@@ -33,10 +33,11 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return MainLayout(
+      title: '生徒認証',
+      onHome: () => PlatformUtils.reloadApp(),
+      child: Column(
         children: [
-          TopBar(title: ''),
           MessageArea(message: '学年、クラス、出席番号を選択してください。', title: ''),
           Expanded(
             child: Padding(
@@ -83,7 +84,6 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
               ),
             ),
           ),
-          BottomBar(uuid: widget.uuid, showNextButton: false),
         ],
       ),
     );

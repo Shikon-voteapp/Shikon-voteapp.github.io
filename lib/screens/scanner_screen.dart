@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
 import '../config/data_range_service.dart';
-import '../widgets/top_bar.dart';
-import '../widgets/message_area.dart';
-import '../widgets/bottom_bar.dart';
+import '../platform/platform_utils.dart';
+import '../widgets/main_layout.dart';
 import 'vote_screen.dart';
 import 'out_of_period_screen.dart';
 import 'student_verification_screen.dart';
+import '../widgets/custom_dialog.dart';
 
 class ScannerScreen extends StatefulWidget {
   @override
@@ -23,6 +23,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
   CameraFacing _currentCamera = CameraFacing.front;
+
   @override
   void initState() {
     super.initState();
@@ -68,107 +69,148 @@ class _ScannerScreenState extends State<ScannerScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          TopBar(title: '投票券読み取り'),
-          MessageArea(
-            message:
-                _showManualInput
-                    ? '10桁の数字コードを入力してください\n投票券のQRコードを使用する場合は、右下のボタンを押してカメラを起動させてください。'
-                    : '投票券のQRコードをカメラにかざしてください \n 何も表示されない場合は、右下のボタンを押して手動で入力してください。',
-            title: "",
-          ),
-          Expanded(
-            child: _showManualInput ? _buildManualInputUI() : _buildScannerUI(),
-          ),
-          BottomBar(uuid: '', showNextButton: false),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _showManualInput = !_showManualInput;
-          });
-        },
-        child: Icon(_showManualInput ? Icons.qr_code_scanner : Icons.keyboard),
-        tooltip: _showManualInput ? 'スキャナーに切り替え' : '手動入力に戻る',
+    return _showManualInput ? _buildManualInputScaffold() : _buildScannerUI();
+  }
+
+  Widget _buildManualInputScaffold() {
+    return MainLayout(
+      title: '投票券情報入力',
+      onHome: () => PlatformUtils.reloadApp(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () => setState(() => _showManualInput = false),
+                child: const Text('スキャナー起動'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: const Text(
+                'パンフレットに同封されている投票券に記載された番号(10桁)を入力してください。',
+                style: TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+            ),
+            const SizedBox(height: 40),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: TextField(
+                controller: _manualCodeController,
+                decoration: InputDecoration(
+                  labelText: 'ID',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey.shade600),
+                ),
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                maxLength: 10,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                if (_manualCodeController.text.isNotEmpty) {
+                  if (_manualCodeController.text.length == 10) {
+                    _processBarcode(_manualCodeController.text);
+                  } else {
+                    showCustomDialog(
+                      context: context,
+                      title: '入力エラー',
+                      content: '10桁の数字を入力してください。',
+                    );
+                  }
+                } else {
+                  showCustomDialog(
+                    context: context,
+                    title: '入力エラー',
+                    content: 'コードを入力してください。',
+                  );
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'ログイン',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
+                ],
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                backgroundColor: const Color(0xFF592C7A), // Shikon color
+                elevation: 0,
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildScannerUI() {
-    return Stack(
-      children: [
-        MobileScanner(
-          controller: _cameraController,
-          onDetect: (capture) {
-            if (_isProcessingCode) return;
-
-            final List<Barcode> barcodes = capture.barcodes;
-            for (final barcode in barcodes) {
-              final String? code = barcode.rawValue;
-              if (code != null) {
-                _processBarcode(code);
-              }
-            }
-          },
-          overlay: Center(
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.green, width: 2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildManualInputUI() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: Stack(
+        alignment: Alignment.center,
         children: [
-          TextField(
-            controller: _manualCodeController,
-            decoration: InputDecoration(
-              labelText: 'バーコード番号',
-              hintText: '10桁の数字を入力',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.dialpad),
-            ),
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            maxLength: 10,
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (_manualCodeController.text.isNotEmpty) {
-                if (_manualCodeController.text.length == 10) {
-                  _processBarcode(_manualCodeController.text);
-                } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('10桁の数字を入力してください')));
+          MobileScanner(
+            controller: _cameraController,
+            onDetect: (capture) {
+              if (_isProcessingCode) return;
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                final String? code = barcode.rawValue;
+                if (code != null) {
+                  _processBarcode(code);
                 }
-              } else {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('コードを入力してください')));
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 12.0,
-                horizontal: 24.0,
-              ),
-              child: Text('ログイン', style: TextStyle(fontSize: 18)),
+          ),
+          Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.green, width: 2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Positioned(
+            top: 50,
+            left: 20,
+            child: FloatingActionButton(
+              onPressed: () => setState(() => _showManualInput = true),
+              child: const Icon(Icons.arrow_back),
+              backgroundColor: Colors.black54,
             ),
           ),
         ],
@@ -177,72 +219,26 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   void _showPermissionDeniedDialog() {
-    Navigator.of(
-      context,
-      rootNavigator: true,
-    ).popUntil((route) => route.isFirst);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.red),
-                SizedBox(width: 10),
-                Text('アクセス権限エラー'),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('投票データへのアクセス権限がありません。'),
-                SizedBox(height: 8),
-                Text('このコードを使用する権限がないか、データベースのアクセス設定に問題があります。'),
-                SizedBox(height: 16),
-                Text(
-                  '管理者にお問い合わせください。',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('キャンセル'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  setState(() {
-                    _isProcessingCode = false;
-                    if (!_showManualInput) {
-                      _resetCameraController();
-                    }
-                  });
-                },
-              ),
-              ElevatedButton(
-                child: Text('再試行'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  if (_showManualInput) {
-                    if (_manualCodeController.text.isNotEmpty) {
-                      _processBarcode(_manualCodeController.text);
-                    }
-                  } else {
-                    setState(() {
-                      _isProcessingCode = false;
-                      _resetCameraController();
-                    });
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
+    showCustomDialog(
+      context: context,
+      title: 'アクセス権限エラー',
+      content: 'このコードは無効か、すでに使われているかもしれません。\nお手数ですが、文準本部室までお越しください。',
+      primaryActionText: '再試行',
+      onPrimaryAction: () {
+        Navigator.of(context).pop();
+        if (_showManualInput) {
+          if (_manualCodeController.text.isNotEmpty) {
+            _processBarcode(_manualCodeController.text);
+          }
+        } else {
+          setState(() {
+            _isProcessingCode = false;
+            _resetCameraController();
+          });
+        }
+      },
+      closeButtonText: '閉じる',
+    );
   }
 
   bool _isWithinValidPeriod() {
@@ -250,102 +246,58 @@ class _ScannerScreenState extends State<ScannerScreen>
     return _dateRangeService.isWithinVotingPeriod(now);
   }
 
-  void _processBarcode(String code) async {
+  Future<void> _processBarcode(String code) async {
+    if (_isProcessingCode) return;
     setState(() {
       _isProcessingCode = true;
     });
 
-    if (!_showManualInput) {
-      _cameraController.stop();
-    }
-
-    if (!_isWithinValidPeriod()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) => OutOfPeriodScreen(
-                startDate: _dateRangeService.startDate,
-                endDate: _dateRangeService.endDate,
-              ),
-        ),
-      ).then((_) {
-        if (mounted) {
-          setState(() {
-            _isProcessingCode = false;
-            if (!_showManualInput) {
-              _resetCameraController();
-            }
-          });
-        }
-      });
-      return;
-    }
-
     try {
-      bool isValid = await _uuidService.validateUuid(code);
-      if (isValid) {
-        if (_uuidService.requiresStudentVerification(code)) {
-          Navigator.push(
+      if (!_isWithinValidPeriod()) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder:
+                (context) => OutOfPeriodScreen(
+                  startDate: _dateRangeService.startDate,
+                  endDate: _dateRangeService.endDate,
+                ),
+          ),
+        );
+        return;
+      }
+      final bool isValid = await _uuidService.validateUuid(code);
+      if (!isValid) {
+        _showPermissionDeniedDialog();
+        return;
+      }
+
+      final bool isStudent = await _uuidService.requiresStudentVerification(
+        code,
+      );
+      if (mounted) {
+        if (isStudent) {
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => StudentVerificationScreen(uuid: code),
             ),
-          ).then((_) {
-            if (mounted) {
-              setState(() {
-                _isProcessingCode = false;
-                if (!_showManualInput) {
-                  _resetCameraController();
-                }
-              });
-            }
-          });
+          );
         } else {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
             ),
-          ).then((_) {
-            if (mounted) {
-              setState(() {
-                _isProcessingCode = false;
-                if (!_showManualInput) {
-                  _resetCameraController();
-                }
-              });
-            }
-          });
+          );
         }
-      } else {
-        setState(() {
-          _isProcessingCode = false;
-          if (!_showManualInput) {
-            _resetCameraController();
-          }
-        });
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('このコードはすでに投票済みか、正しくない形式です')));
       }
     } catch (e) {
-      print('エラー発生: $e');
-
-      if (e.toString().toLowerCase().contains('permission denied')) {
-        _showPermissionDeniedDialog();
-      } else {
+      _showPermissionDeniedDialog();
+    } finally {
+      if (mounted) {
         setState(() {
           _isProcessingCode = false;
-          if (!_showManualInput) {
-            _resetCameraController();
-          }
         });
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('エラーが発生しました。もう一度お試しください。')));
       }
     }
   }

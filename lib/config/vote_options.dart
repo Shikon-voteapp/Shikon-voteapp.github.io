@@ -1,4 +1,5 @@
-import 'package:shikon_voteapp/models/group.dart';
+import 'package:shikon_voteapp/models/group.dart' hide VoteCategory;
+import 'package:shikon_voteapp/models/vote_category.dart';
 
 // config/vote_options.dart
 /*
@@ -513,6 +514,7 @@ final List<Group> allGroups = [
   ),
 ];
 
+// 投票のカテゴリを定義
 final List<VoteCategory> voteCategories = [
   VoteCategory(
     id: 'Shikon_award',
@@ -529,13 +531,7 @@ final List<VoteCategory> voteCategories = [
                   group.categories.contains(GroupCategory.Stage),
             )
             .toList(),
-    eligibleCategories: [
-      GroupCategory.Tenji,
-      GroupCategory.Moyoshi,
-      GroupCategory.Gakunen,
-      GroupCategory.Roten,
-      GroupCategory.Stage,
-    ],
+    helpUrl: 'assets/help/shikon_help.html',
   ),
   VoteCategory(
     id: 'Tenji',
@@ -545,7 +541,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Tenji))
             .toList(),
-    eligibleCategories: [GroupCategory.Tenji],
   ),
   VoteCategory(
     id: 'Gakunen',
@@ -555,7 +550,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Gakunen))
             .toList(),
-    eligibleCategories: [GroupCategory.Gakunen],
   ),
   VoteCategory(
     id: 'Moyoshi',
@@ -565,7 +559,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Moyoshi))
             .toList(),
-    eligibleCategories: [GroupCategory.Moyoshi],
   ),
   VoteCategory(
     id: 'Stage',
@@ -575,7 +568,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Stage))
             .toList(),
-    eligibleCategories: [GroupCategory.Stage],
   ),
   VoteCategory(
     id: 'Band',
@@ -585,7 +577,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Band))
             .toList(),
-    eligibleCategories: [GroupCategory.Band],
     canSkip: true,
   ),
   VoteCategory(
@@ -598,7 +589,6 @@ final List<VoteCategory> voteCategories = [
               (group) => group.categories.contains(GroupCategory.Performance),
             )
             .toList(),
-    eligibleCategories: [GroupCategory.Performance],
     canSkip: true,
   ),
   VoteCategory(
@@ -609,6 +599,6 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Roten))
             .toList(),
-    eligibleCategories: [GroupCategory.Roten],
+    canSkip: true,
   ),
 ];
