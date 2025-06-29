@@ -51,18 +51,21 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           id: 'unknown',
                           name: '不明なカテゴリー',
                           description: '',
+                          shortHelpText: '',
                           groups: [],
                         ),
                   );
-                  var group = category.groups.firstWhere(
+                  var group = allGroups.firstWhere(
                     (g) => g.id == groupId,
                     orElse:
                         () => Group(
                           id: 'unknown',
                           name: '不明な団体',
+                          groupName: '不明',
                           description: '',
-                          imagePath: '',
+                          imagePath: 'assets/Stage/No Select.jpg',
                           floor: 0,
+                          categories: [],
                         ),
                   );
                   return Card(
@@ -108,6 +111,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  group.groupName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[700],
                                   ),
                                 ),
                                 SizedBox(height: 4),

@@ -167,6 +167,8 @@ class CustomDialogWidget extends StatelessWidget {
   final VoidCallback? onPrimaryAction;
   final String? primaryActionText;
   final String closeButtonText;
+  final String? imagePath;
+  final List<Widget>? actions;
 
   const CustomDialogWidget({
     Key? key,
@@ -176,6 +178,8 @@ class CustomDialogWidget extends StatelessWidget {
     this.onPrimaryAction,
     this.primaryActionText,
     this.closeButtonText = '閉じる',
+    this.imagePath,
+    this.actions,
   }) : assert(content != null || contentWidget != null),
        super(key: key);
 
@@ -200,6 +204,23 @@ class CustomDialogWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (imagePath != null) ...[
+                      SizedBox(
+                        height: 150,
+                        width: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            imagePath!,
+                            fit: BoxFit.contain,
+                            errorBuilder:
+                                (context, error, stackTrace) =>
+                                    Container(color: Colors.grey.shade200),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     Text(
                       title,
                       style: const TextStyle(
@@ -221,55 +242,61 @@ class CustomDialogWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment:
-                    onPrimaryAction == null
-                        ? MainAxisAlignment.center
-                        : MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
-                    label: Text(closeButtonText),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 24,
-                      ),
-                    ),
-                  ),
-                  if (onPrimaryAction != null && primaryActionText != null)
-                    ElevatedButton(
-                      onPressed: () {
-                        onPrimaryAction!();
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(primaryActionText!),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward_ios, size: 16),
-                        ],
-                      ),
+              if (actions != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: actions!,
+                )
+              else
+                Row(
+                  mainAxisAlignment:
+                      onPrimaryAction == null
+                          ? MainAxisAlignment.center
+                          : MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                      label: Text(closeButtonText),
                       style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF333333),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         padding: const EdgeInsets.symmetric(
                           vertical: 16,
                           horizontal: 24,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        backgroundColor: const Color(0xFF592C7A),
-                        foregroundColor: Colors.white,
                       ),
                     ),
-                ],
-              ),
+                    if (onPrimaryAction != null && primaryActionText != null)
+                      ElevatedButton(
+                        onPressed: () {
+                          onPrimaryAction!();
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(primaryActionText!),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_forward_ios, size: 16),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6A2C8F),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 24,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
             ],
           ),
         ),

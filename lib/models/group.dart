@@ -12,18 +12,22 @@ enum GroupCategory {
 // models/group.dart (拡張)
 class Group {
   final String id;
-  final String name;
+  final String name; // 展示タイトル
+  final String groupName; // 団体名
   final String description;
   final String imagePath;
   final int floor;
+  final int? pamphletPage; // パンフレットページ
   final List<GroupCategory> categories; // 追加: カテゴリリスト
 
   Group({
     required this.id,
     required this.name,
+    required this.groupName,
     required this.description,
     required this.imagePath,
     required this.floor,
+    this.pamphletPage,
     this.categories = const [], // デフォルト値として空リストを設定
   });
 

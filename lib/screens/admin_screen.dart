@@ -6,7 +6,6 @@ import '../config/vote_options.dart';
 import '../models/group.dart';
 import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
-import '../screens/vote_options_editor_screen.dart';
 import 'dart:html' as html;
 import 'scanner_screen.dart';
 
@@ -236,9 +235,6 @@ class _AdminScreenState extends State<AdminScreen>
 
             // ユーザー管理タブ
             _buildUserManagementTab(),
-
-            // 投票オプション管理タブ
-            VoteOptionsEditorScreen(),
           ],
         ),
       ),
