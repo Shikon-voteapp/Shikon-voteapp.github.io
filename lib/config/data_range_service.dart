@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DateRangeService {
   // ここだけ編集する
   DateTime _startDate = DateTime(2025, 4, 1, 9, 0); // 開始時間(年,月,日,時,分)
-  DateTime _endDate = DateTime(2025, 9, 21, 15, 0); // 終了時間(年,月,日,時,分)
+  DateTime _endDate = DateTime(2025, 9, 22, 15, 0); // 終了時間(年,月,日,時,分)
 
   // ゲッター
   DateTime get startDate => _startDate;
@@ -49,6 +49,13 @@ class DateRangeService {
 
   // 現在時刻が有効期間内かチェック
   bool isWithinVotingPeriod(DateTime dateTime) {
+    // メンテナンス時間をチェック
+    bool isMaintenanceTime = dateTime.hour >= 1 && dateTime.hour < 2;
+
+    if (isMaintenanceTime) {
+      return false; // メンテナンス時間内は常に無効
+    }
+
     return dateTime.isAfter(_startDate) && dateTime.isBefore(_endDate);
   }
 
