@@ -6,10 +6,13 @@ import 'package:shikon_voteapp/theme.dart';
 Future<void> showCustomDialog({
   required BuildContext context,
   required String title,
-  required String content,
+  String? content,
+  Widget? contentWidget,
   VoidCallback? onPrimaryAction,
   String? primaryActionText,
   String closeButtonText = '閉じる',
+  String? imagePath,
+  List<Widget>? actions,
 }) {
   return showGeneralDialog(
     context: context,
@@ -21,9 +24,12 @@ Future<void> showCustomDialog({
       return CustomDialogWidget(
         title: title,
         content: content,
+        contentWidget: contentWidget,
         onPrimaryAction: onPrimaryAction,
         primaryActionText: primaryActionText,
         closeButtonText: closeButtonText,
+        imagePath: imagePath,
+        actions: actions,
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
