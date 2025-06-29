@@ -36,6 +36,25 @@ class _VoteScreenState extends State<VoteScreen> {
     if (currentSelections.containsKey(categoryId)) {
       selectedGroupId = currentSelections[categoryId];
     }
+    // 初回描画後にヘルプを自動表示
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _showInitialHelp(context),
+    );
+  }
+
+  void _showInitialHelp(BuildContext context) {
+    final category = voteCategories[currentCategoryIndex];
+    final helpContent =
+        category.shortHelpText != null && category.shortHelpText!.isNotEmpty
+            ? '${category.description}\n\n${category.shortHelpText}'
+            : category.description;
+
+    showCustomDialog(
+      context: context,
+      title: '${category.name} について',
+      content: helpContent,
+      closeButtonText: '閉じる',
+    );
   }
 
   @override
@@ -43,9 +62,16 @@ class _VoteScreenState extends State<VoteScreen> {
     final category = voteCategories[currentCategoryIndex];
     final bool canProceed = selectedGroupId != null || category.canSkip;
 
+    // 新しいヘルプ本文を作成
+    final helpContent =
+        category.shortHelpText != null && category.shortHelpText!.isNotEmpty
+            ? '${category.description}\n\n${category.shortHelpText}'
+            : category.description;
+
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
-      helpUrl: category.helpUrl,
+      helpTitle: '${category.name} について',
+      helpContent: helpContent,
       onHome: () => PlatformUtils.reloadApp(),
       onBack:
           currentCategoryIndex == 0

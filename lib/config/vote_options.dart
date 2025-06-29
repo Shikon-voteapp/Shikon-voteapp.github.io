@@ -520,6 +520,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Shikon_award',
     name: '紫紺賞',
     description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where(
@@ -537,6 +538,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Tenji',
     name: '教室展示賞',
     description: '教室展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Tenji))
@@ -546,6 +548,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Gakunen',
     name: '学年展示賞',
     description: '学年展示の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Gakunen))
@@ -555,6 +558,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Moyoshi',
     name: '教室催し物賞',
     description: '教室催し物の中で「最後にもう一回行くならこれだ！」と思えるクオリティが最も高かった団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Moyoshi))
@@ -564,6 +568,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Stage',
     name: '部活ステージ賞',
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージ団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Stage))
@@ -573,6 +578,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Band',
     name: 'バンド賞',
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がったバンド団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Band))
@@ -583,6 +589,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Performance',
     name: 'パフォーマンス賞',
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がったパフォーマンス団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where(
@@ -595,6 +602,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Roten',
     name: '露店賞',
     description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった団体を1つ選択してください。',
+    shortHelpText: '詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Roten))
@@ -602,3 +610,12 @@ final List<VoteCategory> voteCategories = [
     canSkip: true,
   ),
 ];
+
+// 生徒認証用の情報を追加
+final VoteCategory studentVerification = VoteCategory(
+  id: 'student_verification',
+  name: '投票券情報入力',
+  description: '投票券に記載されている番号を入力してください。',
+  groups: [],
+  helpUrl: 'assets/help/student_verification_help.html',
+);

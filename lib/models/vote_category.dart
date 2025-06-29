@@ -8,6 +8,7 @@ class VoteCategory {
   final List<Group> groups;
   final bool canSkip;
   final String? helpUrl;
+  final String? shortHelpText;
 
   VoteCategory({
     required this.id,
@@ -16,5 +17,6 @@ class VoteCategory {
     required this.groups,
     this.canSkip = false,
     this.helpUrl,
+    this.shortHelpText,
   });
 }

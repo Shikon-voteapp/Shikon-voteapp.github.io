@@ -11,6 +11,8 @@ class MainLayout extends StatelessWidget {
   final VoidCallback? onBack;
   final VoidCallback? onNext;
   final String? helpUrl;
+  final String? helpTitle;
+  final String? helpContent;
 
   const MainLayout({
     Key? key,
@@ -21,6 +23,8 @@ class MainLayout extends StatelessWidget {
     this.onBack,
     this.onNext,
     this.helpUrl,
+    this.helpTitle,
+    this.helpContent,
   }) : super(key: key);
 
   @override
@@ -32,7 +36,13 @@ class MainLayout extends StatelessWidget {
         children: [
           TopBar(title: title),
           Expanded(child: child),
-          BottomBar(onBack: onBack, onNext: onNext, helpUrl: helpUrl),
+          BottomBar(
+            onBack: onBack,
+            onNext: onNext,
+            helpUrl: helpUrl,
+            helpTitle: helpTitle,
+            helpContent: helpContent,
+          ),
         ],
       ),
     );

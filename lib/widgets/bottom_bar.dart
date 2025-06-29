@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
-import 'package:shikon_voteapp/screens/help_screen.dart';
 import '../theme.dart';
 import 'custom_dialog.dart';
 
@@ -8,15 +8,49 @@ class BottomBar extends StatelessWidget {
   final VoidCallback? onBack;
   final VoidCallback? onNext;
   final String? helpUrl;
+  final String? helpTitle;
+  final String? helpContent;
 
-  const BottomBar({Key? key, this.onBack, this.onNext, this.helpUrl})
-    : super(key: key);
+  const BottomBar({
+    Key? key,
+    this.onBack,
+    this.onNext,
+    this.helpUrl,
+    this.helpTitle,
+    this.helpContent,
+  }) : super(key: key);
 
-  void _showHelp(BuildContext context) {
-    if (helpUrl != null && helpUrl!.isNotEmpty) {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => HelpScreen(url: helpUrl!)),
+  void _showHelp(BuildContext context) async {
+    if (helpContent != null && helpTitle != null) {
+      showCustomDialog(
+        context: context,
+        title: helpTitle!,
+        content: helpContent!,
+        closeButtonText: 'OK',
       );
+    } else if (helpUrl != null && helpUrl!.isNotEmpty) {
+      try {
+        final content = await rootBundle.loadString(helpUrl!);
+        // 簡単なHTMLタグを除去する処理
+        final plainText =
+            content
+                .replaceAll(RegExp(r'<[^>]*>'), '\\n') // タグを改行に
+                .replaceAll('\\n\\n', '\\n')
+                .trim();
+        final lines = plainText.split('\\n');
+        final title = lines.isNotEmpty ? lines[0] : 'ヘルプ';
+        final body =
+            lines.length > 1 ? lines.sublist(1).join('\\n').trim() : '';
+
+        showCustomDialog(
+          context: context,
+          title: title,
+          content: body,
+          closeButtonText: 'OK',
+        );
+      } catch (e) {
+        _showErrorDialog(context);
+      }
     } else {
       _showErrorDialog(context);
     }
@@ -25,8 +59,8 @@ class BottomBar extends StatelessWidget {
   void _showCantGoBackDialog(BuildContext context) {
     showCustomDialog(
       context: context,
-      title: 'これ以上戻れません',
-      content: 'この画面が最初の画面です。',
+      title: 'その操作は行えません',
+      content: '',
       closeButtonText: 'OK',
     );
   }
@@ -34,7 +68,7 @@ class BottomBar extends StatelessWidget {
   void _showErrorDialog(BuildContext context) {
     showCustomDialog(
       context: context,
-      title: 'エラー',
+      title: '',
       content: 'ヘルプ情報を読み込めませんでした。',
       closeButtonText: 'OK',
     );

@@ -36,6 +36,9 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     return MainLayout(
       title: '生徒認証',
       onHome: () => PlatformUtils.reloadApp(),
+      helpTitle: '投票券情報入力',
+      helpContent:
+          'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
       child: Column(
         children: [
           MessageArea(message: '学年、クラス、出席番号を選択してください。', title: ''),

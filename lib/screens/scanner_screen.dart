@@ -75,6 +75,9 @@ class _ScannerScreenState extends State<ScannerScreen>
   Widget _buildManualInputScaffold() {
     return MainLayout(
       title: '投票券情報入力',
+      helpTitle: '投票券情報入力',
+      helpContent:
+          'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
       onHome: () => PlatformUtils.reloadApp(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
