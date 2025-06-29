@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shikon_voteapp/theme.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
@@ -26,7 +27,7 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.black54),
+          Icon(icon, color: AppTheme.primaryColor),
           const SizedBox(width: 8.0),
           Text(
             title,

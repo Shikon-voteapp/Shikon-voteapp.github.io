@@ -13,6 +13,7 @@ class MainLayout extends StatelessWidget {
   final String? helpUrl;
   final String? helpTitle;
   final String? helpContent;
+  final IconData? icon;
 
   const MainLayout({
     Key? key,
@@ -25,6 +26,7 @@ class MainLayout extends StatelessWidget {
     this.helpUrl,
     this.helpTitle,
     this.helpContent,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class MainLayout extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TopBar(title: title),
+          TopBar(title: title, icon: icon ?? Icons.person_outline),
           Expanded(child: child),
           BottomBar(
             onBack: onBack,

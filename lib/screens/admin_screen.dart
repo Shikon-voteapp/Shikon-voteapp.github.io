@@ -8,6 +8,7 @@ import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
 import '../screens/vote_options_editor_screen.dart';
 import 'dart:html' as html;
+import 'scanner_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -316,44 +317,49 @@ class _AdminScreenState extends State<AdminScreen>
 
   // ユーザー管理タブ
   Widget _buildUserManagementTab() {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '管理者ユーザー一覧',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text('管理者一覧', style: Theme.of(context).textTheme.headlineSmall),
+          SizedBox(height: 16),
+          ElevatedButton.icon(
+            icon: Icon(Icons.qr_code_scanner),
+            label: Text('QRコードスキャナーを起動'),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ScannerScreen(startWithScanner: true),
+                ),
+              );
+            },
           ),
           SizedBox(height: 16),
-
-          // ユーザー一覧
-          Expanded(
-            child:
-                _adminUsers.isEmpty
-                    ? Center(child: Text('管理者ユーザーがいません'))
-                    : ListView.builder(
-                      itemCount: _adminUsers.length,
-                      itemBuilder: (context, index) {
-                        final user = _adminUsers[index];
-                        return Card(
-                          margin: EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: CircleAvatar(child: Icon(Icons.person)),
-                            title: Text(user.email),
-                            subtitle: Text(
-                              '${user.name.isNotEmpty ? user.name + ' • ' : ''}追加日: ${_formatDate(user.createdAt)}',
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              onPressed:
-                                  () => _showDeleteUserConfirmation(user),
-                            ),
-                          ),
-                        );
-                      },
+          _adminUsers.isEmpty
+              ? Center(child: Text('管理者がいません'))
+              : ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _adminUsers.length,
+                itemBuilder: (context, index) {
+                  final user = _adminUsers[index];
+                  return Card(
+                    margin: EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: CircleAvatar(child: Icon(Icons.person)),
+                      title: Text(user.email),
+                      subtitle: Text(
+                        '${user.name.isNotEmpty ? user.name + ' • ' : ''}追加日: ${_formatDate(user.createdAt)}',
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _showDeleteUserConfirmation(user),
+                      ),
                     ),
-          ),
+                  );
+                },
+              ),
 
           // 新規ユーザー追加ボタン
           SizedBox(height: 16),

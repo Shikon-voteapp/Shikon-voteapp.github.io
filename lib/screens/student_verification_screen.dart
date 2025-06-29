@@ -4,8 +4,8 @@ import '../services/student_verification_service.dart';
 import '../models/student.dart';
 import '../platform/platform_utils.dart';
 import '../widgets/main_layout.dart';
-import '../widgets/message_area.dart';
 import 'vote_screen.dart';
+import '../widgets/custom_dialog.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
   final String uuid;
@@ -29,147 +29,194 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
   String? _selectedClass;
   int? _selectedNumber;
   bool _isVerifying = false;
-  String _errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
     return MainLayout(
       title: '生徒認証',
+      icon: Icons.badge_outlined,
       onHome: () => PlatformUtils.reloadApp(),
-      helpTitle: '投票券情報入力',
+      helpTitle: '生徒情報の入力について',
       helpContent:
-          'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
-      child: Column(
-        children: [
-          MessageArea(message: '学年、クラス、出席番号を選択してください。', title: ''),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildDropdown(
-                    '学年',
-                    _grades,
-                    _selectedGrade,
-                    (value) => setState(() => _selectedGrade = value),
-                  ),
-                  SizedBox(height: 16),
-                  _buildDropdown(
-                    'クラス',
-                    _classes,
-                    _selectedClass,
-                    (value) => setState(() => _selectedClass = value),
-                  ),
-                  SizedBox(height: 16),
-                  _buildNumberDropdown(),
-                  SizedBox(height: 24),
-                  if (_errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        _errorMessage,
-                        style: TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ElevatedButton(
-                    onPressed: _isVerifying ? null : _verifyStudent,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      child:
-                          _isVerifying
-                              ? CircularProgressIndicator(color: Colors.white)
-                              : Text('確認', style: TextStyle(fontSize: 18)),
-                    ),
-                  ),
-                ],
+          '投票券に記載されているご自身の学年、クラス、出席番号を正しく選択してください。この情報が間違っていると投票に進むことができません。',
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: const Text(
+                '投票券に記載された 学年・クラス・番号を選択してください。\nこの情報が正しくない場合、ログインできません。',
+                style: TextStyle(fontSize: 16, color: Colors.black87),
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
+            const SizedBox(height: 24),
+            _buildDropdownContainer(
+              '学年',
+              _buildDropdown(
+                _grades,
+                _selectedGrade,
+                (value) => setState(() => _selectedGrade = value),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildDropdownContainer(
+              'クラス',
+              _buildDropdown(
+                _classes,
+                _selectedClass,
+                (value) => setState(() => _selectedClass = value),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildDropdownContainer('番号', _buildNumberDropdown()),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _isVerifying ? null : _verifyStudent,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                backgroundColor: const Color(0xFF592C7A),
+                elevation: 0,
+              ),
+              child:
+                  _isVerifying
+                      ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
+                      : const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'ログイン',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDropdownContainer(String label, Widget dropdown) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      child: Column(
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          dropdown,
         ],
       ),
     );
   }
 
   Widget _buildDropdown(
-    String label,
     List<String> items,
     String? selectedValue,
     Function(String?) onChanged,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: selectedValue,
-                hint: Text('選択してください'),
-                onChanged: onChanged,
-                items:
-                    items.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                padding: EdgeInsets.symmetric(horizontal: 16),
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        isExpanded: true,
+        value: selectedValue,
+        hint: const Text(''),
+        onChanged: onChanged,
+        items:
+            items.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                alignment: Alignment.center,
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }).toList(),
+        icon: const Icon(Icons.arrow_drop_down),
+        selectedItemBuilder: (BuildContext context) {
+          return items.map<Widget>((String item) {
+            return Center(
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
+            );
+          }).toList();
+        },
+      ),
     );
   }
 
   Widget _buildNumberDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '出席番号',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton<int>(
-                isExpanded: true,
-                value: _selectedNumber,
-                hint: Text('選択してください'),
-                onChanged: (value) => setState(() => _selectedNumber = value),
-                items:
-                    _numbers.map((int value) {
-                      return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                padding: EdgeInsets.symmetric(horizontal: 16),
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<int>(
+        isExpanded: true,
+        value: _selectedNumber,
+        hint: const Text(''),
+        onChanged: (value) => setState(() => _selectedNumber = value),
+        items:
+            _numbers.map((int value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                alignment: Alignment.center,
+                child: Text(
+                  value.toString(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }).toList(),
+        icon: const Icon(Icons.arrow_drop_down),
+        selectedItemBuilder: (BuildContext context) {
+          return _numbers.map<Widget>((int item) {
+            return Center(
+              child: Text(
+                item.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-          ),
-        ),
-      ],
+            );
+          }).toList();
+        },
+      ),
     );
   }
 
@@ -177,15 +224,16 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     if (_selectedGrade == null ||
         _selectedClass == null ||
         _selectedNumber == null) {
-      setState(() {
-        _errorMessage = 'すべての項目を選択してください';
-      });
+      showCustomDialog(
+        context: context,
+        title: '入力エラー',
+        content: 'すべての項目を選択してください',
+      );
       return;
     }
 
     setState(() {
       _isVerifying = true;
-      _errorMessage = '';
     });
 
     try {
@@ -201,22 +249,36 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       );
 
       if (isValid) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => VoteScreen(uuid: widget.uuid, categoryIndex: 0),
-          ),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => VoteScreen(uuid: widget.uuid, categoryIndex: 0),
+            ),
+          );
+        }
       } else {
+        if (mounted) {
+          showCustomDialog(
+            context: context,
+            title: '認証エラー',
+            content: '認証情報が一致しません。正しい情報を入力してください。',
+          );
+        }
         setState(() {
-          _errorMessage = '認証情報が一致しません。正しい情報を入力してください。';
           _isVerifying = false;
         });
       }
     } catch (e) {
+      if (mounted) {
+        showCustomDialog(
+          context: context,
+          title: 'エラー',
+          content: 'エラーが発生しました: ${e.toString()}',
+        );
+      }
       setState(() {
-        _errorMessage = 'エラーが発生しました: ${e.toString()}';
         _isVerifying = false;
       });
     }

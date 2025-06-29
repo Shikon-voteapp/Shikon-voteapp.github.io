@@ -10,6 +10,10 @@ import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 
 class ScannerScreen extends StatefulWidget {
+  final bool startWithScanner;
+
+  const ScannerScreen({super.key, this.startWithScanner = false});
+
   @override
   _ScannerScreenState createState() => _ScannerScreenState();
 }
@@ -19,7 +23,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   final UuidService _uuidService = UuidService();
   final DateRangeService _dateRangeService = DateRangeService();
   final TextEditingController _manualCodeController = TextEditingController();
-  bool _showManualInput = true;
+  late bool _showManualInput;
   late MobileScannerController _cameraController;
   bool _isProcessingCode = false;
   CameraFacing _currentCamera = CameraFacing.front;
@@ -27,6 +31,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   @override
   void initState() {
     super.initState();
+    _showManualInput = !widget.startWithScanner;
     WidgetsBinding.instance.addObserver(this);
     _initCameraController();
   }
@@ -75,6 +80,7 @@ class _ScannerScreenState extends State<ScannerScreen>
   Widget _buildManualInputScaffold() {
     return MainLayout(
       title: '投票券情報入力',
+      icon: Icons.confirmation_number_outlined,
       helpTitle: '投票券情報入力',
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
@@ -84,20 +90,6 @@ class _ScannerScreenState extends State<ScannerScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () => setState(() => _showManualInput = false),
-                child: const Text('スキャナー起動'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(24.0),
