@@ -476,6 +476,7 @@ class _VoteScreenState extends State<VoteScreen> {
         initialIndex: initialIndex,
         length: 5,
         child: TabBar(
+          tabAlignment: TabAlignment.center,
           onTap: (index) {
             if (index == 0) {
               _filterByFloor(null);

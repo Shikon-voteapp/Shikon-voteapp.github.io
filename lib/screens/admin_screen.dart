@@ -10,6 +10,7 @@ import '../widgets/admin_chart.dart';
 import '../widgets/admin_pie_chart.dart';
 import 'scanner_screen.dart';
 import 'selection_screen.dart';
+import '../widgets/custom_dialog.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -200,37 +201,40 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   Widget _buildResultsTab() {
-    return Column(
+    return Stack(
       children: [
-        _buildCategoryTabs(),
-        Expanded(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 60.0),
           child:
               _votes == null || _votes!.isEmpty
                   ? Center(child: Text('投票データがありません'))
                   : _buildCategoryResults(),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton.icon(
-            icon: Icon(Icons.delete_sweep),
-            label: Text('全投票データをクリア'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: _showClearConfirmation,
-          ),
-        ),
+        Positioned(bottom: 0, left: 0, right: 0, child: _buildCategoryTabs()),
       ],
     );
   }
 
   Widget _buildCategoryTabs() {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      margin: const EdgeInsets.all(8.0),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: TabBar(
         controller: _categoryTabController,
         isScrollable: true,
+        tabAlignment: TabAlignment.center,
         labelColor: Theme.of(context).primaryColor,
         unselectedLabelColor: Colors.grey,
         indicatorSize: TabBarIndicatorSize.label,
@@ -245,7 +249,7 @@ class _AdminScreenState extends State<AdminScreen>
     final results = _getSortedResults(category.id);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -264,6 +268,20 @@ class _AdminScreenState extends State<AdminScreen>
           SizedBox(height: 300, child: AdminChart(results: results)),
           SizedBox(height: 24),
           SizedBox(height: 300, child: AdminPieChart(results: results)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.delete_sweep),
+                label: Text('全投票データをクリア'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _showClearConfirmation,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -335,51 +353,49 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   void _showClearConfirmation() {
-    showDialog(
+    showCustomDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('全投票データを削除'),
-            content: Text('すべての投票データを削除します。この操作は元に戻せません。よろしいですか？'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('キャンセル'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  await _database.remove();
-                  _loadAllData();
-                },
-                child: Text('削除する', style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          ),
+      title: '全投票データを削除',
+      content: 'すべての投票データを削除します。この操作は元に戻せません。よろしいですか？',
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('キャンセル'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await _database.remove();
+            _loadAllData();
+          },
+          child: Text('削除する'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+        ),
+      ],
     );
   }
 
   void _showDeleteUserConfirmation(UserData user) {
-    showDialog(
+    showCustomDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('管理者を削除'),
-            content: Text('${user.email} を管理者から削除しますか？\nこの操作は元に戻せません。'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('キャンセル'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  await _deleteAdminUser(user);
-                },
-                child: Text('削除する', style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          ),
+      title: '管理者を削除',
+      content: '${user.email} を管理者から削除しますか？\nこの操作は元に戻せません。',
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('キャンセル'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await _deleteAdminUser(user);
+          },
+          child: Text('削除する'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+        ),
+      ],
     );
   }
 
@@ -389,66 +405,74 @@ class _AdminScreenState extends State<AdminScreen>
     final TextEditingController nameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
-    showDialog(
+    showCustomDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('新規管理者を追加'),
-            content: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(labelText: 'メールアドレス'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator:
-                        (value) => value!.isEmpty ? 'メールアドレスを入力してください' : null,
-                  ),
-                  TextFormField(
-                    controller: passwordController,
-                    decoration: InputDecoration(labelText: 'パスワード (6文字以上)'),
-                    obscureText: true,
-                    validator:
-                        (value) => value!.length < 6 ? '6文字以上で入力してください' : null,
-                  ),
-                  TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(labelText: '名前 (任意)'),
-                  ),
-                ],
-              ),
+      title: '新規管理者を追加',
+      contentWidget: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: emailController,
+              decoration: InputDecoration(labelText: 'メールアドレス'),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) => value!.isEmpty ? 'メールアドレスを入力してください' : null,
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('キャンセル'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    try {
-                      await _createAdminUser(
-                        email: emailController.text.trim(),
-                        password: passwordController.text,
-                        name: nameController.text.trim(),
-                      );
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('管理者を追加しました')));
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('エラー: ${e.toString()}')),
-                      );
-                    }
-                  }
-                },
-                child: Text('追加'),
-              ),
-            ],
-          ),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: passwordController,
+              decoration: InputDecoration(labelText: 'パスワード (6文字以上)'),
+              obscureText: true,
+              validator: (value) => value!.length < 6 ? '6文字以上で入力してください' : null,
+            ),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: nameController,
+              decoration: InputDecoration(labelText: '名前 (任意)'),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('キャンセル'),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            if (formKey.currentState!.validate()) {
+              try {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder:
+                      (context) => Center(child: CircularProgressIndicator()),
+                );
+
+                await _createAdminUser(
+                  email: emailController.text.trim(),
+                  password: passwordController.text,
+                  name: nameController.text.trim(),
+                );
+
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('管理者を追加しました')));
+              } catch (e) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('エラー: ${e.toString()}')));
+              }
+            }
+          },
+          child: Text('追加'),
+        ),
+      ],
     );
   }
 
