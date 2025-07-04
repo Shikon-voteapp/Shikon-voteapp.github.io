@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shikon_voteapp/models/group.dart';
 import 'package:shikon_voteapp/config/vote_options.dart';
-import 'package:shikon_voteapp/platform/platform_utils.dart';
 import 'package:shikon_voteapp/widgets/main_layout.dart';
 import 'package:shikon_voteapp/screens/confirm_screen.dart';
 import 'package:shikon_voteapp/widgets/custom_dialog.dart';
@@ -10,6 +9,7 @@ import 'package:shikon_voteapp/services/database_service.dart';
 import 'package:shikon_voteapp/widgets/bottom_bar.dart';
 import 'package:shikon_voteapp/widgets/top_bar.dart';
 import 'package:shikon_voteapp/theme.dart';
+import 'package:shikon_voteapp/screens/scanner_screen.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -108,7 +108,12 @@ class _VoteScreenState extends State<VoteScreen> {
       icon: Icons.how_to_vote_outlined,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
-      onHome: () => PlatformUtils.reloadApp(),
+      onHome: () {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const ScannerScreen()),
+          (route) => route.isFirst,
+        );
+      },
       onBack: currentCategoryIndex > 0 ? () => _navigate(-1) : null,
       onNext: null,
       child: Column(
@@ -139,9 +144,18 @@ class _VoteScreenState extends State<VoteScreen> {
           _buildGroupDetailHeader(),
           _buildViewToggle(),
           Expanded(
-            child: _isGridView ? _buildGroupGridView() : _buildGroupListView(),
+            child: Stack(
+              children: [
+                _isGridView ? _buildGroupGridView() : _buildGroupListView(),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildFloorFilter(),
+                ),
+              ],
+            ),
           ),
-          _buildFloorFilter(),
           _buildVoteButton(),
         ],
       ),
@@ -250,7 +264,7 @@ class _VoteScreenState extends State<VoteScreen> {
 
   Widget _buildGroupGridView() {
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         crossAxisSpacing: 8,
@@ -332,7 +346,7 @@ class _VoteScreenState extends State<VoteScreen> {
 
   Widget _buildGroupListView() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
       itemCount: _filteredGroups.length,
       itemBuilder: (context, index) {
         final group = _filteredGroups[index];
@@ -444,8 +458,20 @@ class _VoteScreenState extends State<VoteScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      color: Colors.white,
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Theme.of(context).canvasColor,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: DefaultTabController(
         initialIndex: initialIndex,
         length: 5,
@@ -472,6 +498,24 @@ class _VoteScreenState extends State<VoteScreen> {
 
   Widget _buildVoteButton() {
     final category = voteCategories[currentCategoryIndex];
+    final bool isSelected = _selectedGroup != null;
+
+    VoidCallback? onPressed;
+    String buttonText;
+
+    if (isSelected) {
+      buttonText = '投票する';
+      onPressed = () => _showConfirmationDialog(_selectedGroup!);
+    } else {
+      if (category.canSkip) {
+        buttonText = 'スキップする';
+        onPressed = () => _navigate(1);
+      } else {
+        buttonText = '投票する';
+        onPressed = null;
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: ElevatedButton(
@@ -480,21 +524,12 @@ class _VoteScreenState extends State<VoteScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
-          backgroundColor: const Color(0xFF6A2C8F),
+          backgroundColor:
+              onPressed != null ? const Color(0xFF6A2C8F) : Colors.grey,
           foregroundColor: Colors.white,
         ),
-        onPressed: () {
-          if (_selectedGroup == null && !category.canSkip) {
-            showCustomDialog(
-              context: context,
-              title: '選択エラー',
-              content: '投票先を選択してください。',
-            );
-          } else {
-            _showConfirmationDialog(_selectedGroup!);
-          }
-        },
-        child: const Text('投票する', style: TextStyle(fontSize: 18)),
+        onPressed: onPressed,
+        child: Text(buttonText, style: const TextStyle(fontSize: 18)),
       ),
     );
   }

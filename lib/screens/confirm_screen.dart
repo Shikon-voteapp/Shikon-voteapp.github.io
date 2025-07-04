@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
-import '../platform/platform_utils.dart';
 import '../services/database_service.dart';
 import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
 import 'complete_screen.dart';
+import 'vote_screen.dart';
+import 'scanner_screen.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String uuid;
@@ -26,8 +27,25 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       title: '投票内容の確認',
-      onHome: () => PlatformUtils.reloadApp(),
-      onBack: () => Navigator.pop(context),
+      onHome: () {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const ScannerScreen()),
+          (route) => route.isFirst,
+        );
+      },
+      onBack: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => VoteScreen(
+                  uuid: widget.uuid,
+                  categoryIndex: 0,
+                  selections: widget.selections,
+                ),
+          ),
+        );
+      },
       child: Column(
         children: [
           MessageArea(

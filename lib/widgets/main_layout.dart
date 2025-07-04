@@ -41,6 +41,7 @@ class MainLayout extends StatelessWidget {
           BottomBar(
             onBack: onBack,
             onNext: onNext,
+            onHome: onHome,
             helpUrl: helpUrl,
             helpTitle: helpTitle,
             helpContent: helpContent,

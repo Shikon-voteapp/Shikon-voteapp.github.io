@@ -3,6 +3,7 @@ import 'dart:async';
 import '../config/data_range_service.dart';
 import 'out_of_period_screen.dart';
 import 'scanner_screen.dart';
+import 'selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   final DateRangeService dateRangeService;
@@ -34,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           //builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
-          builder: (context) => ScannerScreen(),
+          builder: (context) => const SelectionScreen(),
         ),
       );
     } else {

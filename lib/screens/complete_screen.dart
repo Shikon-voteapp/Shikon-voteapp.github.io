@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../widgets/main_layout.dart';
 import '../widgets/message_area.dart';
-import '../platform/platform_utils.dart';
+import 'selection_screen.dart';
 
 class CompleteScreen extends StatefulWidget {
   final String uuid;
@@ -33,7 +33,10 @@ class _CompleteScreenState extends State<CompleteScreen> {
   }
 
   void _resetApplication() {
-    PlatformUtils.reloadApp();
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const SelectionScreen()),
+      (route) => route.isFirst,
+    );
   }
 
   @override

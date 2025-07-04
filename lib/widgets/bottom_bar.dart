@@ -10,6 +10,7 @@ class BottomBar extends StatelessWidget {
   final String? helpUrl;
   final String? helpTitle;
   final String? helpContent;
+  final VoidCallback? onHome;
 
   const BottomBar({
     Key? key,
@@ -18,6 +19,7 @@ class BottomBar extends StatelessWidget {
     this.helpUrl,
     this.helpTitle,
     this.helpContent,
+    this.onHome,
   }) : super(key: key);
 
   void _showHelp(BuildContext context) async {
@@ -107,7 +109,7 @@ class BottomBar extends StatelessWidget {
               children: [
                 _buildIconButton(
                   Icons.home_outlined,
-                  () => _showReloadConfirmDialog(context),
+                  onHome ?? () => _showReloadConfirmDialog(context),
                 ),
                 _buildDivider(),
                 _buildIconButton(Icons.help_outline, () => _showHelp(context)),
