@@ -10,6 +10,9 @@ import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
 import 'widgets/camera_permission_wrapper.dart';
 import 'theme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:js/js_util.dart' as js_util;
+import 'dart:html' as html;
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_desktop.dart'
@@ -17,6 +20,13 @@ import 'platform/platform_utils_desktop.dart'
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (kIsWeb) {
+    if (js_util.hasProperty(html.window, "flutterReady")) {
+      js_util.callMethod(html.window, "flutterReady", []);
+    }
+  }
+
   final dateRangeService = DateRangeService();
   await dateRangeService.initialize();
 
@@ -29,17 +39,17 @@ void main() async {
     final studentMappingInitializer = StudentMappingInitializer();
     await studentMappingInitializer.initializeMappings();
 
-    runApp(VoteApp(dateRangeService: dateRangeService));
+    runApp(MyApp(dateRangeService: dateRangeService));
   } catch (e) {
     print('Firebase初期化エラー: $e');
     runApp(MaterialApp(home: ErrorScreen(error: e.toString())));
   }
 }
 
-class VoteApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   final DateRangeService dateRangeService;
 
-  const VoteApp({Key? key, required this.dateRangeService}) : super(key: key);
+  const MyApp({Key? key, required this.dateRangeService}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
