@@ -32,6 +32,10 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>紫紺祭投票アプリ</title>
+  
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
   <script src="https://unpkg.com/@zxing/library@0.19.1" type="application/javascript"></script>
 
   <style>
@@ -51,6 +55,8 @@
       z-index: 9999;
     }
     .loading-container .icon {
+      font-family: 'Material Icons';
+      font-style: normal;
       font-size: 150px;
       line-height: 1;
     }
@@ -63,18 +69,25 @@
       font-size: 16px;
       margin-top: 20px;
     }
-    .loading-spinner {
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top: 4px solid #FFFFFF;
-      width: 40px;
-      height: 40px;
+    .loading-spinner-svg {
       animation: spin 1s linear infinite;
       margin-top: 50px;
+      width: 50px;
+      height: 50px;
+    }
+    .loading-spinner-svg circle {
+      stroke: rgba(255, 255, 255, 0.3);
+      stroke-width: 4;
+      stroke-linecap: round;
+      fill: none;
+    }
+    .loading-spinner-svg .value {
+      stroke: white;
+      stroke-dasharray: 80;
+      stroke-dashoffset: 60;
     }
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
 
@@ -87,12 +100,15 @@
     }
   </script>
 </head>
-<body>
+<body style="background-color: #673AB7;">
   <div id="loading" class="loading-container">
-    <div class="icon">🗳️</div>
+    <i class="icon">how_to_vote</i>
     <h1>紫紺祭投票アプリ</h1>
-    <div class="loading-spinner"></div>
-    <p>読み込み中...</p>
+    <svg class="loading-spinner-svg" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="14"></circle>
+      <circle class="value" cx="16" cy="16" r="14"></circle>
+    </svg>
+    <p>起動初期化を待機中...</p>
   </div>
   <script src="flutter_bootstrap.js" async></script>
   <script type="module">

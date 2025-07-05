@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
 import 'out_of_period_screen.dart';
-import 'scanner_screen.dart';
 import 'selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,30 +15,44 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  String _loadingMessage = '起動準備中...';
+
   @override
   void initState() {
     super.initState();
-    // スプラッシュスクリーンを表示する時間
-    Timer(Duration(milliseconds: 2000), () {
-      _checkVotingPeriod();
-    });
+    _initialize();
   }
 
-  void _checkVotingPeriod() {
-    // 投票期間をチェック
+  Future<void> _initialize() async {
+    // 実際の初期化処理に合わせてメッセージを更新
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    setState(() {
+      _loadingMessage = '投票期間を確認しています...';
+    });
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (!mounted) return;
+
     final DateTime now = DateTime.now();
     final bool isInPeriod = widget.dateRangeService.isWithinVotingPeriod(now);
 
+    setState(() {
+      _loadingMessage = '画面の準備をしています...';
+    });
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+
+    setState(() {
+      _loadingMessage = 'まもなく起動します...';
+    });
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!mounted) return;
+
     if (isInPeriod) {
-      // 投票期間内の場合
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          //builder: (context) => CameraPermissionWrapper(child: ScannerScreen()),
-          builder: (context) => const SelectionScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const SelectionScreen()),
       );
     } else {
-      // 投票期間外の場合
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder:
@@ -78,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              '読み込み中...',
+              _loadingMessage,
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ],
