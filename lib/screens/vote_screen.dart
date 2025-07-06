@@ -15,16 +15,20 @@ class VoteScreen extends StatefulWidget {
   final String uuid;
   final int categoryIndex;
   final Map<String, String> selections;
+  final bool isGridView;
+  final bool restoreSelection;
 
   const VoteScreen({
     super.key,
     required this.uuid,
     required this.categoryIndex,
     this.selections = const {},
+    this.isGridView = true,
+    this.restoreSelection = true,
   });
 
   @override
-  _VoteScreenState createState() => _VoteScreenState();
+  State<VoteScreen> createState() => _VoteScreenState();
 }
 
 class _VoteScreenState extends State<VoteScreen> {
@@ -33,7 +37,7 @@ class _VoteScreenState extends State<VoteScreen> {
   Group? _selectedGroup;
   List<Group> _filteredGroups = [];
   int? _selectedFloor;
-  bool _isGridView = true;
+  late bool _isGridView;
 
   @override
   void initState() {
@@ -41,24 +45,32 @@ class _VoteScreenState extends State<VoteScreen> {
     currentSelections = Map.from(widget.selections);
     currentCategoryIndex = widget.categoryIndex;
     final category = voteCategories[currentCategoryIndex];
+    _isGridView = widget.isGridView;
 
     // 初期グループリストを設定
     _filteredGroups = category.groups;
 
-    // 前の画面から渡された選択状態を復元
-    String? selectedId = currentSelections[category.id];
-    if (selectedId != null) {
-      try {
-        _selectedGroup = category.groups.firstWhere((g) => g.id == selectedId);
-      } catch (e) {
-        _selectedGroup = null;
+    // 画面復元時に選択状態を復元するかどうか
+    if (widget.restoreSelection) {
+      String? selectedId = currentSelections[category.id];
+      if (selectedId != null) {
+        try {
+          _selectedGroup = category.groups.firstWhere(
+            (g) => g.id == selectedId,
+          );
+        } catch (e) {
+          // IDに対応するグループがない場合
+          _selectedGroup = null;
+        }
       }
     }
 
-    // 初回描画後にヘルプを自動表示
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _showInitialHelp(context),
-    );
+    // 初回表示時にヘルプを表示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _showInitialHelp(context);
+      }
+    });
   }
 
   void _showInitialHelp(BuildContext context) {
@@ -410,14 +422,13 @@ class _VoteScreenState extends State<VoteScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (group.groupName != null)
-                          Text(
-                            group.groupName!,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
+                        Text(
+                          group.groupName!,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
                           ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           group.description,
@@ -656,6 +667,7 @@ class _VoteScreenState extends State<VoteScreen> {
               (context) => ConfirmScreen(
                 uuid: widget.uuid,
                 selections: currentSelections,
+                isGridView: _isGridView,
               ),
         ),
       );
@@ -666,6 +678,8 @@ class _VoteScreenState extends State<VoteScreen> {
     if (direction == 0) return; // 画面遷移しない
 
     final nextIndex = currentCategoryIndex + direction;
+    final bool isNavigatingForward = direction > 0;
+
     if (nextIndex >= 0 && nextIndex < voteCategories.length) {
       Navigator.pushReplacement(
         context,
@@ -675,6 +689,8 @@ class _VoteScreenState extends State<VoteScreen> {
                 uuid: widget.uuid,
                 categoryIndex: nextIndex,
                 selections: currentSelections,
+                isGridView: _isGridView,
+                restoreSelection: isNavigatingForward,
               ),
         ),
       );
@@ -686,6 +702,7 @@ class _VoteScreenState extends State<VoteScreen> {
               (context) => ConfirmScreen(
                 uuid: widget.uuid,
                 selections: currentSelections,
+                isGridView: _isGridView,
               ),
         ),
       );
