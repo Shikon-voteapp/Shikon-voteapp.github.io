@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'dart:html' as html;
 import 'platform_utils.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class PlatformUtilsImpl {
   static Future<PermissionResult> requestCameraPermission() async {

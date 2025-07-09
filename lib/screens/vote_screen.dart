@@ -1,15 +1,11 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shikon_voteapp/models/group.dart';
 import 'package:shikon_voteapp/config/vote_options.dart';
-import 'package:shikon_voteapp/widgets/main_layout.dart';
-import 'package:shikon_voteapp/screens/confirm_screen.dart';
+import 'package:shikon_voteapp/models/group.dart';
+import 'package:shikon_voteapp/models/vote_category.dart';
 import 'package:shikon_voteapp/widgets/custom_dialog.dart';
-import 'package:shikon_voteapp/services/database_service.dart';
-import 'package:shikon_voteapp/widgets/bottom_bar.dart';
-import 'package:shikon_voteapp/widgets/top_bar.dart';
-import 'package:shikon_voteapp/theme.dart';
-import 'package:shikon_voteapp/screens/scanner_screen.dart';
+import 'package:shikon_voteapp/widgets/main_layout.dart';
+import 'confirm_screen.dart';
+import 'scanner_screen.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -109,7 +105,6 @@ class _VoteScreenState extends State<VoteScreen> {
   @override
   Widget build(BuildContext context) {
     final category = voteCategories[currentCategoryIndex];
-    final bool canProceed = _selectedGroup != null || category.canSkip;
     final helpContent =
         category.shortHelpText != null && category.shortHelpText!.isNotEmpty
             ? '${category.description}\n\n${category.shortHelpText}'
@@ -476,7 +471,7 @@ class _VoteScreenState extends State<VoteScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             spreadRadius: 2,
             blurRadius: 8,
             offset: const Offset(0, 4),

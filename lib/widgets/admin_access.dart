@@ -94,7 +94,7 @@ class AdminAccessButton extends StatelessWidget {
                                 });
 
                                 try {
-                                  UserCredential userCredential = await _auth
+                                  await FirebaseAuth.instance
                                       .signInWithEmailAndPassword(
                                         email: emailController.text.trim(),
                                         password: passwordController.text,

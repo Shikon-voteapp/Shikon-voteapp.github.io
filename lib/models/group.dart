@@ -9,7 +9,6 @@ enum GroupCategory {
   other, // その他
 }
 
-// models/group.dart (拡張)
 class Group {
   final String id;
   final String name; // 展示タイトル
@@ -32,6 +31,7 @@ class Group {
   });
 
   get options => null;
+
   bool hasCategory(GroupCategory category) {
     if (categories.isNotEmpty) {
       return categories.contains(category);

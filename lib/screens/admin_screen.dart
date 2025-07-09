@@ -9,7 +9,7 @@ import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
 import '../widgets/admin_pie_chart.dart';
 import 'scanner_screen.dart';
-import 'selection_screen.dart';
+// import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -157,10 +157,9 @@ class _AdminScreenState extends State<AdminScreen>
       title: '管理画面',
       icon: Icons.admin_panel_settings,
       onHome:
-          () => Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const SelectionScreen()),
-            (route) => route.isFirst,
-          ),
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/selection', (route) => false),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -178,12 +177,9 @@ class _AdminScreenState extends State<AdminScreen>
               onPressed: () async {
                 await _auth.signOut();
                 if (mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const SelectionScreen(),
-                    ),
-                    (route) => route.isFirst,
-                  );
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/selection', (route) => false);
                 }
               },
             ),
@@ -224,10 +220,10 @@ class _AdminScreenState extends State<AdminScreen>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black.withValues(alpha: 0.15),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
 import 'out_of_period_screen.dart';
-import 'selection_screen.dart';
+import 'scanner_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   final DateRangeService dateRangeService;
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (isInPeriod) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const SelectionScreen()),
+        MaterialPageRoute(builder: (context) => const ScannerScreen()),
       );
     } else {
       Navigator.of(context).pushReplacement(

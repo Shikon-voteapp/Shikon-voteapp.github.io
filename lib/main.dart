@@ -54,16 +54,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey, // Add navigator key for app state management
       title: '紫紺祭投票アプリ',
-      debugShowCheckedModeBanner: false,
       theme: AppTheme.themeData,
-      initialRoute: '/',
+      navigatorKey: navigatorKey,
+      home: SplashScreen(dateRangeService: dateRangeService),
       routes: {
-        '/': (context) => SplashScreen(dateRangeService: dateRangeService),
-        '/scanner':
-            (context) => CameraPermissionWrapper(child: ScannerScreen()),
         '/admin': (context) => AdminScreen(),
+        '/scanner':
+            (context) =>
+                kIsWeb
+                    ? ScannerScreen()
+                    : CameraPermissionWrapper(child: ScannerScreen()),
       },
     );
   }

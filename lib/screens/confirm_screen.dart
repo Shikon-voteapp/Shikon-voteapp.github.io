@@ -4,12 +4,10 @@ import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import '../services/database_service.dart';
 import '../widgets/main_layout.dart';
-import '../widgets/message_area.dart';
 import 'vote_screen.dart';
+import '../widgets/custom_dialog.dart';
+import '../screens/selection_screen.dart';
 import 'scanner_screen.dart';
-import 'package:shikon_voteapp/config/vote_options.dart';
-import 'package:shikon_voteapp/widgets/custom_dialog.dart';
-import 'package:shikon_voteapp/screens/selection_screen.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String uuid;
@@ -365,7 +363,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
   void _resetToTop() {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const SelectionScreen()),
+      MaterialPageRoute(builder: (context) => const ScannerScreen()),
       (route) => false,
     );
   }

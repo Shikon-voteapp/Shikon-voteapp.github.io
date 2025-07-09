@@ -646,6 +646,69 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Performance],
     pamphletPage: 99,
   ),
+  Group(
+    id: 'S01',
+    name: '吹奏楽班',
+    groupName: '吹奏楽班',
+    description: '吹奏楽班による演奏です。',
+    imagePath: 'assets/Stage/Stage01.jpg',
+    floor: 1, // 体育館ステージの場所によって調整
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'S02',
+    name: 'ダンス部',
+    groupName: 'ダンス部',
+    description: 'ダンス部によるパフォーマンスです。',
+    imagePath: 'assets/Stage/Stage02.jpg',
+    floor: 1, // 体育館ステージの場所によって調整
+    categories: [GroupCategory.Performance],
+  ),
+  Group(
+    id: 'S03',
+    name: 'マンドリン部',
+    groupName: 'マンドリン部',
+    description: 'マンドリン部による演奏です。',
+    imagePath: 'assets/Stage/Stage03.jpg',
+    floor: 1, // 体育館ステージの場所によって調整
+    categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: 'S04',
+    name: '書道部',
+    groupName: '書道部',
+    description: '書道部による書道パフォーマンスです。',
+    imagePath: 'assets/Stage/Performance01.jpg',
+    floor: 1, // 第1体育館
+    categories: [GroupCategory.Performance],
+  ),
+  Group(
+    id: 'S05',
+    name: '応援指導班',
+    groupName: '応援指導班',
+    description: '応援指導班による演舞です。',
+    imagePath: 'assets/Stage/Performance02.jpg',
+    floor: 1, // 第1体育館
+    categories: [GroupCategory.Performance],
+  ),
+  Group(
+    id: 'R01',
+    name: 'PTA',
+    groupName: 'PTA',
+    description: 'PTAによる出店です。',
+    imagePath: 'assets/Stage/Roten_a.jpg',
+    floor: 1, // 露店エリア
+    categories: [GroupCategory.Roten],
+  ),
+  Group(
+    id: 'R02',
+    name: '高Ⅲ',
+    groupName: '高Ⅲ',
+    description: '高校3年生による出店です。',
+    imagePath: 'assets/Stage/Roten_b.jpg',
+    floor: 1, // 露店エリア
+    categories: [GroupCategory.Roten],
+  ),
 ];
 
 // 投票のカテゴリを定義

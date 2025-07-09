@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/main_layout.dart';
-import 'digital_pamphlet_screen.dart';
 import 'scanner_screen.dart';
 
 class SelectionScreen extends StatelessWidget {
@@ -11,8 +10,8 @@ class SelectionScreen extends StatelessWidget {
     return MainLayout(
       title: 'ようこそ',
       icon: Icons.touch_app_outlined,
-      helpTitle: 'モード選択',
-      helpContent: '「投票モード」か「デジタルパンフモード」のどちらかを選んでください。',
+      helpTitle: '投票について',
+      helpContent: '「投票を開始する」ボタンを押して、投票を開始してください。パンフレットに同封された投票券をご準備ください。',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
         child: Column(
@@ -21,7 +20,7 @@ class SelectionScreen extends StatelessWidget {
           children: <Widget>[
             _buildModeButton(
               context: context,
-              title: '投票モード',
+              title: '投票を開始する',
               subtitle: '投票を行います。パンフレットに同封された投票券をご準備ください。',
               icon: Icons.how_to_vote,
               onPressed: () {
@@ -29,21 +28,6 @@ class SelectionScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ScannerScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 30),
-            _buildModeButton(
-              context: context,
-              title: 'デジタルパンフモード',
-              subtitle: 'スマートフォン上で簡易パンフレットを閲覧します。',
-              icon: Icons.auto_stories,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DigitalPamphletScreen(),
                   ),
                 );
               },
@@ -61,35 +45,49 @@ class SelectionScreen extends StatelessWidget {
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      onPressed: onPressed,
-      child: Row(
-        children: [
-          Icon(icon, size: 40),
-          const SizedBox(width: 16),
-          Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Icon(icon, size: 64, color: const Color(0xFF6A2C8F)),
+                const SizedBox(height: 16),
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Color(0xFF6A2C8F),
                   ),
+                  textAlign: TextAlign.center,
                 ),
-                Text(subtitle),
+                const SizedBox(height: 8),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 16, color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_ios),
-        ],
+        ),
       ),
     );
   }
