@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:shikon_voteapp/config/vote_options.dart';
-import 'package:shikon_voteapp/models/group.dart';
-import 'package:shikon_voteapp/models/vote_category.dart';
-import 'package:shikon_voteapp/widgets/custom_dialog.dart';
-import 'package:shikon_voteapp/widgets/main_layout.dart';
+import '../models/vote_category.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../config/vote_options.dart';
+import '../widgets/main_layout.dart';
+import '../platform/platform_utils.dart';
 import 'confirm_screen.dart';
-import 'scanner_screen.dart';
+import '../widgets/custom_dialog.dart';
+import '../widgets/group_tile.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -115,12 +116,7 @@ class _VoteScreenState extends State<VoteScreen> {
       icon: Icons.how_to_vote_outlined,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
-      onHome: () {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const ScannerScreen()),
-          (route) => route.isFirst,
-        );
-      },
+      onHome: () => PlatformUtils.reloadApp(),
       onBack: currentCategoryIndex > 0 ? () => _navigate(-1) : null,
       onNext: null,
       child: Column(

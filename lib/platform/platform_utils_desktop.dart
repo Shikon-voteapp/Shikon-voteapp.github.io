@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'platform_utils.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 // Navigator key that needs to be added to main.dart
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -36,6 +38,26 @@ class PlatformUtilsImpl {
       if (context != null) {
         Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
       }
+    }
+  }
+
+  static void downloadFile(String content, String filename) async {
+    try {
+      // Get downloads directory
+      final directory = await getDownloadsDirectory();
+      if (directory != null) {
+        final file = File('${directory.path}/$filename');
+        await file.writeAsString(content);
+        print('ファイルが保存されました: ${file.path}');
+      } else {
+        // Fallback to documents directory
+        final documentsDirectory = await getApplicationDocumentsDirectory();
+        final file = File('${documentsDirectory.path}/$filename');
+        await file.writeAsString(content);
+        print('ファイルが保存されました: ${file.path}');
+      }
+    } catch (e) {
+      print('ファイル保存エラー: $e');
     }
   }
 }

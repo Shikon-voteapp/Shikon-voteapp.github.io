@@ -6,6 +6,75 @@ import 'package:shikon_voteapp/models/vote_category.dart';
 =======投票先一覧を設定する設定ファイル=======
 */
 
+// 投票期間設定クラス
+class VotingPeriodConfig {
+  final DateTime startDate;
+  final DateTime endDate;
+  final bool maintenanceEnabled;
+  final int maintenanceStartHour;
+  final int maintenanceEndHour;
+
+  const VotingPeriodConfig({
+    required this.startDate,
+    required this.endDate,
+    this.maintenanceEnabled = true,
+    this.maintenanceStartHour = 1,
+    this.maintenanceEndHour = 2,
+  });
+
+  // 現在時刻が有効期間内かチェック
+  bool isWithinVotingPeriod(DateTime dateTime) {
+    // メンテナンス時間をチェック
+    if (maintenanceEnabled) {
+      bool isMaintenanceTime =
+          dateTime.hour >= maintenanceStartHour &&
+          dateTime.hour < maintenanceEndHour;
+      if (isMaintenanceTime) {
+        return false; // メンテナンス時間内は常に無効
+      }
+    }
+
+    return dateTime.isAfter(startDate) && dateTime.isBefore(endDate);
+  }
+
+  // 現在の設定を文字列で取得（表示用）
+  String getFormattedDateRange() {
+    return '${_formatDateTime(startDate)} から ${_formatDateTime(endDate)} まで';
+  }
+
+  // 日時のフォーマット
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.year}年${dateTime.month}月${dateTime.day}日 ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  // JSONシリアライゼーション
+  Map<String, dynamic> toJson() {
+    return {
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'maintenanceEnabled': maintenanceEnabled,
+      'maintenanceStartHour': maintenanceStartHour,
+      'maintenanceEndHour': maintenanceEndHour,
+    };
+  }
+
+  factory VotingPeriodConfig.fromJson(Map<String, dynamic> json) {
+    return VotingPeriodConfig(
+      startDate: DateTime.parse(json['startDate']),
+      endDate: DateTime.parse(json['endDate']),
+      maintenanceEnabled: json['maintenanceEnabled'] ?? true,
+      maintenanceStartHour: json['maintenanceStartHour'] ?? 1,
+      maintenanceEndHour: json['maintenanceEndHour'] ?? 2,
+    );
+  }
+}
+
+// デフォルトの投票期間設定
+final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
+  startDate: DateTime(2025, 4, 1, 9, 0), // 2025年4月1日 9:00
+  endDate: DateTime(2025, 9, 22, 15, 0), // 2025年9月22日 15:00
+);
+
 // カテゴリの日本語名
 const Map<GroupCategory, String> groupCategoryNames = {
   GroupCategory.Tenji: '教室展示',

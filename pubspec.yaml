@@ -37,6 +37,7 @@ dependencies:
   google_fonts: ^6.1.0
   webview_flutter: ^4.7.0
   webview_flutter_web: ^0.2.2
+  file_picker: ^8.0.0
 
 flutter:
   uses-material-design: true

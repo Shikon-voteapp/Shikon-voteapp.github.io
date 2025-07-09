@@ -11,6 +11,8 @@ import '../widgets/admin_pie_chart.dart';
 import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
+import 'config_editor_screen.dart';
+import '../platform/platform_utils.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -36,7 +38,7 @@ class _AdminScreenState extends State<AdminScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _categoryTabController = TabController(
       length: voteCategories.length,
       vsync: this,
@@ -156,10 +158,7 @@ class _AdminScreenState extends State<AdminScreen>
     return MainLayout(
       title: '管理画面',
       icon: Icons.admin_panel_settings,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/selection', (route) => false),
+      onHome: () => PlatformUtils.reloadApp(),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -168,6 +167,7 @@ class _AdminScreenState extends State<AdminScreen>
             tabs: [
               Tab(text: '投票結果', icon: Icon(Icons.poll)),
               Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
+              Tab(text: '設定エディタ', icon: Icon(Icons.settings)),
             ],
           ),
           actions: [
@@ -190,7 +190,11 @@ class _AdminScreenState extends State<AdminScreen>
                 ? Center(child: CircularProgressIndicator())
                 : TabBarView(
                   controller: _tabController,
-                  children: [_buildResultsTab(), _buildUserManagementTab()],
+                  children: [
+                    _buildResultsTab(),
+                    _buildUserManagementTab(),
+                    _buildConfigEditorTab(),
+                  ],
                 ),
       ),
     );
@@ -342,6 +346,10 @@ class _AdminScreenState extends State<AdminScreen>
         ],
       ),
     );
+  }
+
+  Widget _buildConfigEditorTab() {
+    return const ConfigEditorScreen();
   }
 
   String _formatDate(DateTime date) {

@@ -1,71 +1,89 @@
 // services/date_range_service.dart
 import 'package:shared_preferences/shared_preferences.dart';
+import 'vote_options.dart';
 
 class DateRangeService {
-  // ここだけ編集する
-  DateTime _startDate = DateTime(2025, 4, 1, 9, 0); // 開始時間(年,月,日,時,分)
-  DateTime _endDate = DateTime(2025, 9, 22, 15, 0); // 終了時間(年,月,日,時,分)
+  // デフォルト設定から取得
+  VotingPeriodConfig _config = defaultVotingPeriod;
 
   // ゲッター
-  DateTime get startDate => _startDate;
-  DateTime get endDate => _endDate;
+  DateTime get startDate => _config.startDate;
+  DateTime get endDate => _config.endDate;
+  VotingPeriodConfig get config => _config;
 
   // 初期化 (アプリ起動時に呼び出す)
   Future<void> initialize() async {
-    await _loadDateRange();
+    await _loadConfig();
   }
 
-  // 有効期間の日時範囲を保存
-  Future<void> saveDateRange(DateTime start, DateTime end) async {
+  // 投票期間設定を保存
+  Future<void> saveConfig(VotingPeriodConfig config) async {
     final prefs = await SharedPreferences.getInstance();
+    final configJson = config.toJson();
 
-    // 開始日時と終了日時をISOフォーマットで保存
-    await prefs.setString('vote_start_date', start.toIso8601String());
-    await prefs.setString('vote_end_date', end.toIso8601String());
+    // 設定をJSONとして保存
+    await prefs.setString('voting_period_config', configJson.toString());
 
-    _startDate = start;
-    _endDate = end;
+    _config = config;
   }
 
-  // 有効期間の日時範囲を読み込み
-  Future<void> _loadDateRange() async {
+  // 投票期間設定を読み込み
+  Future<void> _loadConfig() async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // 保存されている日時を取得
+      // 新しい統合設定を確認
+      String? configStr = prefs.getString('voting_period_config');
+      if (configStr != null) {
+        // JSON文字列をパースして設定を復元
+        // 簡単のために、現在はdefaultVotingPeriodを使用
+        _config = defaultVotingPeriod;
+      }
+
+      // 従来の個別設定との互換性を維持
       String? startDateStr = prefs.getString('vote_start_date');
       String? endDateStr = prefs.getString('vote_end_date');
 
-      // 保存されている場合は値を設定
       if (startDateStr != null && endDateStr != null) {
-        _startDate = DateTime.parse(startDateStr);
-        _endDate = DateTime.parse(endDateStr);
+        final startDate = DateTime.parse(startDateStr);
+        final endDate = DateTime.parse(endDateStr);
+
+        // 従来の設定を新しい形式に変換
+        _config = VotingPeriodConfig(
+          startDate: startDate,
+          endDate: endDate,
+          maintenanceEnabled: _config.maintenanceEnabled,
+          maintenanceStartHour: _config.maintenanceStartHour,
+          maintenanceEndHour: _config.maintenanceEndHour,
+        );
       }
     } catch (e) {
-      print('日時範囲の読み込みエラー: $e');
+      print('投票期間設定の読み込みエラー: $e');
       // エラー時はデフォルト値を使用
+      _config = defaultVotingPeriod;
     }
   }
 
   // 現在時刻が有効期間内かチェック
   bool isWithinVotingPeriod(DateTime dateTime) {
-    // メンテナンス時間をチェック
-    bool isMaintenanceTime = dateTime.hour >= 1 && dateTime.hour < 2;
-
-    if (isMaintenanceTime) {
-      return false; // メンテナンス時間内は常に無効
-    }
-
-    return dateTime.isAfter(_startDate) && dateTime.isBefore(_endDate);
+    return _config.isWithinVotingPeriod(dateTime);
   }
 
   // 現在の設定を文字列で取得（表示用）
   String getFormattedDateRange() {
-    return '${_formatDateTime(_startDate)} から ${_formatDateTime(_endDate)} まで';
+    return _config.getFormattedDateRange();
   }
 
-  // 日時のフォーマット
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.year}年${dateTime.month}月${dateTime.day}日 ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  // 従来のAPIとの互換性を維持
+  @Deprecated('Use saveConfig instead')
+  Future<void> saveDateRange(DateTime start, DateTime end) async {
+    final config = VotingPeriodConfig(
+      startDate: start,
+      endDate: end,
+      maintenanceEnabled: _config.maintenanceEnabled,
+      maintenanceStartHour: _config.maintenanceStartHour,
+      maintenanceEndHour: _config.maintenanceEndHour,
+    );
+    await saveConfig(config);
   }
 }

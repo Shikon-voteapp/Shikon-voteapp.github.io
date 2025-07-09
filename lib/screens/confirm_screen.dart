@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../config/vote_options.dart';
-import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../config/vote_options.dart';
 import '../services/database_service.dart';
 import '../widgets/main_layout.dart';
+import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
-import '../screens/selection_screen.dart';
-import 'scanner_screen.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String uuid;
@@ -38,7 +37,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       helpTitle: '投票内容の確認について',
       helpContent:
           '表示されている内容で投票が確定されます。内容を修正したい場合は、左下の「戻る」矢印から投票画面に戻ることができます。投票を完了すると、内容の変更は一切できなくなりますのでご注意ください。',
-      onHome: _resetToTop,
+      onHome: () => PlatformUtils.reloadApp(),
       onBack:
           _isLoading
               ? null
@@ -362,9 +361,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _resetToTop() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const ScannerScreen()),
-      (route) => false,
-    );
+    PlatformUtils.reloadApp();
   }
 }

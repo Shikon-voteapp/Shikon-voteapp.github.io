@@ -51,6 +51,45 @@ class Group {
       return false;
     }
   }
+
+  // JSONシリアライゼーション
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'groupName': groupName,
+      'description': description,
+      'imagePath': imagePath,
+      'floor': floor,
+      'pamphletPage': pamphletPage,
+      'categories':
+          categories.map((c) => c.toString().split('.').last).toList(),
+    };
+  }
+
+  factory Group.fromJson(Map<String, dynamic> json) {
+    List<GroupCategory> categories = [];
+    if (json['categories'] != null) {
+      categories =
+          (json['categories'] as List).map((c) {
+            return GroupCategory.values.firstWhere(
+              (e) => e.toString().split('.').last == c,
+              orElse: () => GroupCategory.other,
+            );
+          }).toList();
+    }
+
+    return Group(
+      id: json['id'],
+      name: json['name'],
+      groupName: json['groupName'],
+      description: json['description'],
+      imagePath: json['imagePath'],
+      floor: json['floor'],
+      pamphletPage: json['pamphletPage'],
+      categories: categories,
+    );
+  }
 }
 
 class VoteCategory {
@@ -60,6 +99,7 @@ class VoteCategory {
   final List<Group> groups;
   final List<GroupCategory>? _eligibleCategories; // 内部用: 対象カテゴリのリスト
   final bool canSkip; // スキップ可能かどうかのフラグを追加
+  final String? shortHelpText; // 短いヘルプテキスト
 
   VoteCategory({
     required this.id,
@@ -68,6 +108,7 @@ class VoteCategory {
     required this.groups,
     List<GroupCategory>? eligibleCategories,
     this.canSkip = false, // デフォルトは false (スキップ不可)
+    this.shortHelpText,
   }) : _eligibleCategories = eligibleCategories;
 
   // eligibleCategoriesのゲッターを追加
@@ -93,6 +134,67 @@ class VoteCategory {
       }
       return false;
     }).toList();
+  }
+
+  // JSONシリアライゼーション
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'groups': groups.map((g) => g.id).toList(), // 団体はIDのみ保存
+      'eligibleCategories':
+          _eligibleCategories
+              ?.map((c) => c.toString().split('.').last)
+              .toList(),
+      'canSkip': canSkip,
+      'shortHelpText': shortHelpText,
+    };
+  }
+
+  factory VoteCategory.fromJson(
+    Map<String, dynamic> json,
+    List<Group> allGroups,
+  ) {
+    List<Group> groups = [];
+    if (json['groups'] != null) {
+      groups =
+          (json['groups'] as List).map((id) {
+            return allGroups.firstWhere(
+              (g) => g.id == id,
+              orElse:
+                  () => Group(
+                    id: id,
+                    name: 'Unknown Group',
+                    groupName: '',
+                    description: '',
+                    imagePath: '',
+                    floor: 1,
+                  ),
+            );
+          }).toList();
+    }
+
+    List<GroupCategory>? eligibleCategories;
+    if (json['eligibleCategories'] != null) {
+      eligibleCategories =
+          (json['eligibleCategories'] as List).map((c) {
+            return GroupCategory.values.firstWhere(
+              (e) => e.toString().split('.').last == c,
+              orElse: () => GroupCategory.other,
+            );
+          }).toList();
+    }
+
+    return VoteCategory(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      groups: groups,
+      eligibleCategories: eligibleCategories,
+      canSkip: json['canSkip'] ?? false,
+      shortHelpText: json['shortHelpText'],
+    );
   }
 }
 

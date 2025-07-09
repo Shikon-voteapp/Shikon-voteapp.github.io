@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
 import '../config/data_range_service.dart';
 import '../widgets/main_layout.dart';
+import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import 'out_of_period_screen.dart';
 import 'student_verification_screen.dart';
@@ -83,7 +84,7 @@ class _ScannerScreenState extends State<ScannerScreen>
       helpTitle: '投票券情報入力',
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
-      onHome: () => Navigator.of(context).pop(),
+      onHome: () => PlatformUtils.reloadApp(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
         child: Column(
@@ -202,8 +203,8 @@ class _ScannerScreenState extends State<ScannerScreen>
             top: 50,
             left: 20,
             child: FloatingActionButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Icon(Icons.arrow_back),
+              onPressed: () => PlatformUtils.reloadApp(),
+              child: const Icon(Icons.home),
               backgroundColor: Colors.black54,
             ),
           ),
