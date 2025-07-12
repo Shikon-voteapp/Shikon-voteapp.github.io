@@ -116,7 +116,10 @@ class _VoteScreenState extends State<VoteScreen> {
       icon: Icons.how_to_vote_outlined,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
-      onHome: () => PlatformUtils.reloadApp(),
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       onBack: currentCategoryIndex > 0 ? () => _navigate(-1) : null,
       onNext: null,
       child: Column(

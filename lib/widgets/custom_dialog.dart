@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:shikon_voteapp/screens/admin_screen.dart'; // 循環参照を解消するため削除
+import 'package:shikon_voteapp/screens/admin_screen.dart';
 import 'package:shikon_voteapp/theme.dart';
 
 Future<void> showCustomDialog({
@@ -118,9 +118,11 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                           password: passwordController.text,
                         );
                         Navigator.of(context).pop(); // Close dialog
-                        Navigator.of(
-                          context,
-                        ).pushReplacementNamed('/admin'); // 名前付きルートに変更
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => AdminScreen(),
+                          ),
+                        );
                       } on FirebaseAuthException catch (e) {
                         Navigator.of(
                           context,

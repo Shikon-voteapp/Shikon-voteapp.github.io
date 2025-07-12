@@ -30,6 +30,7 @@ class _AdminScreenState extends State<AdminScreen>
   List<Vote>? _votes;
   List<UserData> _adminUsers = [];
   bool _isLoading = true;
+  bool _isLoggedIn = false;
   int _selectedCategoryIndex = 0;
 
   late TabController _tabController;
@@ -38,29 +39,80 @@ class _AdminScreenState extends State<AdminScreen>
   @override
   void initState() {
     super.initState();
+    _checkLoginAndLoadData();
+  }
+
+  Future<void> _checkLoginAndLoadData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = _auth.currentUser;
+    if (user == null) {
+      setState(() {
+        _isLoading = false;
+        _isLoggedIn = false;
+      });
+
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder:
+                (dialogContext) => AlertDialog(
+                  title: const Text('認証が必要です'),
+                  content: const Text('このページを表示するには管理者ログインが必要です。'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        Navigator.of(
+                          context,
+                        ).pushNamedAndRemoveUntil('/scanner', (route) => false);
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+          );
+        });
+      }
+    } else {
+      setState(() {
+        _isLoggedIn = true;
+      });
+      _initializeControllers();
+      await _loadAllData();
+    }
+  }
+
+  void _initializeControllers() {
     _tabController = TabController(length: 3, vsync: this);
     _categoryTabController = TabController(
       length: voteCategories.length,
       vsync: this,
     );
     _categoryTabController.addListener(() {
-      if (!_categoryTabController.indexIsChanging) {
+      if (mounted && !_categoryTabController.indexIsChanging) {
         setState(() {
           _selectedCategoryIndex = _categoryTabController.index;
         });
       }
     });
-    _loadAllData();
   }
 
   Future<void> _loadAllData() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
     await Future.wait([_loadVotes(), _loadAdminUsers()]);
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -155,10 +207,17 @@ class _AdminScreenState extends State<AdminScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading || !_isLoggedIn) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return MainLayout(
-      title: '管理画面',
+      title: '管理者パネル',
       icon: Icons.admin_panel_settings,
-      onHome: () => PlatformUtils.reloadApp(),
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -185,17 +244,14 @@ class _AdminScreenState extends State<AdminScreen>
             ),
           ],
         ),
-        body:
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildResultsTab(),
-                    _buildUserManagementTab(),
-                    _buildConfigEditorTab(),
-                  ],
-                ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildResultsTab(),
+            _buildUserManagementTab(),
+            _buildConfigEditorTab(),
+          ],
+        ),
       ),
     );
   }

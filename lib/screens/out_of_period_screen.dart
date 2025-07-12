@@ -15,8 +15,12 @@ class OutOfPeriodScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainLayout(
-      title: '投票期間外',
-      icon: Icons.access_time_filled_outlined,
+      title: '投票時間外',
+      icon: Icons.timer_off_outlined,
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       helpTitle: '投票期間について',
       helpContent:
           '投票は指定された期間内でのみ可能です。\nまた、毎日深夜01:00から02:00まではサーバーメンテナンスのため投票できません。\nご了承ください。',

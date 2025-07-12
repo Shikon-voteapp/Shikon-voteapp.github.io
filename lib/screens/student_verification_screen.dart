@@ -33,12 +33,14 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return MainLayout(
-      title: '生徒認証',
-      icon: Icons.badge_outlined,
-      onHome: () => PlatformUtils.reloadApp(),
-      helpTitle: '生徒情報の入力について',
-      helpContent:
-          '投票券に記載されているご自身の学年、クラス、出席番号を正しく選択してください。この情報が間違っていると投票に進むことができません。',
+      title: '本人確認',
+      icon: Icons.verified_user_outlined,
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+      helpTitle: '生徒の本人確認',
+      helpUrl: 'assets/help/student_verification_help.html',
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
         child: Column(

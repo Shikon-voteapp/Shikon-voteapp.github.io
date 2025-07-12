@@ -59,12 +59,12 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       home: SplashScreen(dateRangeService: dateRangeService),
       routes: {
-        '/admin': (context) => AdminScreen(),
-        '/scanner':
-            (context) =>
-                kIsWeb
-                    ? ScannerScreen()
-                    : CameraPermissionWrapper(child: ScannerScreen()),
+        // '/admin': (context) => AdminScreen(),
+        // '/scanner':
+        //     (context) =>
+        //         kIsWeb
+        //             ? ScannerScreen()
+        //             : CameraPermissionWrapper(child: ScannerScreen()),
       },
     );
   }

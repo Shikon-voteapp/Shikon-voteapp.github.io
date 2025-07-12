@@ -10,6 +10,10 @@ class SelectionScreen extends StatelessWidget {
     return MainLayout(
       title: 'ようこそ',
       icon: Icons.touch_app_outlined,
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       helpTitle: '投票について',
       helpContent: '「投票を開始する」ボタンを押して、投票を開始してください。パンフレットに同封された投票券をご準備ください。',
       child: Padding(
