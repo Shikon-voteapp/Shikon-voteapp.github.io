@@ -55,7 +55,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '紫紺祭投票アプリ',
-      theme: AppTheme.themeData,
+      theme: AppTheme.lightThemeData,
+      darkTheme: AppTheme.darkThemeData,
+      themeMode: ThemeMode.system,
       navigatorKey: navigatorKey,
       home: SplashScreen(dateRangeService: dateRangeService),
       routes: {

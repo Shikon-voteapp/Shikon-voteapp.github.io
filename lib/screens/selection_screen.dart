@@ -49,9 +49,11 @@ class SelectionScreen extends StatelessWidget {
     required IconData icon,
     required VoidCallback onPressed,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -71,21 +73,24 @@ class SelectionScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                Icon(icon, size: 64, color: const Color(0xFF6A2C8F)),
+                Icon(icon, size: 64, color: colorScheme.primary),
                 const SizedBox(height: 16),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF6A2C8F),
+                    color: colorScheme.primary,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   subtitle,
-                  style: const TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: colorScheme.onSurface.withOpacity(0.7),
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

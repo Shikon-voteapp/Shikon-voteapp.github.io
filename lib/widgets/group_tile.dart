@@ -20,6 +20,8 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool showImage = displayMode == DisplayMode.grid;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onSelect,
@@ -28,11 +30,11 @@ class GroupTile extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: isSelected ? Colors.red : Colors.grey.shade300,
+                color: isSelected ? colorScheme.primary : theme.dividerColor,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(8),
-              color: Colors.white,
+              color: colorScheme.surface,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,7 +70,7 @@ class GroupTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: colorScheme.onSurface,
                         ),
                         maxLines: showImage ? 1 : 2,
                         overflow: TextOverflow.ellipsis,
@@ -76,7 +78,10 @@ class GroupTile extends StatelessWidget {
                       SizedBox(height: 4),
                       Text(
                         group.description,
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
                         maxLines: showImage ? 2 : 3, // リスト表示の場合は3行に制限
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -93,10 +98,14 @@ class GroupTile extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: colorScheme.secondary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.check, color: Colors.white, size: 16),
+                child: Icon(
+                  Icons.check,
+                  color: colorScheme.onSecondary,
+                  size: 16,
+                ),
               ),
             ),
         ],

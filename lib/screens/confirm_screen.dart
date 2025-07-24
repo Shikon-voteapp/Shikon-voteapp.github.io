@@ -112,11 +112,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 _isLoading ? Container() : const Icon(Icons.touch_app_outlined),
             label:
                 _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         strokeWidth: 2,
                       ),
                     )
@@ -124,8 +124,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
             onPressed: _isLoading ? null : _showConfirmationDialog,
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: const Color(0xFF6A2C8F),
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0),
               ),
@@ -137,6 +137,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   Widget _buildGroupCard(VoteCategory category, Group group) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
@@ -152,7 +155,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
+                color: colorScheme.primary,
               ),
             ),
           ),
@@ -188,7 +191,10 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                       const SizedBox(height: 4),
                       Text(
                         group.groupName,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -209,12 +215,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   Widget _buildSkippedCard(VoteCategory category) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 2,
-      color: Colors.grey.shade100,
+      color: colorScheme.surface.withOpacity(0.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -225,7 +233,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade700,
+                color: colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
           ),
@@ -236,13 +244,16 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               children: [
                 Icon(
                   Icons.do_not_disturb_on_outlined,
-                  color: Colors.grey.shade500,
+                  color: colorScheme.onSurface.withOpacity(0.4),
                   size: 40,
                 ),
                 const SizedBox(width: 16),
-                const Text(
+                Text(
                   '選択されていません',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
                 ),
               ],
             ),
@@ -253,6 +264,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _showConfirmationDialog() {
+    final theme = Theme.of(context);
     showCustomDialog(
       context: context,
       title: '投票を確定しますか？',
@@ -263,8 +275,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           label: const Text('戻る'),
           onPressed: () => Navigator.of(context).pop(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey.shade200,
-            foregroundColor: Colors.black87,
+            backgroundColor: theme.colorScheme.surface,
+            foregroundColor: theme.colorScheme.onSurface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
@@ -272,15 +284,15 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           ),
         ),
         ElevatedButton.icon(
-          icon: const Icon(Icons.check, color: Colors.white),
+          icon: Icon(Icons.check, color: theme.colorScheme.onPrimary),
           label: const Text('投票する'),
           onPressed: () {
             Navigator.of(context).pop();
             _submitVote();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6A2C8F),
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
@@ -292,6 +304,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _showVoteCompletedDialog() {
+    final theme = Theme.of(context);
     showCustomDialog(
       context: context,
       title: '投票完了',
@@ -305,8 +318,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               label: const Text('トップへ戻る'),
               onPressed: _resetToTop,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6A2C8F),
-                foregroundColor: Colors.white,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),

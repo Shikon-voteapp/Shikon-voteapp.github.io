@@ -14,6 +14,7 @@ class OutOfPeriodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return MainLayout(
       title: '投票時間外',
       icon: Icons.timer_off_outlined,
@@ -29,17 +30,18 @@ class OutOfPeriodScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.access_time, size: 80.0, color: AppTheme.primaryColor),
-            SizedBox(height: 30),
-            Text(
-              '投票期間外です',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Icon(
+              Icons.access_time,
+              size: 80.0,
+              color: theme.colorScheme.primary,
             ),
+            SizedBox(height: 30),
+            Text('投票期間外です', style: theme.textTheme.headlineSmall),
             SizedBox(height: 20),
             Text(
               '現在は投票を受け付けていません。\n以下の期間内に再度お試しください。\nなお、毎日深夜01:00～02:00はサーバーメンテナンスのため投票できません。',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              style: theme.textTheme.bodyLarge,
             ),
             SizedBox(height: 30),
             Card(
@@ -50,24 +52,18 @@ class OutOfPeriodScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.play_arrow, color: Colors.green),
+                        Icon(Icons.play_arrow, color: Colors.green.shade400),
                         SizedBox(width: 10),
-                        Text(
-                          '開始：',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        Text('開始：', style: theme.textTheme.titleMedium),
                         Expanded(child: Text(_formatDateTime(startDate))),
                       ],
                     ),
                     SizedBox(height: 10),
                     Row(
                       children: [
-                        Icon(Icons.stop, color: Colors.red),
+                        Icon(Icons.stop, color: theme.colorScheme.error),
                         SizedBox(width: 10),
-                        Text(
-                          '終了：',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        Text('終了：', style: theme.textTheme.titleMedium),
                         Expanded(child: Text(_formatDateTime(endDate))),
                       ],
                     ),

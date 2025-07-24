@@ -91,6 +91,7 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
@@ -102,24 +103,31 @@ class BottomBar extends StatelessWidget {
             height: 56.0,
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             decoration: BoxDecoration(
-              color: AppTheme.widgetBackgroundColor,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(28.0),
             ),
             child: Row(
               children: [
                 _buildIconButton(
+                  context,
                   Icons.home_outlined,
                   onHome ?? () => _showReloadConfirmDialog(context),
                 ),
-                _buildDivider(),
-                _buildIconButton(Icons.help_outline, () => _showHelp(context)),
-                _buildDivider(),
+                _buildDivider(context),
                 _buildIconButton(
+                  context,
+                  Icons.help_outline,
+                  () => _showHelp(context),
+                ),
+                _buildDivider(context),
+                _buildIconButton(
+                  context,
                   Icons.admin_panel_settings_outlined,
                   () => showAdminLoginDialog(context: context),
                 ),
-                _buildDivider(),
+                _buildDivider(context),
                 _buildIconButton(
+                  context,
                   Icons.arrow_back_ios_new,
                   onBack ?? () => _showCantGoBackDialog(context),
                 ),
@@ -133,8 +141,8 @@ class BottomBar extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onNext,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28.0),
                   ),
@@ -155,9 +163,14 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(IconData icon, VoidCallback? onPressed) {
+  Widget _buildIconButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback? onPressed,
+  ) {
+    final theme = Theme.of(context);
     return IconButton(
-      icon: Icon(icon, color: AppTheme.primaryColor, size: 24.0),
+      icon: Icon(icon, color: theme.colorScheme.primary, size: 24.0),
       onPressed: onPressed,
       splashRadius: 24.0,
       padding: EdgeInsets.zero,
@@ -165,7 +178,8 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Container(height: 24, width: 1, color: Colors.grey.shade300);
+  Widget _buildDivider(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(height: 24, width: 1, color: theme.dividerColor);
   }
 }

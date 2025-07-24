@@ -110,6 +110,7 @@ class _VoteScreenState extends State<VoteScreen> {
         category.shortHelpText != null && category.shortHelpText!.isNotEmpty
             ? '${category.description}\n\n${category.shortHelpText}'
             : category.description;
+    final theme = Theme.of(context);
 
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
@@ -129,19 +130,22 @@ class _VoteScreenState extends State<VoteScreen> {
             child: RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                style: const TextStyle(fontFamily: 'IBMPlexSansJP'),
+                style: theme.textTheme.bodyMedium,
                 children: [
                   TextSpan(
                     text: category.name,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
-                  const TextSpan(
+                  TextSpan(
                     text: 'に選びたい団体を選択してください',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
                   ),
                 ],
               ),
@@ -169,20 +173,25 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   Widget _buildGroupDetailHeader() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     if (_selectedGroup == null) {
       return Container(
         height: 140,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: theme.dividerColor),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
             '投票先を選択してください',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 18,
+              color: colorScheme.onSurface.withOpacity(0.7),
+            ),
           ),
         ),
       );
@@ -198,9 +207,9 @@ class _VoteScreenState extends State<VoteScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Row(
           children: [
@@ -231,19 +240,25 @@ class _VoteScreenState extends State<VoteScreen> {
                   ),
                   Text(
                     _selectedGroup!.groupName,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
                   Text(
                     _selectedGroup!.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, color: Colors.black),
+                    style: const TextStyle(fontSize: 12),
                   ),
                   const Spacer(),
                   Text(
                     '${_selectedGroup!.floor == 4 ? '' : '${_selectedGroup!.floor}階・'}${groupCategoryNames[_selectedGroup!.categories.first]!}'
                     '${_selectedGroup!.pamphletPage != null ? '・パンフレット P${_selectedGroup!.pamphletPage}' : ''}',
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
                 ],
               ),
@@ -269,6 +284,7 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   Widget _buildGroupGridView() {
+    final theme = Theme.of(context);
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -304,7 +320,10 @@ class _VoteScreenState extends State<VoteScreen> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: isSelected ? Colors.orange : Colors.grey.shade300,
+                  color:
+                      isSelected
+                          ? theme.colorScheme.primary
+                          : theme.dividerColor,
                   width: isSelected ? 3 : 1,
                 ),
                 borderRadius: BorderRadius.circular(8),
@@ -323,11 +342,11 @@ class _VoteScreenState extends State<VoteScreen> {
                         width: double.infinity,
                         errorBuilder:
                             (context, error, stackTrace) => Container(
-                              color: Colors.grey.shade200,
+                              color: theme.colorScheme.secondaryContainer,
                               alignment: Alignment.center,
-                              child: const Icon(
+                              child: Icon(
                                 Icons.error_outline,
-                                color: Colors.grey,
+                                color: theme.colorScheme.onSecondaryContainer,
                               ),
                             ),
                       ),
@@ -351,6 +370,8 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   Widget _buildGroupListView() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
       itemCount: _filteredGroups.length,
@@ -381,9 +402,9 @@ class _VoteScreenState extends State<VoteScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 border: Border.all(
-                  color: isSelected ? Colors.orange : Colors.grey.shade300,
+                  color: isSelected ? colorScheme.primary : theme.dividerColor,
                   width: isSelected ? 3 : 1,
                 ),
                 borderRadius: BorderRadius.circular(8),
@@ -399,8 +420,9 @@ class _VoteScreenState extends State<VoteScreen> {
                         group.imagePath,
                         fit: BoxFit.cover,
                         errorBuilder:
-                            (context, error, stackTrace) =>
-                                Container(color: Colors.grey.shade200),
+                            (context, error, stackTrace) => Container(
+                              color: colorScheme.secondaryContainer,
+                            ),
                       ),
                     ),
                   ),
@@ -418,9 +440,9 @@ class _VoteScreenState extends State<VoteScreen> {
                         ),
                         Text(
                           group.groupName!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -433,9 +455,9 @@ class _VoteScreenState extends State<VoteScreen> {
                         Text(
                           '${group.floor == 4 ? '' : '${group.floor}階・'}${groupCategoryNames[group.categories.first]!}'
                           '${group.pamphletPage != null ? '・パンフレット P${group.pamphletPage}' : ''}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.black54,
+                            color: colorScheme.onSurface.withOpacity(0.6),
                           ),
                         ),
                       ],
@@ -453,6 +475,7 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildFloorFilter() {
     final floors = [1, 2, 3, 4]; // 1,2,3階とステージ(4)
     final floorLabels = {1: '1階', 2: '2階', 3: '3階', 4: 'ステージ'};
+    final theme = Theme.of(context);
 
     int initialIndex = 0;
     if (_selectedFloor != null) {
@@ -466,11 +489,11 @@ class _VoteScreenState extends State<VoteScreen> {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withOpacity(0.15),
             spreadRadius: 2,
             blurRadius: 8,
             offset: const Offset(0, 4),
@@ -490,8 +513,8 @@ class _VoteScreenState extends State<VoteScreen> {
             }
           },
           isScrollable: true,
-          labelColor: Theme.of(context).primaryColor,
-          unselectedLabelColor: Colors.grey,
+          labelColor: theme.colorScheme.primary,
+          unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
           indicatorSize: TabBarIndicatorSize.label,
           tabs: [
             const Tab(text: 'すべて'),
@@ -505,6 +528,7 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildVoteButton() {
     final category = voteCategories[currentCategoryIndex];
     final bool isSelected = _selectedGroup != null;
+    final theme = Theme.of(context);
 
     VoidCallback? onPressed;
     String buttonText;
@@ -531,8 +555,10 @@ class _VoteScreenState extends State<VoteScreen> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           backgroundColor:
-              onPressed != null ? const Color(0xFF6A2C8F) : Colors.grey,
-          foregroundColor: Colors.white,
+              onPressed != null
+                  ? theme.colorScheme.primary
+                  : theme.disabledColor,
+          foregroundColor: theme.colorScheme.onPrimary,
         ),
         onPressed: onPressed,
         child: Text(buttonText, style: const TextStyle(fontSize: 18)),
@@ -541,6 +567,8 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   void _showGroupDetailDialog(Group group) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     showCustomDialog(
       context: context,
       title: group.name,
@@ -553,10 +581,10 @@ class _VoteScreenState extends State<VoteScreen> {
           children: [
             Text(
               group.groupName,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -570,12 +598,18 @@ class _VoteScreenState extends State<VoteScreen> {
                 if (group.floor != 4)
                   Text(
                     '場所: ${group.floor}階',
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
                 if (group.pamphletPage != null)
                   Text(
                     'パンフレット: P${group.pamphletPage}',
-                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
               ],
             ),
@@ -603,6 +637,7 @@ class _VoteScreenState extends State<VoteScreen> {
   void _showConfirmationDialog(Group group) {
     final currentCategory = voteCategories[currentCategoryIndex];
     final isLastCategory = currentCategoryIndex == voteCategories.length - 1;
+    final theme = Theme.of(context);
 
     showCustomDialog(
       context: context,
@@ -615,8 +650,8 @@ class _VoteScreenState extends State<VoteScreen> {
           icon: const Icon(Icons.close),
           label: const Text('戻る'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF333333),
+            backgroundColor: theme.colorScheme.surface,
+            foregroundColor: theme.colorScheme.onSurface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -629,8 +664,8 @@ class _VoteScreenState extends State<VoteScreen> {
             _vote(group);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6A2C8F),
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),

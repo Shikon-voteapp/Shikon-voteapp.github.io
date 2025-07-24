@@ -13,28 +13,29 @@ class TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 24.0),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(24.0),
           bottomRight: Radius.circular(24.0),
         ),
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppTheme.primaryColor),
+          Icon(icon, color: theme.colorScheme.primary),
           const SizedBox(width: 8.0),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: theme.textTheme.bodyLarge?.color,
             ),
           ),
         ],

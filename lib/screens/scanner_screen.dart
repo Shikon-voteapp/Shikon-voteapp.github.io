@@ -78,6 +78,8 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Widget _buildManualInputScaffold() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return MainLayout(
       title: '投票券情報入力',
       icon: Icons.confirmation_number_outlined,
@@ -94,19 +96,19 @@ class _ScannerScreenState extends State<ScannerScreen>
             Container(
               padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              child: const Text(
+              child: Text(
                 'パンフレットに同封されている投票券に記載された番号(10桁)を入力してください。',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
+                style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 40),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(16.0),
               ),
               child: TextField(
@@ -114,7 +116,9 @@ class _ScannerScreenState extends State<ScannerScreen>
                 decoration: InputDecoration(
                   labelText: 'ID',
                   border: InputBorder.none,
-                  labelStyle: TextStyle(color: Colors.grey.shade600),
+                  labelStyle: TextStyle(
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
                 ),
                 keyboardType: TextInputType.number,
                 autofocus: true,
@@ -148,13 +152,20 @@ class _ScannerScreenState extends State<ScannerScreen>
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'ログイン',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: colorScheme.onPrimary,
+                  ),
                 ],
               ),
               style: ElevatedButton.styleFrom(
@@ -162,7 +173,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
-                backgroundColor: const Color(0xFF592C7A), // Shikon color
+                backgroundColor: colorScheme.primary,
                 elevation: 0,
               ),
             ),

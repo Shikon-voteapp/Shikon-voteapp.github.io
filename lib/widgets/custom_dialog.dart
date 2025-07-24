@@ -59,6 +59,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     pageBuilder: (context, animation, secondaryAnimation) {
       return StatefulBuilder(
         builder: (context, setState) {
+          final theme = Theme.of(context);
           return CustomDialogWidget(
             title: '管理者ログイン',
             contentWidget: Column(
@@ -70,8 +71,6 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                   decoration: const InputDecoration(
                     labelText: 'メールアドレス',
                     border: OutlineInputBorder(),
-                    fillColor: AppTheme.backgroundColor,
-                    filled: true,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -81,8 +80,6 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                   decoration: const InputDecoration(
                     labelText: 'パスワード',
                     border: OutlineInputBorder(),
-                    fillColor: AppTheme.backgroundColor,
-                    filled: true,
                   ),
                 ),
                 if (isLoading)
@@ -191,6 +188,7 @@ class CustomDialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       child: Material(
         color: Colors.transparent,
@@ -203,7 +201,7 @@ class CustomDialogWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Column(
@@ -220,8 +218,9 @@ class CustomDialogWidget extends StatelessWidget {
                             imagePath!,
                             fit: BoxFit.contain,
                             errorBuilder:
-                                (context, error, stackTrace) =>
-                                    Container(color: Colors.grey.shade200),
+                                (context, error, stackTrace) => Container(
+                                  color: theme.colorScheme.secondaryContainer,
+                                ),
                           ),
                         ),
                       ),
@@ -229,19 +228,19 @@ class CustomDialogWidget extends StatelessWidget {
                     ],
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: theme.textTheme.titleLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 16),
                     contentWidget ??
                         Text(
                           content!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
-                            color: Colors.black54,
+                            color: theme.textTheme.bodyMedium?.color,
                           ),
                         ),
                   ],
@@ -265,8 +264,8 @@ class CustomDialogWidget extends StatelessWidget {
                       icon: const Icon(Icons.close),
                       label: Text(closeButtonText),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF333333),
+                        backgroundColor: theme.colorScheme.surface,
+                        foregroundColor: theme.colorScheme.onSurface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -290,8 +289,8 @@ class CustomDialogWidget extends StatelessWidget {
                           ],
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6A2C8F),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
