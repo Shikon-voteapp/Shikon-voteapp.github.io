@@ -269,7 +269,7 @@ shape of you/Ed Sheeran
     name: '中学1年生　学年展示',
     groupName: '中1学年',
     description: '''中学1年生の軌跡をご覧ください。''',
-    imagePath: '中１学年展示.jpg',
+    imagePath: 'assets/中１学年展示.jpg',
     floor: 2,
     categories: [GroupCategory.Gakunen],
   ),
