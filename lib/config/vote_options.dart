@@ -63,8 +63,8 @@ class VotingPeriodConfig {
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
       maintenanceEnabled: json['maintenanceEnabled'] ?? true,
-      maintenanceStartHour: json['maintenanceStartHour'] ?? 1,
-      maintenanceEndHour: json['maintenanceEndHour'] ?? 2,
+      maintenanceStartHour: json['maintenanceStartHour'] ?? 2,
+      maintenanceEndHour: json['maintenanceEndHour'] ?? 3,
     );
   }
 }
