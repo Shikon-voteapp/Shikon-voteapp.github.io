@@ -42,8 +42,4 @@ dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/help/
-    - assets/Stage/
-    - assets/First/
-    - assets/Second/
-    - assets/Third/
+    - assets/
