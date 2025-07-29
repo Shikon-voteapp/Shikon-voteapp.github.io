@@ -312,7 +312,10 @@ class _VoteScreenState extends State<VoteScreen> {
               );
               _showAlreadyVotedDialog(group, votedCategory.name, category.name);
             } else {
-              setState(() => _selectedGroup = group);
+              setState(() {
+                // 既に選択されている場合は選択を解除、そうでなければ選択
+                _selectedGroup = isSelected ? null : group;
+              });
             }
           },
           child: Opacity(
@@ -393,7 +396,10 @@ class _VoteScreenState extends State<VoteScreen> {
               );
               _showAlreadyVotedDialog(group, votedCategory.name, category.name);
             } else {
-              setState(() => _selectedGroup = group);
+              setState(() {
+                // 既に選択されている場合は選択を解除、そうでなければ選択
+                _selectedGroup = isSelected ? null : group;
+              });
             }
           },
           child: Opacity(
