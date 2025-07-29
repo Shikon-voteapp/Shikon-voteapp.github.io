@@ -267,7 +267,7 @@ shape of you/Ed Sheeran
   Group(
     id: 'G01',
     name: '中学1年生　学年展示',
-    groupName: '中1学年',
+    groupName: '中学1年',
     description: '''中学1年生の軌跡をご覧ください。''',
     imagePath: 'assets/中１学年展示.jpg',
     floor: 2,
@@ -276,7 +276,7 @@ shape of you/Ed Sheeran
   Group(
     id: 'G02',
     name: '中学2年生　学年展示',
-    groupName: '中2学年',
+    groupName: '中学2年',
     description: '''わたし達がつくった最高の思い出を是非、味わっていってください！！あなたは久能山東照宮で何をお願いする？''',
     imagePath: '',
     floor: 2,
@@ -285,7 +285,7 @@ shape of you/Ed Sheeran
   Group(
     id: 'G03',
     name: '中学3年生　学年展示',
-    groupName: '中3学年',
+    groupName: '中学3年',
     description:
         '''中学３年生が、明治中学校の「いいところ」や「学校の様子」を、心を込めて紹介します！毎年大好評の体験コーナーにも挑戦してください！中学３年生が笑顔でみなさんをお迎えします！''',
     imagePath: '',
@@ -310,6 +310,291 @@ shape of you/Ed Sheeran
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
+  Group(
+    id: 'H03',
+    name: '電車でGO！',
+    groupName: '鉄道研究部',
+    description: '''鉄道模型の体験運転、発車メロディ体験、運転シミュレーターなどができます！ぜひお越しください！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H04',
+    name: '書の世界、ここに展示中',
+    groupName: '書道部',
+    description:
+        '''個性溢れる個人作品から歴史感じる共同作品まで！ 書の世界を体感しませんか？ プレゼントも用意してお待ちしています！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H05',
+    name: 'ESSで世界旅行',
+    groupName: 'ESS部',
+    description: '''文通で届いた世界の人たちからのポストカードを展示！調布市英語マップの展示もあります！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H06',
+    name: '歴研合戦絵巻 ｰ紫紺の的を射貫けｰ',
+    groupName: '歴史研究部',
+    description:
+        '''源平合戦の真実に迫る！ 歴史研究部による合戦絵巻、ここに展開！「紫紺の的」を射抜くのは誰か――歴史の渦に飛び込み、見届けよ！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H07',
+    name: 'トリック・オア・漫研',
+    groupName: '有志漫画研究部',
+    description: '''今年のテーマは「ハロウィン」！オリジナルの短編漫画集やイラスト集がゲットできるかも⁉︎''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H08',
+    name: 'JRC部＆有志シャプラニール',
+    groupName: '',
+    description:
+        '''フェアトレード商品(バングラディシュやネパールなど)と東北支援商品(桃ジュースやかりんとう)を販売しています(現金)。２日目のみの開店いたします。明校から国際協力しませんか？''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H09',
+    name: 'いしざんまい！',
+    groupName: '地学部',
+    description: '''地学部自慢の鉱物や化石をお楽しみください！合宿をまとめたポスターも展示しています！''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H10',
+    name: '八十年目の廣島',
+    groupName: '地理研究部',
+    description: '''80年目の原爆の日である8月6日に調査した広島の様子、春に行った東海道合宿について展示しています。''',
+    imagePath: 'assets/地理研究部.jpg',
+    floor: 2,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H11',
+    name: '図書班',
+    groupName: '',
+    description: '''今回のテーマは「スポーツ」本と共に走り抜けよう！！''',
+    imagePath: 'assets/図書班.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H12',
+    name: '映画部',
+    groupName: '',
+    description: '''ドキドキワクワクの学生青春物語！自主制作映画を上映中！見に来てね♪''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H13',
+    name: '生物部',
+    groupName: '',
+    description:
+        '''#ウーパールーパー #食虫植物 #生物観察 #合宿 #顕微鏡 生物部で飼育しているユニークな生き物たちの展示や実験、夏合宿の成果報告などを行います！''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H14',
+    name: '化学部',
+    groupName: '',
+    description: '''来てくださった方々があっと驚くような実験を行います。スライムの制作体験もできます。''',
+    imagePath: 'assets/化学部.jpg',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'H15',
+    name: '物理部',
+    groupName: '',
+    description: '''部員が作成した作品を展示しているので是非見に来てください''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'K01',
+    name: 'トロピカル・エスケープ',
+    groupName: '高校Ⅱ年B組',
+    description: '''僕はモモキー！幻のバナナを探していたら罠にかかっちゃった！？みんなⅡBに僕を助けにきて～！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K02',
+    name: 'みきえちゃんクルーズ',
+    groupName: '高校Ⅱ年E組',
+    description: '''ただ回るだけじゃない⁉動物にエサをあげる、新感覚クルーズ体験''',
+    imagePath: '',
+    floor: 0,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K03',
+    name: '先生、患者が逃げました',
+    groupName: '高校Ⅱ年F組',
+    description: '''死んだ患者の呪いが残る廃病院。鍵を探し、無事に脱出できるか...？''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K04',
+    name: 'SUPER はらしんご WORLD',
+    groupName: '高校Ⅱ年A組＋高校Ⅱ年C組',
+    description:
+        '''トロッコに乗ってゲームの世界の中でミニゲームにチャレンジ！あなたを乗せて、私たちが全力で案内します！友達同士でも親子でも1人でも大歓迎！''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K05',
+    name: 'Royal MasqueraDe CaGino',
+    groupName: '高校Ⅱ年D組＋高校Ⅱ年G組',
+    description:
+        '''あなたの元へ一枚の手紙が届きました。それは仮面舞踏会カジノへの招待状だったのです！全ての印を集めると豪華景品を貰えるかも…？今宵あなたを仮面の夜へ誘います。#仮面舞踏会 #カジノ''',
+    imagePath: '',
+    floor: 1,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K06',
+    name: '霊園のサバイバル場',
+    groupName: '高校Ⅰ年A組',
+    description: '''あなたが吸い込まれたのはゲームの世界。敵は人間…？それとも… スリル満点の没入型サバイバルゲーム！''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K07',
+    name: 'ご主人様、悲鳴の準備はよろしくて？',
+    groupName: '高校Ⅰ年B組',
+    description: '''メイドが暗闇から忍び寄り、逃げる客を執拗に追い回す恐怖のお化け屋敷！？君は逃げ切れるか！？''',
+    imagePath: 'assets/ⅠB.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K08',
+    name: '「高身長じゃ、ダメですか？」',
+    groupName: '高校Ⅰ年C組',
+    description: '''メイド服を着た高身長ディーラーと勝負しよう！ 勝ったら身長が手に入れられるかも… ？''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K09',
+    name: '梶野\'s CASINO',
+    groupName: '高校Ⅰ年D組',
+    description: '''「梶野」の星からやってきた「カジノ」の申し子たちから勝利を掴み取れ！''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K10',
+    name: 'ピザの切れ目が命の切れ目',
+    groupName: '高校Ⅰ年E組',
+    description: '''興味本位で廃墟のピザ屋に来たあなた、けれど入った途端出られなくなくなり。。脱出の鍵はピザ。ちょっと刺激ツヨメ。''',
+    imagePath: 'assets/ⅠE.jpg',
+    floor: 2,
+    categories: [],
+  ),
+  Group(
+    id: 'K11',
+    name: 'Kick＆Fight！',
+    groupName: '高校Ⅰ年F組',
+    description: '''キックで標的を狙い撃て！高ⅠFがお届けする最高にCOOLな夏が始まる！''',
+    imagePath: 'assets/ⅠF.jpg',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K12',
+    name: 'トロッコ・レーザー・マニア！ｰ無限の彼方へさぁ行くぞｰ',
+    groupName: '高校Ⅰ年G組',
+    description: '''暗闇の中光る的を狙撃せよ！高ⅠGがお届けする新感覚トロッコアドベンチャー！''',
+    imagePath: '',
+    floor: 2,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K14',
+    name: 'むぅちゃんの落とし物',
+    groupName: '高校Ⅲ年C組',
+    description: '''君にむぅちゃんのことが救えるのか？生還できるかどうかは、あなた次第。''',
+    imagePath: 'assets/ⅢC.jpg',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K15',
+    name: 'ゴンピン星㊙︎のお茶会',
+    groupName: '高校Ⅲ年D組',
+    description: '''あなたは、ゴンピン星へと訪れた。楽しいお茶会、陽気な仲間たち。？？？何かがおかしい？？？''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K13',
+    name: '君たちはどう賭けるか',
+    groupName: '高校Ⅲ年A組＋高校Ⅲ年B組',
+    description: '''ゲーム？カジノ？…どっちもやっちゃえ！欲ばりさん、ようこそ“運命のアトラクション”へ''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K16',
+    name: 'まっくら投げハウス',
+    groupName: '高校Ⅲ年E組',
+    description: '''夢の中で枕を武器に化け物退治！目覚ましが鳴る前に現実へ帰還せよ、夢からの脱出劇！''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K17',
+    name: 'ラーメン田中　明大明治本店',
+    groupName: '高校Ⅲ年F組',
+    description: '''ラーメン屋の弟子となって素材選びから盛り付けまで修行！君の一杯が伝説に！？''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
+  Group(
+    id: 'K18',
+    name: '楽シミマ船？Lets号',
+    groupName: '高校Ⅲ年G組',
+    description: '''ヴァイキングの世界を再現！戦士気分で楽しめる冒険アトラクション！''',
+    imagePath: '',
+    floor: 3,
+    categories: [GroupCategory.Moyoshi],
+  ),
 ];
 
 // 投票のカテゴリを定義
@@ -318,7 +603,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Shikon_award',
     name: '紫紺賞',
     description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
-    shortHelpText: '詳細はパンフレットをご覧ください',
+    shortHelpText: 'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください',
     groups:
         allGroups
             .where(
@@ -341,6 +626,7 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Tenji))
             .toList(),
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Gakunen',
@@ -351,6 +637,7 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Gakunen))
             .toList(),
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Moyoshi',
@@ -361,6 +648,7 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Moyoshi))
             .toList(),
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Stage',
@@ -371,6 +659,7 @@ final List<VoteCategory> voteCategories = [
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Stage))
             .toList(),
+    canSkip: true,
   ),
   VoteCategory(
     id: 'Band',
@@ -393,17 +682,6 @@ final List<VoteCategory> voteCategories = [
             .where(
               (group) => group.categories.contains(GroupCategory.Performance),
             )
-            .toList(),
-    canSkip: true,
-  ),
-  VoteCategory(
-    id: 'Roten',
-    name: '露店賞',
-    description: '露店の装飾が魅力的で接客における笑顔が最も素敵であった団体を1つ選択してください。',
-    shortHelpText: '詳細はパンフレットをご覧ください',
-    groups:
-        allGroups
-            .where((group) => group.categories.contains(GroupCategory.Roten))
             .toList(),
     canSkip: true,
   ),
