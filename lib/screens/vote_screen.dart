@@ -82,6 +82,7 @@ class _VoteScreenState extends State<VoteScreen> {
       title: '${category.name} について',
       content: helpContent,
       closeButtonText: '閉じる',
+      showWikiLink: true,
     );
   }
 
