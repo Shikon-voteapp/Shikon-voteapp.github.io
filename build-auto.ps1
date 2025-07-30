@@ -19,14 +19,15 @@ if (!(Test-Path $versionConfigPath)) {
 
 # 現在のバージョン設定を読み込み
 $versionConfig = Get-Content $versionConfigPath | ConvertFrom-Json
-Write-Host "Current version: $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
+Write-Host "Current version: $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch).$($versionConfig.build)"
 
 # 自動的にビルド番号を増やす
 $versionConfig.build++
-Write-Host "Auto-updating build number to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
+Write-Host "Auto-updating build number to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch).$($versionConfig.build)"
 
-# ビルド日時を更新
-$versionConfig.last_build_date = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
+# ビルド日時を更新（JST）
+$jstTime = (Get-Date).AddHours(9)  # UTC+9 (JST)
+$versionConfig.last_build_date = $jstTime.ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 # バージョン設定ファイルを保存
 $versionConfig | ConvertTo-Json | Set-Content $versionConfigPath
@@ -40,6 +41,15 @@ Set-Content $pubspecPath $pubspecContent -NoNewline -Encoding UTF8
 
 Write-Host "Updated pubspec.yaml version to: $newVersion"
 
+# version_info.dartのハードコードされたバージョンを更新
+$versionInfoPath = "lib/utils/version_info.dart"
+$versionInfoContent = Get-Content $versionInfoPath -Raw -Encoding UTF8
+$versionInfoContent = $versionInfoContent -replace "_version = '[^']*'", "_version = '$($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)'"
+$versionInfoContent = $versionInfoContent -replace "_buildNumber = '[^']*'", "_buildNumber = '$($versionConfig.build)'"
+Set-Content $versionInfoPath $versionInfoContent -NoNewline -Encoding UTF8
+
+Write-Host "Updated version_info.dart hardcoded version to: $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch).$($versionConfig.build)"
+
 # vote_options.dartのデータ更新日時を更新
 $voteOptionsPath = "lib/config/vote_options.dart"
 $voteOptionsContent = Get-Content $voteOptionsPath -Raw -Encoding UTF8
@@ -48,7 +58,7 @@ $formattedDate = "DateTime($($buildDate.Year), $($buildDate.Month), $($buildDate
 $voteOptionsContent = $voteOptionsContent -replace "final DateTime dataUpdateDate = DateTime\([^)]+\);", "final DateTime dataUpdateDate = $formattedDate;"
 Set-Content $voteOptionsPath $voteOptionsContent -NoNewline -Encoding UTF8
 
-Write-Host "Updated vote_options.dart data update date to: $($buildDate.ToString('yyyy-MM-dd HH:mm'))"
+Write-Host "Updated vote_options.dart data update date to: $($buildDate.ToString('yyyy-MM-dd HH:mm')) (JST)"
 
 Write-Host "=== Auto Version Management Complete ==="
 
