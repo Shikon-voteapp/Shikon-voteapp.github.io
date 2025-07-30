@@ -105,7 +105,7 @@ class BottomBar extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow(context, 'データ更新日', VersionInfo.formattedBuildDate),
           const SizedBox(height: 12),
-          _buildInfoRow(context, '著作権表記', '© 2025 文化祭準備委員会\n©2025 '),
+          _buildInfoRow(context, '著作権表記', '© 2025 文化祭準備委員会\n© 2025 Mamouna_inori '),
         ],
       ),
       closeButtonText: '閉じる',
