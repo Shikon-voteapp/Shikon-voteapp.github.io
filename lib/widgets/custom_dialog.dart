@@ -279,7 +279,7 @@ class CustomDialogWidget extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'さらに詳細な情報はこちらからご覧ください',
+                                '詳細情報',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: theme.colorScheme.primary,

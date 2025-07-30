@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
 import '../theme.dart';
 import 'custom_dialog.dart';
+import '../utils/version_info.dart';
 
 class BottomBar extends StatelessWidget {
   final VoidCallback? onBack;
@@ -91,6 +93,63 @@ class BottomBar extends StatelessWidget {
     );
   }
 
+  void _showInfoDialog(BuildContext context) {
+    showCustomDialog(
+      context: context,
+      title: 'アプリ情報',
+      contentWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildInfoRow(context, 'バージョン情報', VersionInfo.fullVersion),
+          const SizedBox(height: 12),
+          _buildInfoRow(context, 'データ更新日', VersionInfo.formattedBuildDate),
+          const SizedBox(height: 12),
+          _buildInfoRow(context, '著作権表記', '© 2024 紫紺祭実行委員会'),
+        ],
+      ),
+      closeButtonText: '閉じる',
+    );
+  }
+
+  Widget _buildInfoRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isClickable = false,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color:
+                  isClickable
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface,
+              decoration: isClickable ? TextDecoration.underline : null,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -137,29 +196,49 @@ class BottomBar extends StatelessWidget {
             ),
           ),
           // Right side navigation
-          if (onNext != null)
-            SizedBox(
-              height: 56.0,
-              child: ElevatedButton(
-                onPressed: onNext,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          Row(
+            children: [
+              // Info button (hamburger menu)
+              Container(
+                width: 56.0,
+                height: 56.0,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  shape: BoxShape.circle,
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('次へ', style: TextStyle(fontSize: 16)),
-                    SizedBox(width: 8),
-                    Icon(Icons.arrow_forward_ios, size: 16),
-                  ],
+                child: _buildIconButton(
+                  context,
+                  Icons.menu,
+                  () => _showInfoDialog(context),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              // Next button
+              if (onNext != null)
+                SizedBox(
+                  height: 56.0,
+                  child: ElevatedButton(
+                    onPressed: onNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('次へ', style: TextStyle(fontSize: 16)),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward_ios, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );

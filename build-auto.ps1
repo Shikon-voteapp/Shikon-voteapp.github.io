@@ -1,5 +1,5 @@
-# バージョン管理機能
-Write-Host "=== Version Management Start ==="
+# 自動ビルド番号更新スクリプト
+Write-Host "=== Auto Version Management Start ==="
 
 # バージョン設定ファイルのパス
 $versionConfigPath = "version_config.json"
@@ -21,46 +21,9 @@ if (!(Test-Path $versionConfigPath)) {
 $versionConfig = Get-Content $versionConfigPath | ConvertFrom-Json
 Write-Host "Current version: $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
 
-# バージョン更新の確認
-Write-Host "`nVersion update options:"
-Write-Host "1. Patch version (1.0.0 -> 1.0.1)"
-Write-Host "2. Minor version (1.0.0 -> 1.1.0)"
-Write-Host "3. Major version (1.0.0 -> 2.0.0)"
-Write-Host "4. Build number only (1.0.0+1 -> 1.0.0+2)"
-Write-Host "5. Skip version update"
-
-$choice = Read-Host "`nSelect option (1-5)"
-
-switch ($choice) {
-    "1" {
-        $versionConfig.patch++
-        $versionConfig.build++
-        Write-Host "Updating patch version to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
-    }
-    "2" {
-        $versionConfig.minor++
-        $versionConfig.patch = 0
-        $versionConfig.build++
-        Write-Host "Updating minor version to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
-    }
-    "3" {
-        $versionConfig.major++
-        $versionConfig.minor = 0
-        $versionConfig.patch = 0
-        $versionConfig.build++
-        Write-Host "Updating major version to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
-    }
-    "4" {
-        $versionConfig.build++
-        Write-Host "Updating build number to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
-    }
-    "5" {
-        Write-Host "Skipping version update"
-    }
-    default {
-        Write-Host "Invalid choice. Skipping version update"
-    }
-}
+# 自動的にビルド番号を増やす
+$versionConfig.build++
+Write-Host "Auto-updating build number to $($versionConfig.major).$($versionConfig.minor).$($versionConfig.patch)+$($versionConfig.build)"
 
 # ビルド日時を更新
 $versionConfig.last_build_date = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -87,7 +50,7 @@ Set-Content $voteOptionsPath $voteOptionsContent -NoNewline -Encoding UTF8
 
 Write-Host "Updated vote_options.dart data update date to: $($buildDate.ToString('yyyy-MM-dd HH:mm'))"
 
-Write-Host "=== Version Management Complete ==="
+Write-Host "=== Auto Version Management Complete ==="
 
 # Flutter Web をビルド
 Write-Host "=== Flutter Web Build Start ==="
@@ -116,7 +79,7 @@ Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
 Write-Host "=== Git Operations Start ==="
 
 # 日付を取得してコミットメッセージを作成
-$commitMessage = "build_$(Get-Date -Format 'yyyyMMdd')"
+$commitMessage = "build_$(Get-Date -Format 'yyyyMMdd')_v$newVersion"
 Write-Host "Commit message: $commitMessage"
 
 # Git add
@@ -142,4 +105,4 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-Write-Host "=== Script Finished Successfully ==="
+Write-Host "=== Script Finished Successfully ===" 

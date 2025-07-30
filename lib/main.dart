@@ -13,6 +13,7 @@ import 'theme.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:js/js_util.dart' as js_util;
 import 'dart:html' as html;
+import 'utils/version_info.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_desktop.dart'
@@ -29,6 +30,9 @@ void main() async {
 
   final dateRangeService = DateRangeService();
   await dateRangeService.initialize();
+
+  // バージョン情報の初期化
+  await VersionInfo.initialize();
 
   try {
     await Firebase.initializeApp(
