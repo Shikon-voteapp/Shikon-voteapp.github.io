@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shikon_voteapp/screens/admin_screen.dart';
 import 'package:shikon_voteapp/theme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:html' as html;
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -13,6 +15,7 @@ Future<void> showCustomDialog({
   String closeButtonText = '閉じる',
   String? imagePath,
   List<Widget>? actions,
+  bool showWikiLink = false,
 }) {
   return showGeneralDialog(
     context: context,
@@ -30,6 +33,7 @@ Future<void> showCustomDialog({
         closeButtonText: closeButtonText,
         imagePath: imagePath,
         actions: actions,
+        showWikiLink: showWikiLink,
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -172,6 +176,7 @@ class CustomDialogWidget extends StatelessWidget {
   final String closeButtonText;
   final String? imagePath;
   final List<Widget>? actions;
+  final bool showWikiLink;
 
   const CustomDialogWidget({
     Key? key,
@@ -183,6 +188,7 @@ class CustomDialogWidget extends StatelessWidget {
     this.closeButtonText = '閉じる',
     this.imagePath,
     this.actions,
+    this.showWikiLink = false,
   }) : assert(content != null || contentWidget != null),
        super(key: key);
 
@@ -243,6 +249,48 @@ class CustomDialogWidget extends StatelessWidget {
                             color: theme.textTheme.bodyMedium?.color,
                           ),
                         ),
+                    if (showWikiLink) ...[
+                      const SizedBox(height: 16),
+                      InkWell(
+                        onTap: () {
+                          // GitHub Wikiへのリンクを新しいタブで開く
+                          final url =
+                              'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
+                          if (kIsWeb) {
+                            html.window.open(url, '_blank');
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: theme.colorScheme.primary.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.open_in_new,
+                                size: 16,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'さらに詳細な情報はこちらからご覧ください',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

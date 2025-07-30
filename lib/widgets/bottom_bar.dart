@@ -29,6 +29,7 @@ class BottomBar extends StatelessWidget {
         title: helpTitle!,
         content: helpContent!,
         closeButtonText: 'OK',
+        showWikiLink: true,
       );
     } else if (helpUrl != null && helpUrl!.isNotEmpty) {
       try {
@@ -49,6 +50,7 @@ class BottomBar extends StatelessWidget {
           title: title,
           content: body,
           closeButtonText: 'OK',
+          showWikiLink: true,
         );
       } catch (e) {
         _showErrorDialog(context);
