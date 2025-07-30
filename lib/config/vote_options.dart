@@ -70,7 +70,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2025, 7, 31, 16, 45, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2025, 7, 31, 18, 50, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
@@ -597,7 +597,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Shikon_award',
     name: '紫紺賞',
     description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
-    shortHelpText: 'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください',
+    shortHelpText: 'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください。\nまた、応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。',
     groups:
         allGroups
             .where(
@@ -648,7 +648,7 @@ final List<VoteCategory> voteCategories = [
     id: 'Stage',
     name: '部活ステージ賞',
     description: '「もう一度行きたい、見たい！」と思える最も盛り上がった部活ステージ団体を1つ選択してください。',
-    shortHelpText: '詳細はパンフレットをご覧ください',
+    shortHelpText: '応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。詳細はパンフレットをご覧ください。',
     groups:
         allGroups
             .where((group) => group.categories.contains(GroupCategory.Stage))
