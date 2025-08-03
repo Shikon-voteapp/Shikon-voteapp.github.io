@@ -83,6 +83,7 @@ class _VoteScreenState extends State<VoteScreen> {
       content: helpContent,
       closeButtonText: '閉じる',
       showWikiLink: true,
+      imagePath: 'assets/sho_setsumei.png',
     );
   }
 

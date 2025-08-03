@@ -30277,9 +30277,9 @@ A.e1("\u30d5\u30a1\u30a4\u30eb\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u30a8\u30e9\u
 aJp(){var s=0,r=A.C(t.H),q
 var $async$aJp=A.x(function(a,b){if(a===1)return A.z(b,r)
 while(true)switch(s){case 0:if($.aQe){s=1
-break}$.aQf="25.2.0"
-$.aQd="17"
-A.e1("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 25.2.0.17")
+break}$.aQf="26.0.0"
+$.aQd="18"
+A.e1("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 26.0.0.18")
 $.aQe=!0
 case 1:return A.A(q,r)}})
 return A.B($async$aJp,r)}},B={}
@@ -98851,7 +98851,7 @@ o=r.r
 s=o!=null&&o.length!==0
 q=r.c
 if(s)q=q+"\n\n"+A.l(o)
-A.e3(p,"\u9589\u3058\u308b",q,p,n,p,p,p,!0,r.b+" \u306b\u3064\u3044\u3066")}},
+A.e3(p,"\u9589\u3058\u308b",q,p,n,"assets/sho_setsumei.png",p,p,!0,r.b+" \u306b\u3064\u3044\u3066")}},
 $S:5}
 A.aDX.prototype={
 $0(){var s=this.a,r=s.w=this.b,q=$.ei(),p=s.e
@@ -99313,7 +99313,7 @@ break
 case 2:i=o.f
 i.toString
 g.toString
-A.e3(null,"OK",g,null,a,null,null,null,!0,i)
+A.e3(null,"OK",g,null,a,"assets/sho_setsumei.png",null,null,!0,i)
 s=3
 break
 case 4:g=o.e
@@ -99331,7 +99331,7 @@ m=B.d.hI(A.un(g,"\\n\\n","\\n"))
 l=J.aWC(m,"\\n")
 k=J.d8(l)!==0?J.aP(l,0):"\u30d8\u30eb\u30d7"
 j=J.d8(l)>1?B.d.hI(B.b.bd(J.aWD(l,1),"\\n")):""
-A.e3(null,"OK",j,null,a,null,null,null,!0,k)
+A.e3(null,"OK",j,null,a,"assets/sho_setsumei.png",null,null,!0,k)
 q=1
 s=11
 break
@@ -106746,8 +106746,8 @@ $.jP=function(){var s=t.n
 return A.c([A.c([0.41233895,0.35762064,0.18051042],s),A.c([0.2126,0.7152,0.0722],s),A.c([0.01932141,0.11916382,0.95034478],s)],t.zg)}()
 $.v4=A.c([95.047,100,108.883],t.n)
 $.aol=null
-$.aQf="25.2.0"
-$.aQd="17"
+$.aQf="26.0.0"
+$.aQd="18"
 $.aQe=!1
 $.b_a=A.y(t.S,A.ar("b_9"))
 $.aOb=null
@@ -107311,7 +107311,7 @@ s($,"bbV","aKV",()=>new A.v())
 r($,"b1v","aKU",()=>{var q=new A.ai7()
 q.yL($.aKV())
 return q})
-s($,"beu","aW9",()=>A.c7(2025,8,4,16,23,0,0,0))
+s($,"beu","aW9",()=>A.c7(2025,8,4,19,25,0,0,0))
 s($,"bev","M2",()=>{var q=A.c7(2025,4,1,9,0,0,0,0)
 return A.b2F(A.c7(2025,9,22,15,0,0,0,0),!0,3,0,2,45,q)})
 s($,"bek","aH5",()=>{var q=t.Yy
