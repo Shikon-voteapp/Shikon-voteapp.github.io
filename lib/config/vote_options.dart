@@ -12,23 +12,34 @@ class VotingPeriodConfig {
   final DateTime endDate;
   final bool maintenanceEnabled;
   final int maintenanceStartHour;
+  final int maintenanceStartMinute;
   final int maintenanceEndHour;
+  final int maintenanceEndMinute;
 
   const VotingPeriodConfig({
     required this.startDate,
     required this.endDate,
     this.maintenanceEnabled = true,
     this.maintenanceStartHour = 1,
+    this.maintenanceStartMinute = 0,
     this.maintenanceEndHour = 2,
+    this.maintenanceEndMinute = 0,
   });
 
   // 現在時刻が有効期間内かチェック
   bool isWithinVotingPeriod(DateTime dateTime) {
     // メンテナンス時間をチェック
     if (maintenanceEnabled) {
+      // 現在時刻を分単位で計算
+      int currentTimeInMinutes = dateTime.hour * 60 + dateTime.minute;
+      int maintenanceStartInMinutes =
+          maintenanceStartHour * 60 + maintenanceStartMinute;
+      int maintenanceEndInMinutes =
+          maintenanceEndHour * 60 + maintenanceEndMinute;
+
       bool isMaintenanceTime =
-          dateTime.hour >= maintenanceStartHour &&
-          dateTime.hour < maintenanceEndHour;
+          currentTimeInMinutes >= maintenanceStartInMinutes &&
+          currentTimeInMinutes < maintenanceEndInMinutes;
       if (isMaintenanceTime) {
         return false; // メンテナンス時間内は常に無効
       }
@@ -54,7 +65,9 @@ class VotingPeriodConfig {
       'endDate': endDate.toIso8601String(),
       'maintenanceEnabled': maintenanceEnabled,
       'maintenanceStartHour': maintenanceStartHour,
+      'maintenanceStartMinute': maintenanceStartMinute,
       'maintenanceEndHour': maintenanceEndHour,
+      'maintenanceEndMinute': maintenanceEndMinute,
     };
   }
 
@@ -64,21 +77,25 @@ class VotingPeriodConfig {
       endDate: DateTime.parse(json['endDate']),
       maintenanceEnabled: json['maintenanceEnabled'] ?? true,
       maintenanceStartHour: json['maintenanceStartHour'] ?? 2,
+      maintenanceStartMinute: json['maintenanceStartMinute'] ?? 45,
       maintenanceEndHour: json['maintenanceEndHour'] ?? 3,
+      maintenanceEndMinute: json['maintenanceEndMinute'] ?? 0,
     );
   }
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2025, 7, 31, 18, 55, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2025, 8, 4, 16, 23, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2025, 4, 1, 9, 0), // 2025年4月1日 9:00
   endDate: DateTime(2025, 9, 22, 15, 0), // 2025年9月22日 15:00
   maintenanceEnabled: true,
-  maintenanceStartHour: 1,
-  maintenanceEndHour: 2,
+  maintenanceStartHour: 2,
+  maintenanceStartMinute: 45,
+  maintenanceEndHour: 3,
+  maintenanceEndMinute: 0,
 );
 
 // カテゴリの日本語名
@@ -137,7 +154,8 @@ pixyの魔法の世界へようこそ。''',
   Group(
     id: 'P05',
     name: 'MBC-15人の野球侍-',
-    groupName: '鈴木啓太、萩原大晄、近田洋司、萩原夢都、藤井智寛、鈴木悠一郎、林航大、清水日秀仁、平尾友哉、伊藤大志、稲付翔、音羽真優、賀川湊太、根本優花、山本蒼珠',
+    groupName:
+        '鈴木啓太、萩原大晄、近田洋司、萩原夢都、藤井智寛、鈴木悠一郎、林航大、清水日秀仁、平尾友哉、伊藤大志、稲付翔、音羽真優、賀川湊太、根本優花、山本蒼珠',
     description: '''15人の引退した野球侍、俺らの夏はまだ終わっちゃいない！明治魂！''',
     imagePath: 'assets/MBC.jpeg',
     floor: 4,
@@ -242,7 +260,8 @@ shape of you/Ed Sheeran
     id: 'S05',
     name: '書道部',
     groupName: '',
-    description: '''流行の楽曲をテーマに、一字一字魂を込めた作品を作り上げます。 迫力ある書道パフォーマンスをぜひご覧ください！ # 一筆入魂''',
+    description:
+        '''流行の楽曲をテーマに、一字一字魂を込めた作品を作り上げます。 迫力ある書道パフォーマンスをぜひご覧ください！ # 一筆入魂''',
     imagePath: '',
     floor: 4,
     categories: [GroupCategory.Stage],
@@ -287,7 +306,8 @@ shape of you/Ed Sheeran
     id: 'G03',
     name: '中学3年生　学年展示',
     groupName: '中学3年',
-    description: '''中学３年生が、明治中学校の「いいところ」や「学校の様子」を、心を込めて紹介します！毎年大好評の体験コーナーにも挑戦してください！中学３年生が笑顔でみなさんをお迎えします！''',
+    description:
+        '''中学３年生が、明治中学校の「いいところ」や「学校の様子」を、心を込めて紹介します！毎年大好評の体験コーナーにも挑戦してください！中学３年生が笑顔でみなさんをお迎えします！''',
     imagePath: 'assets/中3.jpg',
     floor: 2,
     categories: [GroupCategory.Gakunen],
@@ -323,7 +343,8 @@ shape of you/Ed Sheeran
     id: 'H04',
     name: '書の世界、ここに展示中',
     groupName: '書道部',
-    description: '''個性溢れる個人作品から歴史感じる共同作品まで！ 書の世界を体感しませんか？ プレゼントも用意してお待ちしています！''',
+    description:
+        '''個性溢れる個人作品から歴史感じる共同作品まで！ 書の世界を体感しませんか？ プレゼントも用意してお待ちしています！''',
     imagePath: '',
     floor: 1,
     categories: [GroupCategory.Tenji],
@@ -341,7 +362,8 @@ shape of you/Ed Sheeran
     id: 'H06',
     name: '歴研合戦絵巻 ｰ紫紺の的を射貫けｰ',
     groupName: '歴史研究部',
-    description: '''源平合戦の真実に迫る！ 歴史研究部による合戦絵巻、ここに展開！「紫紺の的」を射抜くのは誰か――歴史の渦に飛び込み、見届けよ！''',
+    description:
+        '''源平合戦の真実に迫る！ 歴史研究部による合戦絵巻、ここに展開！「紫紺の的」を射抜くのは誰か――歴史の渦に飛び込み、見届けよ！''',
     imagePath: '',
     floor: 1,
     categories: [GroupCategory.Tenji],
@@ -404,7 +426,8 @@ shape of you/Ed Sheeran
     id: 'H13',
     name: '生物部',
     groupName: '',
-    description: '''#ウーパールーパー #食虫植物 #生物観察 #合宿 #顕微鏡 生物部で飼育しているユニークな生き物たちの展示や実験、夏合宿の成果報告などを行います！''',
+    description:
+        '''#ウーパールーパー #食虫植物 #生物観察 #合宿 #顕微鏡 生物部で飼育しているユニークな生き物たちの展示や実験、夏合宿の成果報告などを行います！''',
     imagePath: '',
     floor: 3,
     categories: [GroupCategory.Tenji],
@@ -458,7 +481,8 @@ shape of you/Ed Sheeran
     id: 'K04',
     name: 'SUPER はらしんご WORLD',
     groupName: '高校Ⅱ年A組＋高校Ⅱ年C組',
-    description: '''トロッコに乗ってゲームの世界の中でミニゲームにチャレンジ！あなたを乗せて、私たちが全力で案内します！友達同士でも親子でも1人でも大歓迎！''',
+    description:
+        '''トロッコに乗ってゲームの世界の中でミニゲームにチャレンジ！あなたを乗せて、私たちが全力で案内します！友達同士でも親子でも1人でも大歓迎！''',
     imagePath: '',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
@@ -467,7 +491,8 @@ shape of you/Ed Sheeran
     id: 'K05',
     name: 'Royal MasqueraDe CaGino',
     groupName: '高校Ⅱ年D組＋高校Ⅱ年G組',
-    description: '''あなたの元へ一枚の手紙が届きました。それは仮面舞踏会カジノへの招待状だったのです！全ての印を集めると豪華景品を貰えるかも…？今宵あなたを仮面の夜へ誘います。#仮面舞踏会 #カジノ''',
+    description:
+        '''あなたの元へ一枚の手紙が届きました。それは仮面舞踏会カジノへの招待状だったのです！全ての印を集めると豪華景品を貰えるかも…？今宵あなたを仮面の夜へ誘います。#仮面舞踏会 #カジノ''',
     imagePath: '',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
@@ -588,7 +613,7 @@ shape of you/Ed Sheeran
     imagePath: 'assets/ⅢG.jpeg',
     floor: 3,
     categories: [GroupCategory.Moyoshi],
-  )
+  ),
 ];
 
 // 投票のカテゴリを定義
@@ -597,7 +622,8 @@ final List<VoteCategory> voteCategories = [
     id: 'Shikon_award',
     name: '紫紺賞',
     description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
-    shortHelpText: 'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください。\nまた、応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。',
+    shortHelpText:
+        'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください。\nまた、応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。',
     groups:
         allGroups
             .where(

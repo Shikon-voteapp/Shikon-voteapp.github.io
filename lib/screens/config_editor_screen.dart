@@ -219,8 +219,10 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
         startDate: startDate,
         endDate: endDate,
         maintenanceEnabled: _votingPeriod?.maintenanceEnabled ?? false,
-        maintenanceStartHour: _votingPeriod?.maintenanceStartHour ?? 0,
-        maintenanceEndHour: _votingPeriod?.maintenanceEndHour ?? 0,
+        maintenanceStartHour: _votingPeriod?.maintenanceStartHour ?? 2,
+        maintenanceStartMinute: _votingPeriod?.maintenanceStartMinute ?? 45,
+        maintenanceEndHour: _votingPeriod?.maintenanceEndHour ?? 3,
+        maintenanceEndMinute: _votingPeriod?.maintenanceEndMinute ?? 0,
       );
     });
   }

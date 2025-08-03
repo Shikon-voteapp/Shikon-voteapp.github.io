@@ -24,7 +24,7 @@ class OutOfPeriodScreen extends StatelessWidget {
           ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       helpTitle: '投票期間について',
       helpContent:
-          '投票は指定された期間内でのみ可能です。\nまた、毎日深夜01:00から02:00まではサーバーメンテナンスのため投票できません。\nご了承ください。',
+          '投票は指定された期間内でのみ可能です。\nまた、毎日深夜02:45から03:00まではサーバーメンテナンスのため投票できません。\nご了承ください。',
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -39,7 +39,7 @@ class OutOfPeriodScreen extends StatelessWidget {
             Text('投票期間外です', style: theme.textTheme.headlineSmall),
             SizedBox(height: 20),
             Text(
-              '現在は投票を受け付けていません。\n以下の期間内に再度お試しください。\nなお、毎日深夜01:00～02:00はサーバーメンテナンスのため投票できません。',
+              '現在は投票を受け付けていません。\n以下の期間内に再度お試しください。\nなお、毎日深夜02:45～03:00はサーバーメンテナンスのため投票できません。',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge,
             ),

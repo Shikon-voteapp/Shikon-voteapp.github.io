@@ -54,7 +54,9 @@ class DateRangeService {
           endDate: endDate,
           maintenanceEnabled: _config.maintenanceEnabled,
           maintenanceStartHour: _config.maintenanceStartHour,
+          maintenanceStartMinute: _config.maintenanceStartMinute,
           maintenanceEndHour: _config.maintenanceEndHour,
+          maintenanceEndMinute: _config.maintenanceEndMinute,
         );
       }
     } catch (e) {
@@ -82,7 +84,9 @@ class DateRangeService {
       endDate: end,
       maintenanceEnabled: _config.maintenanceEnabled,
       maintenanceStartHour: _config.maintenanceStartHour,
+      maintenanceStartMinute: _config.maintenanceStartMinute,
       maintenanceEndHour: _config.maintenanceEndHour,
+      maintenanceEndMinute: _config.maintenanceEndMinute,
     );
     await saveConfig(config);
   }
