@@ -85,7 +85,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2025, 8, 4, 19, 25, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2025, 8, 7, 14, 13, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
@@ -93,9 +93,7 @@ final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   endDate: DateTime(2025, 9, 22, 15, 0), // 2025年9月22日 15:00
   maintenanceEnabled: true,
   maintenanceStartHour: 2,
-  maintenanceStartMinute: 45,
   maintenanceEndHour: 3,
-  maintenanceEndMinute: 0,
 );
 
 // カテゴリの日本語名
@@ -118,7 +116,7 @@ final List<Group> allGroups = [
     groupName: '柳下理宇、相田千青、河田萌音、梅田彩夏、山口未結',
     description: '''雨のち、きらめき
 pixyの魔法の世界へようこそ。''',
-    imagePath: '',
+    imagePath: 'assets/pixy.jpeg',
     floor: 4,
     categories: [GroupCategory.Performance],
   ),
@@ -147,15 +145,14 @@ pixyの魔法の世界へようこそ。''',
     groupName: '鈴木美優、山田結月、山岸咲結、西出茉央、高崎羽彩、土谷怜奈',
     description: '''6我夢chu!です！初めてのパフォですが頑張ります！
 私達に夢中になってください♡''',
-    imagePath: '',
+    imagePath: 'assets/6我夢chu.jpeg',
     floor: 4,
     categories: [GroupCategory.Performance],
   ),
   Group(
     id: 'P05',
     name: 'MBC-15人の野球侍-',
-    groupName:
-        '鈴木啓太、萩原大晄、近田洋司、萩原夢都、藤井智寛、鈴木悠一郎、林航大、清水日秀仁、平尾友哉、伊藤大志、稲付翔、音羽真優、賀川湊太、根本優花、山本蒼珠',
+    groupName: '鈴木啓太、萩原大晄、近田洋司、萩原夢都、藤井智寛、鈴木悠一郎、林航大、清水日秀仁、平尾友哉、伊藤大志、稲付翔、音羽真優、賀川湊太、根本優花、山本蒼珠',
     description: '''15人の引退した野球侍、俺らの夏はまだ終わっちゃいない！明治魂！''',
     imagePath: 'assets/MBC.jpeg',
     floor: 4,
@@ -178,7 +175,7 @@ pixyの魔法の世界へようこそ。''',
     description: '''飛行艇/King Gnu
 more than words/羊文学
 タッチ/岩崎良美''',
-    imagePath: '',
+    imagePath: 'assets/みたらし.jpeg',
     floor: 4,
     categories: [GroupCategory.Band],
   ),
@@ -201,7 +198,7 @@ Lovers/sumika
     description: '''ノーダウト/Official髭男dism
 shape of you/Ed Sheeran
 カブトムシ/aiko''',
-    imagePath: '',
+    imagePath: 'assets/PapiFleur.jpeg',
     floor: 4,
     categories: [GroupCategory.Band],
   ),
@@ -211,7 +208,7 @@ shape of you/Ed Sheeran
     groupName: '丸山諒大、片山瑛輝、岡野悠人、匹田碧人',
     description: '''欲望に満ちた青年団/ONE OK LOCK
 シルエット/KANA-BOON''',
-    imagePath: '',
+    imagePath: 'assets/Jupiter.jpeg',
     floor: 4,
     categories: [GroupCategory.Band],
   ),
@@ -233,7 +230,7 @@ shape of you/Ed Sheeran
     description: '''君と夏フェス/SHISHAMO
 勿忘/Awesome City Club
 キミシダイ列車/ONE OK ROCK''',
-    imagePath: '',
+    imagePath: 'assets/はろーさんでー.jpeg',
     floor: 4,
     categories: [GroupCategory.Band],
   ),
@@ -242,7 +239,7 @@ shape of you/Ed Sheeran
     name: 'ダンス部',
     groupName: '',
     description: '''#朝イチごめん 総勢58人の部員で踊ります！ 一度きりのステージ！是非一緒に盛り上がりましょう♪''',
-    imagePath: '',
+    imagePath: 'assets/ダンス部.jpeg',
     floor: 4,
     categories: [GroupCategory.Stage],
   ),
@@ -260,9 +257,8 @@ shape of you/Ed Sheeran
     id: 'S05',
     name: '書道部',
     groupName: '',
-    description:
-        '''流行の楽曲をテーマに、一字一字魂を込めた作品を作り上げます。 迫力ある書道パフォーマンスをぜひご覧ください！ # 一筆入魂''',
-    imagePath: '',
+    description: '''流行の楽曲をテーマに、一字一字魂を込めた作品を作り上げます。 迫力ある書道パフォーマンスをぜひご覧ください！ # 一筆入魂''',
+    imagePath: 'assets/書道部.jpeg',
     floor: 4,
     categories: [GroupCategory.Stage],
   ),
@@ -306,8 +302,7 @@ shape of you/Ed Sheeran
     id: 'G03',
     name: '中学3年生　学年展示',
     groupName: '中学3年',
-    description:
-        '''中学３年生が、明治中学校の「いいところ」や「学校の様子」を、心を込めて紹介します！毎年大好評の体験コーナーにも挑戦してください！中学３年生が笑顔でみなさんをお迎えします！''',
+    description: '''中学３年生が、明治中学校の「いいところ」や「学校の様子」を、心を込めて紹介します！毎年大好評の体験コーナーにも挑戦してください！中学３年生が笑顔でみなさんをお迎えします！''',
     imagePath: 'assets/中3.jpg',
     floor: 2,
     categories: [GroupCategory.Gakunen],
@@ -317,7 +312,7 @@ shape of you/Ed Sheeran
     name: '次は終点、美術室',
     groupName: '美術部',
     description: '''夜空に瞬く星を眺めれば、銀河鉄道があなたを連れて行ってくれる''',
-    imagePath: '',
+    imagePath: 'assets/美術部.PNG',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
@@ -326,7 +321,7 @@ shape of you/Ed Sheeran
     name: '有志料理研究部',
     groupName: '',
     description: '''レッツ　ワールドクッキング！''',
-    imagePath: '',
+    imagePath: 'assets/料理研究.jpeg',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
@@ -343,9 +338,8 @@ shape of you/Ed Sheeran
     id: 'H04',
     name: '書の世界、ここに展示中',
     groupName: '書道部',
-    description:
-        '''個性溢れる個人作品から歴史感じる共同作品まで！ 書の世界を体感しませんか？ プレゼントも用意してお待ちしています！''',
-    imagePath: '',
+    description: '''個性溢れる個人作品から歴史感じる共同作品まで！ 書の世界を体感しませんか？ プレゼントも用意してお待ちしています！''',
+    imagePath: 'assets/書道部展示.jpg',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
@@ -362,9 +356,8 @@ shape of you/Ed Sheeran
     id: 'H06',
     name: '歴研合戦絵巻 ｰ紫紺の的を射貫けｰ',
     groupName: '歴史研究部',
-    description:
-        '''源平合戦の真実に迫る！ 歴史研究部による合戦絵巻、ここに展開！「紫紺の的」を射抜くのは誰か――歴史の渦に飛び込み、見届けよ！''',
-    imagePath: '',
+    description: '''源平合戦の真実に迫る！ 歴史研究部による合戦絵巻、ここに展開！「紫紺の的」を射抜くのは誰か――歴史の渦に飛び込み、見届けよ！''',
+    imagePath: 'assets/歴研２０２５文化祭パンフ - 牧野淳弥.jpg',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
@@ -373,7 +366,7 @@ shape of you/Ed Sheeran
     name: 'トリック・オア・漫研',
     groupName: '有志漫画研究部',
     description: '''今年のテーマは「ハロウィン」！オリジナルの短編漫画集やイラスト集がゲットできるかも⁉︎''',
-    imagePath: '',
+    imagePath: 'assets/漫画研究.jpeg',
     floor: 2,
     categories: [GroupCategory.Tenji],
   ),
@@ -381,8 +374,8 @@ shape of you/Ed Sheeran
     id: 'H08',
     name: 'JRC部＆有志シャプラニール',
     groupName: '',
-    description: '''''',
-    imagePath: '',
+    description: '''フェアトレード商品(バングラディシュやネパールなど)と東北支援商品(桃ジュースやかりんとう)を販売しています(現金)。２日目のみの開店いたします。明校から国際協力しませんか？''',
+    imagePath: 'assets/JRC.jpg',
     floor: 2,
     categories: [GroupCategory.Tenji],
   ),
@@ -391,7 +384,7 @@ shape of you/Ed Sheeran
     name: 'いしざんまい！',
     groupName: '地学部',
     description: '''地学部自慢の鉱物や化石をお楽しみください！合宿をまとめたポスターも展示しています！''',
-    imagePath: '',
+    imagePath: 'assets/地学部.png',
     floor: 2,
     categories: [GroupCategory.Tenji],
   ),
@@ -418,7 +411,7 @@ shape of you/Ed Sheeran
     name: '映画部',
     groupName: '',
     description: '''ドキドキワクワクの学生青春物語！自主制作映画を上映中！見に来てね♪''',
-    imagePath: '',
+    imagePath: 'assets/映画部.jpg',
     floor: 3,
     categories: [GroupCategory.Tenji],
   ),
@@ -426,9 +419,8 @@ shape of you/Ed Sheeran
     id: 'H13',
     name: '生物部',
     groupName: '',
-    description:
-        '''#ウーパールーパー #食虫植物 #生物観察 #合宿 #顕微鏡 生物部で飼育しているユニークな生き物たちの展示や実験、夏合宿の成果報告などを行います！''',
-    imagePath: '',
+    description: '''#ウーパールーパー #食虫植物 #生物観察 #合宿 #顕微鏡 生物部で飼育しているユニークな生き物たちの展示や実験、夏合宿の成果報告などを行います！''',
+    imagePath: 'assets/生物部.jpg',
     floor: 3,
     categories: [GroupCategory.Tenji],
   ),
@@ -446,7 +438,7 @@ shape of you/Ed Sheeran
     name: '物理部',
     groupName: '',
     description: '''部員が作成した作品を展示しているので是非見に来てください''',
-    imagePath: '',
+    imagePath: 'assets/物理部.jpg',
     floor: 3,
     categories: [GroupCategory.Tenji],
   ),
@@ -455,7 +447,7 @@ shape of you/Ed Sheeran
     name: 'トロピカル・エスケープ',
     groupName: '高校Ⅱ年B組',
     description: '''僕はモモキー！幻のバナナを探していたら罠にかかっちゃった！？みんなⅡBに僕を助けにきて～！''',
-    imagePath: '',
+    imagePath: 'assets/トロピカルエスケープ.jpg',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -464,7 +456,7 @@ shape of you/Ed Sheeran
     name: 'みきえちゃんクルーズ',
     groupName: '高校Ⅱ年E組',
     description: '''ただ回るだけじゃない⁉動物にエサをあげる、新感覚クルーズ体験''',
-    imagePath: '',
+    imagePath: 'assets/みきえちゃんクルーズ.JPG',
     floor: 0,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -473,7 +465,7 @@ shape of you/Ed Sheeran
     name: '先生、患者が逃げました',
     groupName: '高校Ⅱ年F組',
     description: '''死んだ患者の呪いが残る廃病院。鍵を探し、無事に脱出できるか...？''',
-    imagePath: '',
+    imagePath: 'assets/高II F .png',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -481,9 +473,8 @@ shape of you/Ed Sheeran
     id: 'K04',
     name: 'SUPER はらしんご WORLD',
     groupName: '高校Ⅱ年A組＋高校Ⅱ年C組',
-    description:
-        '''トロッコに乗ってゲームの世界の中でミニゲームにチャレンジ！あなたを乗せて、私たちが全力で案内します！友達同士でも親子でも1人でも大歓迎！''',
-    imagePath: '',
+    description: '''トロッコに乗ってゲームの世界の中でミニゲームにチャレンジ！あなたを乗せて、私たちが全力で案内します！友達同士でも親子でも1人でも大歓迎！''',
+    imagePath: 'assets/ⅡAC.jpg',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -491,9 +482,8 @@ shape of you/Ed Sheeran
     id: 'K05',
     name: 'Royal MasqueraDe CaGino',
     groupName: '高校Ⅱ年D組＋高校Ⅱ年G組',
-    description:
-        '''あなたの元へ一枚の手紙が届きました。それは仮面舞踏会カジノへの招待状だったのです！全ての印を集めると豪華景品を貰えるかも…？今宵あなたを仮面の夜へ誘います。#仮面舞踏会 #カジノ''',
-    imagePath: '',
+    description: '''あなたの元へ一枚の手紙が届きました。それは仮面舞踏会カジノへの招待状だったのです！全ての印を集めると豪華景品を貰えるかも…？今宵あなたを仮面の夜へ誘います。#仮面舞踏会 #カジノ''',
+    imagePath: 'assets/Royal MasqueraDe CaGino.jpeg',
     floor: 1,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -520,7 +510,7 @@ shape of you/Ed Sheeran
     name: '「高身長じゃ、ダメですか？」',
     groupName: '高校Ⅰ年C組',
     description: '''メイド服を着た高身長ディーラーと勝負しよう！ 勝ったら身長が手に入れられるかも… ？''',
-    imagePath: '',
+    imagePath: 'assets/高身長じゃダメですか.png',
     floor: 2,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -556,7 +546,7 @@ shape of you/Ed Sheeran
     name: 'トロッコ・レーザー・マニア！ｰ無限の彼方へさぁ行くぞｰ',
     groupName: '高校Ⅰ年G組',
     description: '''暗闇の中光る的を狙撃せよ！高ⅠGがお届けする新感覚トロッコアドベンチャー！''',
-    imagePath: '',
+    imagePath: 'assets/ⅠG.jpg',
     floor: 2,
     categories: [GroupCategory.Moyoshi],
   ),
@@ -613,7 +603,7 @@ shape of you/Ed Sheeran
     imagePath: 'assets/ⅢG.jpeg',
     floor: 3,
     categories: [GroupCategory.Moyoshi],
-  ),
+  )
 ];
 
 // 投票のカテゴリを定義
