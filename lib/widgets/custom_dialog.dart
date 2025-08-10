@@ -195,7 +195,8 @@ class CustomDialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isSmallHeight = MediaQuery.of(context).size.height < 700;
+    final media = MediaQuery.of(context);
+    final isSmallHeight = media.size.height < 700;
     return SafeArea(
       child: Material(
         color: Colors.transparent,
@@ -216,7 +217,8 @@ class CustomDialogWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (imagePath != null && !isSmallHeight) ...[
+                      // 画像は端末縦幅が十分で、かつ画像の表示が禁止されていない画面のみ表示
+                      if (imagePath != null && !isSmallHeight && _shouldShowImage(context)) ...[
                         SizedBox(
                           height: 150,
                           width: double.infinity,
@@ -241,65 +243,71 @@ class CustomDialogWidget extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              contentWidget ??
-                                  Text(
-                                    content ?? '',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: theme.textTheme.bodyMedium?.color,
-                                    ),
-                                  ),
-                              if (showWikiLink) ...[
-                                const SizedBox(height: 16),
-                                InkWell(
-                                  onTap: () {
-                                    final url =
-                                        'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
-                                    if (kIsWeb) {
-                                      html.window.open(url, '_blank');
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: theme.colorScheme.primaryContainer,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: theme.colorScheme.primary.withOpacity(0.3),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.open_in_new,
-                                          size: 16,
-                                          color: theme.colorScheme.primary,
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final maxScrollHeight = MediaQuery.of(context).size.height * 0.6;
+                          return ConstrainedBox(
+                            constraints: BoxConstraints(maxHeight: maxScrollHeight),
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  contentWidget ??
+                                      Text(
+                                        content ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: theme.textTheme.bodyMedium?.color,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '詳細情報',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: theme.colorScheme.primary,
-                                            fontWeight: FontWeight.w500,
+                                      ),
+                                  if (showWikiLink) ...[
+                                    const SizedBox(height: 16),
+                                    InkWell(
+                                      onTap: () {
+                                        final url =
+                                            'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
+                                        if (kIsWeb) {
+                                          html.window.open(url, '_blank');
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primaryContainer,
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: theme.colorScheme.primary.withOpacity(0.3),
                                           ),
                                         ),
-                                      ],
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.open_in_new,
+                                              size: 16,
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              '詳細情報',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: theme.colorScheme.primary,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -364,5 +372,25 @@ class CustomDialogWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // 特定の画面では画像を表示しない
+  bool _shouldShowImage(BuildContext context) {
+    final route = ModalRoute.of(context);
+    final settingsName = route?.settings.name ?? '';
+
+    // 非表示対象: トップ画面(スキャナ), 投票券入力画面, 生徒認証画面, 確認画面
+    // ルート名が無いケースもあるため、Widget 型でも判定
+    final widgetType = context.widget.runtimeType.toString();
+    const hiddenNames = ['/scanner', '/top', '/confirm'];
+    const hiddenWidgets = [
+      'ScannerScreen',
+      'StudentVerificationScreen',
+      'ConfirmScreen',
+    ];
+
+    if (hiddenNames.any((n) => settingsName.contains(n))) return false;
+    if (hiddenWidgets.any((w) => widgetType.contains(w))) return false;
+    return true;
   }
 }
