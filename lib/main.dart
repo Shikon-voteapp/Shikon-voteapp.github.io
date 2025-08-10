@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:js/js_util.dart' as js_util;
 import 'dart:html' as html;
 import 'utils/version_info.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_desktop.dart'
@@ -57,20 +58,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '紫紺祭投票アプリ',
-      theme: AppTheme.lightThemeData,
-      darkTheme: AppTheme.darkThemeData,
-      themeMode: ThemeMode.system,
-      navigatorKey: navigatorKey,
-      home: SplashScreen(dateRangeService: dateRangeService),
-      routes: {
-        '/admin': (context) => AdminScreen(),
-        '/scanner':
-            (context) =>
-                kIsWeb
-                    ? ScannerScreen()
-                    : CameraPermissionWrapper(child: ScannerScreen()),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: '紫紺祭投票アプリ',
+          theme: AppTheme.lightThemeData,
+          darkTheme: AppTheme.darkThemeData,
+          themeMode: ThemeMode.system,
+          navigatorKey: navigatorKey,
+          home: SplashScreen(dateRangeService: dateRangeService),
+          routes: {
+            '/admin': (context) => AdminScreen(),
+            '/scanner': (context) => kIsWeb
+                ? ScannerScreen()
+                : CameraPermissionWrapper(child: ScannerScreen()),
+          },
+        );
       },
     );
   }

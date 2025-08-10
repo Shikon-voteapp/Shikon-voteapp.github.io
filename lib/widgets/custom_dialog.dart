@@ -195,6 +195,7 @@ class CustomDialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isSmallHeight = MediaQuery.of(context).size.height < 700;
     return SafeArea(
       child: Material(
         color: Colors.transparent,
@@ -204,94 +205,104 @@ class CustomDialogWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                padding: const EdgeInsets.all(24.0),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (imagePath != null) ...[
-                      SizedBox(
-                        height: 150,
-                        width: double.infinity,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.asset(
-                            imagePath!,
-                            fit: BoxFit.contain,
-                            errorBuilder:
-                                (context, error, stackTrace) => Container(
-                                  color: theme.colorScheme.secondaryContainer,
-                                ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: theme.textTheme.titleLarge?.color,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    contentWidget ??
-                        Text(
-                          content!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: theme.textTheme.bodyMedium?.color,
-                          ),
-                        ),
-                    if (showWikiLink) ...[
-                      const SizedBox(height: 16),
-                      InkWell(
-                        onTap: () {
-                          // GitHub Wikiへのリンクを新しいタブで開く
-                          final url =
-                              'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
-                          if (kIsWeb) {
-                            html.window.open(url, '_blank');
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: theme.colorScheme.primary.withOpacity(0.3),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.all(24.0),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (imagePath != null && !isSmallHeight) ...[
+                        SizedBox(
+                          height: 150,
+                          width: double.infinity,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              imagePath!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(color: theme.colorScheme.secondaryContainer),
                             ),
                           ),
-                          child: Row(
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: theme.textTheme.titleLarge?.color,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.open_in_new,
-                                size: 16,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '詳細情報',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w500,
+                              contentWidget ??
+                                  Text(
+                                    content ?? '',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: theme.textTheme.bodyMedium?.color,
+                                    ),
+                                  ),
+                              if (showWikiLink) ...[
+                                const SizedBox(height: 16),
+                                InkWell(
+                                  onTap: () {
+                                    final url =
+                                        'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
+                                    if (kIsWeb) {
+                                      html.window.open(url, '_blank');
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.primaryContainer,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: theme.colorScheme.primary.withOpacity(0.3),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.open_in_new,
+                                          size: 16,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '詳細情報',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ),
                       ),
                     ],
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -325,9 +336,7 @@ class CustomDialogWidget extends StatelessWidget {
                     ),
                     if (onPrimaryAction != null && primaryActionText != null)
                       ElevatedButton(
-                        onPressed: () {
-                          onPrimaryAction!();
-                        },
+                        onPressed: () => onPrimaryAction!(),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

@@ -113,6 +113,8 @@ class _VoteScreenState extends State<VoteScreen> {
             ? '${category.description}\n\n${category.shortHelpText}'
             : category.description;
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+    final bool isCompact = size.height < 700;
 
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
@@ -154,20 +156,35 @@ class _VoteScreenState extends State<VoteScreen> {
               ),
             ),
           ),
-          _buildGroupDetailHeader(),
-          _buildViewToggle(),
+          // 縦幅が小さい場合は上部詳細表示を無効化
+          if (!isCompact) _buildGroupDetailHeader(isCompact: isCompact),
+          // コンパクト時は強制的にリスト表示・トグルは無効化
+          if (!isCompact) _buildViewToggle() else const SizedBox(height: 8),
           Expanded(
-            child: Stack(
-              children: [
-                _isGridView ? _buildGroupGridView() : _buildGroupListView(),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: _buildFloorFilter(),
-                ),
-              ],
-            ),
+            child: isCompact
+                ? Column(
+                    children: [
+                      _buildFloorFilter(),
+                      Expanded(
+                        child: _buildGroupListView(isOverlayFilter: false),
+                      ),
+                    ],
+                  )
+                : Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _isGridView
+                            ? _buildGroupGridView(isOverlayFilter: true)
+                            : _buildGroupListView(isOverlayFilter: true),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: _buildFloorFilter(),
+                      ),
+                    ],
+                  ),
           ),
           _buildVoteButton(),
         ],
@@ -175,12 +192,12 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
-  Widget _buildGroupDetailHeader() {
+  Widget _buildGroupDetailHeader({required bool isCompact}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     if (_selectedGroup == null) {
       return Container(
-        height: 140,
+        height: isCompact ? 100 : 140,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -192,7 +209,7 @@ class _VoteScreenState extends State<VoteScreen> {
           child: Text(
             '投票先を選択してください',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: isCompact ? 16 : 18,
               fontWeight: FontWeight.w500,
               color: colorScheme.onSurface.withOpacity(0.7),
             ),
@@ -207,7 +224,7 @@ class _VoteScreenState extends State<VoteScreen> {
         }
       },
       child: Container(
-        height: 140,
+        height: isCompact ? 100 : 140,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -354,15 +371,24 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
-  Widget _buildGroupGridView() {
+  Widget _buildGroupGridView({required bool isOverlayFilter}) {
     final theme = Theme.of(context);
+    final width = MediaQuery.of(context).size.width;
+    // 画面幅に応じて列数を調整（iPhone SE相当で2列）
+    final int crossAxisCount = width < 380
+        ? 2
+        : width < 650
+            ? 3
+            : 4;
+    final double childAspectRatio = width < 380 ? 0.7 : 0.8;
+
     return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
+      padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 80 : 16),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
-        childAspectRatio: 0.8,
+        childAspectRatio: childAspectRatio,
       ),
       itemCount: _filteredGroups.length,
       itemBuilder: (context, index) {
@@ -446,11 +472,11 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
-  Widget _buildGroupListView() {
+  Widget _buildGroupListView({required bool isOverlayFilter}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 60 : 16),
       itemCount: _filteredGroups.length,
       itemBuilder: (context, index) {
         final group = _filteredGroups[index];

@@ -32,6 +32,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return MainLayout(
       title: '本人確認',
       icon: Icons.verified_user_outlined,
@@ -40,98 +41,113 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             context,
           ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       helpTitle: '生徒の本人確認',
-      helpUrl: 'assets/help/student_verification_help.html',
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: const Text(
-                '投票券に記載された 学年・クラス・番号を選択してください。\nこの情報が正しくない場合、ログインできません。',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildDropdownContainer(
-              '学年',
-              _buildDropdown(
-                _grades,
-                _selectedGrade,
-                (value) => setState(() => _selectedGrade = value),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildDropdownContainer(
-              'クラス',
-              _buildDropdown(
-                _classes,
-                _selectedClass,
-                (value) => setState(() => _selectedClass = value),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildDropdownContainer('番号', _buildNumberDropdown()),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _isVerifying ? null : _verifyStudent,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                backgroundColor: const Color(0xFF592C7A),
-                elevation: 0,
-              ),
-              child:
-                  _isVerifying
-                      ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 3,
-                        ),
-                      )
-                      : const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'ログイン',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ],
+      helpContent:
+          '投票権に記載された学年・クラス・番号を選択してください。',
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24.0),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(16.0),
+                        border: Border.all(color: theme.dividerColor),
                       ),
+                      child: Text(
+                        '投票券に記載された 学年・クラス・番号を選択してください。\nこの情報が正しくない場合、ログインできません。',
+                        style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildDropdownContainer(
+                      '学年',
+                      _buildDropdown(
+                        _grades,
+                        _selectedGrade,
+                        (value) => setState(() => _selectedGrade = value),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdownContainer(
+                      'クラス',
+                      _buildDropdown(
+                        _classes,
+                        _selectedClass,
+                        (value) => setState(() => _selectedClass = value),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDropdownContainer('番号', _buildNumberDropdown()),
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: _isVerifying ? null : _verifyStudent,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        elevation: 0,
+                      ),
+                      child: _isVerifying
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'ログイン',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(width: 8),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildDropdownContainer(String label, Widget dropdown) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600)),
+          Text(
+            label,
+            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+          ),
           dropdown,
         ],
       ),
@@ -156,10 +172,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               );
             }).toList(),
@@ -169,10 +182,10 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             return Center(
               child: Text(
                 item,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             );
@@ -196,10 +209,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   value.toString(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               );
             }).toList(),
@@ -209,10 +219,10 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             return Center(
               child: Text(
                 item.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             );
