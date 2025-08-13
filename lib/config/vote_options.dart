@@ -85,7 +85,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2025, 8, 12, 9, 9, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2025, 8, 14, 4, 22, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
@@ -613,7 +613,7 @@ final List<VoteCategory> voteCategories = [
     name: '紫紺賞',
     description: 'この文化祭を通じて、最も印象に残った団体を1つ選択してください。',
     shortHelpText:
-        'ここで選択した団体は、後の賞で選択することはできません。詳細はパンフレットをご覧ください。\nまた、応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。',
+        'ここで選択した団体は、他の賞でも選択できます（重複可）。詳細はパンフレットをご覧ください。\nまた、応援指導班、吹奏楽班は受賞を辞退しているため、選択することはできません。',
     groups:
         allGroups
             .where(

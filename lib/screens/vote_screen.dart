@@ -395,15 +395,17 @@ class _VoteScreenState extends State<VoteScreen> {
         final group = _filteredGroups[index];
         final isSelected = _selectedGroup?.id == group.id;
         final category = voteCategories[currentCategoryIndex];
-        final otherVotedEntries = currentSelections.entries.where(
-          (entry) => entry.key != category.id && entry.value == group.id,
-        );
-        final isVotedInOtherCategory = otherVotedEntries.isNotEmpty;
+        const String shikonId = 'Shikon_award';
+        final filteredOtherVotedEntries = currentSelections.entries
+            .where((entry) => entry.key != category.id && entry.value == group.id && entry.key != shikonId)
+            .toList();
+        final bool isVotedInOtherCategory =
+            category.id == shikonId ? false : filteredOtherVotedEntries.isNotEmpty;
 
         return GestureDetector(
           onTap: () {
             if (isVotedInOtherCategory) {
-              final votedCategoryKey = otherVotedEntries.first.key;
+              final votedCategoryKey = filteredOtherVotedEntries.first.key;
               final votedCategory = voteCategories.firstWhere(
                 (cat) => cat.id == votedCategoryKey,
               );
@@ -482,15 +484,17 @@ class _VoteScreenState extends State<VoteScreen> {
         final group = _filteredGroups[index];
         final isSelected = _selectedGroup?.id == group.id;
         final category = voteCategories[currentCategoryIndex];
-        final otherVotedEntries = currentSelections.entries.where(
-          (entry) => entry.key != category.id && entry.value == group.id,
-        );
-        final isVotedInOtherCategory = otherVotedEntries.isNotEmpty;
+        const String shikonId = 'Shikon_award';
+        final filteredOtherVotedEntries = currentSelections.entries
+            .where((entry) => entry.key != category.id && entry.value == group.id && entry.key != shikonId)
+            .toList();
+        final bool isVotedInOtherCategory =
+            category.id == shikonId ? false : filteredOtherVotedEntries.isNotEmpty;
 
         return GestureDetector(
           onTap: () {
             if (isVotedInOtherCategory) {
-              final votedCategoryKey = otherVotedEntries.first.key;
+              final votedCategoryKey = filteredOtherVotedEntries.first.key;
               final votedCategory = voteCategories.firstWhere(
                 (cat) => cat.id == votedCategoryKey,
               );
