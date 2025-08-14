@@ -218,7 +218,9 @@ class CustomDialogWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // 画像は端末縦幅が十分で、かつ画像の表示が禁止されていない画面のみ表示
-                      if (imagePath != null && !isSmallHeight && _shouldShowImage(context)) ...[
+                      if (imagePath != null &&
+                          !isSmallHeight &&
+                          _shouldShowImage(context)) ...[
                         SizedBox(
                           height: 150,
                           width: double.infinity,
@@ -227,8 +229,10 @@ class CustomDialogWidget extends StatelessWidget {
                             child: Image.asset(
                               imagePath!,
                               fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(color: theme.colorScheme.secondaryContainer),
+                              errorBuilder:
+                                  (context, error, stackTrace) => Container(
+                                    color: theme.colorScheme.secondaryContainer,
+                                  ),
                             ),
                           ),
                         ),
@@ -245,9 +249,12 @@ class CustomDialogWidget extends StatelessWidget {
                       const SizedBox(height: 16),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final maxScrollHeight = MediaQuery.of(context).size.height * 0.6;
+                          final maxScrollHeight =
+                              MediaQuery.of(context).size.height * 0.6;
                           return ConstrainedBox(
-                            constraints: BoxConstraints(maxHeight: maxScrollHeight),
+                            constraints: BoxConstraints(
+                              maxHeight: maxScrollHeight,
+                            ),
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
                               child: Column(
@@ -259,7 +266,8 @@ class CustomDialogWidget extends StatelessWidget {
                                         content ?? '',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: theme.textTheme.bodyMedium?.color,
+                                          color:
+                                              theme.textTheme.bodyMedium?.color,
                                         ),
                                       ),
                                   if (showWikiLink) ...[
@@ -267,7 +275,7 @@ class CustomDialogWidget extends StatelessWidget {
                                     InkWell(
                                       onTap: () {
                                         final url =
-                                            'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/wiki';
+                                            'https://shikon-voteapp.github.io/information/';
                                         if (kIsWeb) {
                                           html.window.open(url, '_blank');
                                         }
@@ -275,10 +283,16 @@ class CustomDialogWidget extends StatelessWidget {
                                       child: Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
-                                          color: theme.colorScheme.primaryContainer,
-                                          borderRadius: BorderRadius.circular(8),
+                                          color:
+                                              theme
+                                                  .colorScheme
+                                                  .primaryContainer,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                           border: Border.all(
-                                            color: theme.colorScheme.primary.withOpacity(0.3),
+                                            color: theme.colorScheme.primary
+                                                .withOpacity(0.3),
                                           ),
                                         ),
                                         child: Row(
@@ -294,7 +308,8 @@ class CustomDialogWidget extends StatelessWidget {
                                               '詳細情報',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: theme.colorScheme.primary,
+                                                color:
+                                                    theme.colorScheme.primary,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
