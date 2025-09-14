@@ -1,0 +1,9 @@
+:root{
+  --vp-font-family-base: 'Noto Sans JP', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+html, body{
+  font-family: var(--vp-font-family-base);
+}
+
+
