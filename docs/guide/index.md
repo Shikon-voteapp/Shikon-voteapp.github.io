@@ -1,9 +1,10 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+title: 紫紺祭投票アプリ
 
 hero:
-  name: "紫紺祭投票アプリ　ガイド"
+  name: "紫紺祭投票アプリ"
   tagline: Shikon Fes Vote App Guide
   actions:
     - theme: brand
