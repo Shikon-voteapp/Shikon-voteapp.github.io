@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
@@ -107,28 +108,46 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton.icon(
-            icon:
-                _isLoading ? Container() : const Icon(Icons.touch_app_outlined),
-            label:
-                _isLoading
-                    ? SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        strokeWidth: 2,
-                      ),
-                    )
-                    : const Text('この内容で投票する'),
+          child: NeumorphicButton(
             onPressed: _isLoading ? null : _showConfirmationDialog,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
+            style: NeumorphicStyle(
+              color:
+                  _isLoading
+                      ? Theme.of(context).disabledColor
+                      : Theme.of(context).colorScheme.primary,
+              depth: _isLoading ? 0 : 4,
+              intensity: 0.8,
+              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
+            ),
+            child: Center(
+              child:
+                  _isLoading
+                      ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          strokeWidth: 2,
+                        ),
+                      )
+                      : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'この内容で投票する',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.check,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ],
+                      ),
             ),
           ),
         ),
@@ -139,12 +158,13 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget _buildGroupCard(VoteCategory category, Group group) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    return Card(
+    return Neumorphic(
       margin: const EdgeInsets.only(bottom: 16),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
+      style: NeumorphicStyle(
+        color: colorScheme.surface,
+        depth: 4,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -217,12 +237,13 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget _buildSkippedCard(VoteCategory category) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Card(
+    return Neumorphic(
       margin: const EdgeInsets.only(bottom: 16),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
-      color: colorScheme.surface.withOpacity(0.5),
+      style: NeumorphicStyle(
+        color: colorScheme.surface,
+        depth: 2,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

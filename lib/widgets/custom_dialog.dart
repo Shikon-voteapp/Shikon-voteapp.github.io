@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shikon_voteapp/screens/admin_screen.dart';
-import 'package:shikon_voteapp/theme.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:html' as html;
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -37,12 +38,13 @@ Future<void> showCustomDialog({
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: child,
+      final slide = Tween<Offset>(
+        begin: const Offset(0, 0.08),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        child: SlideTransition(position: slide, child: child),
       );
     },
   );
@@ -63,7 +65,6 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     pageBuilder: (context, animation, secondaryAnimation) {
       return StatefulBuilder(
         builder: (context, setState) {
-          final theme = Theme.of(context);
           return CustomDialogWidget(
             title: '管理者ログイン',
             contentWidget: Column(
@@ -143,7 +144,6 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                           closeButtonText: 'OK',
                         );
                       } finally {
-                        // Check if the dialog is still mounted before calling setState
                         if (context.mounted) {
                           setState(() {
                             isLoading = false;
@@ -156,12 +156,13 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
       );
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
-        child: child,
+      final slide = Tween<Offset>(
+        begin: const Offset(0, 0.08),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        child: SlideTransition(position: slide, child: child),
       );
     },
   );
@@ -207,93 +208,100 @@ class CustomDialogWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Flexible(
-                child: Container(
-                  padding: const EdgeInsets.all(24.0),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // 画像は端末縦幅が十分で、かつ画像の表示が禁止されていない画面のみ表示
-                      if (imagePath != null &&
-                          !isSmallHeight &&
-                          _shouldShowImage(context)) ...[
-                        SizedBox(
-                          height: 150,
-                          width: double.infinity,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.asset(
-                              imagePath!,
-                              fit: BoxFit.contain,
-                              errorBuilder:
-                                  (context, error, stackTrace) => Container(
-                                    color: theme.colorScheme.secondaryContainer,
+                child: AnimationLimiter(
+                  child: Neumorphic(
+                    style: NeumorphicStyle(
+                      color: theme.colorScheme.surface,
+                      depth: 4,
+                      intensity: 0.8,
+                      boxShape: NeumorphicBoxShape.roundRect(
+                        BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 画像
+                        if (imagePath != null &&
+                            !isSmallHeight &&
+                            _shouldShowImage(context)) ...[
+                          AnimationConfiguration.synchronized(
+                            duration: const Duration(milliseconds: 300),
+                            child: FadeInAnimation(
+                              child: SizedBox(
+                                height: 150,
+                                width: double.infinity,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.asset(
+                                    imagePath!,
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              color:
+                                                  theme
+                                                      .colorScheme
+                                                      .secondaryContainer,
+                                            ),
                                   ),
+                                ),
+                              ),
                             ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: theme.textTheme.titleLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 16),
-                      ],
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.textTheme.titleLarge?.color,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final maxScrollHeight =
-                              MediaQuery.of(context).size.height * 0.6;
-                          return ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxHeight: maxScrollHeight,
-                            ),
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  contentWidget ??
-                                      Text(
-                                        content ?? '',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color:
-                                              theme.textTheme.bodyMedium?.color,
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final maxScrollHeight =
+                                MediaQuery.of(context).size.height * 0.6;
+                            return ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight: maxScrollHeight,
+                              ),
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    contentWidget ??
+                                        Text(
+                                          content ?? '',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color:
+                                                theme
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.color,
+                                          ),
                                         ),
-                                      ),
-                                  if (showWikiLink) ...[
-                                    const SizedBox(height: 16),
-                                    InkWell(
-                                      onTap: () {
-                                        final url =
-                                            'https://shikon-voteapp.github.io/information/';
-                                        if (kIsWeb) {
-                                          html.window.open(url, '_blank');
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              theme
-                                                  .colorScheme
-                                                  .primaryContainer,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          border: Border.all(
-                                            color: theme.colorScheme.primary
-                                                .withOpacity(0.3),
-                                          ),
+                                    if (showWikiLink) ...[
+                                      const SizedBox(height: 16),
+                                      NeumorphicButton(
+                                        onPressed: () {
+                                          final url =
+                                              'https://shikon-voteapp.github.io/information/';
+                                          if (kIsWeb) {
+                                            html.window.open(url, '_blank');
+                                          }
+                                        },
+                                        style: NeumorphicStyle(
+                                          depth: 2,
+                                          intensity: 0.8,
+                                          color: theme.colorScheme.surface,
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -316,15 +324,15 @@ class CustomDialogWidget extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ],
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -341,43 +349,49 @@ class CustomDialogWidget extends StatelessWidget {
                           ? MainAxisAlignment.center
                           : MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton.icon(
+                    NeumorphicButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
-                      label: Text(closeButtonText),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.surface,
-                        foregroundColor: theme.colorScheme.onSurface,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                      style: NeumorphicStyle(
+                        color: theme.colorScheme.surface,
+                        depth: 2,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(30.0),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 24,
-                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.close),
+                          const SizedBox(width: 8),
+                          Text(closeButtonText),
+                        ],
                       ),
                     ),
                     if (onPrimaryAction != null && primaryActionText != null)
-                      ElevatedButton(
+                      NeumorphicButton(
                         onPressed: () => onPrimaryAction!(),
+                        style: NeumorphicStyle(
+                          color: theme.colorScheme.primary,
+                          depth: 2,
+                          boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(30.0),
+                          ),
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(primaryActionText!),
+                            Text(
+                              primaryActionText!,
+                              style: TextStyle(
+                                color: theme.colorScheme.onPrimary,
+                              ),
+                            ),
                             const SizedBox(width: 4),
-                            const Icon(Icons.arrow_forward_ios, size: 16),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: theme.colorScheme.onPrimary,
+                            ),
                           ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 16,
-                            horizontal: 24,
-                          ),
                         ),
                       ),
                   ],
@@ -394,8 +408,6 @@ class CustomDialogWidget extends StatelessWidget {
     final route = ModalRoute.of(context);
     final settingsName = route?.settings.name ?? '';
 
-    // 非表示対象: トップ画面(スキャナ), 投票券入力画面, 生徒認証画面, 確認画面
-    // ルート名が無いケースもあるため、Widget 型でも判定
     final widgetType = context.widget.runtimeType.toString();
     const hiddenNames = ['/scanner', '/top', '/confirm'];
     const hiddenWidgets = [

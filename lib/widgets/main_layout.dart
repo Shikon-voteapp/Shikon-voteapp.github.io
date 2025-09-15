@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:shikon_voteapp/widgets/bottom_bar.dart';
 import 'package:shikon_voteapp/widgets/top_bar.dart';
-import 'package:shikon_voteapp/theme.dart';
 
 class MainLayout extends StatelessWidget {
   final String title;

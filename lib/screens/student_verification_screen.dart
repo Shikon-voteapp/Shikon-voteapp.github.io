@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import '../services/student_verification_service.dart';
 import '../models/student.dart';
-import '../platform/platform_utils.dart';
 import '../widgets/main_layout.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
 
@@ -41,28 +42,31 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             context,
           ).pushNamedAndRemoveUntil('/scanner', (route) => false),
       helpTitle: '生徒の本人確認',
-      helpContent:
-          '投票権に記載された学年・クラス・番号を選択してください。',
+      helpContent: '投票権に記載された学年・クラス・番号を選択してください。',
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight - 32,
+              ),
               child: IntrinsicHeight(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
+                    neumorphicCard(
+                      context: context,
                       padding: const EdgeInsets.all(24.0),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16.0),
-                        border: Border.all(color: theme.dividerColor),
-                      ),
                       child: Text(
                         '投票券に記載された 学年・クラス・番号を選択してください。\nこの情報が正しくない場合、ログインできません。',
-                        style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: theme.colorScheme.onSurface,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -98,29 +102,24 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                         foregroundColor: theme.colorScheme.onPrimary,
                         elevation: 0,
                       ),
-                      child: _isVerifying
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 3,
+                      child:
+                          _isVerifying
+                              ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                              : const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('ログイン', style: TextStyle(fontSize: 18)),
+                                  SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward_ios, size: 16),
+                                ],
                               ),
-                            )
-                          : const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'ログイン',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                SizedBox(width: 8),
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 16,
-                                ),
-                              ],
-                            ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -135,18 +134,17 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
 
   Widget _buildDropdownContainer(String label, Widget dropdown) {
     final theme = Theme.of(context);
-    return Container(
+    return neumorphicCard(
+      context: context,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16.0),
-        border: Border.all(color: theme.dividerColor),
-      ),
+      borderRadius: BorderRadius.circular(16.0),
       child: Column(
         children: [
           Text(
             label,
-            style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            style: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
           ),
           dropdown,
         ],
@@ -172,7 +170,10 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   value,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               );
             }).toList(),
@@ -209,7 +210,10 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                 alignment: Alignment.center,
                 child: Text(
                   value.toString(),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               );
             }).toList(),

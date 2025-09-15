@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
 import '../widgets/main_layout.dart';
-import '../platform/platform_utils.dart';
 import 'confirm_screen.dart';
 import '../widgets/custom_dialog.dart';
-import '../widgets/group_tile.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import '../widgets/neumorphic_wrappers.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -141,7 +141,10 @@ class _VoteScreenState extends State<VoteScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
+                      color:
+                          theme.brightness == Brightness.dark
+                              ? theme.colorScheme.onSurface
+                              : theme.colorScheme.primary,
                     ),
                   ),
                   TextSpan(
@@ -159,32 +162,38 @@ class _VoteScreenState extends State<VoteScreen> {
           // 縦幅が小さい場合は上部詳細表示を無効化
           if (!isCompact) _buildGroupDetailHeader(isCompact: isCompact),
           // コンパクト時は強制的にリスト表示・トグルは無効化
-          if (!isCompact) _buildViewToggle() else const SizedBox(height: 8),
+          if (!isCompact) ...[
+            _buildViewToggle(),
+            const SizedBox(height: 12),
+          ] else
+            const SizedBox(height: 8),
           Expanded(
-            child: isCompact
-                ? Column(
-                    children: [
-                      _buildFloorFilter(),
-                      Expanded(
-                        child: _buildGroupListView(isOverlayFilter: false),
-                      ),
-                    ],
-                  )
-                : Stack(
-                    children: [
-                      Positioned.fill(
-                        child: _isGridView
-                            ? _buildGroupGridView(isOverlayFilter: true)
-                            : _buildGroupListView(isOverlayFilter: true),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: _buildFloorFilter(),
-                      ),
-                    ],
-                  ),
+            child:
+                isCompact
+                    ? Column(
+                      children: [
+                        _buildFloorFilter(),
+                        Expanded(
+                          child: _buildAnimatedGroupView(
+                            isOverlayFilter: false,
+                            forceList: true,
+                          ),
+                        ),
+                      ],
+                    )
+                    : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: _buildAnimatedGroupView(isOverlayFilter: true),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: _buildFloorFilter(),
+                        ),
+                      ],
+                    ),
           ),
           _buildVoteButton(),
         ],
@@ -192,26 +201,56 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
+  // 画面内のグリッド/リスト領域の切替・フィルタ変更にアニメーションを付与
+  Widget _buildAnimatedGroupView({
+    required bool isOverlayFilter,
+    bool forceList = false,
+  }) {
+    final viewKey = ValueKey<String>(
+      'view-${(forceList ? false : _isGridView) ? 'grid' : 'list'}-floor-${_selectedFloor ?? 'all'}',
+    );
+    final child =
+        (forceList ? false : _isGridView)
+            ? _buildGroupGridView(isOverlayFilter: isOverlayFilter)
+            : _buildGroupListView(isOverlayFilter: isOverlayFilter);
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (widget, animation) {
+        final slide = Tween<Offset>(
+          begin: const Offset(0, 0.05),
+          end: Offset.zero,
+        ).animate(animation);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(position: slide, child: widget),
+        );
+      },
+      child: KeyedSubtree(key: viewKey, child: child),
+    );
+  }
+
   Widget _buildGroupDetailHeader({required bool isCompact}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     if (_selectedGroup == null) {
-      return Container(
-        height: isCompact ? 100 : 140,
+      return neumorphicCard(
+        context: context,
+        // pass size via child Container to control height
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.dividerColor),
-        ),
-        child: Center(
-          child: Text(
-            '投票先を選択してください',
-            style: TextStyle(
-              fontSize: isCompact ? 16 : 18,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface.withOpacity(0.7),
+        child: SizedBox(
+          height: isCompact ? 100 : 140,
+          child: Center(
+            child: Text(
+              '投票先を選択してください',
+              style: TextStyle(
+                fontSize: isCompact ? 16 : 18,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface.withOpacity(0.7),
+              ),
             ),
           ),
         ),
@@ -223,70 +262,72 @@ class _VoteScreenState extends State<VoteScreen> {
           _showGroupDetailDialog(_selectedGroup!);
         }
       },
-      child: Container(
-        height: isCompact ? 100 : 140,
+      child: neumorphicCard(
+        context: context,
+        // pass size via child Container to control height
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.dividerColor),
-        ),
-        child: Row(
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  _selectedGroup!.imagePath,
-                  fit: BoxFit.cover,
+        child: SizedBox(
+          height: isCompact ? 100 : 140,
+          child: Row(
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    _selectedGroup!.imagePath,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _selectedGroup!.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _selectedGroup!.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    _selectedGroup!.groupName,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                    Text(
+                      _selectedGroup!.groupName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
                     ),
-                  ),
-                  Text(
-                    _selectedGroup!.description,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '${_selectedGroup!.floor == 4 ? '' : '${_selectedGroup!.floor}階・'}${groupCategoryNames[_selectedGroup!.categories.first]!}'
-                    '${_selectedGroup!.pamphletPage != null ? '・パンフレット P${_selectedGroup!.pamphletPage}' : ''}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                    Text(
+                      _selectedGroup!.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ],
+                    const Spacer(),
+                    Text(
+                      '${_selectedGroup!.floor == 4 ? '' : '${_selectedGroup!.floor}階・'}${groupCategoryNames[_selectedGroup!.categories.first]!}'
+                      '${_selectedGroup!.pamphletPage != null ? '・パンフレット P${_selectedGroup!.pamphletPage}' : ''}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -298,11 +339,11 @@ class _VoteScreenState extends State<VoteScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Align(
         alignment: Alignment.centerRight,
-        child: Container(
-          decoration: BoxDecoration(
+        child: Neumorphic(
+          style: NeumorphicStyle(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: theme.dividerColor),
+            depth: 4,
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -313,7 +354,7 @@ class _VoteScreenState extends State<VoteScreen> {
                 isSelected: _isGridView,
                 onPressed: () => setState(() => _isGridView = true),
               ),
-              Container(width: 1, height: 32, color: theme.dividerColor),
+              const SizedBox(width: 4),
               _buildToggleButton(
                 icon: Icons.list,
                 label: 'リスト',
@@ -334,39 +375,31 @@ class _VoteScreenState extends State<VoteScreen> {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color:
-                  isSelected
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurface,
+    final Color selectedBg = Color.alphaBlend(
+      Colors.black.withOpacity(0.08),
+      theme.colorScheme.surface,
+    );
+    return NeumorphicButton(
+      style: NeumorphicStyle(
+        color: isSelected ? selectedBg : theme.colorScheme.surface,
+        depth: isSelected ? -3 : 3,
+        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(10)),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20, color: theme.colorScheme.onSurface),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface,
             ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color:
-                    isSelected
-                        ? theme.colorScheme.onPrimary
-                        : theme.colorScheme.onSurface,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -374,216 +407,306 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildGroupGridView({required bool isOverlayFilter}) {
     final theme = Theme.of(context);
     final width = MediaQuery.of(context).size.width;
+    if (_filteredGroups.isEmpty) {
+      return Center(
+        child: Text(
+          '該当する団体がありません',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
     // 画面幅に応じて列数を調整（iPhone SE相当で2列）
-    final int crossAxisCount = width < 380
-        ? 2
-        : width < 650
+    final int crossAxisCount =
+        width < 380
+            ? 2
+            : width < 650
             ? 3
             : 4;
     final double childAspectRatio = width < 380 ? 0.7 : 0.8;
 
-    return GridView.builder(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 80 : 16),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: childAspectRatio,
-      ),
-      itemCount: _filteredGroups.length,
-      itemBuilder: (context, index) {
-        final group = _filteredGroups[index];
-        final isSelected = _selectedGroup?.id == group.id;
-        final category = voteCategories[currentCategoryIndex];
-        const String shikonId = 'Shikon_award';
-        final filteredOtherVotedEntries = currentSelections.entries
-            .where((entry) => entry.key != category.id && entry.value == group.id && entry.key != shikonId)
-            .toList();
-        final bool isVotedInOtherCategory =
-            category.id == shikonId ? false : filteredOtherVotedEntries.isNotEmpty;
+    return AnimationLimiter(
+      child: GridView.builder(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 80 : 16),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: childAspectRatio,
+        ),
+        itemCount: _filteredGroups.length,
+        itemBuilder: (context, index) {
+          final group = _filteredGroups[index];
+          final isSelected = _selectedGroup?.id == group.id;
+          final category = voteCategories[currentCategoryIndex];
+          const String shikonId = 'Shikon_award';
+          final filteredOtherVotedEntries =
+              currentSelections.entries
+                  .where(
+                    (entry) =>
+                        entry.key != category.id &&
+                        entry.value == group.id &&
+                        entry.key != shikonId,
+                  )
+                  .toList();
+          final bool isVotedInOtherCategory =
+              category.id == shikonId
+                  ? false
+                  : filteredOtherVotedEntries.isNotEmpty;
 
-        return GestureDetector(
-          onTap: () {
-            if (isVotedInOtherCategory) {
-              final votedCategoryKey = filteredOtherVotedEntries.first.key;
-              final votedCategory = voteCategories.firstWhere(
-                (cat) => cat.id == votedCategoryKey,
-              );
-              _showAlreadyVotedDialog(group, votedCategory.name, category.name);
-            } else {
-              setState(() {
-                // 既に選択されている場合は選択を解除、そうでなければ選択
-                _selectedGroup = isSelected ? null : group;
-              });
-            }
-          },
-          child: Opacity(
-            opacity: isVotedInOtherCategory ? 0.5 : 1.0,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color:
-                      isSelected
-                          ? theme.colorScheme.primary
-                          : theme.dividerColor,
-                  width: isSelected ? 3 : 1,
+          return animatedItem(
+            index: index,
+            child: GestureDetector(
+              onTap: () {
+                if (isVotedInOtherCategory) {
+                  final votedCategoryKey = filteredOtherVotedEntries.first.key;
+                  final votedCategory = voteCategories.firstWhere(
+                    (cat) => cat.id == votedCategoryKey,
+                  );
+                  _showAlreadyVotedDialog(
+                    group,
+                    votedCategory.name,
+                    category.name,
+                  );
+                } else {
+                  setState(() {
+                    // 既に選択されている場合は選択を解除、そうでなければ選択
+                    _selectedGroup = isSelected ? null : group;
+                  });
+                }
+              },
+              child: Opacity(
+                opacity: isVotedInOtherCategory ? 0.5 : 1.0,
+                child: Neumorphic(
+                  style: NeumorphicStyle(
+                    color: theme.colorScheme.surface,
+                    depth: isSelected ? -6.0 : 6.0,
+                    intensity: 0.7,
+                    lightSource: LightSource.topLeft,
+                    boxShape: NeumorphicBoxShape.roundRect(
+                      BorderRadius.circular(12),
+                    ),
+                    border: NeumorphicBorder(
+                      isEnabled: isSelected,
+                      color:
+                          isSelected
+                              ? theme.colorScheme.primary
+                              : theme.dividerColor,
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(7),
+                            topRight: Radius.circular(7),
+                          ),
+                          child: Image.asset(
+                            group.imagePath,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            errorBuilder:
+                                (context, error, stackTrace) => Container(
+                                  color: theme.colorScheme.secondaryContainer,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color:
+                                        theme.colorScheme.onSecondaryContainer,
+                                  ),
+                                ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        alignment: Alignment.center,
+                        child: Text(
+                          group.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(7),
-                        topRight: Radius.circular(7),
-                      ),
-                      child: Image.asset(
-                        group.imagePath,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: theme.colorScheme.secondaryContainer,
-                              alignment: Alignment.center,
-                              child: Icon(
-                                Icons.error_outline,
-                                color: theme.colorScheme.onSecondaryContainer,
-                              ),
-                            ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    alignment: Alignment.center,
-                    child: Text(
-                      group.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   Widget _buildGroupListView({required bool isOverlayFilter}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 60 : 16),
-      itemCount: _filteredGroups.length,
-      itemBuilder: (context, index) {
-        final group = _filteredGroups[index];
-        final isSelected = _selectedGroup?.id == group.id;
-        final category = voteCategories[currentCategoryIndex];
-        const String shikonId = 'Shikon_award';
-        final filteredOtherVotedEntries = currentSelections.entries
-            .where((entry) => entry.key != category.id && entry.value == group.id && entry.key != shikonId)
-            .toList();
-        final bool isVotedInOtherCategory =
-            category.id == shikonId ? false : filteredOtherVotedEntries.isNotEmpty;
+    if (_filteredGroups.isEmpty) {
+      return Center(
+        child: Text(
+          '該当する団体がありません',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
+    return AnimationLimiter(
+      child: ListView.builder(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+        itemCount: _filteredGroups.length,
+        itemBuilder: (context, index) {
+          final group = _filteredGroups[index];
+          final isSelected = _selectedGroup?.id == group.id;
+          final category = voteCategories[currentCategoryIndex];
+          const String shikonId = 'Shikon_award';
+          final filteredOtherVotedEntries =
+              currentSelections.entries
+                  .where(
+                    (entry) =>
+                        entry.key != category.id &&
+                        entry.value == group.id &&
+                        entry.key != shikonId,
+                  )
+                  .toList();
+          final bool isVotedInOtherCategory =
+              category.id == shikonId
+                  ? false
+                  : filteredOtherVotedEntries.isNotEmpty;
 
-        return GestureDetector(
-          onTap: () {
-            if (isVotedInOtherCategory) {
-              final votedCategoryKey = filteredOtherVotedEntries.first.key;
-              final votedCategory = voteCategories.firstWhere(
-                (cat) => cat.id == votedCategoryKey,
-              );
-              _showAlreadyVotedDialog(group, votedCategory.name, category.name);
-            } else {
-              setState(() {
-                // 既に選択されている場合は選択を解除、そうでなければ選択
-                _selectedGroup = isSelected ? null : group;
-              });
-            }
-          },
-          child: Opacity(
-            opacity: isVotedInOtherCategory ? 0.5 : 1.0,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                border: Border.all(
-                  color: isSelected ? colorScheme.primary : theme.dividerColor,
-                  width: isSelected ? 3 : 1,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        group.imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: colorScheme.secondaryContainer,
+          return animatedItem(
+            index: index,
+            child: GestureDetector(
+              onTap: () {
+                if (isVotedInOtherCategory) {
+                  final votedCategoryKey = filteredOtherVotedEntries.first.key;
+                  final votedCategory = voteCategories.firstWhere(
+                    (cat) => cat.id == votedCategoryKey,
+                  );
+                  _showAlreadyVotedDialog(
+                    group,
+                    votedCategory.name,
+                    category.name,
+                  );
+                } else {
+                  setState(() {
+                    // 既に選択されている場合は選択を解除、そうでなければ選択
+                    _selectedGroup = isSelected ? null : group;
+                  });
+                }
+              },
+              child: Opacity(
+                opacity: isVotedInOtherCategory ? 0.5 : 1.0,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Neumorphic(
+                    style: NeumorphicStyle(
+                      color: colorScheme.surface,
+                      depth:
+                          isSelected
+                              ? -((Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? 6.0
+                                  : 10.0))
+                              : (Theme.of(context).brightness == Brightness.dark
+                                  ? 6.0
+                                  : 10.0),
+                      intensity: 0.8,
+                      lightSource: LightSource.topLeft,
+                      boxShape: NeumorphicBoxShape.roundRect(
+                        BorderRadius.circular(12),
+                      ),
+                      border: NeumorphicBorder(
+                        isEnabled: isSelected,
+                        color:
+                            isSelected
+                                ? colorScheme.primary
+                                : theme.dividerColor,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                group.imagePath,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (context, error, stackTrace) => Container(
+                                      color: colorScheme.secondaryContainer,
+                                    ),
+                              ),
                             ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  group.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  group.groupName,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.6,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  group.description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '${group.floor == 4 ? '' : '${group.floor}階・'}${groupCategoryNames[group.categories.first]!}'
+                                  '${group.pamphletPage != null ? '・パンフレット P${group.pamphletPage}' : ''}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.6,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          group.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          group.groupName!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          group.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '${group.floor == 4 ? '' : '${group.floor}階・'}${groupCategoryNames[group.categories.first]!}'
-                          '${group.pamphletPage != null ? '・パンフレット P${group.pamphletPage}' : ''}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -654,29 +777,65 @@ class _VoteScreenState extends State<VoteScreen> {
     } else {
       if (category.canSkip) {
         buttonText = 'スキップする';
-        onPressed = () => _navigate(1);
+        onPressed = () {
+          showCustomDialog(
+            context: context,
+            title: '${category.name} をスキップしますか？',
+            content: 'このカテゴリの投票先を選択せずに次へ進みます。',
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('戻る'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _navigate(1);
+                },
+                child: const Text('スキップする'),
+              ),
+            ],
+          );
+        };
       } else {
         buttonText = '投票する';
         onPressed = null;
       }
     }
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.all(16),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          backgroundColor:
+      child: NeumorphicButton(
+        onPressed: onPressed,
+        style: NeumorphicStyle(
+          color:
               onPressed != null
                   ? theme.colorScheme.primary
                   : theme.disabledColor,
-          foregroundColor: theme.colorScheme.onPrimary,
+          depth: onPressed != null ? 4 : 0,
+          intensity: 0.8,
+          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
         ),
-        onPressed: onPressed,
-        child: Text(buttonText, style: const TextStyle(fontSize: 18)),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                buttonText,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: theme.colorScheme.onPrimary,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: theme.colorScheme.onPrimary,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

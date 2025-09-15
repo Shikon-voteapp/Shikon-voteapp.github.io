@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shikon_voteapp/theme.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
@@ -14,16 +14,19 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 24.0),
+    return Neumorphic(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      decoration: BoxDecoration(
+      margin: const EdgeInsets.only(top: 16.0, bottom: 16.0, right: 24.0),
+      style: NeumorphicStyle(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(24.0),
-          bottomRight: Radius.circular(24.0),
+        boxShape: NeumorphicBoxShape.roundRect(
+          const BorderRadius.only(
+            topRight: Radius.circular(24.0),
+            bottomRight: Radius.circular(24.0),
+          ),
         ),
-        border: Border.all(color: theme.dividerColor),
+        depth: 4,
+        intensity: 0.7,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

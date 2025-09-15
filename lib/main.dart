@@ -1,5 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/scanner_screen.dart';
 import 'firebase_options.dart';
@@ -63,18 +64,30 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
+        return NeumorphicApp(
           title: '紫紺祭投票アプリ',
-          theme: AppTheme.lightThemeData,
-          darkTheme: AppTheme.darkThemeData,
-          themeMode: ThemeMode.system,
+          theme: const NeumorphicThemeData(
+            baseColor: Color(0xFFF5F5F5),
+            lightSource: LightSource.topLeft,
+            depth: 4,
+          ),
+          darkTheme: const NeumorphicThemeData(
+            baseColor: Color(0xFF121212),
+            lightSource: LightSource.topLeft,
+            depth: 3,
+          ),
+          materialTheme: AppTheme.lightThemeData,
+          materialDarkTheme: AppTheme.darkThemeData,
+          themeMode: ThemeMode.light,
           navigatorKey: navigatorKey,
           home: SplashScreen(dateRangeService: dateRangeService),
           routes: {
             '/admin': (context) => AdminScreen(),
-            '/scanner': (context) => kIsWeb
-                ? ScannerScreen()
-                : CameraPermissionWrapper(child: ScannerScreen()),
+            '/scanner':
+                (context) =>
+                    kIsWeb
+                        ? ScannerScreen()
+                        : CameraPermissionWrapper(child: ScannerScreen()),
           },
         );
       },

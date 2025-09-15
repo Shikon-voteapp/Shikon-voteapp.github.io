@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'neumorphic_wrappers.dart';
 import '../models/group.dart';
 import './group_selection_area.dart'; // group_selection_area.dart をインポート
 
@@ -27,15 +29,10 @@ class GroupTile extends StatelessWidget {
       onTap: onSelect,
       child: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected ? colorScheme.primary : theme.dividerColor,
-                width: isSelected ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(8),
-              color: colorScheme.surface,
-            ),
+          neumorphicCard(
+            context: context,
+            depth: theme.brightness == Brightness.dark ? 3 : 5,
+            borderRadius: BorderRadius.circular(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment:

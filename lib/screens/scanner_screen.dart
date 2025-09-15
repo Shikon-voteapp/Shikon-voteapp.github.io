@@ -3,6 +3,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
 import '../config/data_range_service.dart';
 import '../widgets/main_layout.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import '../widgets/neumorphic_wrappers.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import 'out_of_period_screen.dart';
@@ -93,24 +95,20 @@ class _ScannerScreenState extends State<ScannerScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 24),
-            Container(
+            neumorphicCard(
+              context: context,
               padding: const EdgeInsets.all(24.0),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(16.0),
-              ),
+              borderRadius: BorderRadius.circular(16.0),
               child: Text(
                 'パンフレットに同封されている投票券に記載された番号(10桁)を入力してください。',
                 style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
               ),
             ),
             const SizedBox(height: 40),
-            Container(
+            neumorphicCard(
+              context: context,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(16.0),
-              ),
+              borderRadius: BorderRadius.circular(16.0),
               child: TextField(
                 controller: _manualCodeController,
                 decoration: InputDecoration(

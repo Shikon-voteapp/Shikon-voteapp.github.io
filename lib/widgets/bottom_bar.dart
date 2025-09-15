@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
-import '../theme.dart';
 import 'custom_dialog.dart';
 import '../utils/version_info.dart';
 
@@ -162,13 +161,15 @@ class BottomBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left side navigation
-          Container(
-            height: 56.0,
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            decoration: BoxDecoration(
+          Neumorphic(
+            style: NeumorphicStyle(
               color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(28.0),
+              depth: 4,
+              boxShape: NeumorphicBoxShape.roundRect(
+                BorderRadius.circular(28.0),
+              ),
             ),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               children: [
                 _buildIconButton(
@@ -201,17 +202,19 @@ class BottomBar extends StatelessWidget {
           Row(
             children: [
               // Info button (hamburger menu)
-              Container(
-                width: 56.0,
-                height: 56.0,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  shape: BoxShape.circle,
+              Neumorphic(
+                style: const NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  depth: 4,
                 ),
-                child: _buildIconButton(
-                  context,
-                  Icons.menu,
-                  () => _showInfoDialog(context),
+                child: SizedBox(
+                  width: 56.0,
+                  height: 56.0,
+                  child: _buildIconButton(
+                    context,
+                    Icons.menu,
+                    () => _showInfoDialog(context),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
