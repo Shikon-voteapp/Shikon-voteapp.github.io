@@ -7,37 +7,157 @@ const Color lightPurple = Color(0xFFF3E5F5);
 class AppTheme {
   // Light Theme Colors
   static const Color lightPrimaryColor = shikonPurple;
-  static const Color lightBackgroundColor = lightPurple;
+  static const Color lightBackgroundColor = Color(0xFFF5F5F5); // 明るい灰
   static const Color lightWidgetBackgroundColor = Colors.white;
   static final Color lightAccentColor = Colors.white;
 
   // Dark Theme Colors
   static const Color darkPrimaryColor = shikonPurple;
-  static const Color darkBackgroundColor = Color(0xFF241E30);
+  static const Color darkBackgroundColor = Color(0xFF121212); // 近年の標準ダーク
   static const Color darkWidgetBackgroundColor = Color(0xFF1E1E1E);
   static final Color darkAccentColor = Colors.grey[800]!;
 
   static ThemeData get lightThemeData {
-    return ThemeData(
+    final baseText = GoogleFonts.notoSansJpTextTheme();
+    final textTheme = baseText.copyWith(
+      displayLarge: baseText.displayLarge?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.2,
+      ),
+      displayMedium: baseText.displayMedium?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.1,
+      ),
+      headlineLarge: baseText.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      headlineMedium: baseText.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+      bodyLarge: baseText.bodyLarge?.copyWith(height: 1.3),
+      bodyMedium: baseText.bodyMedium?.copyWith(height: 1.35),
+      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+    );
+
+    final colorScheme = const ColorScheme(
       brightness: Brightness.light,
-      primarySwatch: Colors.deepPurple,
+      primary: shikonPurple,
+      onPrimary: Colors.white,
+      secondary: Color(0xFF616161),
+      onSecondary: Colors.white,
+      error: Color(0xFFB00020),
+      onError: Colors.white,
+      background: lightBackgroundColor,
+      onBackground: Color(0xFF121212),
+      surface: Colors.white,
+      onSurface: Color(0xFF121212),
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: colorScheme,
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
-      textTheme: GoogleFonts.ibmPlexSansJpTextTheme(),
-      useMaterial3: true,
+      textTheme: textTheme,
+      cardTheme: const CardTheme(
+        elevation: 0,
+        margin: EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+        ),
+      ),
+      appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          textStyle: textTheme.labelLarge,
+        ),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ),
     );
   }
 
   static ThemeData get darkThemeData {
-    return ThemeData(
+    final baseDark = ThemeData(brightness: Brightness.dark).textTheme;
+    final baseText = GoogleFonts.notoSansJpTextTheme(baseDark);
+    final textTheme = baseText.copyWith(
+      displayLarge: baseText.displayLarge?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.2,
+      ),
+      displayMedium: baseText.displayMedium?.copyWith(
+        fontWeight: FontWeight.w500,
+        letterSpacing: -0.1,
+      ),
+      headlineLarge: baseText.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      headlineMedium: baseText.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+      bodyLarge: baseText.bodyLarge?.copyWith(height: 1.35),
+      bodyMedium: baseText.bodyMedium?.copyWith(height: 1.4),
+      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+    );
+
+    final colorScheme = const ColorScheme(
       brightness: Brightness.dark,
-      primarySwatch: Colors.deepPurple,
+      primary: shikonPurple,
+      onPrimary: Colors.white,
+      secondary: Color(0xFF9E9E9E),
+      onSecondary: Colors.black,
+      error: Color(0xFFCF6679),
+      onError: Colors.black,
+      background: darkBackgroundColor,
+      onBackground: Colors.white,
+      surface: darkWidgetBackgroundColor,
+      onSurface: Colors.white,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: colorScheme,
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,
-      textTheme: GoogleFonts.ibmPlexSansJpTextTheme(
-        ThemeData(brightness: Brightness.dark).textTheme,
+      textTheme: textTheme,
+      cardTheme: const CardTheme(
+        elevation: 0,
+        margin: EdgeInsets.all(12),
+        color: darkWidgetBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+        ),
       ),
-      useMaterial3: true,
+      appBarTheme: const AppBarTheme(
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          textStyle: textTheme.labelLarge,
+        ),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        filled: true,
+        fillColor: Color(0xFF1A1A1A),
+      ),
     );
   }
 }
