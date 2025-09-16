@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +13,7 @@ import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
 import 'config_editor_screen.dart';
-import '../platform/platform_utils.dart';
+// import '../platform/platform_utils.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -56,26 +57,18 @@ class _AdminScreenState extends State<AdminScreen>
 
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          showDialog(
+          showCustomDialog(
             context: context,
-            barrierDismissible: false,
-            builder:
-                (dialogContext) => AlertDialog(
-                  title: const Text('認証が必要です'),
-                  content: const Text('このページを表示するには管理者ログインが必要です。'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(dialogContext).pop();
-                        Navigator.of(
-                          context,
-                        ).pushNamedAndRemoveUntil('/scanner', (route) => false);
-                      },
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
-          );
+            title: '認証が必要です',
+            content: 'このページを表示するには管理者ログインが必要です。',
+            closeButtonText: 'OK',
+          ).then((_) {
+            if (mounted) {
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil('/scanner', (route) => false);
+            }
+          });
         });
       }
     } else {
@@ -230,17 +223,36 @@ class _AdminScreenState extends State<AdminScreen>
             ],
           ),
           actions: [
-            IconButton(icon: Icon(Icons.refresh), onPressed: _loadAllData),
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () async {
-                await _auth.signOut();
-                if (mounted) {
-                  Navigator.of(
-                    context,
-                  ).pushNamedAndRemoveUntil('/selection', (route) => false);
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: NeumorphicButton(
+                onPressed: _loadAllData,
+                style: const NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  depth: 3,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.refresh),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: NeumorphicButton(
+                onPressed: () async {
+                  await _auth.signOut();
+                  if (mounted) {
+                    Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil('/selection', (route) => false);
+                  }
+                },
+                style: const NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  depth: 3,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.logout),
+              ),
             ),
           ],
         ),
@@ -327,14 +339,25 @@ class _AdminScreenState extends State<AdminScreen>
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
             child: Center(
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.delete_sweep),
-                label: Text('全投票データをクリア'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                ),
+              child: NeumorphicButton(
                 onPressed: _showClearConfirmation,
+                style: const NeumorphicStyle(
+                  color: Colors.black,
+                  depth: 6,
+                  boxShape: NeumorphicBoxShape.stadium(),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.delete_sweep, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text('全投票データをクリア', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
               ),
             ),
           ),
@@ -351,9 +374,7 @@ class _AdminScreenState extends State<AdminScreen>
         children: [
           Text('管理者一覧', style: Theme.of(context).textTheme.headlineSmall),
           SizedBox(height: 16),
-          ElevatedButton.icon(
-            icon: Icon(Icons.qr_code_scanner),
-            label: Text('QRコードスキャナーを起動'),
+          NeumorphicButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -361,6 +382,20 @@ class _AdminScreenState extends State<AdminScreen>
                 ),
               );
             },
+            style: const NeumorphicStyle(
+              color: Colors.black,
+              depth: 6,
+              boxShape: NeumorphicBoxShape.stadium(),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.qr_code_scanner, color: Colors.white),
+                SizedBox(width: 8),
+                Text('QRコードスキャナーを起動', style: TextStyle(color: Colors.white)),
+              ],
+            ),
           ),
           SizedBox(height: 16),
           _adminUsers.isEmpty
@@ -390,13 +425,23 @@ class _AdminScreenState extends State<AdminScreen>
           SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              icon: Icon(Icons.person_add),
-              label: Text('新規管理者を追加'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-              ),
+            child: NeumorphicButton(
               onPressed: _showAddUserDialog,
+              style: const NeumorphicStyle(
+                color: Colors.black,
+                depth: 6,
+                boxShape: NeumorphicBoxShape.stadium(),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person_add, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text('新規管理者を追加', style: TextStyle(color: Colors.white)),
+                ],
+              ),
             ),
           ),
         ],
@@ -417,22 +462,13 @@ class _AdminScreenState extends State<AdminScreen>
       context: context,
       title: '全投票データを削除',
       content: 'すべての投票データを削除します。この操作は元に戻せません。よろしいですか？',
-      actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('キャンセル'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            Navigator.of(context).pop();
-            await _database.remove();
-            _loadAllData();
-          },
-          child: Text('削除する'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-        ),
-      ],
+      closeButtonText: 'キャンセル',
+      primaryActionText: '削除する',
+      onPrimaryAction: () async {
+        Navigator.of(context).pop();
+        await _database.remove();
+        _loadAllData();
+      },
     );
   }
 
@@ -441,21 +477,12 @@ class _AdminScreenState extends State<AdminScreen>
       context: context,
       title: '管理者を削除',
       content: '${user.email} を管理者から削除しますか？\nこの操作は元に戻せません。',
-      actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('キャンセル'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            Navigator.of(context).pop();
-            await _deleteAdminUser(user);
-          },
-          child: Text('削除する'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-        ),
-      ],
+      closeButtonText: 'キャンセル',
+      primaryActionText: '削除する',
+      onPrimaryAction: () async {
+        Navigator.of(context).pop();
+        await _deleteAdminUser(user);
+      },
     );
   }
 
@@ -494,45 +521,37 @@ class _AdminScreenState extends State<AdminScreen>
           ],
         ),
       ),
-      actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('キャンセル'),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (formKey.currentState!.validate()) {
-              try {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder:
-                      (context) => Center(child: CircularProgressIndicator()),
-                );
+      closeButtonText: 'キャンセル',
+      primaryActionText: '追加',
+      onPrimaryAction: () async {
+        if (formKey.currentState!.validate()) {
+          try {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder:
+                  (context) => const Center(child: CircularProgressIndicator()),
+            );
 
-                await _createAdminUser(
-                  email: emailController.text.trim(),
-                  password: passwordController.text,
-                  name: nameController.text.trim(),
-                );
+            await _createAdminUser(
+              email: emailController.text.trim(),
+              password: passwordController.text,
+              name: nameController.text.trim(),
+            );
 
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('管理者を追加しました')));
-              } catch (e) {
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('エラー: ${e.toString()}')));
-              }
-            }
-          },
-          child: Text('追加'),
-        ),
-      ],
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('管理者を追加しました')));
+          } catch (e) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('エラー: ${e.toString()}')));
+          }
+        }
+      },
     );
   }
 

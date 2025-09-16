@@ -1,5 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import '../models/group.dart' hide VoteCategory;
@@ -97,26 +97,6 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
     });
   }
 
-  void _generateAndDownloadDartFile() {
-    try {
-      final dartContent = _generateVoteOptionsDart();
-
-      // クリップボードにコピー
-      Clipboard.setData(ClipboardData(text: dartContent));
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('vote_options.dartの内容をクリップボードにコピーしました！'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('生成エラー: $e')));
-    }
-  }
-
   String _generateVoteOptionsDart() {
     final buffer = StringBuffer();
 
@@ -158,7 +138,7 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
     buffer.writeln('final Map<GroupCategory, String> groupCategoryNames = {');
     _categoryNames?.forEach((category, name) {
       buffer.writeln(
-        '  GroupCategory.${category.toString().split('.').last}: \'$name\',',
+        "  GroupCategory.${category.toString().split('.').last}: '$name',",
       );
     });
     buffer.writeln('};');
@@ -169,15 +149,15 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
     buffer.writeln('final List<Group> allGroups = [');
     for (final group in _groups ?? []) {
       buffer.writeln('  Group(');
-      buffer.writeln('    id: \'${group.id}\',');
-      buffer.writeln('    name: \'${group.name}\',');
-      buffer.writeln('    groupName: \'${group.groupName}\',');
-      buffer.writeln('    description: \'${group.description}\',');
+      buffer.writeln("    id: '${group.id}',");
+      buffer.writeln("    name: '${group.name}',");
+      buffer.writeln("    groupName: '${group.groupName}',");
+      buffer.writeln("    description: '${group.description}',");
       buffer.writeln(
-        '    categories: [${group.categories.map((c) => 'GroupCategory.${c.toString().split('.').last}').join(', ')}],',
+        "    categories: [${group.categories.map((c) => 'GroupCategory.${c.toString().split('.').last}').join(', ')}],",
       );
       buffer.writeln('    floor: ${group.floor},');
-      buffer.writeln('    imagePath: \'${group.imagePath}\',');
+      buffer.writeln("    imagePath: '${group.imagePath}',");
       if (group.pamphletPage != null) {
         buffer.writeln('    pamphletPage: ${group.pamphletPage},');
       }
@@ -191,20 +171,20 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
     buffer.writeln('final List<VoteCategory> voteCategories = [');
     for (final category in _categories ?? []) {
       buffer.writeln('  VoteCategory(');
-      buffer.writeln('    id: \'${category.id}\',');
-      buffer.writeln('    name: \'${category.name}\',');
-      buffer.writeln('    description: \'${category.description}\',');
+      buffer.writeln("    id: '${category.id}',");
+      buffer.writeln("    name: '${category.name}',");
+      buffer.writeln("    description: '${category.description}',");
       buffer.writeln('    groups: allGroups.where((g) => [');
       for (final group in category.groups) {
-        buffer.writeln('      \'${group.id}\',');
+        buffer.writeln("      '${group.id}',");
       }
       buffer.writeln('    ].contains(g.id)).toList(),');
       buffer.writeln('    canSkip: ${category.canSkip},');
       if (category.helpUrl != null) {
-        buffer.writeln('    helpUrl: \'${category.helpUrl}\',');
+        buffer.writeln("    helpUrl: '${category.helpUrl}',");
       }
       if (category.shortHelpText != null) {
-        buffer.writeln('    shortHelpText: \'${category.shortHelpText}\',');
+        buffer.writeln("    shortHelpText: '${category.shortHelpText}',");
       }
       buffer.writeln('  ),');
     }
@@ -286,14 +266,27 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 16),
-                  ElevatedButton.icon(
+                  NeumorphicButton(
                     onPressed: _loadVoteOptionsFile,
-                    icon: const Icon(Icons.file_upload),
-                    label: const Text('vote_options.dartを読み込み'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    style: const NeumorphicStyle(
+                      color: Colors.black,
+                      depth: 6,
+                      boxShape: NeumorphicBoxShape.stadium(),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.file_upload, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'vote_options.dartを読み込み',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -302,7 +295,7 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 12),
-                  ElevatedButton.icon(
+                  NeumorphicButton(
                     onPressed: () {
                       final content = _generateVoteOptionsDart();
                       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -316,12 +309,25 @@ class _ConfigEditorScreenState extends State<ConfigEditorScreen> {
                         );
                       }
                     },
-                    icon: const Icon(Icons.download),
-                    label: const Text('vote_options.dartをダウンロード'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    style: const NeumorphicStyle(
+                      color: Colors.black,
+                      depth: 6,
+                      boxShape: NeumorphicBoxShape.stadium(),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.download, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'vote_options.dartをダウンロード',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),

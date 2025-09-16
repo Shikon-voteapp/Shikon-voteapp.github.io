@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
@@ -8,7 +9,7 @@ class TopBar extends StatelessWidget {
   const TopBar({
     Key? key,
     required this.title,
-    this.icon = Icons.person_outline,
+    this.icon = HugeIcons.strokeRoundedUser,
   }) : super(key: key);
 
   @override
@@ -31,7 +32,7 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: theme.colorScheme.primary),
+          Icon(icon, color: Colors.black),
           const SizedBox(width: 8.0),
           Text(
             title,

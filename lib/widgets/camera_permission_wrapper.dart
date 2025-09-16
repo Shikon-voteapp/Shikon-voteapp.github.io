@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../platform/platform_utils.dart';
 
 class CameraPermissionWrapper extends StatefulWidget {
@@ -141,12 +142,23 @@ class CameraPermissionDeniedScreen extends StatelessWidget {
                 ),
               ],
               SizedBox(height: 24),
-              ElevatedButton.icon(
-                icon: Icon(Icons.refresh),
-                label: Text('制限された機能で実行'),
+              NeumorphicButton(
                 onPressed: null,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                style: const NeumorphicStyle(
+                  depth: -4,
+                  boxShape: NeumorphicBoxShape.stadium(),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.refresh),
+                    SizedBox(width: 8),
+                    Text('制限された機能で実行'),
+                  ],
                 ),
               ),
             ],

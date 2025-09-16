@@ -91,16 +91,14 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                     const SizedBox(height: 16),
                     _buildDropdownContainer('番号', _buildNumberDropdown()),
                     const Spacer(),
-                    ElevatedButton(
+                    NeumorphicButton(
                       onPressed: _isVerifying ? null : _verifyStudent,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                      style: NeumorphicStyle(
+                        color: _isVerifying ? null : Colors.black,
+                        depth: _isVerifying ? -4 : 6,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(30.0),
                         ),
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
-                        elevation: 0,
                       ),
                       child:
                           _isVerifying
@@ -115,9 +113,19 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                               : const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text('ログイン', style: TextStyle(fontSize: 18)),
+                                  Text(
+                                    'ログイン',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                   SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward_ios, size: 16),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
                                 ],
                               ),
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
@@ -27,8 +28,12 @@ class AdminDashboard extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => onCategorySelected(index),
-          child: Card(
-            elevation: 4,
+          child: Neumorphic(
+            style: NeumorphicStyle(
+              depth: 4,
+              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+            ),
+            padding: const EdgeInsets.all(12.0),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -73,7 +78,8 @@ class AdminDashboard extends StatelessWidget {
                               ],
                             ),
                   ),
-                  Divider(),
+                  const SizedBox(height: 8),
+                  Container(height: 1, color: Colors.black12),
                   Text(
                     '総投票数: ${_getTotalVotesForCategory(category.id)}',
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),

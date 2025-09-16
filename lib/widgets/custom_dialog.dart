@@ -4,6 +4,7 @@ import 'package:shikon_voteapp/screens/admin_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:html' as html;
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 Future<void> showCustomDialog({
@@ -301,23 +302,22 @@ class CustomDialogWidget extends StatelessWidget {
                                         style: NeumorphicStyle(
                                           depth: 2,
                                           intensity: 0.8,
-                                          color: theme.colorScheme.surface,
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
-                                              Icons.open_in_new,
+                                              HugeIcons
+                                                  .strokeRoundedExternalLink01,
                                               size: 16,
-                                              color: theme.colorScheme.primary,
+                                              color: Colors.black,
                                             ),
                                             const SizedBox(width: 8),
                                             Text(
                                               '詳細情報',
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color:
-                                                    theme.colorScheme.primary,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -352,7 +352,6 @@ class CustomDialogWidget extends StatelessWidget {
                     NeumorphicButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: NeumorphicStyle(
-                        color: theme.colorScheme.surface,
                         depth: 2,
                         boxShape: NeumorphicBoxShape.roundRect(
                           BorderRadius.circular(30.0),
@@ -370,8 +369,8 @@ class CustomDialogWidget extends StatelessWidget {
                       NeumorphicButton(
                         onPressed: () => onPrimaryAction!(),
                         style: NeumorphicStyle(
-                          color: theme.colorScheme.primary,
-                          depth: 2,
+                          color: Colors.black,
+                          depth: 6,
                           boxShape: NeumorphicBoxShape.roundRect(
                             BorderRadius.circular(30.0),
                           ),
@@ -381,15 +380,13 @@ class CustomDialogWidget extends StatelessWidget {
                           children: [
                             Text(
                               primaryActionText!,
-                              style: TextStyle(
-                                color: theme.colorScheme.onPrimary,
-                              ),
+                              style: TextStyle(color: Colors.white),
                             ),
                             const SizedBox(width: 4),
                             Icon(
                               Icons.arrow_forward_ios,
                               size: 16,
-                              color: theme.colorScheme.onPrimary,
+                              color: Colors.white,
                             ),
                           ],
                         ),

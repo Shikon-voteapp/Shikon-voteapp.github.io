@@ -8,6 +8,7 @@ import '../widgets/main_layout.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
+import '../config/special_ids.dart';
 
 class ConfirmScreen extends StatefulWidget {
   final String uuid;
@@ -111,11 +112,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           child: NeumorphicButton(
             onPressed: _isLoading ? null : _showConfirmationDialog,
             style: NeumorphicStyle(
-              color:
-                  _isLoading
-                      ? Theme.of(context).disabledColor
-                      : Theme.of(context).colorScheme.primary,
-              depth: _isLoading ? 0 : 4,
+              color: _isLoading ? null : Colors.black,
+              depth: _isLoading ? -4 : 6,
               intensity: 0.8,
               boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
             ),
@@ -126,7 +124,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                           strokeWidth: 2,
                         ),
                       )
@@ -136,16 +134,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           Text(
                             'この内容で投票する',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Icon(
-                            Icons.check,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                          Icon(Icons.check, size: 16, color: Colors.white),
                         ],
                       ),
             ),
@@ -285,74 +279,25 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _showConfirmationDialog() {
-    final theme = Theme.of(context);
     showCustomDialog(
       context: context,
       title: '投票を確定しますか？',
       content: 'この内容で投票すると、変更はできません。',
-      actions: [
-        ElevatedButton.icon(
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('戻る'),
-          onPressed: () => Navigator.of(context).pop(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.surface,
-            foregroundColor: theme.colorScheme.onSurface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-        ),
-        ElevatedButton.icon(
-          icon: Icon(Icons.check, color: theme.colorScheme.onPrimary),
-          label: const Text('投票する'),
-          onPressed: () {
-            Navigator.of(context).pop();
-            _submitVote();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-        ),
-      ],
+      primaryActionText: '投票する',
+      onPrimaryAction: () {
+        Navigator.of(context).pop();
+        _submitVote();
+      },
     );
   }
 
   void _showVoteCompletedDialog() {
-    final theme = Theme.of(context);
     showCustomDialog(
       context: context,
       title: '投票完了',
       content: '投票が完了しました。ご協力ありがとうございました。',
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
-              icon: const Icon(Icons.home_outlined),
-              label: const Text('トップへ戻る'),
-              onPressed: _resetToTop,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 24,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+      primaryActionText: 'トップへ戻る',
+      onPrimaryAction: _resetToTop,
     );
   }
 
@@ -364,6 +309,16 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     });
 
     try {
+      // 特別IDは重複確認・保存をスキップし完了ダイアログ表示のみ
+      if (widget.uuid == specialBypassUuid) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+        });
+        _showVoteCompletedDialog();
+        return;
+      }
+
       bool hasAlreadyVoted = await _dbService.hasVoted(widget.uuid);
       if (hasAlreadyVoted) {
         if (!mounted) return;

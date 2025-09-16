@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
 import 'custom_dialog.dart';
@@ -153,7 +154,6 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
@@ -162,38 +162,39 @@ class BottomBar extends StatelessWidget {
         children: [
           // Left side navigation
           Neumorphic(
-            style: NeumorphicStyle(
-              color: theme.colorScheme.surface,
-              depth: 4,
-              boxShape: NeumorphicBoxShape.roundRect(
-                BorderRadius.circular(28.0),
-              ),
+            style: const NeumorphicStyle(
+              color: Colors.white,
+              depth: 6,
+              boxShape: NeumorphicBoxShape.stadium(),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 6.0,
+            ),
             child: Row(
               children: [
-                _buildIconButton(
-                  context,
-                  Icons.home_outlined,
-                  onHome ?? () => _showReloadConfirmDialog(context),
+                _buildGroupedIcon(
+                  context: context,
+                  icon: HugeIcons.strokeRoundedHome03,
+                  onPressed: onHome ?? () => _showReloadConfirmDialog(context),
                 ),
-                _buildDivider(context),
-                _buildIconButton(
-                  context,
-                  Icons.help_outline,
-                  () => _showHelp(context),
+                _buildGroupedDivider(),
+                _buildGroupedIcon(
+                  context: context,
+                  icon: HugeIcons.strokeRoundedQuestion,
+                  onPressed: () => _showHelp(context),
                 ),
-                _buildDivider(context),
-                _buildIconButton(
-                  context,
-                  Icons.admin_panel_settings_outlined,
-                  () => showAdminLoginDialog(context: context),
+                _buildGroupedDivider(),
+                _buildGroupedIcon(
+                  context: context,
+                  icon: HugeIcons.strokeRoundedShield01,
+                  onPressed: () => showAdminLoginDialog(context: context),
                 ),
-                _buildDivider(context),
-                _buildIconButton(
-                  context,
-                  Icons.arrow_back_ios_new,
-                  onBack ?? () => _showCantGoBackDialog(context),
+                _buildGroupedDivider(),
+                _buildGroupedIcon(
+                  context: context,
+                  icon: HugeIcons.strokeRoundedArrowLeft01,
+                  onPressed: onBack ?? () => _showCantGoBackDialog(context),
                 ),
               ],
             ),
@@ -210,10 +211,16 @@ class BottomBar extends StatelessWidget {
                 child: SizedBox(
                   width: 56.0,
                   height: 56.0,
-                  child: _buildIconButton(
-                    context,
-                    Icons.menu,
-                    () => _showInfoDialog(context),
+                  child: GestureDetector(
+                    onTap: () => _showInfoDialog(context),
+                    behavior: HitTestBehavior.opaque,
+                    child: Center(
+                      child: Icon(
+                        HugeIcons.strokeRoundedMenu01,
+                        color: Colors.black,
+                        size: 24.0,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -222,22 +229,27 @@ class BottomBar extends StatelessWidget {
               if (onNext != null)
                 SizedBox(
                   height: 56.0,
-                  child: ElevatedButton(
+                  child: NeumorphicButton(
                     onPressed: onNext,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: theme.colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    style: const NeumorphicStyle(
+                      color: Colors.white,
+                      depth: 6,
+                      boxShape: NeumorphicBoxShape.stadium(),
                     ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('次へ', style: TextStyle(fontSize: 16)),
+                        Text(
+                          '次へ',
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                        ),
                         SizedBox(width: 8),
-                        Icon(Icons.arrow_forward_ios, size: 16),
+                        Icon(
+                          HugeIcons.strokeRoundedArrowRight01,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ],
                     ),
                   ),
@@ -249,23 +261,30 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(
-    BuildContext context,
-    IconData icon,
-    VoidCallback? onPressed,
-  ) {
+  Widget _buildGroupedIcon({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback? onPressed,
+  }) {
     final theme = Theme.of(context);
-    return IconButton(
-      icon: Icon(icon, color: theme.colorScheme.primary, size: 24.0),
-      onPressed: onPressed,
-      splashRadius: 24.0,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+    final Color iconColor =
+        onPressed == null
+            ? theme.colorScheme.onSurface.withOpacity(0.4)
+            : Colors.black;
+    return Opacity(
+      opacity: onPressed == null ? 0.5 : 1.0,
+      child: GestureDetector(
+        onTap: onPressed,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: Icon(icon, color: iconColor, size: 22.0),
+        ),
+      ),
     );
   }
 
-  Widget _buildDivider(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(height: 24, width: 1, color: theme.dividerColor);
+  Widget _buildGroupedDivider() {
+    return Container(height: 24, width: 1, color: Colors.black12);
   }
 }

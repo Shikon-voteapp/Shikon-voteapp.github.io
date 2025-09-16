@@ -1,6 +1,7 @@
 // lib/services/uuid_service.dart
 import 'database_service.dart';
 import '../config/uuid_range.dart';
+import '../config/special_ids.dart';
 
 class UuidService {
   final DatabaseService _dbService = DatabaseService();
@@ -8,6 +9,10 @@ class UuidService {
 
   Future<bool> validateUuid(String uuid) async {
     try {
+      // 特別IDは常に有効
+      if (uuid == specialBypassUuid) {
+        return true;
+      }
       if (!_isValidUuidFormat(uuid)) {
         return false;
       }
@@ -31,6 +36,8 @@ class UuidService {
 
   // 学生検証が必要かどうかを確認
   bool requiresStudentVerification(String uuid) {
+    // 特別IDは学生認証不要
+    if (uuid == specialBypassUuid) return false;
     return _rangeService.requiresStudentVerification(uuid);
   }
 

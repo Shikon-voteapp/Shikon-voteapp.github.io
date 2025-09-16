@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../models/group.dart';
 
 class AdminCategoryResults extends StatelessWidget {
@@ -25,8 +26,13 @@ class AdminCategoryResults extends StatelessWidget {
             final group = entry.key;
             final voteCount = entry.value;
 
-            return Card(
-              elevation: 3,
+            return Neumorphic(
+              style: NeumorphicStyle(
+                depth: 4,
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(12),
+                ),
+              ),
               margin: EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: _buildRankBadge(index),

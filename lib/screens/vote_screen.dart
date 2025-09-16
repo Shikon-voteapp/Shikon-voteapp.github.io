@@ -782,19 +782,12 @@ class _VoteScreenState extends State<VoteScreen> {
             context: context,
             title: '${category.name} をスキップしますか？',
             content: 'このカテゴリの投票先を選択せずに次へ進みます。',
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('戻る'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _navigate(1);
-                },
-                child: const Text('スキップする'),
-              ),
-            ],
+            closeButtonText: '戻る',
+            primaryActionText: 'スキップする',
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              _navigate(1);
+            },
           );
         };
       } else {
@@ -808,11 +801,8 @@ class _VoteScreenState extends State<VoteScreen> {
       child: NeumorphicButton(
         onPressed: onPressed,
         style: NeumorphicStyle(
-          color:
-              onPressed != null
-                  ? theme.colorScheme.primary
-                  : theme.disabledColor,
-          depth: onPressed != null ? 4 : 0,
+          color: onPressed != null ? Colors.black : null,
+          depth: onPressed != null ? 6 : -4,
           intensity: 0.8,
           boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
         ),
@@ -824,14 +814,20 @@ class _VoteScreenState extends State<VoteScreen> {
                 buttonText,
                 style: TextStyle(
                   fontSize: 18,
-                  color: theme.colorScheme.onPrimary,
+                  color:
+                      onPressed != null
+                          ? Colors.white
+                          : theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: 6),
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: theme.colorScheme.onPrimary,
+                color:
+                    onPressed != null
+                        ? Colors.white
+                        : theme.colorScheme.onSurface,
               ),
             ],
           ),
@@ -911,50 +907,18 @@ class _VoteScreenState extends State<VoteScreen> {
   void _showConfirmationDialog(Group group) {
     final currentCategory = voteCategories[currentCategoryIndex];
     final isLastCategory = currentCategoryIndex == voteCategories.length - 1;
-    final theme = Theme.of(context);
 
     showCustomDialog(
       context: context,
       imagePath: group.imagePath,
       title: '${currentCategory.name}の確認',
       content: '「${group.name}」に投票します。\nよろしいですか？',
-      actions: [
-        ElevatedButton.icon(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.close),
-          label: const Text('戻る'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.surface,
-            foregroundColor: theme.colorScheme.onSurface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            _vote(group);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(isLastCategory ? '投票を完了する' : '次のカテゴリへ'),
-              const SizedBox(width: 4),
-              const Icon(Icons.arrow_forward_ios, size: 16),
-            ],
-          ),
-        ),
-      ],
+      closeButtonText: '戻る',
+      primaryActionText: isLastCategory ? '投票を完了する' : '次のカテゴリへ',
+      onPrimaryAction: () {
+        Navigator.of(context).pop();
+        _vote(group);
+      },
     );
   }
 

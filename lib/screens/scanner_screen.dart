@@ -9,6 +9,7 @@ import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
+import '../config/special_ids.dart';
 
 class ScannerScreen extends StatefulWidget {
   final bool startWithScanner;
@@ -127,7 +128,7 @@ class _ScannerScreenState extends State<ScannerScreen>
               ),
             ),
             const Spacer(),
-            ElevatedButton(
+            NeumorphicButton(
               onPressed:
                   _isProcessingCode
                       ? null
@@ -150,6 +151,14 @@ class _ScannerScreenState extends State<ScannerScreen>
                           );
                         }
                       },
+              style: NeumorphicStyle(
+                color: _isProcessingCode ? null : Colors.black,
+                depth: _isProcessingCode ? -4 : 6,
+                intensity: 0.8,
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(30.0),
+                ),
+              ),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 transitionBuilder:
@@ -164,7 +173,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              colorScheme.onPrimary,
+                              Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         )
@@ -176,25 +185,17 @@ class _ScannerScreenState extends State<ScannerScreen>
                               'ログイン',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: colorScheme.onPrimary,
+                                color: Colors.white,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
                               Icons.arrow_forward_ios,
                               size: 16,
-                              color: colorScheme.onPrimary,
+                              color: Colors.white,
                             ),
                           ],
                         ),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                backgroundColor: colorScheme.primary,
-                elevation: 0,
               ),
             ),
             const SizedBox(height: 20),
@@ -233,10 +234,15 @@ class _ScannerScreenState extends State<ScannerScreen>
           Positioned(
             top: 50,
             left: 20,
-            child: FloatingActionButton(
+            child: NeumorphicButton(
               onPressed: () => PlatformUtils.reloadApp(),
-              child: const Icon(Icons.home),
-              backgroundColor: Colors.black54,
+              style: const NeumorphicStyle(
+                boxShape: NeumorphicBoxShape.circle(),
+                depth: 6,
+                color: Colors.black,
+              ),
+              padding: const EdgeInsets.all(16),
+              child: const Icon(Icons.home, color: Colors.white),
             ),
           ),
         ],
@@ -337,6 +343,19 @@ class _ScannerScreenState extends State<ScannerScreen>
     });
 
     try {
+      // 特別IDは時間・UUID検証をスキップして投票画面へ
+      if (code == specialBypassUuid) {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VoteScreen(uuid: code, categoryIndex: 0),
+            ),
+          );
+        }
+        return;
+      }
+
       if (!_isWithinValidPeriod()) {
         await _showOutOfPeriodDialog();
         return;
