@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
   final IconData icon;
 
-  const TopBar({
-    Key? key,
-    required this.title,
-    this.icon = HugeIcons.strokeRoundedUser,
-  }) : super(key: key);
+  const TopBar({Key? key, required this.title, this.icon = FontAwesome.user})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +29,23 @@ class TopBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.black),
+          Icon(
+            icon,
+            color:
+                theme.brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+          ),
           const SizedBox(width: 8.0),
           Text(
             title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: theme.textTheme.bodyLarge?.color,
+              color:
+                  theme.brightness == Brightness.dark
+                      ? Colors.white
+                      : theme.textTheme.bodyLarge?.color,
             ),
           ),
         ],

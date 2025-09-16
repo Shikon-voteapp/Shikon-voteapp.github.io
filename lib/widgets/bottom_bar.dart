@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
 import 'custom_dialog.dart';
@@ -40,13 +40,12 @@ class BottomBar extends StatelessWidget {
         // 簡単なHTMLタグを除去する処理
         final plainText =
             content
-                .replaceAll(RegExp(r'<[^>]*>'), '\\n') // タグを改行に
-                .replaceAll('\\n\\n', '\\n')
+                .replaceAll(RegExp(r'<[^>]*>'), '\n') // タグを改行に
+                .replaceAll('\n\n', '\n')
                 .trim();
-        final lines = plainText.split('\\n');
+        final lines = plainText.split('\n');
         final title = lines.isNotEmpty ? lines[0] : 'ヘルプ';
-        final body =
-            lines.length > 1 ? lines.sublist(1).join('\\n').trim() : '';
+        final body = lines.length > 1 ? lines.sublist(1).join('\n').trim() : '';
 
         showCustomDialog(
           context: context,
@@ -162,10 +161,13 @@ class BottomBar extends StatelessWidget {
         children: [
           // Left side navigation
           Neumorphic(
-            style: const NeumorphicStyle(
-              color: Colors.white,
+            style: NeumorphicStyle(
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF1E1E1E)
+                      : Colors.white,
               depth: 6,
-              boxShape: NeumorphicBoxShape.stadium(),
+              boxShape: const NeumorphicBoxShape.stadium(),
             ),
             padding: const EdgeInsets.symmetric(
               horizontal: 10.0,
@@ -175,25 +177,25 @@ class BottomBar extends StatelessWidget {
               children: [
                 _buildGroupedIcon(
                   context: context,
-                  icon: HugeIcons.strokeRoundedHome03,
+                  icon: FontAwesome.house_solid,
                   onPressed: onHome ?? () => _showReloadConfirmDialog(context),
                 ),
-                _buildGroupedDivider(),
+                _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: HugeIcons.strokeRoundedQuestion,
+                  icon: FontAwesome.circle_question_solid,
                   onPressed: () => _showHelp(context),
                 ),
-                _buildGroupedDivider(),
+                _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: HugeIcons.strokeRoundedShield01,
+                  icon: FontAwesome.shield_halved_solid,
                   onPressed: () => showAdminLoginDialog(context: context),
                 ),
-                _buildGroupedDivider(),
+                _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: HugeIcons.strokeRoundedArrowLeft01,
+                  icon: FontAwesome.arrow_left_solid,
                   onPressed: onBack ?? () => _showCantGoBackDialog(context),
                 ),
               ],
@@ -204,9 +206,13 @@ class BottomBar extends StatelessWidget {
             children: [
               // Info button (hamburger menu)
               Neumorphic(
-                style: const NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
+                style: NeumorphicStyle(
+                  boxShape: const NeumorphicBoxShape.circle(),
                   depth: 4,
+                  color:
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF1E1E1E)
+                          : null,
                 ),
                 child: SizedBox(
                   width: 56.0,
@@ -216,8 +222,11 @@ class BottomBar extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     child: Center(
                       child: Icon(
-                        HugeIcons.strokeRoundedMenu01,
-                        color: Colors.black,
+                        FontAwesome.bars_solid,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
                         size: 24.0,
                       ),
                     ),
@@ -231,24 +240,36 @@ class BottomBar extends StatelessWidget {
                   height: 56.0,
                   child: NeumorphicButton(
                     onPressed: onNext,
-                    style: const NeumorphicStyle(
-                      color: Colors.white,
+                    style: NeumorphicStyle(
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF1E1E1E)
+                              : Colors.white,
                       depth: 6,
-                      boxShape: NeumorphicBoxShape.stadium(),
+                      boxShape: const NeumorphicBoxShape.stadium(),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           '次へ',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
                         ),
                         SizedBox(width: 8),
                         Icon(
-                          HugeIcons.strokeRoundedArrowRight01,
+                          FontAwesome.arrow_right_solid,
                           size: 16,
-                          color: Colors.black,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                         ),
                       ],
                     ),
@@ -267,10 +288,11 @@ class BottomBar extends StatelessWidget {
     required VoidCallback? onPressed,
   }) {
     final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
     final Color iconColor =
         onPressed == null
             ? theme.colorScheme.onSurface.withOpacity(0.4)
-            : Colors.black;
+            : (isDark ? Colors.white : Colors.black);
     return Opacity(
       opacity: onPressed == null ? 0.5 : 1.0,
       child: GestureDetector(
@@ -284,7 +306,14 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildGroupedDivider() {
-    return Container(height: 24, width: 1, color: Colors.black12);
+  Widget _buildGroupedDivider(BuildContext context) {
+    return Container(
+      height: 24,
+      width: 1,
+      color:
+          Theme.of(context).brightness == Brightness.dark
+              ? Colors.white24
+              : Colors.black12,
+    );
   }
 }

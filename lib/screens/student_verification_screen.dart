@@ -7,6 +7,7 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
   final String uuid;
@@ -36,7 +37,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     final theme = Theme.of(context);
     return MainLayout(
       title: '本人確認',
-      icon: Icons.verified_user_outlined,
+      icon: FontAwesome.id_card_solid,
       onHome:
           () => Navigator.of(
             context,
@@ -100,34 +101,36 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                           BorderRadius.circular(30.0),
                         ),
                       ),
-                      child:
-                          _isVerifying
-                              ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                ),
-                              )
-                              : const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'ログイン',
-                                    style: TextStyle(
-                                      fontSize: 18,
+                      child: Center(
+                        child:
+                            _isVerifying
+                                ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 3,
+                                  ),
+                                )
+                                : const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'ログイン',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      FontAwesome.arrow_right_solid,
+                                      size: 16,
                                       color: Colors.white,
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 16,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -256,6 +259,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       return;
     }
 
+    final Stopwatch sw = Stopwatch()..start();
     setState(() {
       _isVerifying = true;
     });
@@ -290,6 +294,12 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             content: '認証情報が一致しません。正しい情報を入力してください。',
           );
         }
+        final int elapsed = sw.elapsedMilliseconds;
+        final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
+        final int rest = target - elapsed;
+        if (rest > 0) {
+          await Future.delayed(Duration(milliseconds: rest));
+        }
         setState(() {
           _isVerifying = false;
         });
@@ -301,6 +311,12 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           title: 'エラー',
           content: 'エラーが発生しました: ${e.toString()}',
         );
+      }
+      final int elapsed = sw.elapsedMilliseconds;
+      final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
+      final int rest = target - elapsed;
+      if (rest > 0) {
+        await Future.delayed(Duration(milliseconds: rest));
       }
       setState(() {
         _isVerifying = false;

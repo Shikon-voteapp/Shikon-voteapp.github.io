@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
 
@@ -9,7 +10,7 @@ class SelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MainLayout(
       title: 'ようこそ',
-      icon: Icons.touch_app_outlined,
+      icon: FontAwesome.hand_pointer_solid,
       onHome:
           () => Navigator.of(
             context,
@@ -26,7 +27,7 @@ class SelectionScreen extends StatelessWidget {
               context: context,
               title: '投票を開始する',
               subtitle: '投票を行います。パンフレットに同封された投票券をご準備ください。',
-              icon: Icons.how_to_vote,
+              icon: FontAwesome.check_to_slot_solid,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -51,18 +52,29 @@ class SelectionScreen extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final bool isDark = theme.brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow:
+            isDark
+                ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.6),
+                    spreadRadius: 2,
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+                : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -73,14 +85,18 @@ class SelectionScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                Icon(icon, size: 64, color: colorScheme.primary),
+                Icon(
+                  icon,
+                  size: 64,
+                  color: isDark ? Colors.white : colorScheme.primary,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
+                    color: isDark ? Colors.white : colorScheme.primary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -89,7 +105,7 @@ class SelectionScreen extends StatelessWidget {
                   subtitle,
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorScheme.onSurface.withOpacity(0.7),
+                    color: colorScheme.onSurface.withOpacity(0.8),
                   ),
                   textAlign: TextAlign.center,
                 ),

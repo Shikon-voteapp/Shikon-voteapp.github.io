@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:icons_plus/icons_plus.dart';
+// import 'package:hugeicons/hugeicons.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +14,7 @@ import '../widgets/admin_pie_chart.dart';
 import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
-import 'config_editor_screen.dart';
+// import 'config_editor_screen.dart';
 // import '../platform/platform_utils.dart';
 
 class AdminScreen extends StatefulWidget {
@@ -81,7 +83,7 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   void _initializeControllers() {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _categoryTabController = TabController(
       length: voteCategories.length,
       vsync: this,
@@ -206,7 +208,7 @@ class _AdminScreenState extends State<AdminScreen>
 
     return MainLayout(
       title: '管理者パネル',
-      icon: Icons.admin_panel_settings,
+      icon: FontAwesome.shield_halved_solid,
       onHome:
           () => Navigator.of(
             context,
@@ -219,7 +221,6 @@ class _AdminScreenState extends State<AdminScreen>
             tabs: [
               Tab(text: '投票結果', icon: Icon(Icons.poll)),
               Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
-              Tab(text: '設定エディタ', icon: Icon(Icons.settings)),
             ],
           ),
           actions: [
@@ -258,11 +259,7 @@ class _AdminScreenState extends State<AdminScreen>
         ),
         body: TabBarView(
           controller: _tabController,
-          children: [
-            _buildResultsTab(),
-            _buildUserManagementTab(),
-            _buildConfigEditorTab(),
-          ],
+          children: [_buildResultsTab(), _buildUserManagementTab()],
         ),
       ),
     );
@@ -449,9 +446,7 @@ class _AdminScreenState extends State<AdminScreen>
     );
   }
 
-  Widget _buildConfigEditorTab() {
-    return const ConfigEditorScreen();
-  }
+  // 設定エディタ機能は管理画面から削除
 
   String _formatDate(DateTime date) {
     return '${date.year}/${date.month}/${date.day}';

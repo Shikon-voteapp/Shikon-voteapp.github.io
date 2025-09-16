@@ -33,82 +33,81 @@
 
   <title>紫紺祭投票アプリ</title>
   
-  <!-- Google Material Icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Icons Plus (Font Awesome) + Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome (Free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkfPWq7Gt9eC4R2zD4cVZ4BQ9WQqLr5Q8dt9N6+3Zx9e6VXY4GxcpP5xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
   <script src="https://unpkg.com/@zxing/library@0.19.1" type="application/javascript"></script>
 
   <style>
+    :root { --bg: #ffffff; --fg: #000000; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #000000; --fg: #ffffff; }
+    }
     .loading-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      width: 100vw;
       position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #512DA8;
-      color: white;
-      font-family: sans-serif;
+      inset: 0;
+      background-color: var(--bg);
+      color: var(--fg);
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 12px 16px;
+      font-family: 'Noto Sans JP', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
       z-index: 9999;
     }
-    .loading-container .icon {
-      font-family: 'Material Icons';
-      font-style: normal;
-      font-size: 150px;
-      line-height: 1;
-    }
-    .loading-container h1 {
-      font-size: 28px;
-      margin-top: 30px;
-      font-weight: bold;
-    }
-    .loading-container p {
-      font-size: 16px;
-      margin-top: 20px;
-    }
-    .loading-spinner-svg {
-      animation: spin 1s linear infinite;
-      margin-top: 50px;
-      width: 50px;
-      height: 50px;
-    }
-    .loading-spinner-svg circle {
-      stroke: rgba(255, 255, 255, 0.3);
-      stroke-width: 4;
-      stroke-linecap: round;
-      fill: none;
-    }
-    .loading-spinner-svg .value {
-      stroke: white;
-      stroke-dasharray: 80;
-      stroke-dashoffset: 60;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    .loading-text { font-size: 14px; opacity: 0.85; }
   </style>
 
   <script>
-    function flutterReady() {
-      var loadingElement = document.getElementById("loading");
-      if (loadingElement) {
-        loadingElement.remove();
+    // Flutterの最初のフレームが描画されたらローダーをフェードアウトして削除
+    // フォント読み込み完了までローダーを保持し、豆腐出現を抑止
+    let fontLoaded = false;
+    let flutterFirstFrame = false;
+
+    function maybeHide() {
+      if (fontLoaded && flutterFirstFrame) {
+        var loadingElement = document.getElementById('loading');
+        if (!loadingElement) return;
+        loadingElement.style.transition = 'opacity 350ms ease';
+        loadingElement.style.opacity = '0';
+        setTimeout(function(){
+          if (loadingElement && loadingElement.parentNode) {
+            loadingElement.parentNode.removeChild(loadingElement);
+          }
+        }, 380);
       }
+    }
+
+    // Noto Sans JP がロードされたらフラグON
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function(){
+        fontLoaded = true;
+        maybeHide();
+      });
+    } else {
+      // フォントAPI非対応ブラウザはタイムアウトでフォールバック（2.2秒）
+      setTimeout(function(){ fontLoaded = true; maybeHide(); }, 2200);
+    }
+
+    window.addEventListener('flutter-first-frame', function () {
+      flutterFirstFrame = true;
+      maybeHide();
+    });
+
+    // 互換: Flutter側から明示的に呼ばれる場合も同様に処理
+    function flutterReady() {
+      var event = new Event('flutter-first-frame');
+      window.dispatchEvent(event);
     }
   </script>
 </head>
-<body style="background-color: #673AB7;">
+<body style="background-color: var(--bg); color: var(--fg);">
   <div id="loading" class="loading-container">
-    <i class="icon">how_to_vote</i>
-    <h1>紫紺祭投票アプリ</h1>
-    <svg class="loading-spinner-svg" viewBox="0 0 32 32">
-      <circle cx="16" cy="16" r="14"></circle>
-      <circle class="value" cx="16" cy="16" r="14"></circle>
-    </svg>
-    <p>起動初期化を待機中...</p>
+    <span class="loading-text">起動準備中...</span>
   </div>
   <script src="flutter_bootstrap.js" async></script>
   <script type="module">

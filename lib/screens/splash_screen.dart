@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
 import 'selection_screen.dart';
+import '../utils/font_loading_stub.dart'
+    if (dart.library.html) '../utils/font_loading_web.dart';
 
 class SplashScreen extends StatefulWidget {
   final DateRangeService dateRangeService;
@@ -23,6 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initialize() async {
+    // Webフォントの読み込み完了まで待機（非Webは即時）
+    await waitForWebFonts();
     // 実際の初期化処理に合わせてメッセージを更新
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
@@ -50,33 +55,60 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: Colors.deepPurple),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.how_to_vote, size: 150, color: Colors.white),
+            Icon(
+              FontAwesome.check_to_slot_solid,
+              size: 150,
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+            ),
             SizedBox(height: 30),
             Text(
               '紫紺祭投票アプリ',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
               ),
             ),
             SizedBox(height: 50),
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              ),
             ),
             SizedBox(height: 20),
             Text(
               _loadingMessage,
-              style: TextStyle(fontSize: 16, color: Colors.white),
+              style: TextStyle(
+                fontSize: 16,
+                color:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : Colors.black87,
+              ),
             ),
           ],
         ),

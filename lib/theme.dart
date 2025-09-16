@@ -12,7 +12,7 @@ class AppTheme {
   static final Color lightAccentColor = Colors.white;
 
   // Dark Theme Colors
-  static const Color darkPrimaryColor = shikonPurple;
+  static const Color darkPrimaryColor = lightPurple;
   static const Color darkBackgroundColor = Color(0xFF121212); // 近年の標準ダーク
   static const Color darkWidgetBackgroundColor = Color(0xFF1E1E1E);
   static final Color darkAccentColor = Colors.grey[800]!;
@@ -111,8 +111,8 @@ class AppTheme {
 
     final colorScheme = const ColorScheme(
       brightness: Brightness.dark,
-      primary: shikonPurple,
-      onPrimary: Colors.white,
+      primary: lightPurple,
+      onPrimary: Colors.black,
       secondary: Color(0xFF9E9E9E),
       onSecondary: Colors.black,
       error: Color(0xFFCF6679),

@@ -2,15 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'screens/scanner_screen.dart';
 import 'firebase_options.dart';
 import 'screens/admin_screen.dart';
 import 'config/data_range_service.dart';
 import 'config/student_map_init.dart';
 import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
-import 'widgets/camera_permission_wrapper.dart';
+
 import 'theme.dart';
+import 'screens/selection_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:js/js_util.dart' as js_util;
 import 'dart:html' as html;
@@ -72,22 +72,23 @@ class MyApp extends StatelessWidget {
             depth: 4,
           ),
           darkTheme: const NeumorphicThemeData(
-            baseColor: Color(0xFF121212),
+            baseColor: Color(0xff333333),
+            accentColor: Colors.purple,
             lightSource: LightSource.topLeft,
-            depth: 3,
+            depth: 4,
+            intensity: 0.28,
+            shadowLightColor: Color(0x26FFFFFF),
+            shadowDarkColor: Color(0xFF000000),
           ),
           materialTheme: AppTheme.lightThemeData,
           materialDarkTheme: AppTheme.darkThemeData,
-          themeMode: ThemeMode.light,
+          themeMode: ThemeMode.system,
           navigatorKey: navigatorKey,
           home: SplashScreen(dateRangeService: dateRangeService),
           routes: {
             '/admin': (context) => AdminScreen(),
-            '/scanner':
-                (context) =>
-                    kIsWeb
-                        ? ScannerScreen()
-                        : CameraPermissionWrapper(child: ScannerScreen()),
+            // URL直叩きでスキャナへ直接行かない: トップ（Selection）へ誘導
+            '/scanner': (context) => const SelectionScreen(),
           },
         );
       },

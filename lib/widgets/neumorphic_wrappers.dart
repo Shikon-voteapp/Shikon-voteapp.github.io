@@ -8,7 +8,7 @@ Widget neumorphicCard({
   required Widget child,
   EdgeInsetsGeometry? padding,
   EdgeInsetsGeometry? margin,
-  double depth = 4.0,
+  double depth = 6.0,
   BorderRadius borderRadius = const BorderRadius.all(Radius.circular(14)),
 }) {
   final theme = Theme.of(context);
@@ -19,7 +19,7 @@ Widget neumorphicCard({
       style: NeumorphicStyle(
         color: baseColor,
         depth: depth,
-        intensity: 0.8,
+        intensity: 0.6,
         lightSource: LightSource.topLeft,
         boxShape: NeumorphicBoxShape.roundRect(borderRadius),
       ),

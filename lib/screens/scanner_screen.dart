@@ -10,6 +10,7 @@ import 'vote_screen.dart';
 import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class ScannerScreen extends StatefulWidget {
   final bool startWithScanner;
@@ -84,8 +85,8 @@ class _ScannerScreenState extends State<ScannerScreen>
     final colorScheme = theme.colorScheme;
     return MainLayout(
       title: '投票券情報入力',
-      icon: Icons.confirmation_number_outlined,
-      helpTitle: '投票券情報入力',
+      icon: FontAwesome.ticket_simple_solid,
+      helpTitle: '投票について',
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
       onHome: () {},
@@ -105,25 +106,38 @@ class _ScannerScreenState extends State<ScannerScreen>
               ),
             ),
             const SizedBox(height: 40),
-            neumorphicCard(
-              context: context,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              borderRadius: BorderRadius.circular(16.0),
-              child: TextField(
-                controller: _manualCodeController,
-                decoration: InputDecoration(
-                  labelText: 'ID',
-                  border: InputBorder.none,
-                  labelStyle: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.6),
-                  ),
+            Neumorphic(
+              style: NeumorphicStyle(
+                color: colorScheme.surface,
+                depth: 6,
+                intensity: 0.6,
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.circular(16.0),
                 ),
-                keyboardType: TextInputType.number,
-                autofocus: true,
-                maxLength: 10,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                child: TextField(
+                  controller: _manualCodeController,
+                  decoration: InputDecoration(
+                    labelText: 'ID',
+                    border: InputBorder.none,
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  maxLength: 10,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -190,7 +204,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              Icons.arrow_forward_ios,
+                              FontAwesome.arrow_right_solid,
                               size: 16,
                               color: Colors.white,
                             ),
@@ -338,6 +352,7 @@ class _ScannerScreenState extends State<ScannerScreen>
 
   Future<void> _processBarcode(String code) async {
     if (_isProcessingCode) return;
+    final Stopwatch sw = Stopwatch()..start();
     setState(() {
       _isProcessingCode = true;
     });
@@ -390,6 +405,13 @@ class _ScannerScreenState extends State<ScannerScreen>
       _showPermissionDeniedDialog();
     } finally {
       if (mounted) {
+        final int elapsed = sw.elapsedMilliseconds;
+        // ランダム1.3〜1.7秒の最小表示
+        final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
+        final int rest = target - elapsed;
+        if (rest > 0) {
+          await Future.delayed(Duration(milliseconds: rest));
+        }
         setState(() {
           _isProcessingCode = false;
         });

@@ -7,6 +7,7 @@ import '../widgets/custom_dialog.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -118,7 +119,7 @@ class _VoteScreenState extends State<VoteScreen> {
 
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
-      icon: Icons.how_to_vote_outlined,
+      icon: FontAwesome.check_to_slot_solid,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
       onHome:
@@ -784,6 +785,9 @@ class _VoteScreenState extends State<VoteScreen> {
             content: 'このカテゴリの投票先を選択せずに次へ進みます。',
             closeButtonText: '戻る',
             primaryActionText: 'スキップする',
+            enablePrimaryLoading: true,
+            minLoadingMs: 1300,
+            maxLoadingMs: 1700,
             onPrimaryAction: () {
               Navigator.of(context).pop();
               _navigate(1);
@@ -822,7 +826,7 @@ class _VoteScreenState extends State<VoteScreen> {
               ),
               const SizedBox(width: 6),
               Icon(
-                Icons.arrow_forward_ios,
+                FontAwesome.arrow_right_solid,
                 size: 16,
                 color:
                     onPressed != null
@@ -915,6 +919,9 @@ class _VoteScreenState extends State<VoteScreen> {
       content: '「${group.name}」に投票します。\nよろしいですか？',
       closeButtonText: '戻る',
       primaryActionText: isLastCategory ? '投票を完了する' : '次のカテゴリへ',
+      enablePrimaryLoading: true,
+      minLoadingMs: 1300,
+      maxLoadingMs: 1700,
       onPrimaryAction: () {
         Navigator.of(context).pop();
         _vote(group);

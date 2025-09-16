@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:icons_plus/icons_plus.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
@@ -35,7 +36,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       title: '投票内容の確認',
-      icon: Icons.check_circle_outline,
+      icon: FontAwesome.circle_check,
       onHome:
           () => Navigator.of(
             context,
@@ -284,6 +285,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       title: '投票を確定しますか？',
       content: 'この内容で投票すると、変更はできません。',
       primaryActionText: '投票する',
+      enablePrimaryLoading: true,
+      minLoadingMs: 6000,
+      maxLoadingMs: 6000,
       onPrimaryAction: () {
         Navigator.of(context).pop();
         _submitVote();
