@@ -61,7 +61,7 @@ class AppTheme {
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
       textTheme: textTheme,
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),
         shape: RoundedRectangleBorder(
@@ -130,7 +130,7 @@ class AppTheme {
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,
       textTheme: textTheme,
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),
         color: darkWidgetBackgroundColor,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
-import 'out_of_period_screen.dart';
-import 'scanner_screen.dart';
 import 'selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -29,13 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     setState(() {
-      _loadingMessage = '投票期間を確認しています...';
+      _loadingMessage = '起動準備をしています...';
     });
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 800));
     if (!mounted) return;
-
-    final DateTime now = DateTime.now();
-    final bool isInPeriod = widget.dateRangeService.isWithinVotingPeriod(now);
 
     setState(() {
       _loadingMessage = '画面の準備をしています...';
@@ -49,21 +44,9 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
 
-    if (isInPeriod) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const SelectionScreen()),
-      );
-    } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder:
-              (context) => OutOfPeriodScreen(
-                startDate: widget.dateRangeService.startDate,
-                endDate: widget.dateRangeService.endDate,
-              ),
-        ),
-      );
-    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const SelectionScreen()),
+    );
   }
 
   @override

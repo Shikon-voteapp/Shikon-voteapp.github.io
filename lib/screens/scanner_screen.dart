@@ -7,7 +7,6 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
-import 'out_of_period_screen.dart';
 import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 
@@ -129,42 +128,65 @@ class _ScannerScreenState extends State<ScannerScreen>
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () {
-                if (_manualCodeController.text.isNotEmpty) {
-                  if (_manualCodeController.text.length == 10) {
-                    _processBarcode(_manualCodeController.text);
-                  } else {
-                    showCustomDialog(
-                      context: context,
-                      title: '入力エラー',
-                      content: '10桁の数字を入力してください。',
-                    );
-                  }
-                } else {
-                  showCustomDialog(
-                    context: context,
-                    title: '入力エラー',
-                    content: 'コードを入力してください。',
-                  );
-                }
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'ログイン',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: colorScheme.onPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: colorScheme.onPrimary,
-                  ),
-                ],
+              onPressed:
+                  _isProcessingCode
+                      ? null
+                      : () {
+                        if (_manualCodeController.text.isNotEmpty) {
+                          if (_manualCodeController.text.length == 10) {
+                            _processBarcode(_manualCodeController.text);
+                          } else {
+                            showCustomDialog(
+                              context: context,
+                              title: '入力エラー',
+                              content: '10桁の数字を入力してください。',
+                            );
+                          }
+                        } else {
+                          showCustomDialog(
+                            context: context,
+                            title: '入力エラー',
+                            content: 'コードを入力してください。',
+                          );
+                        }
+                      },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                transitionBuilder:
+                    (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                child:
+                    _isProcessingCode
+                        ? SizedBox(
+                          key: const ValueKey('loading'),
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              colorScheme.onPrimary,
+                            ),
+                          ),
+                        )
+                        : Row(
+                          key: const ValueKey('label'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'ログイン',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: colorScheme.onPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: colorScheme.onPrimary,
+                            ),
+                          ],
+                        ),
               ),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -245,6 +267,64 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
+  Future<void> _showOutOfPeriodDialog() async {
+    final theme = Theme.of(context);
+    await showCustomDialog(
+      context: context,
+      title: '投票期間外です',
+      contentWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '現在は投票を受け付けていません。\n以下の期間内に再度お試しください。\nなお、毎日深夜02:45～03:00はサーバーメンテナンスのため投票できません。',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.play_arrow, color: Colors.green),
+                    const SizedBox(width: 8),
+                    Text('開始：', style: theme.textTheme.titleMedium),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(_formatDateTime(_dateRangeService.startDate)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.stop, color: theme.colorScheme.error),
+                    const SizedBox(width: 8),
+                    Text('終了：', style: theme.textTheme.titleMedium),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(_formatDateTime(_dateRangeService.endDate)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      closeButtonText: '閉じる',
+    );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.year}年${dateTime.month}月${dateTime.day}日 ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
   bool _isWithinValidPeriod() {
     DateTime now = DateTime.now();
     return _dateRangeService.isWithinVotingPeriod(now);
@@ -258,15 +338,7 @@ class _ScannerScreenState extends State<ScannerScreen>
 
     try {
       if (!_isWithinValidPeriod()) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder:
-                (context) => OutOfPeriodScreen(
-                  startDate: _dateRangeService.startDate,
-                  endDate: _dateRangeService.endDate,
-                ),
-          ),
-        );
+        await _showOutOfPeriodDialog();
         return;
       }
       final bool isValid = await _uuidService.validateUuid(code);
