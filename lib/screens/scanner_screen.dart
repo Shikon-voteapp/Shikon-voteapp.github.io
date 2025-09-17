@@ -289,6 +289,12 @@ class _ScannerScreenState extends State<ScannerScreen>
 
   Future<void> _showOutOfPeriodDialog() async {
     final theme = Theme.of(context);
+    final now = DateTime.now();
+    String _format(DateTime dt) {
+      String two(int n) => n.toString().padLeft(2, '0');
+      return '${dt.year}年${dt.month}月${dt.day}日 ${two(dt.hour)}:${two(dt.minute)}';
+    }
+
     await showCustomDialog(
       context: context,
       title: '投票期間外です',
@@ -299,6 +305,15 @@ class _ScannerScreenState extends State<ScannerScreen>
           Text(
             '現在は投票を受け付けていません。\n以下の期間内に再度お試しください。\nなお、毎日深夜02:45～03:00はサーバーメンテナンスのため投票できません。',
             style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.schedule, size: 18),
+              const SizedBox(width: 6),
+              Text('現在時刻: ', style: theme.textTheme.titleSmall),
+              Expanded(child: Text(_format(now))),
+            ],
           ),
           const SizedBox(height: 16),
           Container(
