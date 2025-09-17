@@ -10,7 +10,6 @@ import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
 
 import 'theme.dart';
-import 'screens/selection_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:js/js_util.dart' as js_util;
 import 'dart:html' as html;
@@ -85,11 +84,7 @@ class MyApp extends StatelessWidget {
           themeMode: ThemeMode.system,
           navigatorKey: navigatorKey,
           home: SplashScreen(dateRangeService: dateRangeService),
-          routes: {
-            '/admin': (context) => AdminScreen(),
-            // URL直叩きでスキャナへ直接行かない: トップ（Selection）へ誘導
-            '/scanner': (context) => const SelectionScreen(),
-          },
+          routes: {'/admin': (context) => AdminScreen()},
         );
       },
     );

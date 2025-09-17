@@ -68,7 +68,7 @@ class _AdminScreenState extends State<AdminScreen>
             if (mounted) {
               Navigator.of(
                 context,
-              ).pushNamedAndRemoveUntil('/scanner', (route) => false);
+              ).pushNamedAndRemoveUntil('/', (route) => false);
             }
           });
         });
@@ -212,7 +212,7 @@ class _AdminScreenState extends State<AdminScreen>
       onHome:
           () => Navigator.of(
             context,
-          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+          ).pushNamedAndRemoveUntil('/', (route) => false),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,

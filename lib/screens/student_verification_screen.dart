@@ -1,6 +1,7 @@
 // lib/screens/student_verification_screen.dart
 import 'package:flutter/material.dart';
 import '../services/student_verification_service.dart';
+import 'package:flutter/services.dart';
 import '../models/student.dart';
 import '../widgets/main_layout.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -8,6 +9,7 @@ import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
 import 'package:icons_plus/icons_plus.dart';
+import '../platform/platform_utils.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
   final String uuid;
@@ -25,7 +27,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       StudentVerificationService();
   final List<String> _grades = ['中1', '中2', '中3', '高Ⅰ', '高Ⅱ', '高Ⅲ'];
   final List<String> _classes = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-  final List<int> _numbers = List.generate(45, (index) => index + 1);
+  // 数値入力へ変更したため未使用
 
   String? _selectedGrade;
   String? _selectedClass;
@@ -38,10 +40,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     return MainLayout(
       title: '本人確認',
       icon: FontAwesome.id_card_solid,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+      onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '生徒の本人確認',
       helpContent: '投票権に記載された学年・クラス・番号を選択してください。',
       child: LayoutBuilder(
@@ -90,7 +89,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildDropdownContainer('番号', _buildNumberDropdown()),
+                    _buildDropdownContainer('番号', _buildNumberField()),
                     const Spacer(),
                     NeumorphicButton(
                       onPressed: _isVerifying ? null : _verifyStudent,
@@ -207,42 +206,49 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     );
   }
 
-  Widget _buildNumberDropdown() {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton<int>(
-        isExpanded: true,
-        value: _selectedNumber,
-        hint: const Text(''),
-        onChanged: (value) => setState(() => _selectedNumber = value),
-        items:
-            _numbers.map((int value) {
-              return DropdownMenuItem<int>(
-                value: value,
-                alignment: Alignment.center,
-                child: Text(
-                  value.toString(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              );
-            }).toList(),
-        icon: const Icon(Icons.arrow_drop_down),
-        selectedItemBuilder: (BuildContext context) {
-          return _numbers.map<Widget>((int item) {
-            return Center(
-              child: Text(
-                item.toString(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            );
-          }).toList();
-        },
+  Widget _buildNumberField() {
+    final theme = Theme.of(context);
+    return Neumorphic(
+      style: NeumorphicStyle(
+        depth: 0,
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.all(Radius.circular(12)),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: TextField(
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(2),
+          ],
+          decoration: InputDecoration(
+            counterText: '',
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            hintText: '番号を入力...',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
+          ),
+          onChanged: (value) {
+            final trimmed = value.length > 2 ? value.substring(0, 2) : value;
+            if (trimmed != value) {
+              // TextFieldが自動で切り詰めるため、stateだけ更新
+            }
+            setState(() => _selectedNumber = int.tryParse(trimmed));
+          },
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+          maxLength: 2,
+        ),
       ),
     );
   }

@@ -259,10 +259,8 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // 画像
-                        if (widget.imagePath != null &&
-                            !isSmallHeight &&
-                            _shouldShowImage(context)) ...[
+                        // 画像（指定があれば常に表示。小さい縦幅では非表示）
+                        if (widget.imagePath != null && !isSmallHeight) ...[
                           AnimationConfiguration.synchronized(
                             duration: const Duration(milliseconds: 300),
                             child: FadeInAnimation(
@@ -461,9 +459,5 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
     );
   }
 
-  // 画像は「投票先選択画面（VoteScreen）」でのみ表示する
-  bool _shouldShowImage(BuildContext context) {
-    final widgetType = context.widget.runtimeType.toString();
-    return widgetType.contains('VoteScreen');
-  }
+  // 以前は画面タイプでフィルタしていたが、画像指定があれば表示する方針に変更
 }

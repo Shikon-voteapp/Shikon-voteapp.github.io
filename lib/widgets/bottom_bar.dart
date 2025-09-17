@@ -32,7 +32,6 @@ class BottomBar extends StatelessWidget {
         content: helpContent!,
         closeButtonText: 'OK',
         showWikiLink: true,
-        imagePath: 'assets/sho_setsumei.png',
       );
     } else if (helpUrl != null && helpUrl!.isNotEmpty) {
       try {
@@ -53,7 +52,6 @@ class BottomBar extends StatelessWidget {
           content: body,
           closeButtonText: 'OK',
           showWikiLink: true,
-          imagePath: 'assets/sho_setsumei.png',
         );
       } catch (e) {
         _showErrorDialog(context);

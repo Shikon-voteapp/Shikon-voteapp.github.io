@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
+import '../platform/platform_utils.dart';
 
 class SelectionScreen extends StatelessWidget {
   const SelectionScreen({Key? key}) : super(key: key);
@@ -11,10 +12,7 @@ class SelectionScreen extends StatelessWidget {
     return MainLayout(
       title: 'ようこそ',
       icon: FontAwesome.hand_pointer_solid,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+      onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '投票について',
       helpContent: '「投票を開始する」ボタンを押して、投票を開始してください。パンフレットに同封された投票券をご準備ください。',
       child: Padding(

@@ -37,10 +37,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     return MainLayout(
       title: '投票内容の確認',
       icon: FontAwesome.circle_check,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+      onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '投票内容の確認について',
       helpContent:
           '表示されている内容で投票が確定されます。内容を修正したい場合は、左下の「戻る」矢印から投票画面に戻ることができます。投票を完了すると、内容の変更は一切できなくなりますのでご注意ください。',

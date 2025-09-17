@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
 import '../widgets/main_layout.dart';
+import '../platform/platform_utils.dart';
 import 'confirm_screen.dart';
 import '../widgets/custom_dialog.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
@@ -122,10 +123,7 @@ class _VoteScreenState extends State<VoteScreen> {
       icon: FontAwesome.check_to_slot_solid,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/scanner', (route) => false),
+      onHome: () => PlatformUtils.reloadApp(),
       onBack: currentCategoryIndex > 0 ? () => _navigate(-1) : null,
       onNext: null,
       child: Column(
@@ -370,16 +368,23 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   Widget _buildToggleButton({
-    required IconData icon,
+    IconData? icon,
     required String label,
     required bool isSelected,
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    final Color selectedBg = Color.alphaBlend(
-      Colors.black.withOpacity(0.08),
-      theme.colorScheme.surface,
-    );
+    final bool isDark = theme.brightness == Brightness.dark;
+    final Color selectedBg =
+        isDark
+            ? Color.alphaBlend(
+              Colors.white.withOpacity(0.10),
+              theme.colorScheme.surface,
+            )
+            : Color.alphaBlend(
+              Colors.black.withOpacity(0.08),
+              theme.colorScheme.surface,
+            );
     return NeumorphicButton(
       style: NeumorphicStyle(
         color: isSelected ? selectedBg : theme.colorScheme.surface,
@@ -390,8 +395,10 @@ class _VoteScreenState extends State<VoteScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20, color: theme.colorScheme.onSurface),
-          const SizedBox(width: 4),
+          if (icon != null) ...[
+            Icon(icon, size: 20, color: theme.colorScheme.onSurface),
+            const SizedBox(width: 4),
+          ],
           Text(
             label,
             style: TextStyle(
@@ -714,51 +721,38 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildFloorFilter() {
     final floors = [1, 2, 3, 4]; // 1,2,3階とステージ(4)
     final floorLabels = {1: '1階', 2: '2階', 3: '3階', 4: 'ステージ'};
-    final theme = Theme.of(context);
 
-    int initialIndex = 0;
-    if (_selectedFloor != null) {
-      final index = floors.indexOf(_selectedFloor!);
-      if (index != -1) {
-        initialIndex = index + 1;
-      }
-    }
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Center(
+        child: Neumorphic(
+          style: NeumorphicStyle(
+            depth: 3,
+            color: Theme.of(context).colorScheme.surface,
+            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
           ),
-        ],
-      ),
-      child: DefaultTabController(
-        initialIndex: initialIndex,
-        length: 5,
-        child: TabBar(
-          tabAlignment: TabAlignment.center,
-          onTap: (index) {
-            if (index == 0) {
-              _filterByFloor(null);
-            } else {
-              _filterByFloor(floors[index - 1]);
-            }
-          },
-          isScrollable: true,
-          labelColor: theme.colorScheme.primary,
-          unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
-          indicatorSize: TabBarIndicatorSize.label,
-          tabs: [
-            const Tab(text: 'すべて'),
-            ...floors.map((floor) => Tab(text: floorLabels[floor]!)),
-          ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                _buildToggleButton(
+                  label: 'すべて',
+                  isSelected: _selectedFloor == null,
+                  onPressed: () => _filterByFloor(null),
+                ),
+                ...floors.map(
+                  (f) => _buildToggleButton(
+                    label: floorLabels[f]!,
+                    isSelected: _selectedFloor == f,
+                    onPressed: () => _filterByFloor(f),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -795,18 +789,30 @@ class _VoteScreenState extends State<VoteScreen> {
           );
         };
       } else {
+        // スキップ不可でもボタンはアクティブ。押下時に選択を促す
         buttonText = '投票する';
-        onPressed = null;
+        onPressed = () {
+          showCustomDialog(
+            context: context,
+            title: '選択してください',
+            content: '${category.name} の投票先を選択してから「投票する」を押してください。',
+            closeButtonText: 'OK',
+          );
+        };
       }
     }
+
+    final bool isDark = theme.brightness == Brightness.dark;
+    final Color activeBgColor = isDark ? Colors.white : Colors.black;
+    final Color activeFgColor = isDark ? Colors.black : Colors.white;
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: NeumorphicButton(
         onPressed: onPressed,
         style: NeumorphicStyle(
-          color: onPressed != null ? Colors.black : null,
-          depth: onPressed != null ? 6 : -4,
+          color: activeBgColor,
+          depth: 6,
           intensity: 0.8,
           boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
         ),
@@ -816,22 +822,13 @@ class _VoteScreenState extends State<VoteScreen> {
             children: [
               Text(
                 buttonText,
-                style: TextStyle(
-                  fontSize: 18,
-                  color:
-                      onPressed != null
-                          ? Colors.white
-                          : theme.colorScheme.onSurface,
-                ),
+                style: TextStyle(fontSize: 18, color: activeFgColor),
               ),
               const SizedBox(width: 6),
               Icon(
                 FontAwesome.arrow_right_solid,
                 size: 16,
-                color:
-                    onPressed != null
-                        ? Colors.white
-                        : theme.colorScheme.onSurface,
+                color: activeFgColor,
               ),
             ],
           ),
