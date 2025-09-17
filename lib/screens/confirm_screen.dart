@@ -98,9 +98,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     );
                   },
                 );
-                return _buildGroupCard(category, group);
+                return _buildGroupCard(index, category, group);
               } else {
-                return _buildSkippedCard(category);
+                return _buildSkippedCard(index, category);
               }
             },
           ),
@@ -147,7 +147,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     );
   }
 
-  Widget _buildGroupCard(VoteCategory category, Group group) {
+  Widget _buildGroupCard(
+    int categoryIndex,
+    VoteCategory category,
+    Group group,
+  ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return Neumorphic(
@@ -162,13 +166,53 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Text(
-              category.name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    category.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
+                NeumorphicButton(
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => VoteScreen(
+                                      uuid: widget.uuid,
+                                      categoryIndex: categoryIndex,
+                                      selections: widget.selections,
+                                      isGridView: widget.isGridView,
+                                      restoreSelection: false,
+                                      returnToConfirm: true,
+                                    ),
+                              ),
+                            );
+                          },
+                  style: const NeumorphicStyle(depth: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.edit, size: 16),
+                      SizedBox(width: 6),
+                      Text('編集'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           const Divider(height: 1),
@@ -226,7 +270,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     );
   }
 
-  Widget _buildSkippedCard(VoteCategory category) {
+  Widget _buildSkippedCard(int categoryIndex, VoteCategory category) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return Neumorphic(
@@ -241,13 +285,53 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Text(
-              category.name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface.withOpacity(0.6),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    category.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+                NeumorphicButton(
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => VoteScreen(
+                                      uuid: widget.uuid,
+                                      categoryIndex: categoryIndex,
+                                      selections: widget.selections,
+                                      isGridView: widget.isGridView,
+                                      restoreSelection: false,
+                                      returnToConfirm: true,
+                                    ),
+                              ),
+                            );
+                          },
+                  style: const NeumorphicStyle(depth: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.edit, size: 16),
+                      SizedBox(width: 6),
+                      Text('編集'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           const Divider(height: 1),

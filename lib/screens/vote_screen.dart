@@ -16,6 +16,8 @@ class VoteScreen extends StatefulWidget {
   final Map<String, String> selections;
   final bool isGridView;
   final bool restoreSelection;
+  // 確認画面から特定カテゴリのみ編集して戻るモード
+  final bool returnToConfirm;
 
   const VoteScreen({
     super.key,
@@ -24,6 +26,7 @@ class VoteScreen extends StatefulWidget {
     this.selections = const {},
     this.isGridView = true,
     this.restoreSelection = true,
+    this.returnToConfirm = false,
   });
 
   @override
@@ -37,6 +40,7 @@ class _VoteScreenState extends State<VoteScreen> {
   List<Group> _filteredGroups = [];
   int? _selectedFloor;
   late bool _isGridView;
+  late bool _returnToConfirm;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _VoteScreenState extends State<VoteScreen> {
     currentCategoryIndex = widget.categoryIndex;
     final category = voteCategories[currentCategoryIndex];
     _isGridView = widget.isGridView;
+    _returnToConfirm = widget.returnToConfirm;
 
     // 初期グループリストを設定
     _filteredGroups = category.groups;
@@ -124,7 +129,10 @@ class _VoteScreenState extends State<VoteScreen> {
       helpTitle: '${category.name} について',
       helpContent: helpContent,
       onHome: () => PlatformUtils.reloadApp(),
-      onBack: currentCategoryIndex > 0 ? () => _navigate(-1) : null,
+      onBack:
+          currentCategoryIndex > 0 && !_returnToConfirm
+              ? () => _navigate(-1)
+              : null,
       onNext: null,
       child: Column(
         children: [
@@ -766,31 +774,77 @@ class _VoteScreenState extends State<VoteScreen> {
     VoidCallback? onPressed;
     String buttonText;
 
-    if (isSelected) {
+    if (_returnToConfirm) {
+      // 確認画面からの単独編集モード
+      buttonText = 'この内容に変更する';
+      onPressed = () {
+        if (_selectedGroup == null && !category.canSkip) {
+          showCustomDialog(
+            context: context,
+            title: '選択してください',
+            content: '${category.name} の投票先を選択してから実行してください。',
+            closeButtonText: 'OK',
+          );
+          return;
+        }
+        if (_selectedGroup != null) {
+          currentSelections[category.id] = _selectedGroup!.id;
+        } else {
+          // スキップ可能カテゴリの場合のみ未選択を許容
+          currentSelections.remove(category.id);
+        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => ConfirmScreen(
+                  uuid: widget.uuid,
+                  selections: currentSelections,
+                  isGridView: _isGridView,
+                ),
+          ),
+        );
+      };
+    } else if (isSelected) {
       buttonText = '投票する';
       onPressed = () => _showConfirmationDialog(_selectedGroup!);
     } else {
       if (category.canSkip) {
-        buttonText = 'スキップする';
+        buttonText = _returnToConfirm ? 'この内容に変更する' : 'スキップする';
         onPressed = () {
-          showCustomDialog(
-            context: context,
-            title: '${category.name} をスキップしますか？',
-            content: 'このカテゴリの投票先を選択せずに次へ進みます。',
-            closeButtonText: '戻る',
-            primaryActionText: 'スキップする',
-            enablePrimaryLoading: true,
-            minLoadingMs: 1300,
-            maxLoadingMs: 1700,
-            onPrimaryAction: () {
-              Navigator.of(context).pop();
-              _navigate(1);
-            },
-          );
+          if (_returnToConfirm) {
+            currentSelections.remove(category.id);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => ConfirmScreen(
+                      uuid: widget.uuid,
+                      selections: currentSelections,
+                      isGridView: _isGridView,
+                    ),
+              ),
+            );
+          } else {
+            showCustomDialog(
+              context: context,
+              title: '${category.name} をスキップしますか？',
+              content: 'このカテゴリの投票先を選択せずに次へ進みます。',
+              closeButtonText: '戻る',
+              primaryActionText: 'スキップする',
+              enablePrimaryLoading: true,
+              minLoadingMs: 1300,
+              maxLoadingMs: 1700,
+              onPrimaryAction: () {
+                Navigator.of(context).pop();
+                _navigate(1);
+              },
+            );
+          }
         };
       } else {
         // スキップ不可でもボタンはアクティブ。押下時に選択を促す
-        buttonText = '投票する';
+        buttonText = _returnToConfirm ? 'この内容に変更する' : '投票する';
         onPressed = () {
           showCustomDialog(
             context: context,
