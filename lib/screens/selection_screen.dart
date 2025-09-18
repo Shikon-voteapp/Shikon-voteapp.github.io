@@ -37,7 +37,7 @@ class SelectionScreen extends StatelessWidget {
                     title: '再読み込みをしてください',
                     content:
                         'このアプリのデータが古い可能性があります。最新のデータを取得するため、キャッシュを破棄して再読み込みを行ってください。',
-                    closeButtonText: 'あとで',
+                    closeButtonText: null,
                     primaryActionText: 'キャッシュを破棄して再読み込み',
                     enablePrimaryLoading: true,
                     minLoadingMs: 800,

@@ -14,7 +14,7 @@ Future<void> showCustomDialog({
   Widget? contentWidget,
   VoidCallback? onPrimaryAction,
   String? primaryActionText,
-  String closeButtonText = '閉じる',
+  String? closeButtonText = '閉じる',
   String? imagePath,
   List<Widget>? actions,
   bool showWikiLink = false,
@@ -181,7 +181,7 @@ class CustomDialogWidget extends StatefulWidget {
   final Widget? contentWidget;
   final VoidCallback? onPrimaryAction;
   final String? primaryActionText;
-  final String closeButtonText;
+  final String? closeButtonText;
   final String? imagePath;
   final List<Widget>? actions;
   final bool showWikiLink;
@@ -394,22 +394,23 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                           ? MainAxisAlignment.center
                           : MainAxisAlignment.spaceBetween,
                   children: [
-                    NeumorphicButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: NeumorphicStyle(
-                        depth: 2,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(30.0),
+                    if (widget.closeButtonText != null)
+                      NeumorphicButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: NeumorphicStyle(
+                          depth: 2,
+                          boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(FontAwesome.xmark_solid),
+                            const SizedBox(width: 8),
+                            Text(widget.closeButtonText!),
+                          ],
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(FontAwesome.xmark_solid),
-                          const SizedBox(width: 8),
-                          Text(widget.closeButtonText),
-                        ],
-                      ),
-                    ),
                     if (widget.onPrimaryAction != null &&
                         widget.primaryActionText != null)
                       NeumorphicButton(
