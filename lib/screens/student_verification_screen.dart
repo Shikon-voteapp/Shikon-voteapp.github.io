@@ -94,8 +94,15 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                     NeumorphicButton(
                       onPressed: _isVerifying ? null : _verifyStudent,
                       style: NeumorphicStyle(
-                        color: _isVerifying ? null : Colors.black,
+                        color:
+                            _isVerifying
+                                ? null
+                                : (Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black),
                         depth: _isVerifying ? -4 : 6,
+                        intensity: 0.8,
                         boxShape: NeumorphicBoxShape.roundRect(
                           BorderRadius.circular(30.0),
                         ),
@@ -111,21 +118,29 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                                     strokeWidth: 3,
                                   ),
                                 )
-                                : const Row(
+                                : Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       'ログイン',
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color: Colors.white,
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.black
+                                                : Colors.white,
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    const SizedBox(width: 8),
                                     Icon(
                                       FontAwesome.arrow_right_solid,
                                       size: 16,
-                                      color: Colors.white,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.black
+                                              : Colors.white,
                                     ),
                                   ],
                                 ),
@@ -265,10 +280,12 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       return;
     }
 
-    final Stopwatch sw = Stopwatch()..start();
     setState(() {
       _isVerifying = true;
     });
+
+    // 1.1秒の待機時間
+    await Future.delayed(const Duration(milliseconds: 1100));
 
     try {
       Student student = Student(
@@ -300,12 +317,6 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             content: '認証情報が一致しません。正しい情報を入力してください。',
           );
         }
-        final int elapsed = sw.elapsedMilliseconds;
-        final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
-        final int rest = target - elapsed;
-        if (rest > 0) {
-          await Future.delayed(Duration(milliseconds: rest));
-        }
         setState(() {
           _isVerifying = false;
         });
@@ -317,12 +328,6 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           title: 'エラー',
           content: 'エラーが発生しました: ${e.toString()}',
         );
-      }
-      final int elapsed = sw.elapsedMilliseconds;
-      final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
-      final int rest = target - elapsed;
-      if (rest > 0) {
-        await Future.delayed(Duration(milliseconds: rest));
       }
       setState(() {
         _isVerifying = false;

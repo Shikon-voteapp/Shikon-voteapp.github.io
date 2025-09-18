@@ -33,4 +33,9 @@ abstract class PlatformUtils {
   static void downloadFile(String content, String filename) {
     PlatformUtilsImpl.downloadFile(content, filename);
   }
+
+  // Open URL - platform specific implementation
+  static void openUrl(String url) {
+    PlatformUtilsImpl.openUrl(url);
+  }
 }

@@ -60,4 +60,21 @@ class PlatformUtilsImpl {
       print('ファイル保存エラー: $e');
     }
   }
+
+  static void openUrl(String url) {
+    try {
+      // Use platform-specific URL opening
+      if (Platform.isWindows) {
+        Process.run('start', [url], runInShell: true);
+      } else if (Platform.isMacOS) {
+        Process.run('open', [url], runInShell: true);
+      } else if (Platform.isLinux) {
+        Process.run('xdg-open', [url], runInShell: true);
+      } else {
+        print('サポートされていないプラットフォームです');
+      }
+    } catch (e) {
+      print('URLを開くエラー: $e');
+    }
+  }
 }

@@ -37,15 +37,22 @@ class PlatformUtilsImpl {
       final url = html.Url.createObjectUrlFromBlob(blob);
 
       // Create and trigger download
-      final anchor =
-          html.AnchorElement(href: url)
-            ..setAttribute('download', filename)
-            ..click();
+      html.AnchorElement(href: url)
+        ..setAttribute('download', filename)
+        ..click();
 
       // Cleanup
       html.Url.revokeObjectUrl(url);
     } catch (e) {
       print('ファイルダウンロードエラー: $e');
+    }
+  }
+
+  static void openUrl(String url) {
+    try {
+      html.window.open(url, '_blank');
+    } catch (e) {
+      print('URLを開くエラー: $e');
     }
   }
 }
