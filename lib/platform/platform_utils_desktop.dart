@@ -60,4 +60,36 @@ class PlatformUtilsImpl {
       print('ファイル保存エラー: $e');
     }
   }
+
+  static void openUrl(String url) {
+    try {
+      // Use platform-specific URL opening
+      if (Platform.isWindows) {
+        Process.run('start', [url], runInShell: true);
+      } else if (Platform.isMacOS) {
+        Process.run('open', [url], runInShell: true);
+      } else if (Platform.isLinux) {
+        Process.run('xdg-open', [url], runInShell: true);
+      } else {
+        print('サポートされていないプラットフォームです');
+      }
+    } catch (e) {
+      print('URLを開くエラー: $e');
+    }
+  }
+
+  static Future<void> clearCacheAndReload() async {
+    try {
+      // On desktop, there is no SW/cache API. Clear simple storages.
+      // This is a no-op placeholder; just navigate to root.
+      if (navigatorKey.currentState != null) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print('再読み込み操作に失敗しました: $e');
+    }
+  }
 }

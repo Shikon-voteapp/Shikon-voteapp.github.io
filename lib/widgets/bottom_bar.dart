@@ -105,6 +105,32 @@ class BottomBar extends StatelessWidget {
           _buildInfoRow(context, 'Data Update', VersionInfo.formattedBuildDate),
           const SizedBox(height: 12),
           _buildInfoRow(context, '', '© 2025 文化祭準備委員会\n© 2025 Mamouna_inori '),
+          const SizedBox(height: 16),
+          // SNSリンクボタン
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSNSButton(
+                context: context,
+                icon: FontAwesome.twitter_brand,
+                onPressed:
+                    () => PlatformUtils.openUrl(
+                      'https://twitter.com/Mamouna_inori',
+                    ),
+                color: Colors.transparent, // 動的に決定されるため使用されない
+              ),
+              const SizedBox(width: 16),
+              _buildSNSButton(
+                context: context,
+                icon: FontAwesome.github_brand,
+                onPressed:
+                    () => PlatformUtils.openUrl(
+                      'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/',
+                    ),
+                color: Colors.transparent, // 動的に決定されるため使用されない
+              ),
+            ],
+          ),
         ],
       ),
       closeButtonText: '閉じる',
@@ -146,6 +172,32 @@ class BottomBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSNSButton({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback onPressed,
+    required Color color,
+  }) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+    final Color iconColor = isDark ? Colors.white : Colors.white;
+
+    return NeumorphicButton(
+      onPressed: onPressed,
+      style: NeumorphicStyle(
+        boxShape: const NeumorphicBoxShape.circle(),
+        depth: 6,
+        intensity: 0.8,
+        color: isDark ? Colors.black : Colors.black,
+      ),
+      child: SizedBox(
+        width: 48.0,
+        height: 48.0,
+        child: Center(child: Icon(icon, color: iconColor, size: 24.0)),
+      ),
     );
   }
 

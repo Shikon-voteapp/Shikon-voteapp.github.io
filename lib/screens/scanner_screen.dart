@@ -166,7 +166,12 @@ class _ScannerScreenState extends State<ScannerScreen>
                         }
                       },
               style: NeumorphicStyle(
-                color: _isProcessingCode ? null : Colors.black,
+                color:
+                    _isProcessingCode
+                        ? null
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
                 depth: _isProcessingCode ? -4 : 6,
                 intensity: 0.8,
                 boxShape: NeumorphicBoxShape.roundRect(
@@ -199,14 +204,22 @@ class _ScannerScreenState extends State<ScannerScreen>
                               'ログイン',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.white,
+                                color:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.black
+                                        : Colors.white,
                               ),
                             ),
                             const SizedBox(width: 8),
                             Icon(
                               FontAwesome.arrow_right_solid,
                               size: 16,
-                              color: Colors.white,
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.black
+                                      : Colors.white,
                             ),
                           ],
                         ),
@@ -367,10 +380,12 @@ class _ScannerScreenState extends State<ScannerScreen>
 
   Future<void> _processBarcode(String code) async {
     if (_isProcessingCode) return;
-    final Stopwatch sw = Stopwatch()..start();
     setState(() {
       _isProcessingCode = true;
     });
+
+    // 1.1秒の待機時間
+    await Future.delayed(const Duration(milliseconds: 1100));
 
     try {
       // 特別IDは時間・UUID検証をスキップして投票画面へ
@@ -420,13 +435,6 @@ class _ScannerScreenState extends State<ScannerScreen>
       _showPermissionDeniedDialog();
     } finally {
       if (mounted) {
-        final int elapsed = sw.elapsedMilliseconds;
-        // ランダム1.3〜1.7秒の最小表示
-        final int target = 1300 + (DateTime.now().microsecondsSinceEpoch % 401);
-        final int rest = target - elapsed;
-        if (rest > 0) {
-          await Future.delayed(Duration(milliseconds: rest));
-        }
         setState(() {
           _isProcessingCode = false;
         });
