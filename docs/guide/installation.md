@@ -14,7 +14,7 @@ next:
 <!-- Container with Custom Title -->
 ::: tip ヒント
 高校Ⅰ年次に購入する学習用ノートPCで正常に動作することを確認しています。
-最低 1GB 以上の空き容量が必要です。
+5GB 以上の空き容量が必要です。
 :::
 - Google 認証システムがインストールされたスマートフォン
 - Google 認証システム用の QR コードが記された紙
@@ -57,4 +57,12 @@ next:
 git config --global user.email Meiji.hs.vote@gmail.com
 git config --global user.name ShikonFes_Sohmu
 ```
-以上で、Git の初期設定は完了です。
+以上で、Git の初期設定は完了です。(Gitからの出力はありません。)
+## Flutter SDKのインストール
+1. [Flutter SDKのダウンロードページ](https://docs.flutter.dev/get-started/install/windows/web)にアクセスし、 **Install the Flutter SDK** の見出しの項にある「 Download and install 」を押します。
+![FlutterWebPage](/img/FlutterWebPage.png "Flutter Web Page")
+2. その下にある青いボタン「flutter_windows_(バージョン名)-stable.zip」を押し、 Zip ファイルをダウンロードします。
+3. ダウンロードした Zip ファイルを開き、中にある「``flutter``」フォルダを``C:\``以下にコピーします。
+::: tip ヒント
+エクスプローラー上部の「ダウンロード > flutter_windows_3.35.4-stable」が書かれているところに、``C:\``と入力すると、``C:\``に飛ぶことができるので、そこに展開した``Flutter``フォルダを貼り付けるとよいです。
+:::
