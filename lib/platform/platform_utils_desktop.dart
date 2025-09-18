@@ -77,4 +77,19 @@ class PlatformUtilsImpl {
       print('URLを開くエラー: $e');
     }
   }
+
+  static Future<void> clearCacheAndReload() async {
+    try {
+      // On desktop, there is no SW/cache API. Clear simple storages.
+      // This is a no-op placeholder; just navigate to root.
+      if (navigatorKey.currentState != null) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print('再読み込み操作に失敗しました: $e');
+    }
+  }
 }

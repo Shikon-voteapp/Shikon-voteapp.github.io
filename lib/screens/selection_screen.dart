@@ -3,6 +3,8 @@ import 'package:icons_plus/icons_plus.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
 import '../platform/platform_utils.dart';
+import '../widgets/custom_dialog.dart';
+import '../config/vote_options.dart';
 
 class SelectionScreen extends StatelessWidget {
   const SelectionScreen({Key? key}) : super(key: key);
@@ -27,6 +29,25 @@ class SelectionScreen extends StatelessWidget {
               subtitle: '投票を行います。パンフレットに同封された投票券をご準備ください。',
               icon: FontAwesome.check_to_slot_solid,
               onPressed: () {
+                final now = DateTime.now();
+                final isOutdated = now.difference(dataUpdateDate).inDays >= 365;
+                if (isOutdated) {
+                  showCustomDialog(
+                    context: context,
+                    title: '再読み込みをしてください',
+                    content:
+                        'このアプリのデータが古い可能性があります。最新のデータを取得するため、キャッシュを破棄して再読み込みを行ってください。',
+                    closeButtonText: 'あとで',
+                    primaryActionText: 'キャッシュを破棄して再読み込み',
+                    enablePrimaryLoading: true,
+                    minLoadingMs: 800,
+                    maxLoadingMs: 1400,
+                    onPrimaryAction: () {
+                      PlatformUtils.clearCacheAndReload();
+                    },
+                  );
+                  return;
+                }
                 Navigator.push(
                   context,
                   MaterialPageRoute(

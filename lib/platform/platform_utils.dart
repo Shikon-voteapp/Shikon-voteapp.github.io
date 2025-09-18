@@ -29,6 +29,11 @@ abstract class PlatformUtils {
     PlatformUtilsImpl.reloadApp();
   }
 
+  // Clear caches and reload application - platform specific implementation
+  static void clearCacheAndReload() {
+    PlatformUtilsImpl.clearCacheAndReload();
+  }
+
   // Download file - platform specific implementation
   static void downloadFile(String content, String filename) {
     PlatformUtilsImpl.downloadFile(content, filename);
