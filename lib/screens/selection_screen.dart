@@ -90,7 +90,7 @@ class SelectionScreen extends StatelessWidget {
                 ]
                 : [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha:0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     spreadRadius: 2,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
@@ -126,7 +126,7 @@ class SelectionScreen extends StatelessWidget {
                   subtitle,
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorScheme.onSurface.withValues(alpha:0.8),
+                    color: colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                   textAlign: TextAlign.center,
                 ),

@@ -15,6 +15,7 @@ import 'package:js/js_util.dart' as js_util;
 // ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'utils/version_info.dart';
+import 'utils/cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
@@ -29,6 +30,9 @@ void main() async {
       js_util.callMethod(html.window, "flutterReady", []);
     }
   }
+
+  // アプリ起動時にキャッシュを強制的にクリア
+  await CacheManager.clearAllCache();
 
   final dateRangeService = DateRangeService();
   await dateRangeService.initialize();
