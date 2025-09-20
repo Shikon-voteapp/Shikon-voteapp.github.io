@@ -13,6 +13,8 @@ class ConnectivityService {
     _subscription = _connectivity.onConnectivityChanged.listen((result) async {
       if (result != ConnectivityResult.none) {
         if (_wasOffline) {
+          // 接続復旧時は遅延して同期（ネットワーク負荷を軽減）
+          await Future.delayed(Duration(seconds: 5));
           await _dbService.syncToFirebase();
           _wasOffline = false;
         }
@@ -21,13 +23,16 @@ class ConnectivityService {
       }
     });
 
-    FirebaseDatabase.instance.ref('.info/connected').onValue.listen((event) {
-      bool connected = event.snapshot.value as bool? ?? false;
-      if (connected && _wasOffline) {
-        _dbService.syncToFirebase();
-        _wasOffline = false;
-      }
-    });
+    // Firebase接続監視を無効化（データ取得を抑制するため）
+    // FirebaseDatabase.instance.ref('.info/connected').onValue.listen((event) {
+    //   bool connected = event.snapshot.value as bool? ?? false;
+    //   if (connected && _wasOffline) {
+    //     Future.delayed(Duration(seconds: 5), () async {
+    //       await _dbService.syncToFirebase();
+    //       _wasOffline = false;
+    //     });
+    //   }
+    // });
   }
 
   void stopMonitoring() {

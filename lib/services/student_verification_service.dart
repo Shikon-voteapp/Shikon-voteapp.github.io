@@ -1,18 +1,15 @@
 // lib/services/student_verification_service.dart
-import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/student.dart';
 
 class StudentVerificationService {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  final String _studentMappingPath = 'student_mapping';
   final String _localMappingKey = 'student_mappings';
 
-  // 学生情報を検証
+  // 学生情報を検証（ローカルのみ）
   Future<bool> verifyStudent(String uuid, Student student) async {
     try {
-      // まずはローカルストレージから確認
+      // ローカルストレージから確認
       final prefs = await SharedPreferences.getInstance();
       final localMappingsJson = prefs.getString(_localMappingKey);
 
@@ -27,32 +24,18 @@ class StudentVerificationService {
         }
       }
 
-      // FirebaseからUUIDに対応する学生情報を取得
-      final snapshot = await _database.ref('$_studentMappingPath/$uuid').get();
-
-      if (!snapshot.exists) {
-        return false;
-      }
-
-      Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-      Student mappedStudent = Student(
-        grade: data['grade'],
-        className: data['className'],
-        number: data['number'],
-      );
-
-      // 学生情報を比較
-      return student == mappedStudent;
+      // ローカルにデータがない場合はfalseを返す
+      return false;
     } catch (e) {
       print('学生検証エラー: $e');
       return false;
     }
   }
 
-  // 単一の学生マッピングを保存
+  // 単一の学生マッピングを保存（ローカルのみ）
   Future<void> saveStudentMapping(String uuid, Student student) async {
     try {
-      // ローカルストレージにも保存
+      // ローカルストレージに保存
       final prefs = await SharedPreferences.getInstance();
       Map<String, dynamic> localMappings = {};
 
@@ -63,16 +46,13 @@ class StudentVerificationService {
 
       localMappings[uuid] = student.toJson();
       await prefs.setString(_localMappingKey, json.encode(localMappings));
-
-      // Firebaseに保存
-      await _database.ref('$_studentMappingPath/$uuid').set(student.toJson());
     } catch (e) {
       print('学生マッピング保存エラー: $e');
       throw e;
     }
   }
 
-  // 学生マッピングの一括インポート
+  // 学生マッピングの一括インポート（ローカルのみ）
   Future<void> importStudentMappings(Map<String, Student> mappings) async {
     try {
       // ローカルストレージに保存
@@ -84,42 +64,19 @@ class StudentVerificationService {
       });
 
       await prefs.setString(_localMappingKey, json.encode(localMappings));
-
-      // Firebaseに保存
-      Map<String, Map<String, dynamic>> data = {};
-      mappings.forEach((uuid, student) {
-        data[uuid] = student.toJson();
-      });
-
-      await _database.ref(_studentMappingPath).set(data);
     } catch (e) {
       print('学生マッピングインポートエラー: $e');
       throw e;
     }
   }
 
-  // 学生マッピングのエクスポート
+  // 学生マッピングのエクスポート（ローカルのみ）
   Future<Map<String, Student>> exportStudentMappings() async {
     try {
-      // まずFirebaseから取得を試みる
-      final snapshot = await _database.ref(_studentMappingPath).get();
-      Map<String, Student> mappings = {};
-
-      if (snapshot.exists) {
-        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-
-        data.forEach((key, value) {
-          String uuid = key.toString();
-          Map<String, dynamic> studentData = Map<String, dynamic>.from(value);
-          mappings[uuid] = Student.fromJson(studentData);
-        });
-
-        return mappings;
-      }
-
-      // Firebaseにデータがなければローカルストレージから読み込む
+      // ローカルストレージから読み込む
       final prefs = await SharedPreferences.getInstance();
       final localMappingsJson = prefs.getString(_localMappingKey);
+      Map<String, Student> mappings = {};
 
       if (localMappingsJson != null) {
         final Map<String, dynamic> localMappings = json.decode(

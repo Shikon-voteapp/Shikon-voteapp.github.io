@@ -8,6 +8,7 @@ class DatabaseService {
   final String _votesPath = 'votes';
   Future<bool> hasVoted(String uuid) async {
     try {
+      // ローカルデータのみで確認（Firebaseアクセスを回避）
       final prefs = await SharedPreferences.getInstance();
       final localVotes = prefs.getStringList('votes') ?? [];
 
@@ -17,16 +18,19 @@ class DatabaseService {
           return true;
         }
       }
-      final snapshot = await _database.ref('$_votesPath/$uuid').get();
-      return snapshot.exists;
+      return false;
     } catch (e) {
       print('投票確認エラー: $e');
-      return true;
+      return false;
     }
   }
 
   Future<bool> saveVote(Vote vote) async {
     try {
+      // クラウド優先：まずFirebaseに保存
+      await _database.ref('$_votesPath/${vote.uuid}').set(vote.toJson());
+      
+      // 成功したらローカルにも保存（オフライン時のバックアップ用）
       final prefs = await SharedPreferences.getInstance();
       List<String> localVotes = prefs.getStringList('votes') ?? [];
       bool exists = false;
@@ -42,38 +46,39 @@ class DatabaseService {
         localVotes.add(json.encode(vote.toJson()));
       }
       await prefs.setStringList('votes', localVotes);
-      await _database.ref('$_votesPath/${vote.uuid}').set(vote.toJson());
+
       return true;
     } catch (e) {
-      print('投票保存エラー: $e');
-      return false;
+      print('Firebase保存エラー: $e');
+      // Firebase保存に失敗した場合のみローカルに保存
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        List<String> localVotes = prefs.getStringList('votes') ?? [];
+        bool exists = false;
+        for (int i = 0; i < localVotes.length; i++) {
+          Map<String, dynamic> voteMap = json.decode(localVotes[i]);
+          if (voteMap['uuid'] == vote.uuid) {
+            localVotes[i] = json.encode(vote.toJson());
+            exists = true;
+            break;
+          }
+        }
+        if (!exists) {
+          localVotes.add(json.encode(vote.toJson()));
+        }
+        await prefs.setStringList('votes', localVotes);
+        print('ローカルに保存しました（後で同期されます）');
+        return true;
+      } catch (localError) {
+        print('ローカル保存もエラー: $localError');
+        return false;
+      }
     }
   }
 
   Future<List<Vote>> getAllVotes() async {
     try {
-      final snapshot = await _database.ref(_votesPath).get();
-
-      if (!snapshot.exists) {
-        return [];
-      }
-      final Map<dynamic, dynamic> data =
-          snapshot.value as Map<dynamic, dynamic>;
-      List<Vote> votes = [];
-
-      data.forEach((key, value) {
-        Map<String, dynamic> voteMap = Map<String, dynamic>.from(value);
-        votes.add(
-          Vote(
-            uuid: voteMap['uuid'],
-            selections: Map<String, String>.from(voteMap['selections']),
-            timestamp: DateTime.parse(voteMap['timestamp']),
-          ),
-        );
-      });
-      return votes;
-    } catch (e) {
-      print('投票データ取得エラー: $e');
+      // ローカルデータのみを返す（Firebaseアクセスを完全に回避）
       final prefs = await SharedPreferences.getInstance();
       final localVotes = prefs.getStringList('votes') ?? [];
 
@@ -85,6 +90,9 @@ class DatabaseService {
           timestamp: DateTime.parse(voteMap['timestamp']),
         );
       }).toList();
+    } catch (e) {
+      print('投票データ取得エラー: $e');
+      return [];
     }
   }
 
@@ -98,25 +106,10 @@ class DatabaseService {
     }
   }
 
+  // Firebaseからのデータ取得を無効化（転送量削減のため）
   Future<void> syncFromFirebase() async {
-    try {
-      final snapshot = await _database.ref(_votesPath).get();
-
-      if (!snapshot.exists) {
-        return;
-      }
-      final Map<dynamic, dynamic> data =
-          snapshot.value as Map<dynamic, dynamic>;
-      List<String> localVotes = [];
-      data.forEach((key, value) {
-        Map<String, dynamic> voteMap = Map<String, dynamic>.from(value);
-        localVotes.add(json.encode(voteMap));
-      });
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('votes', localVotes);
-    } catch (e) {
-      print('Firebase同期エラー: $e');
-    }
+    // データ取得を抑制（ローカルデータのみ使用）
+    print('Firebaseからのデータ取得は無効化されています');
   }
 
   Future<void> syncToFirebase() async {
@@ -124,14 +117,18 @@ class DatabaseService {
       final prefs = await SharedPreferences.getInstance();
       final localVotes = prefs.getStringList('votes') ?? [];
 
+      if (localVotes.isEmpty) {
+        return;
+      }
+
+      // バッチでFirebaseに送信（一度に送信して転送量を削減）
+      Map<String, dynamic> data = {};
       for (var voteJson in localVotes) {
         Map<String, dynamic> voteMap = json.decode(voteJson);
-        final snapshot =
-            await _database.ref('$_votesPath/${voteMap['uuid']}').get();
-        if (!snapshot.exists) {
-          await _database.ref('$_votesPath/${voteMap['uuid']}').set(voteMap);
-        }
+        data[voteMap['uuid']] = voteMap;
       }
+
+      await _database.ref(_votesPath).set(data);
     } catch (e) {
       print('Firebaseへの同期エラー: $e');
     }
