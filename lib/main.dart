@@ -47,7 +47,25 @@ void main() async {
     runApp(MyApp(dateRangeService: dateRangeService));
   } catch (e) {
     print('Firebase初期化エラー: $e');
-    runApp(MaterialApp(home: ErrorScreen(error: e.toString())));
+    runApp(
+      NeumorphicApp(
+        theme: const NeumorphicThemeData(
+          baseColor: Color(0xFFF5F5F5),
+          lightSource: LightSource.topLeft,
+          depth: 4,
+        ),
+        darkTheme: const NeumorphicThemeData(
+          baseColor: Color(0xff333333),
+          accentColor: Colors.purple,
+          lightSource: LightSource.topLeft,
+          depth: 4,
+          intensity: 0.28,
+          shadowLightColor: Color(0x26FFFFFF),
+          shadowDarkColor: Color(0xFF000000),
+        ),
+        home: ErrorScreen(error: e.toString()),
+      ),
+    );
   }
 }
 

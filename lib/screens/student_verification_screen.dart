@@ -223,48 +223,87 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
 
   Widget _buildNumberField() {
     final theme = Theme.of(context);
-    return Neumorphic(
-      style: NeumorphicStyle(
-        depth: 0,
-        boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.all(Radius.circular(12)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '番号',
+          style: TextStyle(
+            fontSize: 14,
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: TextField(
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(2),
-          ],
-          decoration: InputDecoration(
-            counterText: '',
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
-            hintText: '番号を入力...',
-            hintStyle: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 10,
+        const SizedBox(height: 8),
+        Neumorphic(
+          style: NeumorphicStyle(
+            depth: -4,
+            intensity: 0.8,
+            boxShape: NeumorphicBoxShape.roundRect(
+              BorderRadius.all(Radius.circular(12)),
             ),
           ),
-          onChanged: (value) {
-            final trimmed = value.length > 2 ? value.substring(0, 2) : value;
-            if (trimmed != value) {
-              // TextFieldが自動で切り詰めるため、stateだけ更新
-            }
-            setState(() => _selectedNumber = int.tryParse(trimmed));
-          },
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-          maxLength: 2,
+          child: Material(
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(2),
+                ],
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                decoration: InputDecoration(
+                  counterText: '',
+                  border: InputBorder.none,
+                  filled: true,
+                  fillColor: Colors.transparent,
+                  hintText: '番号を入力...',
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
+                ),
+                onChanged: (value) {
+                  final trimmed =
+                      value.length > 2 ? value.substring(0, 2) : value;
+                  if (trimmed != value) {
+                    // TextFieldが自動で切り詰めるため、stateだけ更新
+                  }
+                  setState(() => _selectedNumber = int.tryParse(trimmed));
+                },
+                textAlign: TextAlign.center,
+                maxLength: 2,
+                buildCounter:
+                    (
+                      context, {
+                      required currentLength,
+                      required isFocused,
+                      maxLength,
+                    }) => null,
+              ),
+            ),
+          ),
         ),
-      ),
+        const SizedBox(height: 4),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            '${_selectedNumber?.toString().length ?? 0}/2',
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -93,6 +93,7 @@ class BottomBar extends StatelessWidget {
   }
 
   void _showInfoDialog(BuildContext context) {
+    final theme = Theme.of(context);
     showCustomDialog(
       context: context,
       title: 'アプリ情報',
@@ -106,28 +107,94 @@ class BottomBar extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow(context, '', '© 2025 文化祭準備委員会\n© 2025 Mamouna_inori '),
           const SizedBox(height: 16),
-          // SNSリンクボタン
+          // SNSリンク（横並び）
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildSNSButton(
-                context: context,
-                icon: FontAwesome.twitter_brand,
-                onPressed:
-                    () => PlatformUtils.openUrl(
-                      'https://twitter.com/Mamouna_inori',
+              // Meiji Official セクション
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      'Meiji Official',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      ),
                     ),
-                color: Colors.transparent, // 動的に決定されるため使用されない
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSmallSNSButton(
+                          context: context,
+                          icon: FontAwesome.x_twitter_brand,
+                          onPressed:
+                              () => PlatformUtils.openUrl(
+                                'https://x.com/meidai_meiji',
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildSmallSNSButton(
+                          context: context,
+                          icon: FontAwesome.instagram_brand,
+                          onPressed:
+                              () => PlatformUtils.openUrl(
+                                'https://www.instagram.com/meidai_meiji/',
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildSmallSNSButton(
+                          context: context,
+                          icon: FontAwesome.globe_solid,
+                          onPressed:
+                              () => PlatformUtils.openUrl(
+                                'https://www.meiji.ac.jp/ko_chu/',
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(width: 16),
-              _buildSNSButton(
-                context: context,
-                icon: FontAwesome.github_brand,
-                onPressed:
-                    () => PlatformUtils.openUrl(
-                      'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/',
+              // Developer セクション
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      'Developer',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      ),
                     ),
-                color: Colors.transparent, // 動的に決定されるため使用されない
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSmallSNSButton(
+                          context: context,
+                          icon: FontAwesome.x_twitter_brand,
+                          onPressed:
+                              () => PlatformUtils.openUrl(
+                                'https://x.com/Mamouna_inori',
+                              ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildSmallSNSButton(
+                          context: context,
+                          icon: FontAwesome.instagram_brand,
+                          onPressed:
+                              () => PlatformUtils.openUrl(
+                                'https://www.instagram.com/mamouna.inori/',
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -183,7 +250,10 @@ class BottomBar extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
-    final Color iconColor = isDark ? Colors.white : Colors.white;
+    final Color backgroundColor =
+        isDark ? theme.colorScheme.surface : theme.colorScheme.surface;
+    final Color iconColor =
+        isDark ? theme.colorScheme.onSurface : theme.colorScheme.onSurface;
 
     return NeumorphicButton(
       onPressed: onPressed,
@@ -191,12 +261,40 @@ class BottomBar extends StatelessWidget {
         boxShape: const NeumorphicBoxShape.circle(),
         depth: 6,
         intensity: 0.8,
-        color: isDark ? Colors.black : Colors.black,
+        color: backgroundColor,
       ),
       child: SizedBox(
         width: 48.0,
         height: 48.0,
         child: Center(child: Icon(icon, color: iconColor, size: 24.0)),
+      ),
+    );
+  }
+
+  Widget _buildSmallSNSButton({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+    final Color backgroundColor =
+        isDark ? theme.colorScheme.surface : theme.colorScheme.surface;
+    final Color iconColor =
+        isDark ? theme.colorScheme.onSurface : theme.colorScheme.onSurface;
+
+    return NeumorphicButton(
+      onPressed: onPressed,
+      style: NeumorphicStyle(
+        boxShape: const NeumorphicBoxShape.circle(),
+        depth: 2,
+        intensity: 0.6,
+        color: backgroundColor,
+      ),
+      child: SizedBox(
+        width: 28.0,
+        height: 28.0,
+        child: Center(child: Icon(icon, color: iconColor, size: 14.0)),
       ),
     );
   }

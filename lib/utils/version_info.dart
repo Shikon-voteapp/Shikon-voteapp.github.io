@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show rootBundle;
 
 class VersionInfo {
-  static String _version = '28.4.1';
-  static String _buildNumber = '38';
+  static String _version = '3.5.0';
+  static String _buildNumber = '39';
   static bool _initialized = false;
 
   static Future<void> initialize() async {
@@ -14,8 +14,8 @@ class VersionInfo {
     if (kIsWeb) {
       // Webプラットフォームでは、直接バージョン情報を設定
       // pubspec.yamlの読み取りは信頼性が低いため、ハードコードされたバージョンを使用
-      _version = '28.4.1';
-      _buildNumber = '38';
+      _version = '3.5.0';
+      _buildNumber = '39';
       print('Web環境のため、バージョン情報を直接設定します: $_version.$_buildNumber');
     } else {
       try {
@@ -25,8 +25,8 @@ class VersionInfo {
       } catch (e) {
         print('非Webプラットフォームでのバージョン情報の取得に失敗しました: $e');
         print('デフォルトバージョン情報を使用します');
-        _version = '28.4.1';
-        _buildNumber = '38';
+        _version = '3.5.0';
+        _buildNumber = '39';
       }
     }
     
@@ -49,7 +49,7 @@ class VersionInfo {
             _buildNumber = parts.length > 1 ? parts[1] : '1';
           } else {
             _version = versionString;
-            _buildNumber = '38';
+            _buildNumber = '39';
           }
           print('pubspec.yamlからバージョン情報を読み取りました: $_version+$_buildNumber');
           return;
@@ -57,14 +57,14 @@ class VersionInfo {
       }
       
       // フォールバック: デフォルト値を使用
-      _version = '28.4.1';
-      _buildNumber = '38';
+      _version = '3.5.0';
+      _buildNumber = '39';
       print('pubspec.yamlからバージョン情報を読み取れませんでした。デフォルト値を使用します: $_version+$_buildNumber');
     } catch (e) {
       print('pubspec.yamlの読み取りに失敗しました: $e');
       // Web環境では、ハードコードされたバージョンを使用
-      _version = '28.4.1';
-      _buildNumber = '38';
+      _version = '3.5.0';
+      _buildNumber = '39';
       print('Web環境のため、デフォルトバージョン情報を使用します: $_version+$_buildNumber');
     }
   }

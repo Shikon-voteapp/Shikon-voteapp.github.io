@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 import '../models/group.dart';
 
 class AdminCategoryResults extends StatelessWidget {
@@ -54,7 +54,7 @@ class AdminCategoryResults extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8),
-                    Icon(HugeIcons.strokeRoundedArrowRight01, size: 16),
+                    Icon(FontAwesome.arrow_right_solid, size: 16),
                   ],
                 ),
               ),

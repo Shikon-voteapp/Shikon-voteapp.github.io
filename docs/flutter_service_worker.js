@@ -3,9 +3,9 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"assets/AssetManifest.bin": "ae5533d2645f4ef9afea82c7a829c1e7",
-"assets/AssetManifest.bin.json": "0b0a5da65e837095fca1ff2297b33477",
-"assets/AssetManifest.json": "fc147efbd0a2381811dec64ca2eb823f",
+const RESOURCES = {"assets/AssetManifest.bin": "3ec7747204f40c29e3182201397e73ef",
+"assets/AssetManifest.bin.json": "005abf3f57ed99fc294fc70e0d7f818e",
+"assets/AssetManifest.json": "aeb2e1a712806aa8ca16a5307ebeb454",
 "assets/assets/%25E2%2585%25A0A.jpeg": "8e77c7f974abce5969b7f20681352761",
 "assets/assets/%25E2%2585%25A0B.jpg": "186933f49d69c839ccb68699aa22c476",
 "assets/assets/%25E2%2585%25A0D.JPG": "ba49f27afd2925f088d3c8a6c762827c",
@@ -65,13 +65,12 @@ const RESOURCES = {"assets/AssetManifest.bin": "ae5533d2645f4ef9afea82c7a829c1e7
 "assets/assets/Royal%2520MasqueraDe%2520CaGino.jpeg": "471fe30a35f0abe2dcaa6fd7df84f140",
 "assets/assets/sho_setsumei.png": "d64bfe9fcad86758e84b8e30b49438ac",
 "assets/assets/youth.PNG": "d5fd448d240157bcf45deb1a7bd29100",
-"assets/FontManifest.json": "69921d82f1fd1485390362989fff60e0",
+"assets/FontManifest.json": "227c789e88922ec83c422db6f4f268ad",
 "assets/fonts/MaterialIcons-Regular.otf": "51c01b4c275e1734c1a37f01e5546322",
-"assets/NOTICES": "a4302d8da9fb822df4d0a2066fd530b7",
+"assets/NOTICES": "94ba4ce36775c3246c0d7ded887ee4c7",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "33b7d9392238c04c131b6ce224e13711",
 "assets/packages/flutter_charts/google_fonts/Comforter-Regular.ttf": "cff123ea94f9032380183b8bbbf30ec1",
 "assets/packages/flutter_neumorphic_plus/fonts/NeumorphicIcons.ttf": "32be0c4c86773ba5c9f7791e69964585",
-"assets/packages/hugeicons/lib/fonts/hugeicons-stroke-rounded.ttf": "85511f0673daae174f9e9f28a9e0c86e",
 "assets/packages/icons_plus/assets/fonts/AntDesign.ttf": "338e2d2afb10bdc56e980b3fdb5b8ea3",
 "assets/packages/icons_plus/assets/fonts/Bootstrap.ttf": "672ddb1c9a9d7da08fe8ac7a2869d02f",
 "assets/packages/icons_plus/assets/fonts/BoxIcons.ttf": "99f090506a4d62ae015b9ca637375d0d",
@@ -2197,16 +2196,16 @@ const RESOURCES = {"assets/AssetManifest.bin": "ae5533d2645f4ef9afea82c7a829c1e7
 "canvaskit/skwasm_st.wasm": "56c3973560dfcbf28ce47cebe40f3206",
 "favicon.png": "6b0b881dca1191ee0650e78ad889bbfb",
 "flutter.js": "76f08d47ff9f5715220992f993002504",
-"flutter_bootstrap.js": "ff8dfba72cc7a03fceb7fcf57df62834",
+"flutter_bootstrap.js": "4243b740dea06b8cd5deb123b75a3490",
 "icons/Icon-192.png": "6b0b881dca1191ee0650e78ad889bbfb",
 "icons/Icon-512.png": "6b0b881dca1191ee0650e78ad889bbfb",
 "icons/Icon-maskable-192.png": "6b0b881dca1191ee0650e78ad889bbfb",
 "icons/Icon-maskable-512.png": "6b0b881dca1191ee0650e78ad889bbfb",
 "index.html": "74adc2120d301c837811d6cb35a3d976",
 "/": "74adc2120d301c837811d6cb35a3d976",
-"main.dart.js": "78890a7d95e4aac902e57c9bc9859b7d",
+"main.dart.js": "fcdfe291ece5dda17845b4f556841277",
 "style.css": "52085ddfc20d1dda153ab71cd0153d20",
-"version.json": "2566c57388e0509295cc608fd69efc59",
+"version.json": "c87e1e76222c850619b02f46f3fa8fe4",
 "web_entrypoint.dart": "2b221105f6c12f9a0207793107cc75ba"};
 // The application shell files that are downloaded before a service worker can
 // start.

@@ -77,22 +77,96 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
             contentWidget: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'メールアドレス',
-                    border: OutlineInputBorder(),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'メールアドレス',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Neumorphic(
+                      style: NeumorphicStyle(
+                        depth: -4,
+                        intensity: 0.8,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: TextField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'パスワード',
-                    border: OutlineInputBorder(),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'パスワード',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.6),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Neumorphic(
+                      style: NeumorphicStyle(
+                        depth: -4,
+                        intensity: 0.8,
+                        boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            filled: true,
+                            fillColor: Colors.transparent,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 if (isLoading)
                   const Padding(
@@ -235,8 +309,8 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
     final media = MediaQuery.of(context);
     final isSmallHeight = media.size.height < 700;
     return SafeArea(
-      child: Material(
-        color: Colors.transparent,
+      child: Neumorphic(
+        style: NeumorphicStyle(color: Colors.transparent, depth: 0),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(

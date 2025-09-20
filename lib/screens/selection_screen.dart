@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
@@ -56,6 +58,8 @@ class SelectionScreen extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 32),
+            _buildCreditText(context),
           ],
         ),
       ),
@@ -95,8 +99,8 @@ class SelectionScreen extends StatelessWidget {
                   ),
                 ],
       ),
-      child: Material(
-        color: Colors.transparent,
+      child: Neumorphic(
+        style: NeumorphicStyle(color: Colors.transparent, depth: 0),
         child: InkWell(
           onTap: onPressed,
           borderRadius: BorderRadius.circular(16),
@@ -131,6 +135,26 @@ class SelectionScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCreditText(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+          children: [
+            const TextSpan(text: '本アプリケーションは、生徒有志により開発・運営されています。\n'),
+            const TextSpan(text: 'オープンソースで開発されており、ソースコードはGitHubにて公開されています。'),
+          ],
         ),
       ),
     );

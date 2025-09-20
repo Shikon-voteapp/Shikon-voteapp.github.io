@@ -100,45 +100,90 @@ class _ScannerScreenState extends State<ScannerScreen>
               context: context,
               padding: const EdgeInsets.all(24.0),
               borderRadius: BorderRadius.circular(16.0),
-              child: Text(
-                'パンフレットに同封されている投票券に記載された番号(10桁)を入力してください。',
-                style: TextStyle(fontSize: 16, color: colorScheme.onSurface),
-              ),
-            ),
-            const SizedBox(height: 40),
-            Neumorphic(
-              style: NeumorphicStyle(
-                color: colorScheme.surface,
-                depth: 6,
-                intensity: 0.6,
-                boxShape: NeumorphicBoxShape.roundRect(
-                  BorderRadius.circular(16.0),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                child: TextField(
-                  controller: _manualCodeController,
-                  decoration: InputDecoration(
-                    labelText: 'ID',
-                    border: InputBorder.none,
-                    filled: true,
-                    fillColor: Colors.transparent,
-                    labelStyle: TextStyle(
-                      color: colorScheme.onSurface.withOpacity(0.6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'パンフレットに同封されている投票券に記載された番号(10桁)を入力してください。',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colorScheme.onSurface,
                     ),
                   ),
-                  keyboardType: TextInputType.number,
-                  autofocus: true,
-                  maxLength: 10,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'ID',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Neumorphic(
+                        style: NeumorphicStyle(
+                          depth: -4,
+                          intensity: 0.8,
+                          boxShape: NeumorphicBoxShape.roundRect(
+                            BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            child: TextField(
+                              controller: _manualCodeController,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                filled: true,
+                                fillColor: Colors.transparent,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 12,
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              autofocus: true,
+                              maxLength: 10,
+                              buildCounter:
+                                  (
+                                    context, {
+                                    required currentLength,
+                                    required isFocused,
+                                    maxLength,
+                                  }) => null,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '${_manualCodeController.text.length}/10',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ),
             ),
             const Spacer(),
