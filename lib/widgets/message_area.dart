@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'custom_dialog.dart';
 
 // var MainTitle = "紫紺祭"; // この変数は MessageArea では使用されていないようです

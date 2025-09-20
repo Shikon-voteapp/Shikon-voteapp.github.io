@@ -1,5 +1,4 @@
 // lib/screens/student_verification_screen.dart
-import 'package:flutter/material.dart';
 import '../services/student_verification_service.dart';
 import 'package:flutter/services.dart';
 import '../models/student.dart';
@@ -168,7 +167,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           Text(
             label,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
             ),
           ),
           dropdown,
@@ -230,7 +229,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           '番号',
           style: TextStyle(
             fontSize: 14,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha:0.6),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -264,7 +263,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                   fillColor: Colors.transparent,
                   hintText: '番号を入力...',
                   hintStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues(alpha:0.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -299,7 +298,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
             '${_selectedNumber?.toString().length ?? 0}/2',
             style: TextStyle(
               fontSize: 12,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.5),
             ),
           ),
         ),

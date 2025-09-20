@@ -1,5 +1,4 @@
 // lib/main.dart
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -12,6 +11,8 @@ import 'screens/splash_screen.dart';
 import 'theme.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:js/js_util.dart' as js_util;
+// TODO: Migrate to package:web when stable
+// ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'utils/version_info.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

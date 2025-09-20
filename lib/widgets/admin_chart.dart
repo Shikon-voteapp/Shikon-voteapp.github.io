@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../models/group.dart';
 
 class AdminChart extends StatelessWidget {

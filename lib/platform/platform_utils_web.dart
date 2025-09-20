@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// TODO: Migrate to package:web when stable
+// ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'dart:convert';
 import 'platform_utils.dart';

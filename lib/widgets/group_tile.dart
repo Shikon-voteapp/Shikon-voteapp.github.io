@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'neumorphic_wrappers.dart';
 import '../models/group.dart';
@@ -77,7 +76,7 @@ class GroupTile extends StatelessWidget {
                         group.description,
                         style: TextStyle(
                           fontSize: 14,
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha:0.7),
                         ),
                         maxLines: showImage ? 2 : 3, // リスト表示の場合は3行に制限
                         overflow: TextOverflow.ellipsis,

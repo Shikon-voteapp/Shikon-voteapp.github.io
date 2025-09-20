@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import 'group_tile.dart';
@@ -175,7 +175,7 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
             });
           }
         },
-        selectedColor: Colors.blue.withOpacity(0.2),
+        selectedColor: Colors.blue.withValues(alpha:0.2),
         labelStyle: TextStyle(
           fontWeight: FontWeight.bold,
           color: isEffectivelySelected ? Colors.blue : Colors.black,

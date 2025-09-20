@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../widgets/main_layout.dart';
@@ -84,7 +82,7 @@ class SelectionScreen extends StatelessWidget {
             isDark
                 ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     spreadRadius: 2,
                     blurRadius: 16,
                     offset: const Offset(0, 6),
@@ -92,7 +90,7 @@ class SelectionScreen extends StatelessWidget {
                 ]
                 : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha:0.1),
                     spreadRadius: 2,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
@@ -128,7 +126,7 @@ class SelectionScreen extends StatelessWidget {
                   subtitle,
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorScheme.onSurface.withOpacity(0.8),
+                    color: colorScheme.onSurface.withValues(alpha:0.8),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -149,7 +147,7 @@ class SelectionScreen extends StatelessWidget {
         text: TextSpan(
           style: TextStyle(
             fontSize: 12,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           children: [
             const TextSpan(text: '本アプリケーションは、生徒有志により開発・運営されています。\n'),

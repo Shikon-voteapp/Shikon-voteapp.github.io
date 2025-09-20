@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
 import '../config/data_range_service.dart';
@@ -118,7 +117,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                         'ID',
                         style: TextStyle(
                           fontSize: 14,
-                          color: colorScheme.onSurface.withOpacity(0.6),
+                          color: colorScheme.onSurface.withValues(alpha:0.6),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -177,7 +176,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                           '${_manualCodeController.text.length}/10',
                           style: TextStyle(
                             fontSize: 12,
-                            color: colorScheme.onSurface.withOpacity(0.5),
+                            color: colorScheme.onSurface.withValues(alpha:0.5),
                           ),
                         ),
                       ),
@@ -376,7 +375,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha:0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.all(12),

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shikon_voteapp/screens/admin_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+// TODO: Migrate to package:web when stable
+// ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -26,7 +27,7 @@ Future<void> showCustomDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return CustomDialogWidget(
@@ -67,7 +68,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withOpacity(0.5),
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return StatefulBuilder(
@@ -86,7 +87,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                         fontSize: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -132,7 +133,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                         fontSize: 14,
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.6),
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

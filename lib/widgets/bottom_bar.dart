@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -119,7 +118,7 @@ class BottomBar extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha:0.8),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -167,7 +166,7 @@ class BottomBar extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha:0.8),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -221,7 +220,7 @@ class BottomBar extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.6),
             ),
           ),
         ),
@@ -410,7 +409,7 @@ class BottomBar extends StatelessWidget {
     final bool isDark = theme.brightness == Brightness.dark;
     final Color iconColor =
         onPressed == null
-            ? theme.colorScheme.onSurface.withOpacity(0.4)
+            ? theme.colorScheme.onSurface.withValues(alpha:0.4)
             : (isDark ? Colors.white : Colors.black);
     return Opacity(
       opacity: onPressed == null ? 0.5 : 1.0,

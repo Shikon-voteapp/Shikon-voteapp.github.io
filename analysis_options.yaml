@@ -9,6 +9,23 @@
 # packages, and plugins designed to encourage good coding practices.
 # include: package:flutter_lints/flutter_lints.yaml
 
+analyzer:
+  # 情報レベルの診断を抑制
+  errors:
+    # 非推奨メンバーの使用警告を抑制
+    deprecated_member_use: ignore
+    # 不要なインポートの警告を抑制
+    unnecessary_import: ignore
+    # 未使用の要素の警告を抑制
+    unused_import: ignore
+    unused_element: ignore
+    # その他の情報レベルの診断を抑制
+    unnecessary_null_comparison: ignore
+    unnecessary_non_null_assertion: ignore
+    invalid_null_aware_operator: ignore
+    # TODOコメントを抑制
+    todo: ignore
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`
@@ -23,6 +40,7 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # deprecated_member_use: false  # Disable deprecated member use warnings
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

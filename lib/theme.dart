@@ -48,9 +48,7 @@ class AppTheme {
       onSecondary: Colors.white,
       error: Color(0xFFB00020),
       onError: Colors.white,
-      background: lightBackgroundColor,
-      onBackground: Color(0xFF121212),
-      surface: Colors.white,
+      surface: lightBackgroundColor,
       onSurface: Color(0xFF121212),
     );
 
@@ -117,9 +115,7 @@ class AppTheme {
       onSecondary: Colors.black,
       error: Color(0xFFCF6679),
       onError: Colors.black,
-      background: darkBackgroundColor,
-      onBackground: Colors.white,
-      surface: darkWidgetBackgroundColor,
+      surface: darkBackgroundColor,
       onSurface: Colors.white,
     );
 

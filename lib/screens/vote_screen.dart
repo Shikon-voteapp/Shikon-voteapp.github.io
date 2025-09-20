@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
 import '../widgets/main_layout.dart';
@@ -308,7 +307,7 @@ class _VoteScreenState extends State<VoteScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface.withOpacity(0.6),
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
@@ -327,7 +326,7 @@ class _VoteScreenState extends State<VoteScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface.withOpacity(0.6),
+                        color: colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -386,11 +385,11 @@ class _VoteScreenState extends State<VoteScreen> {
     final Color selectedBg =
         isDark
             ? Color.alphaBlend(
-              Colors.white.withOpacity(0.10),
+              Colors.white.withValues(alpha: 0.10),
               theme.colorScheme.surface,
             )
             : Color.alphaBlend(
-              Colors.black.withOpacity(0.08),
+              Colors.black.withValues(alpha: 0.08),
               theme.colorScheme.surface,
             );
     return NeumorphicButton(
@@ -428,7 +427,7 @@ class _VoteScreenState extends State<VoteScreen> {
         child: Text(
           '該当する団体がありません',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -576,7 +575,7 @@ class _VoteScreenState extends State<VoteScreen> {
         child: Text(
           '該当する団体がありません',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -698,8 +697,8 @@ class _VoteScreenState extends State<VoteScreen> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.6,
+                                      color: colorScheme.onSurface.withValues(
+                                        alpha: 0.6,
                                       ),
                                     ),
                                   ),
@@ -719,8 +718,8 @@ class _VoteScreenState extends State<VoteScreen> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.6,
+                                      color: colorScheme.onSurface.withValues(
+                                        alpha: 0.6,
                                       ),
                                     ),
                                   ),
@@ -924,7 +923,7 @@ class _VoteScreenState extends State<VoteScreen> {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface.withOpacity(0.6),
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -940,7 +939,7 @@ class _VoteScreenState extends State<VoteScreen> {
                     '場所: ${group.floor}階',
                     style: TextStyle(
                       fontSize: 14,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 if (group.pamphletPage != null)
@@ -948,7 +947,7 @@ class _VoteScreenState extends State<VoteScreen> {
                     'パンフレット: P${group.pamphletPage}',
                     style: TextStyle(
                       fontSize: 14,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
               ],
