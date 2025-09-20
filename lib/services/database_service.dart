@@ -8,7 +8,7 @@ class DatabaseService {
   final String _votesPath = 'votes';
   Future<bool> hasVoted(String uuid) async {
     try {
-      // ローカルデータのみで確認（Firebaseアクセスを回避）
+      // まずローカルデータをチェック
       final prefs = await SharedPreferences.getInstance();
       final localVotes = prefs.getStringList('votes') ?? [];
 
@@ -18,10 +18,14 @@ class DatabaseService {
           return true;
         }
       }
-      return false;
+
+      // ローカルにない場合はFirebaseで重複チェック（重複防止のため必要）
+      final snapshot = await _database.ref('$_votesPath/$uuid').get();
+      return snapshot.exists;
     } catch (e) {
       print('投票確認エラー: $e');
-      return false;
+      // エラー時は安全側に倒して重複とみなす
+      return true;
     }
   }
 
@@ -29,7 +33,7 @@ class DatabaseService {
     try {
       // クラウド優先：まずFirebaseに保存
       await _database.ref('$_votesPath/${vote.uuid}').set(vote.toJson());
-      
+
       // 成功したらローカルにも保存（オフライン時のバックアップ用）
       final prefs = await SharedPreferences.getInstance();
       List<String> localVotes = prefs.getStringList('votes') ?? [];
