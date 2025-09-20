@@ -1,9 +1,9 @@
-name: shikon_voteapp
+﻿name: shikon_voteapp
 description: "A flutter project that provides voting service on the Shikon Fes."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 28.4.1+39
+version: 1.0.2+3
 environment:
   sdk: ^3.7.2
 dependencies:

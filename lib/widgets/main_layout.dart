@@ -37,14 +37,7 @@ class MainLayout extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TopBar(title: title, icon: icon ?? Icons.person_outline),
-          Expanded(
-            child: Scrollbar(
-              thumbVisibility: true,
-              thickness: 4.0,
-              radius: const Radius.circular(8),
-              child: child,
-            ),
-          ),
+          Expanded(child: child),
           BottomBar(
             onBack: onBack,
             onNext: onNext,

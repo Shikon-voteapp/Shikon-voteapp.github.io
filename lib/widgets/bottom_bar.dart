@@ -242,35 +242,6 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildSNSButton({
-    required BuildContext context,
-    required IconData icon,
-    required VoidCallback onPressed,
-    required Color color,
-  }) {
-    final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final Color backgroundColor =
-        isDark ? theme.colorScheme.surface : theme.colorScheme.surface;
-    final Color iconColor =
-        isDark ? theme.colorScheme.onSurface : theme.colorScheme.onSurface;
-
-    return NeumorphicButton(
-      onPressed: onPressed,
-      style: NeumorphicStyle(
-        boxShape: const NeumorphicBoxShape.circle(),
-        depth: 6,
-        intensity: 0.8,
-        color: backgroundColor,
-      ),
-      child: SizedBox(
-        width: 48.0,
-        height: 48.0,
-        child: Center(child: Icon(icon, color: iconColor, size: 24.0)),
-      ),
-    );
-  }
-
   Widget _buildSmallSNSButton({
     required BuildContext context,
     required IconData icon,
