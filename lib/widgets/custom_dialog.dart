@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 Future<void> showCustomDialog({
@@ -415,8 +415,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
-                                              FontAwesome
-                                                  .arrow_up_right_from_square_solid,
+                                              Icons.open_in_new,
                                               size: 16,
                                               color:
                                                   Theme.of(
@@ -480,7 +479,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(FontAwesome.xmark_solid),
+                            const Icon(Icons.close),
                             const SizedBox(width: 8),
                             Text(widget.closeButtonText!),
                           ],
@@ -519,7 +518,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                     ),
                                     const SizedBox(width: 4),
                                     const Icon(
-                                      FontAwesome.arrow_right_solid,
+                                      Icons.arrow_forward,
                                       size: 16,
                                       color: Colors.white,
                                     ),

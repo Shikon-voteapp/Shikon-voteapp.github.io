@@ -7,7 +7,7 @@ import '../widgets/custom_dialog.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -124,7 +124,7 @@ class _VoteScreenState extends State<VoteScreen> {
 
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
-      icon: FontAwesome.check_to_slot_solid,
+      icon: Icons.how_to_vote,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
       onHome: () => PlatformUtils.reloadApp(),
@@ -934,11 +934,7 @@ class _VoteScreenState extends State<VoteScreen> {
                 style: TextStyle(fontSize: 18, color: activeFgColor),
               ),
               const SizedBox(width: 6),
-              Icon(
-                FontAwesome.arrow_right_solid,
-                size: 16,
-                color: activeFgColor,
-              ),
+              Icon(Icons.arrow_forward, size: 16, color: activeFgColor),
             ],
           ),
         ),

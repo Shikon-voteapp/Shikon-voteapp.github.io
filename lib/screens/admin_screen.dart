@@ -1,5 +1,5 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 // import 'package:hugeicons/hugeicons.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -207,7 +207,7 @@ class _AdminScreenState extends State<AdminScreen>
 
     return MainLayout(
       title: '管理者パネル',
-      icon: FontAwesome.shield_halved_solid,
+      icon: Icons.admin_panel_settings,
       onHome:
           () => Navigator.of(
             context,

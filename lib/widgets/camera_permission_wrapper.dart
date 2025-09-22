@@ -1,5 +1,5 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 import '../platform/platform_utils.dart';
 
 class CameraPermissionWrapper extends StatefulWidget {
@@ -71,7 +71,7 @@ class CameraPermissionLoadingScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(FontAwesome.camera_solid, size: 64, color: Colors.blue),
+            Icon(Icons.camera_alt, size: 64, color: Colors.blue),
             SizedBox(height: 24),
             Text(
               'カメラ権限を確認中...',

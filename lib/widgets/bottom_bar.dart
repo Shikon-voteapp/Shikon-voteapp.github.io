@@ -1,4 +1,5 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
@@ -151,7 +152,7 @@ class BottomBar extends StatelessWidget {
                         const SizedBox(width: 8),
                         _buildSmallSNSButton(
                           context: context,
-                          icon: FontAwesome.globe_solid,
+                          icon: Icons.public,
                           onPressed:
                               () => PlatformUtils.openUrl(
                                 'https://www.meiji.ac.jp/ko_chu/',
@@ -303,25 +304,25 @@ class BottomBar extends StatelessWidget {
               children: [
                 _buildGroupedIcon(
                   context: context,
-                  icon: FontAwesome.house_solid,
+                  icon: Icons.home,
                   onPressed: onHome ?? () => _showReloadConfirmDialog(context),
                 ),
                 _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: FontAwesome.circle_question_solid,
+                  icon: Icons.help_outline,
                   onPressed: () => _showHelp(context),
                 ),
                 _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: FontAwesome.shield_halved_solid,
+                  icon: Icons.admin_panel_settings,
                   onPressed: () => showAdminLoginDialog(context: context),
                 ),
                 _buildGroupedDivider(context),
                 _buildGroupedIcon(
                   context: context,
-                  icon: FontAwesome.arrow_left_solid,
+                  icon: Icons.arrow_back,
                   onPressed: onBack ?? () => _showCantGoBackDialog(context),
                 ),
               ],
@@ -348,7 +349,7 @@ class BottomBar extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     child: Center(
                       child: Icon(
-                        FontAwesome.bars_solid,
+                        Icons.menu,
                         color:
                             Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
@@ -390,7 +391,7 @@ class BottomBar extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         Icon(
-                          FontAwesome.arrow_right_solid,
+                          Icons.arrow_forward,
                           size: 16,
                           color:
                               Theme.of(context).brightness == Brightness.dark

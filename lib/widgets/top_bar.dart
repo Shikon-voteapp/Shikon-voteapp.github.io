@@ -1,11 +1,11 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
   final IconData icon;
 
-  const TopBar({Key? key, required this.title, this.icon = FontAwesome.user})
+  const TopBar({Key? key, required this.title, this.icon = Icons.person})
     : super(key: key);
 
   @override

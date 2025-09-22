@@ -1,5 +1,5 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
 import '../platform/platform_utils.dart';
@@ -13,7 +13,7 @@ class SelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MainLayout(
       title: 'ようこそ',
-      icon: FontAwesome.hand_pointer_solid,
+      icon: Icons.pan_tool_alt,
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '投票について',
       helpContent: '「投票を開始する」ボタンを押して、投票を開始してください。パンフレットに同封された投票券をご準備ください。',
@@ -27,7 +27,7 @@ class SelectionScreen extends StatelessWidget {
               context: context,
               title: '投票を開始する',
               subtitle: '投票を行います。パンフレットに同封された投票券をご準備ください。',
-              icon: FontAwesome.check_to_slot_solid,
+              icon: Icons.how_to_vote,
               onPressed: () {
                 final now = DateTime.now();
                 final isOutdated = now.difference(dataUpdateDate).inDays >= 365;
@@ -147,11 +147,19 @@ class SelectionScreen extends StatelessWidget {
         text: TextSpan(
           style: TextStyle(
             fontSize: 12,
+            height: 1.6,
+            fontFamily: 'A-OTF-ShinGoPr6',
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
-          children: [
-            const TextSpan(text: '本アプリケーションは、生徒有志により開発・運営されています。\n'),
-            const TextSpan(text: 'オープンソースで開発されており、ソースコードはGitHubにて公開されています。'),
+          children: const [
+            TextSpan(
+              text: '本アプリケーションは、生徒有志により開発・運営されています。\n',
+              style: TextStyle(fontFamily: 'A-OTF-ShinGoPr6'),
+            ),
+            TextSpan(
+              text: 'オープンソースで開発されており、ソースコードはGitHubにて公開されています。',
+              style: TextStyle(fontFamily: 'A-OTF-ShinGoPr6'),
+            ),
           ],
         ),
       ),

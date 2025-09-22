@@ -1,5 +1,5 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
@@ -35,7 +35,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       title: '投票内容の確認',
-      icon: FontAwesome.circle_check,
+      icon: Icons.verified,
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '投票内容の確認について',
       helpContent:
@@ -192,7 +192,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                       categoryIndex: categoryIndex,
                                       selections: widget.selections,
                                       isGridView: widget.isGridView,
-                                      restoreSelection: false,
+                                      restoreSelection: true,
                                       returnToConfirm: true,
                                     ),
                               ),
@@ -311,7 +311,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                       categoryIndex: categoryIndex,
                                       selections: widget.selections,
                                       isGridView: widget.isGridView,
-                                      restoreSelection: false,
+                                      restoreSelection: true,
                                       returnToConfirm: true,
                                     ),
                               ),

@@ -1,5 +1,5 @@
+// duplicate removed
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
 import 'selection_screen.dart';
@@ -72,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              FontAwesome.check_to_slot_solid,
+              Icons.how_to_vote,
               size: 150,
               color:
                   Theme.of(context).brightness == Brightness.dark

@@ -7,7 +7,7 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 import '../platform/platform_utils.dart';
 
 class StudentVerificationScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
     final theme = Theme.of(context);
     return MainLayout(
       title: '本人確認',
-      icon: FontAwesome.id_card_solid,
+      icon: Icons.badge,
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '生徒の本人確認',
       helpContent: '投票権に記載された学年・クラス・番号を選択してください。',
@@ -133,7 +133,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                                     ),
                                     const SizedBox(width: 8),
                                     Icon(
-                                      FontAwesome.arrow_right_solid,
+                                      Icons.arrow_forward,
                                       size: 16,
                                       color:
                                           Theme.of(context).brightness ==

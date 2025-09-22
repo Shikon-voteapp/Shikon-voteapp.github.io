@@ -9,7 +9,7 @@ import 'vote_screen.dart';
 import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:flutter/material.dart';
 
 class ScannerScreen extends StatefulWidget {
   final bool startWithScanner;
@@ -84,7 +84,7 @@ class _ScannerScreenState extends State<ScannerScreen>
     final colorScheme = theme.colorScheme;
     return MainLayout(
       title: '投票券情報入力',
-      icon: FontAwesome.ticket_simple_solid,
+      icon: Icons.confirmation_number,
       helpTitle: '投票について',
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
@@ -257,7 +257,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                             ),
                             const SizedBox(width: 8),
                             Icon(
-                              FontAwesome.arrow_right_solid,
+                              Icons.arrow_forward,
                               size: 16,
                               color:
                                   Theme.of(context).brightness ==
