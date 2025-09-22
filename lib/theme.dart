@@ -58,8 +58,7 @@ class AppTheme {
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
       textTheme: textTheme,
-      fontFamily: 'Triumvirate',
-      fontFamilyFallback: const ['ShinGo'],
+      fontFamily: 'ShinGo',
       cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),
@@ -126,8 +125,7 @@ class AppTheme {
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,
       textTheme: textTheme,
-      fontFamily: 'Triumvirate',
-      fontFamilyFallback: const ['ShinGo'],
+      fontFamily: 'ShinGo',
       cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),

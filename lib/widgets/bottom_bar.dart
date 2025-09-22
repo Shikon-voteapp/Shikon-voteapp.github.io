@@ -104,7 +104,11 @@ class BottomBar extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow(context, 'Data Update', VersionInfo.formattedBuildDate),
           const SizedBox(height: 12),
-          _buildInfoRow(context, '', '© 2025 文化祭準備委員会\n© 2025 Mamouna_inori '),
+          _buildInfoRow(
+            context,
+            '',
+            '© 2025 明治大学付属明治高等学校　文化祭準備委員会\n© 2025 Mamouna_inori ',
+          ),
           const SizedBox(height: 16),
           // SNSリンク（横並び）
           Row(
