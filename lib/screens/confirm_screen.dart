@@ -53,7 +53,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           categoryIndex: voteCategories.length - 1,
                           selections: widget.selections,
                           isGridView: widget.isGridView,
-                          restoreSelection: false,
+                          restoreSelection: true,
+                          returnToConfirm: true,
                         ),
                   ),
                 );
@@ -248,7 +249,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                         group.groupName,
                         style: TextStyle(
                           fontSize: 14,
-                          color: colorScheme.onSurface.withValues(alpha:0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -292,7 +293,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface.withValues(alpha:0.6),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -340,7 +341,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               children: [
                 Icon(
                   Icons.do_not_disturb_on_outlined,
-                  color: colorScheme.onSurface.withValues(alpha:0.4),
+                  color: colorScheme.onSurface.withValues(alpha: 0.4),
                   size: 40,
                 ),
                 const SizedBox(width: 16),
@@ -348,7 +349,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                   '選択されていません',
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorScheme.onSurface.withValues(alpha:0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],

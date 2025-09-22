@@ -801,23 +801,64 @@ class _VoteScreenState extends State<VoteScreen> {
           );
           return;
         }
-        if (_selectedGroup != null) {
-          currentSelections[category.id] = _selectedGroup!.id;
-        } else {
-          // スキップ可能カテゴリの場合のみ未選択を許容
-          currentSelections.remove(category.id);
-        }
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => ConfirmScreen(
-                  uuid: widget.uuid,
-                  selections: currentSelections,
-                  isGridView: _isGridView,
+
+        // 確認ダイアログを表示してから反映
+        final group = _selectedGroup;
+        if (group != null) {
+          showCustomDialog(
+            context: context,
+            imagePath: group.imagePath,
+            title: '${category.name}の変更確認',
+            content: '「${group.name}」に変更します。よろしいですか？',
+            closeButtonText: '戻る',
+            primaryActionText: '変更を反映する',
+            enablePrimaryLoading: true,
+            minLoadingMs: 1000,
+            maxLoadingMs: 1400,
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              currentSelections[category.id] = group.id;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ConfirmScreen(
+                        uuid: widget.uuid,
+                        selections: currentSelections,
+                        isGridView: _isGridView,
+                      ),
                 ),
-          ),
-        );
+              );
+            },
+          );
+        } else {
+          // スキップ可能カテゴリで未選択→確認してスキップ反映
+          showCustomDialog(
+            context: context,
+            title: '${category.name} を未選択で反映しますか？',
+            content: 'このカテゴリの投票先を未選択として確認画面に戻ります。',
+            closeButtonText: '戻る',
+            primaryActionText: '未選択で反映',
+            enablePrimaryLoading: true,
+            minLoadingMs: 800,
+            maxLoadingMs: 1200,
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              currentSelections.remove(category.id);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ConfirmScreen(
+                        uuid: widget.uuid,
+                        selections: currentSelections,
+                        isGridView: _isGridView,
+                      ),
+                ),
+              );
+            },
+          );
+        }
       };
     } else if (isSelected) {
       buttonText = '投票する';

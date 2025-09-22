@@ -3,7 +3,7 @@ description: "A flutter project that provides voting service on the Shikon Fes."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.4+5
+version: 1.1.0+6
 environment:
   sdk: ^3.7.2
 dependencies:
@@ -49,3 +49,22 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+  fonts:
+    - family: ShinGo
+      fonts:
+        - asset: assets/Fonts/A-OTF-ShinGoPr6-Regular.otf
+          weight: 400
+        - asset: assets/Fonts/A-OTF-ShinGoPr6-Medium.otf
+          weight: 500
+    - family: Triumvirate
+      fonts:
+        - asset: assets/Fonts/Triumvirate.ttf
+          weight: 300
+        - asset: assets/Fonts/Triumvirate.ttf
+          weight: 400
+        - asset: assets/Fonts/Triumvirate.ttf
+          weight: 500
+        - asset: assets/Fonts/Triumvirate.ttf
+          weight: 600
+        - asset: assets/Fonts/Triumvirate.ttf
+          weight: 700

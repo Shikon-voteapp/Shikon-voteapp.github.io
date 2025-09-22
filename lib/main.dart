@@ -56,12 +56,13 @@ void main() async {
       NeumorphicApp(
         theme: const NeumorphicThemeData(
           baseColor: Color(0xFFF5F5F5),
+          accentColor: shikonPurple,
           lightSource: LightSource.topLeft,
           depth: 4,
         ),
         darkTheme: const NeumorphicThemeData(
           baseColor: Color(0xff333333),
-          accentColor: Colors.purple,
+          accentColor: shikonPurple,
           lightSource: LightSource.topLeft,
           depth: 4,
           intensity: 0.28,
@@ -90,12 +91,13 @@ class MyApp extends StatelessWidget {
           title: '紫紺祭投票アプリ',
           theme: const NeumorphicThemeData(
             baseColor: Color(0xFFF5F5F5),
+            accentColor: shikonPurple,
             lightSource: LightSource.topLeft,
             depth: 4,
           ),
           darkTheme: const NeumorphicThemeData(
             baseColor: Color(0xff333333),
-            accentColor: Colors.purple,
+            accentColor: shikonPurple,
             lightSource: LightSource.topLeft,
             depth: 4,
             intensity: 0.28,

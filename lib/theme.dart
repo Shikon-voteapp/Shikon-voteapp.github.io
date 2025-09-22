@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 const Color shikonPurple = Color(0xFF4A2A8A);
 const Color lightPurple = Color(0xFFF3E5F5);
@@ -18,7 +17,7 @@ class AppTheme {
   static final Color darkAccentColor = Colors.grey[800]!;
 
   static ThemeData get lightThemeData {
-    final baseText = GoogleFonts.notoSansJpTextTheme();
+    final baseText = ThemeData(brightness: Brightness.light).textTheme;
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
         fontWeight: FontWeight.w500,
@@ -59,6 +58,8 @@ class AppTheme {
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
       textTheme: textTheme,
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['ShinGo'],
       cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),
@@ -84,8 +85,7 @@ class AppTheme {
   }
 
   static ThemeData get darkThemeData {
-    final baseDark = ThemeData(brightness: Brightness.dark).textTheme;
-    final baseText = GoogleFonts.notoSansJpTextTheme(baseDark);
+    final baseText = ThemeData(brightness: Brightness.dark).textTheme;
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
         fontWeight: FontWeight.w500,
@@ -126,6 +126,8 @@ class AppTheme {
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,
       textTheme: textTheme,
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['ShinGo'],
       cardTheme: const CardThemeData(
         elevation: 0,
         margin: EdgeInsets.all(12),
