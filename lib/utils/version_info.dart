@@ -3,8 +3,8 @@ import '../config/vote_options.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class VersionInfo {
-  static String _version = '1.5.0';
-  static String _buildNumber = '11';
+  static String _version = '1.5.1';
+  static String _buildNumber = '12';
   static bool _initialized = false;
 
   static Future<void> initialize() async {
@@ -13,8 +13,8 @@ class VersionInfo {
     if (kIsWeb) {
       // Webプラットフォームでは、直接バージョン情報を設定
       // pubspec.yamlの読み取りは信頼性が低いため、ハードコードされたバージョンを使用
-      _version = '1.5.0';
-      _buildNumber = '11';
+      _version = '1.5.1';
+      _buildNumber = '12';
       print('Web環境のため、バージョン情報を直接設定します: $_version.$_buildNumber');
     } else {
       try {
@@ -24,8 +24,8 @@ class VersionInfo {
       } catch (e) {
         print('非Webプラットフォームでのバージョン情報の取得に失敗しました: $e');
         print('デフォルトバージョン情報を使用します');
-        _version = '1.5.0';
-        _buildNumber = '11';
+        _version = '1.5.1';
+        _buildNumber = '12';
       }
     }
 
