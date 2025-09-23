@@ -411,6 +411,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
           _errorMessage = 'この投票券は既に使用されています。';
           _isLoading = false;
         });
+        await showCustomDialog(
+          context: context,
+          title: 'エラー',
+          content: 'この投票券は既に使用されています。',
+          closeButtonText: '閉じる',
+        );
         return;
       }
 
@@ -434,6 +440,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
         _errorMessage = '投票の保存に失敗しました。もう一度お試しください。';
         _isLoading = false;
       });
+      await showCustomDialog(
+        context: context,
+        title: 'エラー',
+        content: '投票の保存に失敗しました。もう一度お試しください。',
+        closeButtonText: '閉じる',
+      );
     }
   }
 

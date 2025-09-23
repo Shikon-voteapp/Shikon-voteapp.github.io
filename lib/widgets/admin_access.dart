@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../widgets/custom_dialog.dart';
 
 class AdminAccessButton extends StatelessWidget {
   @override
@@ -79,10 +80,11 @@ class AdminAccessButton extends StatelessWidget {
                               : () async {
                                 if (emailController.text.isEmpty ||
                                     passwordController.text.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('メールアドレスとパスワードを入力してください'),
-                                    ),
+                                  await showCustomDialog(
+                                    context: context,
+                                    title: '入力エラー',
+                                    content: 'メールアドレスとパスワードを入力してください',
+                                    closeButtonText: 'OK',
                                   );
                                   return;
                                 }
@@ -110,15 +112,21 @@ class AdminAccessButton extends StatelessWidget {
                                   } else {
                                     message = 'ログインエラー: ${e.message}';
                                   }
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(message)),
+                                  await showCustomDialog(
+                                    context: context,
+                                    title: 'エラー',
+                                    content: message,
+                                    closeButtonText: '閉じる',
                                   );
                                   setState(() {
                                     isLoading = false;
                                   });
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('エラーが発生しました: $e')),
+                                  await showCustomDialog(
+                                    context: context,
+                                    title: 'エラー',
+                                    content: 'エラーが発生しました: $e',
+                                    closeButtonText: '閉じる',
                                   );
                                   setState(() {
                                     isLoading = false;

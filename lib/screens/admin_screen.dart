@@ -152,6 +152,14 @@ class _AdminScreenState extends State<AdminScreen>
     } catch (e) {
       print('投票データ読み込みエラー: $e');
       setState(() => _votes = []);
+      if (mounted) {
+        await showCustomDialog(
+          context: context,
+          title: 'エラー',
+          content: '投票データの読み込みに失敗しました。',
+          closeButtonText: '閉じる',
+        );
+      }
     }
   }
 
@@ -172,6 +180,14 @@ class _AdminScreenState extends State<AdminScreen>
       setState(() => _adminUsers = users);
     } catch (e) {
       print('管理者ユーザー読み込みエラー: $e');
+      if (mounted) {
+        await showCustomDialog(
+          context: context,
+          title: 'エラー',
+          content: '管理者ユーザーの読み込みに失敗しました。',
+          closeButtonText: '閉じる',
+        );
+      }
     }
   }
 
@@ -535,14 +551,20 @@ class _AdminScreenState extends State<AdminScreen>
 
             Navigator.of(context).pop();
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('管理者を追加しました')));
+            await showCustomDialog(
+              context: context,
+              title: '完了',
+              content: '管理者を追加しました',
+              closeButtonText: 'OK',
+            );
           } catch (e) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('エラー: ${e.toString()}')));
+            await showCustomDialog(
+              context: context,
+              title: 'エラー',
+              content: 'エラーが発生しました: ${e.toString()}',
+              closeButtonText: '閉じる',
+            );
           }
         }
       },
@@ -572,16 +594,22 @@ class _AdminScreenState extends State<AdminScreen>
 
   Future<void> _deleteAdminUser(UserData user) async {
     if (_auth.currentUser?.uid == user.uid) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('自分自身を削除することはできません')));
+      await showCustomDialog(
+        context: context,
+        title: '操作できません',
+        content: '自分自身を削除することはできません',
+        closeButtonText: 'OK',
+      );
       return;
     }
     await _firestore.collection('admin_users').doc(user.uid).delete();
     _loadAdminUsers();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('${user.email} を削除しました')));
+    await showCustomDialog(
+      context: context,
+      title: '完了',
+      content: '${user.email} を削除しました',
+      closeButtonText: 'OK',
+    );
   }
 }
 

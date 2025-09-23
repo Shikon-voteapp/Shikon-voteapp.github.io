@@ -330,106 +330,96 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                       ),
                     ),
                     padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // 画像（指定があれば常に表示。小さい縦幅では非表示）
-                        if (widget.imagePath != null && !isSmallHeight) ...[
-                          AnimationConfiguration.synchronized(
-                            duration: const Duration(milliseconds: 300),
-                            child: FadeInAnimation(
-                              child: SizedBox(
-                                height: 150,
-                                width: double.infinity,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.asset(
-                                    widget.imagePath!,
-                                    fit: BoxFit.contain,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              color:
-                                                  theme
-                                                      .colorScheme
-                                                      .secondaryContainer,
-                                            ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // 画像（指定があれば常に表示。小さい縦幅では非表示）
+                          if (widget.imagePath != null && !isSmallHeight) ...[
+                            AnimationConfiguration.synchronized(
+                              duration: const Duration(milliseconds: 300),
+                              child: FadeInAnimation(
+                                child: SizedBox(
+                                  height: 150,
+                                  width: double.infinity,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.asset(
+                                      widget.imagePath!,
+                                      fit: BoxFit.contain,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                color:
+                                                    theme
+                                                        .colorScheme
+                                                        .secondaryContainer,
+                                              ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 16),
+                          ],
+                          Text(
+                            widget.title,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: theme.textTheme.titleLarge?.color,
+                            ),
                           ),
                           const SizedBox(height: 16),
-                        ],
-                        Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: theme.textTheme.titleLarge?.color,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final maxScrollHeight =
-                                MediaQuery.of(context).size.height * 0.6;
-                            return ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxHeight: maxScrollHeight,
-                              ),
-                              child: SingleChildScrollView(
-                                physics: const BouncingScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    widget.contentWidget ??
-                                        Text(
-                                          widget.content ?? '',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color:
-                                                theme
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.color,
-                                          ),
-                                        ),
-                                    if (widget.showWikiLink) ...[
-                                      const SizedBox(height: 16),
-                                      NeumorphicButton(
-                                        onPressed: () {
-                                          final url =
-                                              'https://shikon-voteapp.github.io/information/';
-                                          if (kIsWeb) {
-                                            html.window.open(url, '_blank');
-                                          }
-                                        },
-                                        style: NeumorphicStyle(
-                                          depth: 4,
-                                          intensity: 0.7,
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.open_in_new,
-                                              size: 16,
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final maxScrollHeight =
+                                  MediaQuery.of(context).size.height * 0.6;
+                              return ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight: maxScrollHeight,
+                                ),
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      widget.contentWidget ??
+                                          Text(
+                                            widget.content ?? '',
+                                            style: TextStyle(
+                                              fontSize: 16,
                                               color:
-                                                  Theme.of(
-                                                            context,
-                                                          ).brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                                  theme
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.color,
                                             ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              '詳細情報',
-                                              style: TextStyle(
-                                                fontSize: 14,
+                                          ),
+                                      if (widget.showWikiLink) ...[
+                                        const SizedBox(height: 16),
+                                        NeumorphicButton(
+                                          onPressed: () {
+                                            final url =
+                                                'https://shikon-voteapp.github.io/information/';
+                                            if (kIsWeb) {
+                                              html.window.open(url, '_blank');
+                                            }
+                                          },
+                                          style: NeumorphicStyle(
+                                            depth: 4,
+                                            intensity: 0.7,
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.open_in_new,
+                                                size: 16,
                                                 color:
                                                     Theme.of(
                                                               context,
@@ -437,20 +427,34 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                                             Brightness.dark
                                                         ? Colors.white
                                                         : Colors.black,
-                                                fontWeight: FontWeight.w600,
                                               ),
-                                            ),
-                                          ],
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                '詳細情報',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color:
+                                                      Theme.of(
+                                                                context,
+                                                              ).brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ],
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
