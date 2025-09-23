@@ -17,9 +17,10 @@ class AppTheme {
   static final Color darkAccentColor = Colors.grey[800]!;
 
   static ThemeData get lightThemeData {
-    final baseText = ThemeData(
-      brightness: Brightness.light,
-    ).textTheme.apply(fontFamily: 'A-OTF-ShinGoPr6');
+    final baseText = ThemeData(brightness: Brightness.light).textTheme.apply(
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['A-OTF-ShinGoPr6'],
+    );
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
         fontWeight: FontWeight.w500,
@@ -56,7 +57,8 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: 'A-OTF-ShinGoPr6',
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['A-OTF-ShinGoPr6'],
       colorScheme: colorScheme,
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
@@ -86,9 +88,10 @@ class AppTheme {
   }
 
   static ThemeData get darkThemeData {
-    final baseText = ThemeData(
-      brightness: Brightness.dark,
-    ).textTheme.apply(fontFamily: 'A-OTF-ShinGoPr6');
+    final baseText = ThemeData(brightness: Brightness.dark).textTheme.apply(
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['A-OTF-ShinGoPr6'],
+    );
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
         fontWeight: FontWeight.w500,
@@ -125,7 +128,8 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      fontFamily: 'A-OTF-ShinGoPr6',
+      fontFamily: 'Triumvirate',
+      fontFamilyFallback: const ['A-OTF-ShinGoPr6'],
       colorScheme: colorScheme,
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,

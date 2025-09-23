@@ -159,7 +159,7 @@ class _ScannerScreenState extends State<ScannerScreen>
                                     maxLength,
                                   }) => null,
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 27,
                                 fontWeight: FontWeight.bold,
                               ),
                               onChanged: (value) {

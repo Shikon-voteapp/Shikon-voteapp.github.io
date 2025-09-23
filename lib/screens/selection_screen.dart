@@ -148,19 +148,8 @@ class SelectionScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             height: 1.6,
-            fontFamily: 'A-OTF-ShinGoPr6',
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
-          children: const [
-            TextSpan(
-              text: '本アプリケーションは、生徒有志により開発・運営されています。\n',
-              style: TextStyle(fontFamily: 'A-OTF-ShinGoPr6'),
-            ),
-            TextSpan(
-              text: 'オープンソースで開発されており、ソースコードはGitHubにて公開されています。',
-              style: TextStyle(fontFamily: 'A-OTF-ShinGoPr6'),
-            ),
-          ],
         ),
       ),
     );

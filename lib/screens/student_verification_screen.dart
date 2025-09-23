@@ -253,7 +253,7 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                   LengthLimitingTextInputFormatter(2),
                 ],
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 24,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
