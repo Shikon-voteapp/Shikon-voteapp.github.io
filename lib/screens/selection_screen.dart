@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/material.dart';
 import '../widgets/main_layout.dart';
@@ -30,22 +31,32 @@ class SelectionScreen extends StatelessWidget {
               icon: Icons.how_to_vote,
               onPressed: () {
                 final now = DateTime.now();
-                final isOutdated = now.difference(dataUpdateDate).inDays >= 365;
+                final isOutdated = now.difference(dataUpdateDate).inDays >= 180;
                 if (isOutdated) {
+                  bool didReload = false;
                   showCustomDialog(
                     context: context,
                     title: '再読み込みをしてください',
                     content:
-                        'このアプリのデータが古い可能性があります。最新のデータを取得するため、キャッシュを破棄して再読み込みを行ってください。',
+                        'このアプリのデータが古い可能性があります。最新のデータを取得するため、キャッシュを破棄して再読み込みを行ってください。\n3秒後に再読み込みをします...',
                     closeButtonText: null,
                     primaryActionText: 'キャッシュを破棄して再読み込み',
                     enablePrimaryLoading: true,
                     minLoadingMs: 800,
                     maxLoadingMs: 1400,
                     onPrimaryAction: () {
-                      PlatformUtils.clearCacheAndReload();
+                      if (!didReload) {
+                        didReload = true;
+                        PlatformUtils.clearCacheAndReload();
+                      }
                     },
                   );
+                  Timer(const Duration(seconds: 3), () {
+                    if (!didReload) {
+                      didReload = true;
+                      PlatformUtils.clearCacheAndReload();
+                    }
+                  });
                   return;
                 }
                 Navigator.push(
