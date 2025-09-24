@@ -17,6 +17,7 @@ import 'dart:html' as html;
 import 'utils/version_info.dart';
 import 'utils/cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'services/accessibility_service.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_desktop.dart'
@@ -110,6 +111,20 @@ class MyApp extends StatelessWidget {
           navigatorKey: navigatorKey,
           home: SplashScreen(dateRangeService: dateRangeService),
           routes: {'/admin': (context) => AdminScreen()},
+          builder: (context, child) {
+            return ValueListenableBuilder<bool>(
+              valueListenable: AccessibilityService.isZoomed,
+              builder: (context, isZoomed, _) {
+                final media = MediaQuery.of(context);
+                return MediaQuery(
+                  data: media.copyWith(
+                    textScaler: TextScaler.linear(isZoomed ? 1.5 : 1.0),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+          },
         );
       },
     );

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
 import 'custom_dialog.dart';
 import '../utils/version_info.dart';
+import '../services/accessibility_service.dart';
 
 class BottomBar extends StatelessWidget {
   final VoidCallback? onBack;
@@ -101,6 +102,49 @@ class BottomBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // アクセシビリティ: 文字サイズトグル
+          ValueListenableBuilder<bool>(
+            valueListenable: AccessibilityService.isZoomed,
+            builder: (context, isZoomed, _) {
+              return NeumorphicButton(
+                onPressed: () {
+                  AccessibilityService.toggleZoom();
+                  Navigator.of(context).pop();
+                  // 直後にダイアログを再度開き、反対操作の文言を表示
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _showInfoDialog(context);
+                  });
+                },
+                style: NeumorphicStyle(depth: 4, intensity: 0.7),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isZoomed ? Icons.zoom_out : Icons.zoom_in,
+                      size: 18,
+                      color:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isZoomed ? '文字サイズを元に戻す (100%)' : '文字サイズを大きくする (150%)',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
           _buildInfoRow(context, 'Version', VersionInfo.fullVersion),
           const SizedBox(height: 12),
           _buildInfoRow(context, 'Data Update', VersionInfo.formattedBuildDate),
@@ -130,7 +174,7 @@ class BottomBar extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildSmallSNSButton(
                           context: context,
@@ -140,7 +184,6 @@ class BottomBar extends StatelessWidget {
                                 'https://x.com/meidai_meiji',
                               ),
                         ),
-                        const SizedBox(width: 8),
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesome.instagram_brand,
@@ -149,7 +192,6 @@ class BottomBar extends StatelessWidget {
                                 'https://www.instagram.com/meidai_meiji/',
                               ),
                         ),
-                        const SizedBox(width: 8),
                         _buildSmallSNSButton(
                           context: context,
                           icon: Icons.public,
@@ -180,7 +222,7 @@ class BottomBar extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildSmallSNSButton(
                           context: context,
@@ -190,7 +232,6 @@ class BottomBar extends StatelessWidget {
                                 'https://x.com/Mamouna_inori',
                               ),
                         ),
-                        const SizedBox(width: 8),
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesome.instagram_brand,

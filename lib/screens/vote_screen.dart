@@ -4,6 +4,7 @@ import '../widgets/main_layout.dart';
 import '../platform/platform_utils.dart';
 import 'confirm_screen.dart';
 import '../widgets/custom_dialog.dart';
+import '../services/accessibility_service.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -121,6 +122,7 @@ class _VoteScreenState extends State<VoteScreen> {
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     final bool isCompact = size.height < 700;
+    final bool isZoomed = AccessibilityService.isZoomed.value;
 
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
@@ -167,15 +169,15 @@ class _VoteScreenState extends State<VoteScreen> {
           ),
           // 縦幅が小さい場合は上部詳細表示を無効化
           if (!isCompact) _buildGroupDetailHeader(isCompact: isCompact),
-          // コンパクト時は強制的にリスト表示・トグルは無効化
-          if (!isCompact) ...[
+          // コンパクト時やズーム時は強制的にリスト表示・トグルは無効化
+          if (!isCompact && !isZoomed) ...[
             _buildViewToggle(),
             const SizedBox(height: 12),
           ] else
             const SizedBox(height: 8),
           Expanded(
             child:
-                isCompact
+                (isCompact || isZoomed)
                     ? Column(
                       children: [
                         _buildFloorFilter(),
