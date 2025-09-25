@@ -39,6 +39,15 @@ abstract class PlatformUtils {
     PlatformUtilsImpl.downloadFile(content, filename);
   }
 
+  // Download binary bytes - platform specific implementation
+  static void downloadBytes(
+    List<int> bytes,
+    String filename, {
+    String mimeType = 'application/octet-stream',
+  }) {
+    PlatformUtilsImpl.downloadBytes(bytes, filename, mimeType: mimeType);
+  }
+
   // Open URL - platform specific implementation
   static void openUrl(String url) {
     PlatformUtilsImpl.openUrl(url);

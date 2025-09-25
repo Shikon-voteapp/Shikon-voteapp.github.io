@@ -14,7 +14,8 @@ import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
-// import '../platform/platform_utils.dart';
+import '../services/export_service.dart';
+import '../platform/platform_utils.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -252,6 +253,18 @@ class _AdminScreenState extends State<AdminScreen>
               ),
             ),
             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: NeumorphicButton(
+                onPressed: _exportResults,
+                style: const NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  depth: 3,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.file_download),
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: NeumorphicButton(
                 onPressed: () async {
@@ -278,6 +291,34 @@ class _AdminScreenState extends State<AdminScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _exportResults() async {
+    try {
+      final bytes = ExportService.buildResultsWorkbook(_getSortedResults);
+      final now = DateTime.now();
+      final filename =
+          '投票結果_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}.xlsx';
+      PlatformUtils.downloadBytes(
+        bytes,
+        filename,
+        mimeType:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
+      await showCustomDialog(
+        context: context,
+        title: 'エクスポート完了',
+        content: 'Excelファイルを保存しました。',
+        closeButtonText: 'OK',
+      );
+    } catch (e) {
+      await showCustomDialog(
+        context: context,
+        title: 'エクスポート失敗',
+        content: 'エクスポート中にエラー: ${e.toString()}',
+        closeButtonText: '閉じる',
+      );
+    }
   }
 
   Widget _buildResultsTab() {

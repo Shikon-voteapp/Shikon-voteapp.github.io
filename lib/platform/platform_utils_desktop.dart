@@ -61,6 +61,28 @@ class PlatformUtilsImpl {
     }
   }
 
+  static void downloadBytes(
+    List<int> bytes,
+    String filename, {
+    String mimeType = 'application/octet-stream',
+  }) async {
+    try {
+      final directory = await getDownloadsDirectory();
+      if (directory != null) {
+        final file = File('${directory.path}/$filename');
+        await file.writeAsBytes(bytes);
+        print('ファイルが保存されました: ${file.path}');
+      } else {
+        final documentsDirectory = await getApplicationDocumentsDirectory();
+        final file = File('${documentsDirectory.path}/$filename');
+        await file.writeAsBytes(bytes);
+        print('ファイルが保存されました: ${file.path}');
+      }
+    } catch (e) {
+      print('ファイル保存エラー: $e');
+    }
+  }
+
   static void openUrl(String url) {
     try {
       // Use platform-specific URL opening
