@@ -45,6 +45,8 @@ class MainLayout extends StatelessWidget {
             helpUrl: helpUrl,
             helpTitle: helpTitle,
             helpContent: helpContent,
+            infoExtraText:
+                'このアプリケーションでは、読みやすくまちがえにくいUDフォントを採用しています。\n使用フォント：モリサワ　UD新ゴ',
           ),
         ],
       ),

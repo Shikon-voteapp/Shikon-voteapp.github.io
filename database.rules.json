@@ -1,8 +1,15 @@
 {
   "rules": {
-    "$location": {
-      ".write": true,
-      ".read": true
+    ".read": false,
+    ".write": false,
+    "votes": {
+      ".read": "auth != null",
+      ".write": "auth != null && !newData.exists()",
+      "$uuid": {
+        ".read": true,
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['uuid','selections','timestamp']) && newData.child('uuid').val() == $uuid"
+      }
     }
   }
 }

@@ -272,7 +272,7 @@ class _AdminScreenState extends State<AdminScreen>
                   if (mounted) {
                     Navigator.of(
                       context,
-                    ).pushNamedAndRemoveUntil('/selection', (route) => false);
+                    ).pushNamedAndRemoveUntil('/', (route) => false);
                   }
                 },
                 style: const NeumorphicStyle(

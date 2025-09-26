@@ -14,6 +14,8 @@ class BottomBar extends StatelessWidget {
   final String? helpTitle;
   final String? helpContent;
   final VoidCallback? onHome;
+  final String? infoExtraText;
+  final String? infoExtra2Text;
 
   const BottomBar({
     Key? key,
@@ -23,6 +25,8 @@ class BottomBar extends StatelessWidget {
     this.helpTitle,
     this.helpContent,
     this.onHome,
+    this.infoExtraText,
+    this.infoExtra2Text,
   }) : super(key: key);
 
   void _showHelp(BuildContext context) async {
@@ -154,6 +158,10 @@ class BottomBar extends StatelessWidget {
             '',
             '© 2025 明治大学付属明治高等学校　文化祭準備委員会\n© 2025 Mamouna_inori ',
           ),
+          if (infoExtraText != null && infoExtraText!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildInfoRow(context, '', infoExtraText!),
+          ],
           const SizedBox(height: 16),
           // SNSリンク（横並び）
           Row(
