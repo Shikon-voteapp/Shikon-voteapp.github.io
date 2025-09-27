@@ -144,18 +144,11 @@ if ($LASTEXITCODE -ne 0) {
     Write-Warning "git commit failed. This might be because there are no changes to commit."
 }
 
-# Git push to both repositories
-Write-Host "Running 'git push origin main'"
-git push origin main
+# Git push with force to prioritize local changes
+Write-Host "Running 'git push origin main --force'"
+git push origin main --force
 if ($LASTEXITCODE -ne 0) {
     Write-Error "git push to origin failed. Exiting..."
-    exit 1
-}
-
-Write-Host "Running 'git push mamouna main'"
-git push mamouna main
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "git push to mamouna failed. Exiting..."
     exit 1
 }
 

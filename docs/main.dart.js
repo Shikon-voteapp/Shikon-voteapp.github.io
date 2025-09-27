@@ -30121,9 +30121,9 @@ return A.C($async$aHb,r)},
 aJK(){var s=0,r=A.D(t.H),q
 var $async$aJK=A.E(function(a,b){if(a===1)return A.A(b,r)
 while(true)switch(s){case 0:if($.aQZ){s=1
-break}$.aR_="1.6.5"
-$.aQY="23"
-A.cK("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 1.6.5.23")
+break}$.aR_="1.6.6"
+$.aQY="24"
+A.cK("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 1.6.6.24")
 $.aQZ=!0
 case 1:return A.B(q,r)}})
 return A.C($async$aJK,r)},
@@ -106860,8 +106860,8 @@ $.kg=function(){var s=t.n
 return A.c([A.c([0.41233895,0.35762064,0.18051042],s),A.c([0.2126,0.7152,0.0722],s),A.c([0.01932141,0.11916382,0.95034478],s)],t.zg)}()
 $.w0=A.c([95.047,100,108.883],t.n)
 $.aqf=null
-$.aR_="1.6.5"
-$.aQY="23"
+$.aR_="1.6.6"
+$.aQY="24"
 $.aQZ=!1
 $.b0x=A.u(t.S,A.ae("b0w"))
 $.aOJ=null
@@ -107448,7 +107448,7 @@ s($,"bdU","aLp",()=>new A.t())
 r($,"b3c","aHs",()=>{var q=new A.aj5()
 q.tJ($.aLp())
 return q})
-s($,"bgC","aLJ",()=>A.aI7(2025,9,28,20,29,0))
+s($,"bgC","aLJ",()=>A.aI7(2025,9,28,20,33,0))
 s($,"bgD","a5x",()=>{var q=A.aI7(2025,9,26,9,40,0)
 return A.b4k(A.aI7(2025,9,28,15,0,0),!0,3,0,2,45,q)})
 s($,"bgs","aLH",()=>{var q=t.Yy
