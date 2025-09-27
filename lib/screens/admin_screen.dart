@@ -229,6 +229,9 @@ class _AdminScreenState extends State<AdminScreen>
           () => Navigator.of(
             context,
           ).pushNamedAndRemoveUntil('/', (route) => false),
+      helpTitle: '管理者パネルヘルプ',
+      helpContent:
+          '詳細な使用方法については、Webサイトをご覧ください。\n\nVitePressガイド: https://shikon-voteapp.github.io/guide/',
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
