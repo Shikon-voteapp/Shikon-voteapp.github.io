@@ -1,20 +1,11 @@
 {
-  "name": "shikon-voteapp-guide",
-  "version": "1.0.0",
-  "description": "紫紺祭投票アプリの使用方法ガイド",
-  "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview",
-    "docs:build:prod": "vitepress build --outDir dist",
-    "docs:preview:prod": "vitepress preview --outDir dist"
+    "docs:preview": "vitepress preview"
   },
   "dependencies": {
     "create-vite": "^7.1.1",
     "vitepress": "^1.6.4"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0"
   }
 }

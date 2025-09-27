@@ -229,9 +229,6 @@ class _AdminScreenState extends State<AdminScreen>
           () => Navigator.of(
             context,
           ).pushNamedAndRemoveUntil('/', (route) => false),
-      helpTitle: '管理者パネルヘルプ',
-      helpContent:
-          '詳細な使用方法については、Webサイトをご覧ください。\n\nVitePressガイド: https://shikon-voteapp.github.io/guide/',
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -265,6 +262,18 @@ class _AdminScreenState extends State<AdminScreen>
                 ),
                 padding: const EdgeInsets.all(8),
                 child: const Icon(Icons.file_download),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: NeumorphicButton(
+                onPressed: _showHelpDialog,
+                style: const NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  depth: 3,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.help),
               ),
             ),
             Padding(
@@ -322,6 +331,17 @@ class _AdminScreenState extends State<AdminScreen>
         closeButtonText: '閉じる',
       );
     }
+  }
+
+  void _showHelpDialog() {
+    showCustomDialog(
+      context: context,
+      title: 'ヘルプ',
+      content: '管理者パネルの詳細な使用方法については、以下の詳細情報をご覧ください。',
+      showWikiLink: true,
+      wikiUrl: 'https://shikon-voteapp.github.io/guide/public/',
+      closeButtonText: '閉じる',
+    );
   }
 
   Widget _buildResultsTab() {

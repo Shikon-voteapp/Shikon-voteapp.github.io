@@ -19,6 +19,7 @@ Future<void> showCustomDialog({
   String? imagePath,
   List<Widget>? actions,
   bool showWikiLink = false,
+  String? wikiUrl,
   bool enablePrimaryLoading = false,
   int minLoadingMs = 0,
   int maxLoadingMs = 0,
@@ -40,6 +41,7 @@ Future<void> showCustomDialog({
         imagePath: imagePath,
         actions: actions,
         showWikiLink: showWikiLink,
+        wikiUrl: wikiUrl,
         enablePrimaryLoading: enablePrimaryLoading,
         minLoadingMs: minLoadingMs,
         maxLoadingMs: maxLoadingMs,
@@ -260,6 +262,7 @@ class CustomDialogWidget extends StatefulWidget {
   final String? imagePath;
   final List<Widget>? actions;
   final bool showWikiLink;
+  final String? wikiUrl;
   final bool enablePrimaryLoading;
   final int minLoadingMs;
   final int maxLoadingMs;
@@ -275,6 +278,7 @@ class CustomDialogWidget extends StatefulWidget {
     this.imagePath,
     this.actions,
     this.showWikiLink = false,
+    this.wikiUrl,
     this.enablePrimaryLoading = false,
     this.minLoadingMs = 0,
     this.maxLoadingMs = 0,
@@ -405,6 +409,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                         NeumorphicButton(
                                           onPressed: () {
                                             final url =
+                                                widget.wikiUrl ??
                                                 'https://shikon-voteapp.github.io/information/';
                                             if (kIsWeb) {
                                               html.window.open(url, '_blank');
