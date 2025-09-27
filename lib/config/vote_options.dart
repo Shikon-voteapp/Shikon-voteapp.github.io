@@ -85,7 +85,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2025, 9, 28, 20, 24, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2025, 9, 28, 20, 27, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
