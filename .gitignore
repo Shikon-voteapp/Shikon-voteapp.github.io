@@ -57,3 +57,6 @@ GoogleService-Info.plist
 firebase-adminsdk.json
 serviceAccountKey.json
 .firebase/*.cache
+
+# VitePress cache
+docs/guide/.vitepress/cache/
