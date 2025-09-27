@@ -144,11 +144,18 @@ if ($LASTEXITCODE -ne 0) {
     Write-Warning "git commit failed. This might be because there are no changes to commit."
 }
 
-# Git push
-Write-Host "Running 'git push'"
-git push
+# Git push to both repositories
+Write-Host "Running 'git push origin main'"
+git push origin main
 if ($LASTEXITCODE -ne 0) {
-    Write-Error "git push failed. Exiting..."
+    Write-Error "git push to origin failed. Exiting..."
+    exit 1
+}
+
+Write-Host "Running 'git push mamouna main'"
+git push mamouna main
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "git push to mamouna failed. Exiting..."
     exit 1
 }
 
