@@ -1,88 +1,269 @@
 <!DOCTYPE html>
-<html lang="ja-JP" dir="ltr">
+<html lang="ja">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="紫紺祭投票アプリの環境構築手順。必要なソフトウェアのインストール方法を説明します。">
+    <meta name="color-scheme" content="light dark">
     <title>環境構築 | 紫紺祭投票アプリ</title>
-    <meta name="description" content="A VitePress site">
-    <meta name="generator" content="VitePress v1.6.4">
-    <link rel="preload stylesheet" href="assets/style.BuJt6Jv9.css" as="style">
-    <link rel="preload stylesheet" href="vp-icons.css" as="style">
-    
-    <script type="module" src="assets/app.DPwv1LDY.js"></script>
-    <link rel="preload" href="assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="modulepreload" href="assets/chunks/theme.Diycn17n.js">
-    <link rel="modulepreload" href="assets/chunks/framework.Bi6zybwU.js">
-    <link rel="modulepreload" href="assets/installation.md.BmIcTLIt.lean.js">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap">
-    <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"auto",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
-    <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+    <link rel="stylesheet" href="./style.css">
   </head>
   <body>
-    <div id="app"><div class="Layout" data-v-06cb918f><!--[--><!--]--><!--[--><span tabindex="-1" data-v-10c3161e></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-10c3161e>Skip to content</a><!--]--><!----><header class="VPNav" data-v-06cb918f data-v-b9154780><div class="VPNavBar" data-v-b9154780 data-v-2f1b2d84><div class="wrapper" data-v-2f1b2d84><div class="container" data-v-2f1b2d84><div class="title" data-v-2f1b2d84><div class="VPNavBarTitle" data-v-2f1b2d84 data-v-ff9296f5><a class="title" href="./" data-v-ff9296f5><!--[--><!--]--><!----><span data-v-ff9296f5>紫紺祭投票アプリ</span><!--[--><!--]--></a></div></div><div class="content" data-v-2f1b2d84><div class="content-body" data-v-2f1b2d84><!--[--><!--]--><div class="VPNavBarSearch search" data-v-2f1b2d84><!----></div><!----><!----><div class="VPNavBarAppearance appearance" data-v-2f1b2d84 data-v-88efc219><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-88efc219 data-v-10e10e38 data-v-bf9e120b><span class="check" data-v-bf9e120b><span class="icon" data-v-bf9e120b><!--[--><span class="vpi-sun sun" data-v-10e10e38></span><span class="vpi-moon moon" data-v-10e10e38></span><!--]--></span></span></button></div><!----><div class="VPFlyout VPNavBarExtra extra" data-v-2f1b2d84 data-v-cc9bb812 data-v-64caf59b><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-64caf59b><span class="vpi-more-horizontal icon" data-v-64caf59b></span></button><div class="menu" data-v-64caf59b><div class="VPMenu" data-v-64caf59b data-v-8d760da8><!----><!--[--><!--[--><!----><div class="group" data-v-cc9bb812><div class="item appearance" data-v-cc9bb812><p class="label" data-v-cc9bb812>Appearance</p><div class="appearance-action" data-v-cc9bb812><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="false" data-v-cc9bb812 data-v-10e10e38 data-v-bf9e120b><span class="check" data-v-bf9e120b><span class="icon" data-v-bf9e120b><!--[--><span class="vpi-sun sun" data-v-10e10e38></span><span class="vpi-moon moon" data-v-10e10e38></span><!--]--></span></span></button></div></div></div><!----><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-2f1b2d84 data-v-bb98d65f><span class="container" data-v-bb98d65f><span class="top" data-v-bb98d65f></span><span class="middle" data-v-bb98d65f></span><span class="bottom" data-v-bb98d65f></span></span></button></div></div></div></div><div class="divider" data-v-2f1b2d84><div class="divider-line" data-v-2f1b2d84></div></div></div><!----></header><div class="VPLocalNav empty fixed" data-v-06cb918f data-v-8d7364ef><div class="container" data-v-8d7364ef><!----><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-v-8d7364ef data-v-9c5f17fc><button data-v-9c5f17fc>Return to top</button><!----></div></div></div><!----><div class="VPContent" id="VPContent" data-v-06cb918f data-v-9a47cbf5><div class="VPDoc has-aside" data-v-9a47cbf5 data-v-633c7955><!--[--><!--]--><div class="container" data-v-633c7955><div class="aside" data-v-633c7955><div class="aside-curtain" data-v-633c7955></div><div class="aside-container" data-v-633c7955><div class="aside-content" data-v-633c7955><div class="VPDocAside" data-v-633c7955 data-v-8beb131c><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-8beb131c data-v-031bea17><div class="content" data-v-031bea17><div class="outline-marker" data-v-031bea17></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-031bea17>On this page</div><ul class="VPDocOutlineItem root" data-v-031bea17 data-v-10b03b2f><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-8beb131c></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-633c7955><div class="content-container" data-v-633c7955><!--[--><!--]--><main class="main" data-v-633c7955><div style="position:relative;" class="vp-doc _installation" data-v-633c7955><div><h1 id="環境構築" tabindex="-1">環境構築 <a class="header-anchor" href="#環境構築" aria-label="Permalink to &quot;環境構築&quot;">​</a></h1><h2 id="必要なものを用意する" tabindex="-1">必要なものを用意する <a class="header-anchor" href="#必要なものを用意する" aria-label="Permalink to &quot;必要なものを用意する&quot;">​</a></h2><p>紫紺祭投票アプリの設定を行うには、以下の要件を満たしたデバイス等が必要です。</p><ul><li>64ビットバージョンの Windows 10 または Windows 11 を搭載したパソコン</li></ul><div class="tip custom-block"><p class="custom-block-title">ヒント</p><p>高校Ⅰ年次に購入する学習用ノートPCで正常に動作することを確認しています。 5GB 以上の空き容量が必要です。</p></div><ul><li>Google 認証システムがインストールされたスマートフォン</li><li>Google 認証システム用の QR コードが記された紙</li></ul><div class="warning custom-block"><p class="custom-block-title">注意</p><p>引継ぎ時に渡されていない場合は、担当教員の先生に相談するか、<a href="mailto:mamouna.inori@outlook.jp" target="_blank" rel="noreferrer">このメールアドレス</a>まで連絡をしてください。</p></div><h2 id="必要な知識" tabindex="-1">必要な知識 <a class="header-anchor" href="#必要な知識" aria-label="Permalink to &quot;必要な知識&quot;">​</a></h2><h3 id="windows-の基本・応用操作" tabindex="-1">Windows の基本・応用操作 <a class="header-anchor" href="#windows-の基本・応用操作" aria-label="Permalink to &quot;Windows の基本・応用操作&quot;">​</a></h3><p>このチュートリアルでは、Windows 11 を使用します。設定やエクスプローラーの開き方、エクスプローラー画面各部の名称をご存じない場合は、まず検索エンジンを使って最低限の操作方法を勉強されることをおすすめします。</p><h2 id="本項で略して使う言葉" tabindex="-1">本項で略して使う言葉 <a class="header-anchor" href="#本項で略して使う言葉" aria-label="Permalink to &quot;本項で略して使う言葉&quot;">​</a></h2><p><strong>「スタート右クリック」</strong>：タスクバーにあるWindowsロゴ(青い田のロゴ)を右クリックしたメニューを開くこと。画像のようなメニューが表示されます。 <img src="assets/start.Bd4WKWYg.png" alt="Startright"></p><h2 id="はじめに" tabindex="-1">はじめに <a class="header-anchor" href="#はじめに" aria-label="Permalink to &quot;はじめに&quot;">​</a></h2><p>文化祭準備委員会　総務部門ないしはそれに類する部門の部門長・副部門長を引き受けてくださり、ありがとうございます。 2025 年度文化祭準備委員会　総務部門長の小川です。 紫紺祭では 2025 年度より、教室展示等の各賞を決定する際に生徒・来校者双方へ行われる投票を円滑に運営するため、電子システムによる集計を開発・導入しました。このチュートリアルでは、本システムを各年度用に日程や投票先をカスタムする際に必要となる進め方・知識を解説しています。ぜひ、最後まで目を通していただき、円滑な投票運営へお役立てください。 また、本チュートリアルを読んだうえで質問等がある場合には、<a href="mailto:mamouna.inori@outlook.jp" target="_blank" rel="noreferrer">このメールアドレス</a>まで連絡をしてください。</p><div class="warning custom-block"><p class="custom-block-title">注意</p><p>紫紺祭関連であることがわからない場合、迷惑メールとして読み捨てる場合がありますのでご注意ください。</p></div><h2 id="開発者モードの有効化" tabindex="-1">開発者モードの有効化 <a class="header-anchor" href="#開発者モードの有効化" aria-label="Permalink to &quot;開発者モードの有効化&quot;">​</a></h2><ol><li>Windows の設定を開き、左側のメニューから<code>システム</code>を選択します。</li><li>その中から、<code>開発者向け</code>を選択します。</li><li><code>開発者モード</code>を有効にします。</li><li>下にスクロールし、 <code>PowerShell</code> の項目をクリックして展開、<code>署名せずに実行するローカル PowerShell スクリプトを許可するように、実行ポリシーを変更します。リモートスクリプトには署名が必要です。</code>を有効にします。</li></ol><p><img src="assets/DevMode.D4sX2YeY.png" alt="開発者モード" title="Dev Mode Setting"></p><h2 id="git-のインストール・設定" tabindex="-1">Git のインストール・設定 <a class="header-anchor" href="#git-のインストール・設定" aria-label="Permalink to &quot;Git のインストール・設定&quot;">​</a></h2><h3 id="git-のインストール" tabindex="-1">Git のインストール <a class="header-anchor" href="#git-のインストール" aria-label="Permalink to &quot;Git のインストール&quot;">​</a></h3><ol><li><a href="https://git-scm.com/downloads" target="_blank" rel="noreferrer">Git のダウンロードページ</a>にアクセスし、右側にある<code>Download for Windows</code>をクリックします。</li><li>次のページに飛ぶので、本文の一番上にある<code>Click here to download</code>をクリックします。</li><li><code>Git-(バージョン名)-64-bit.exe</code> がダウンロードされるので、それをダブルクリックして起動します。</li><li>このような画面が表示されたら、画面右下の <code>Next</code> を連打して、インストールを完了させてください。特に途中で設定を変更する必要はありません。</li></ol><p><img src="assets/GitInstaller.BSCqRlN5.png" alt="GitInstaller" title="Git Installer"></p><h3 id="git-の初期設定" tabindex="-1">Git の初期設定 <a class="header-anchor" href="#git-の初期設定" aria-label="Permalink to &quot;Git の初期設定&quot;">​</a></h3><ol><li>タスクバーのWindowsロゴ(4つの窓が並んだアイコン)を右クリックし、<code>ターミナル(管理者)</code>をクリックします。</li><li>ターミナルのウィンドウが表示されるので、以下の2行を入力・コピペし、<kbd>Enter</kbd>を押して実行します。</li></ol><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> config</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --global</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> user.email</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Meiji.hs.vote@gmail.com</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">git</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> config</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --global</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> user.name</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> ShikonFes_Sohmu</span></span></code></pre></div><p>以上で、Git の初期設定は完了です。(Gitからの出力はありません。)</p><h2 id="flutter-sdkのインストール" tabindex="-1">Flutter SDKのインストール <a class="header-anchor" href="#flutter-sdkのインストール" aria-label="Permalink to &quot;Flutter SDKのインストール&quot;">​</a></h2><ol><li><a href="https://docs.flutter.dev/get-started/install/windows/web" target="_blank" rel="noreferrer">Flutter SDKのダウンロードページ</a>にアクセスし、 <strong>Install the Flutter SDK</strong> の見出しの項にある「 Download and install 」を押します。 <img src="assets/FlutterWebPage.D_jbc5YP.png" alt="FlutterWebPage" title="Flutter Web Page"></li><li>その下にある青いボタン「flutter_windows_(バージョン名)-stable.zip」を押し、 Zip ファイルをダウンロードします。</li><li>ダウンロードした Zip ファイルを開き、中にある「<code>flutter</code>」フォルダを<code>C:\</code>以下にコピーします。</li></ol><div class="tip custom-block"><p class="custom-block-title">ヒント</p><p>エクスプローラー上部の「ダウンロード &gt; flutter_windows_3.35.4-stable」が書かれているところに、<code>C:\</code>と入力すると、<code>C:\</code>に飛ぶことができるので、そこに展開した<code>Flutter</code>フォルダを貼り付けるとよいです。</p></div><h2 id="環境変数の設定" tabindex="-1">環境変数の設定 <a class="header-anchor" href="#環境変数の設定" aria-label="Permalink to &quot;環境変数の設定&quot;">​</a></h2><p>先ほどダウンロードし、<code>C:\Flutter</code>以下、または任意の場所へ展開したフォルダ内の<code>bin</code>フォルダを環境変数へ登録します。</p><ol><li>フォルダ構造の確認 先ほどコピーした<code>flutter</code>フォルダから<code>bin</code>というフォルダを探し、右クリックメニューから<code>パスをコピー</code>を選択します。 <img src="assets/RightClick.CV2cHnzB.png" alt="右クリックメニュー"></li><li>スタート右クリックから、<code>システム</code>を選択し、表示された設定ウィンドウから<code>システムの詳細設定</code>を探します。</li><li>このようなウィンドウが表示されたら、右下の<code>環境変数(N)...</code>をクリックします。 <img src="assets/property.BmjdlUIr.png" alt="System"></li><li>このようなウィンドウが表示されるので、下の<code>システム環境変数</code>のリストの中から、<code>Path</code>という項目を探し、クリックして青く選択された状態にしたら、右下の<code>編集(I)...</code>をクリックします。 <img src="assets/env.Hp_8UFTg.png" alt="env"></li><li>このようなウィンドウが表示されたら、右側の<code>新規(N)</code>をクリックし、先ほどコピーしたパスを貼り付けます。 <img src="assets/sysenv.C2Ri9oDt.png" alt="sysenv"></li></ol><div class="warning custom-block"><p class="custom-block-title">注意</p><p>貼り付けた際に一緒についてくる<code>&quot;&quot;</code>(ダブルクォーテーション)は必ず削除してください。</p></div><p>以下のような状態になればOKです。ここではやっていませんが、右側の<code>上へ(U)</code>を連打して、今追加したものが一番上になるように設定しておくと安定しやすいです。作業が完了したら、パソコンを再起動してください。 <img src="assets/fluttersysenv.Bc1Gs3Ho.png" alt="fluttersysenv"></p><h2 id="確認" tabindex="-1">確認 <a class="header-anchor" href="#確認" aria-label="Permalink to &quot;確認&quot;">​</a></h2><ol><li>スタート右クリックから、<code>ターミナル(管理者)</code>をクリックします。</li><li>ターミナルウィンドウが表示されるので、<code>flutter</code>と入力します。</li><li>成功していたら、以下のような出力がされます。(あくまで例です。)<code>flutter : 用語 &#39;flutter&#39; は、コマンドレット、関数、スクリプト ファイル、または操作可能なプログラムの名前として認識されません。</code>と表示される場合、どこかで間違っているのでよく見直してもう一度設定してみてください。</li></ol><div class="language-bash vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">bash</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Manage</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> your</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> development.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Common</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> commands:</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> create</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">output</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> director</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">y</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    Create</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> new</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> project</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> in</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> specified</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> directory.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> run</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [options]</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    Run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> your</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> application</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> on</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> attached</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> device</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> in</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> emulator.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Usage:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flutter</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;"> &lt;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">comman</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">d</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">&gt;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> [arguments]</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Global</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> options:</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">-h,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --help</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">                  Print</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> this</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> usage</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> information.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">-v,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --verbose</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">               Noisy</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> logging,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> including</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> all</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> shell</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> commands</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> executed.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">                            If</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> used</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> with</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;--help&quot;,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> shows</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> hidden</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> options.</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> If</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> used</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> with</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;flutter doctor&quot;,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> shows</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> additional</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">                            diagnostic</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> information.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (Use </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">&quot;-vv&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> to</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> force</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> verbose</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> logging</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> in</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> those</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> cases.</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">)</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">-d,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;"> --device-id</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">             Target</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> device</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> id</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> (prefixes </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">allowed</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">).</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    --version</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">               Reports</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> version</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> of</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> this</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> tool.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    --enable-analytics</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">      Enable</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> telemetry</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> reporting</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> each</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> time</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> dart</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> command</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> runs.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    --disable-analytics</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">     Disable</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> telemetry</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> reporting</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> each</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> time</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> dart</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> command</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> runs,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> until</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> it</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> is</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">                            re-enabled.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">    --suppress-analytics</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    Suppress</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> analytics</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> reporting</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> current</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> CLI</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> invocation.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Available</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> commands:</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> SDK</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  bash-completion</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">   Output</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> command</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> line</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> shell</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> completion</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> setup</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> scripts.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  channel</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">           List</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> switch</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> channels.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  config</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            Configure</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> settings.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  doctor</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            Show</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> information</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> about</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> installed</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> tooling.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  downgrade</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">         Downgrade</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> to</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> last</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> active</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> version</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> current</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> channel.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  precache</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          Populate</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> tool&#39;s cache of binary artifacts.</span></span>
-<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">  upgrade           Upgrade your copy of Flutter.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">Project</span></span>
-<span class="line"><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">  analyze           Analyze the project&#39;s</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Dart</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> code.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  assemble</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          Assemble</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> build</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> resources.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  build</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">             Build</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> executable</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> or</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> install</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> bundle.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  clean</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">             Delete</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> build/</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> .dart_tool/</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> directories.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  create</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            Create</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> new</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> project.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  drive</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">             Builds</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> installs</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> runs</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Dart</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> program</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> that</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> connects</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> to</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> often</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> to</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> run</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">                    externally</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> facing</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> integration</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> tests,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> such</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> as</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> with</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> package:test</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> package:flutter_driver.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  gen-l10n</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">          Generate</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> localizations</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> current</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> project.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  pub</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">               Commands</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> managing</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> packages.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">               Run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> your</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> on</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> attached</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> device.</span></span>
-<span class="line"><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">  test</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">              Run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> unit</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> tests</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> the</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> current</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> project.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Tools</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> &amp; </span><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Devices</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  attach</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">            Attach</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> to</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> running</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  custom-devices</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">    List,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> reset,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> add</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> delete</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> custom</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> devices.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  devices</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">           List</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> all</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> connected</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> devices.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  emulators</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">         List,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> launch</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> and</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> create</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> emulators.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  install</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">           Install</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> on</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> attached</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> device.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  logs</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">              Show</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> log</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> output</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> running</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> apps.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  screenshot</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">        Take</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> screenshot</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> from</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> connected</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> device.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">  symbolize</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;">         Symbolize</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> stack</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> trace</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> from</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> an</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> AOT-compiled</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> Flutter</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> app.</span></span>
-<span class="line"></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;flutter help &lt;command&gt;&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> more</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> information</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> about</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> a</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> command.</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">Run</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> &quot;flutter help -v&quot;</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> for</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> verbose</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> help</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> output,</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> including</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> less</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> commonly</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> used</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> options.</span></span></code></pre></div><h2 id="node-jsのインストール" tabindex="-1">node.jsのインストール <a class="header-anchor" href="#node-jsのインストール" aria-label="Permalink to &quot;node.jsのインストール&quot;">​</a></h2><ol><li><a href="https://nodejs.org/ja/download" target="_blank" rel="noreferrer">node.js のダウンロードページ</a>にアクセスし、下のほうの<code>x64 アーキテクチャーで動作する Windows 用のビルド済みの Node.js® も利用できます。</code>と書いてあるところまでスクロールします。</li><li>左側の<code>Windows インストーラー(.msi)</code>をクリックし、インストーラーをダウンロードします。 <img src="assets/node-web-page.BrxoPfrq.png" alt="node"></li><li><code>node-(バージョン名)-x64.msi</code>がダウンロードされるので、それをダブルクリックして起動します。</li><li>このような画面が表示されたら、画面右下の<code>Next</code>を連打して、インストールを完了させてください。最初の<code>Licence Agreement</code>以外、特に設定を変更する必要はありません。 <img src="assets/nodeinstaller.CCYhVUJK.png" alt="node"></li></ol></div></div></main><footer class="VPDocFooter" data-v-633c7955 data-v-bedd17b5><!--[--><!--]--><!----><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-bedd17b5><span class="visually-hidden" id="doc-footer-aria-label" data-v-bedd17b5>Pager</span><div class="pager" data-v-bedd17b5><a class="VPLink link pager-link prev" href="about.html" data-v-bedd17b5><!--[--><span class="desc" data-v-bedd17b5>Previous page</span><span class="title" data-v-bedd17b5>紫紺祭投票アプリとは？</span><!--]--></a></div><div class="pager" data-v-bedd17b5><a class="VPLink link pager-link next" href="clone.html" data-v-bedd17b5><!--[--><span class="desc" data-v-bedd17b5>Next page</span><span class="title" data-v-bedd17b5>ソースコードのクローン</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div>
-    <script>window.__VP_HASH_MAP__=JSON.parse("{\"about.md\":\"CiHCMh8d\",\"api-examples.md\":\"mVX18SD3\",\"build.md\":\"CfEvGStE\",\"change-config.md\":\"ClV55xvP\",\"clone.md\":\"DOT-8V9H\",\"getting-started.md\":\"DbwTj69T\",\"index.md\":\"BX_UjJoJ\",\"installation.md\":\"BmIcTLIt\",\"markdown-examples.md\":\"C25xHo9U\",\"specification.md\":\"B5dKMySs\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"ja-JP\",\"dir\":\"ltr\",\"title\":\"紫紺祭投票アプリ\",\"description\":\"A VitePress site\",\"base\":\"/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":true,\"themeConfig\":{},\"locales\":{},\"scrollOffset\":134,\"cleanUrls\":false}");</script>
-    
+    <header class="app-header">
+        <div class="wrap">
+            <div class="branding">
+                <span class="app-title">紫紺祭投票アプリ</span>
+                <span class="separator">／</span>
+                <span class="page-title">環境構築</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <section class="card">
+            <h1>環境構築</h1>
+            <p>
+                文化祭準備委員会　総務部門ないしはそれに類する部門の部門長・副部門長を引き受けてくださり、ありがとうございます。
+                2025年度文化祭準備委員会　総務部門長の小川です。
+            </p>
+            <p>
+                紫紺祭では2025年度より、教室展示等の各賞を決定する際に生徒・来校者双方へ行われる投票を円滑に運営するため、
+                電子システムによる集計を開発・導入しました。このチュートリアルでは、本システムを各年度用に日程や投票先をカスタムする際に必要となる進め方・知識を解説しています。ぜひ、最後まで目を通していただき、円滑な投票運営へお役立てください。
+            </p>
+            <p>
+                また、本チュートリアルを読んだうえで質問等がある場合には、<a href="mailto:mamouna.inori@outlook.jp">このメールアドレス</a>まで連絡をしてください。
+            </p>
+            <div class="card" style="background: #f8d7da; border-color: #f5c6cb;">
+                <h3>注意</h3>
+                <p>紫紺祭関連であることがわからない場合、迷惑メールとして読み捨てる場合がありますのでご注意ください。</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>必要なものを用意する</h2>
+            <p>紫紺祭投票アプリの設定を行うには、以下の要件を満たしたデバイス等が必要です。</p>
+            <ul>
+                <li>64ビットバージョンの Windows 10 または Windows 11 を搭載したパソコン</li>
+                <li>Google 認証システムがインストールされたスマートフォン</li>
+                <li>Google 認証システム用の QR コードが記された紙</li>
+            </ul>
+            <div class="card" style="background: #fff3cd; border-color: #ffeaa7;">
+                <h3>ヒント</h3>
+                <p>高校Ⅰ年次に購入する学習用ノートPCで正常に動作することを確認しています。5GB以上の空き容量が必要です。</p>
+            </div>
+            <div class="card" style="background: #f8d7da; border-color: #f5c6cb;">
+                <h3>注意</h3>
+                <p>引継ぎ時に渡されていない場合は、担当教員の先生に相談するか、<a href="mailto:mamouna.inori@outlook.jp">このメールアドレス</a>まで連絡をしてください。</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>必要な知識</h2>
+            <h3>Windows の基本・応用操作</h3>
+            <p>
+                このチュートリアルでは、Windows 11 を使用します。設定やエクスプローラーの開き方、エクスプローラー画面各部の名称をご存じない場合は、
+                まず検索エンジンを使って最低限の操作方法を勉強されることをおすすめします。
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>本項で略して使う言葉</h2>
+            <p><strong>「スタート右クリック」</strong>：タスクバーにあるWindowsロゴ(青い田のロゴ)を右クリックしたメニューを開くこと。画像のようなメニューが表示されます。</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/start.Bd4WKWYg.png" alt="スタート右クリックメニュー" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">スタート右クリックメニュー</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>開発者モードの有効化</h2>
+            <ol>
+                <li>Windows の設定を開き、左側のメニューから<code>システム</code>を選択します。</li>
+                <li>その中から、<code>開発者向け</code>を選択します。</li>
+                <li><code>開発者モード</code>を有効にします。</li>
+                <li>下にスクロールし、<code>PowerShell</code>の項目をクリックして展開、<code>署名せずに実行するローカル PowerShell スクリプトを許可するように、実行ポリシーを変更します。リモートスクリプトには署名が必要です。</code>を有効にします。</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/DevMode.D4sX2YeY.png" alt="開発者モード設定画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">開発者モード設定画面</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Git のインストール・設定</h2>
+            <h3>Git のインストール</h3>
+            <ol>
+                <li><a href="https://git-scm.com/downloads" target="_blank" rel="noopener">Git のダウンロードページ</a>にアクセスし、右側にある<code>Download for Windows</code>をクリックします。</li>
+                <li>次のページに飛ぶので、本文の一番上にある<code>Click here to download</code>をクリックします。</li>
+                <li><code>Git-(バージョン名)-64-bit.exe</code>がダウンロードされるので、それをダブルクリックして起動します。</li>
+                <li>このような画面が表示されたら、画面右下の<code>Next</code>を連打して、インストールを完了させてください。特に途中で設定を変更する必要はありません。</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/GitInstaller.BSCqRlN5.png" alt="Gitインストーラー画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Gitインストーラー画面</p>
+            </div>
+
+            <h3>Git の初期設定</h3>
+            <ol>
+                <li>タスクバーのWindowsロゴ(4つの窓が並んだアイコン)を右クリックし、<code>ターミナル(管理者)</code>をクリックします。</li>
+                <li>ターミナルのウィンドウが表示されるので、以下の2行を入力・コピペし、<kbd>Enter</kbd>を押して実行します。</li>
+            </ol>
+            <pre><code>git config --global user.email Meiji.hs.vote@gmail.com
+git config --global user.name ShikonFes_Sohmu</code></pre>
+            <p>以上で、Git の初期設定は完了です。(Gitからの出力はありません。)</p>
+        </section>
+
+        <section class="card">
+            <h2>Flutter SDKのインストール</h2>
+            <ol>
+                <li><a href="https://docs.flutter.dev/get-started/install/windows/web" target="_blank" rel="noopener">Flutter SDKのダウンロードページ</a>にアクセスし、<strong>Install the Flutter SDK</strong>の見出しの項にある「Download and install」を押します。</li>
+                <li>その下にある青いボタン「flutter_windows_(バージョン名)-stable.zip」を押し、Zipファイルをダウンロードします。</li>
+                <li>ダウンロードしたZipファイルを開き、中にある「<code>flutter</code>」フォルダを<code>C:\</code>以下にコピーします。</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/FlutterWebPage.D_jbc5YP.png" alt="Flutter SDKダウンロードページ" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Flutter SDKダウンロードページ</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>環境変数の設定</h2>
+            <p>先ほどダウンロードし、<code>C:\Flutter</code>以下、または任意の場所へ展開したフォルダ内の<code>bin</code>フォルダを環境変数へ登録します。</p>
+            <ol>
+                <li>フォルダ構造の確認：先ほどコピーした<code>flutter</code>フォルダから<code>bin</code>というフォルダを探し、右クリックメニューから<code>パスをコピー</code>を選択します。</li>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="assets/RightClick.CV2cHnzB.png" alt="右クリックメニュー" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">右クリックメニュー</p>
+                </div>
+                <li>スタート右クリックから、<code>システム</code>を選択し、表示された設定ウィンドウから<code>システムの詳細設定</code>を探します。</li>
+                <li>このようなウィンドウが表示されたら、右下の<code>環境変数(N)...</code>をクリックします。</li>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="assets/Property.BmjdlUIr.png" alt="システムの詳細設定画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">システムの詳細設定画面</p>
+                </div>
+                <li>このようなウィンドウが表示されるので、下の<code>システム環境変数</code>のリストの中から、<code>Path</code>という項目を探し、クリックして青く選択された状態にしたら、右下の<code>編集(I)...</code>をクリックします。</li>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="assets/env.Hp_8UFTg.png" alt="環境変数画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">環境変数画面</p>
+                </div>
+                <li>このようなウィンドウが表示されたら、右側の<code>新規(N)</code>をクリックし、先ほどコピーしたパスを貼り付けます。</li>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="assets/sysenv.C2Ri9oDt.png" alt="システム環境変数画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">システム環境変数画面</p>
+                </div>
+            </ol>
+            <div class="card" style="background: #f8d7da; border-color: #f5c6cb;">
+                <h3>注意</h3>
+                <p>貼り付けた際に一緒についてくる<code>""</code>(ダブルクォーテーション)は必ず削除してください。</p>
+            </div>
+            <p>以下のような状態になればOKです。ここではやっていませんが、右側の<code>上へ(U)</code>を連打して、今追加したものが一番上になるように設定しておくと安定しやすいです。作業が完了したら、パソコンを再起動してください。</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/fluttersysenv.Bc1Gs3Ho.png" alt="Flutter環境変数設定完了画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Flutter環境変数設定完了画面</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>node.jsのインストール</h2>
+            <ol>
+                <li><a href="https://nodejs.org/ja/download" target="_blank" rel="noopener">node.js のダウンロードページ</a>にアクセスし、下のほうの<code>x64 アーキテクチャーで動作する Windows 用のビルド済みの Node.js® も利用できます。</code>と書いてあるところまでスクロールします。</li>
+                <li>左側の<code>Windows インストーラー(.msi)</code>をクリックし、インストーラーをダウンロードします。</li>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="assets/node-web-page.BrxoPfrq.png" alt="Node.jsダウンロードページ" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Node.jsダウンロードページ</p>
+                </div>
+                <li><code>node-(バージョン名)-x64.msi</code>がダウンロードされるので、それをダブルクリックして起動します。</li>
+                <li>このような画面が表示されたら、画面右下の<code>Next</code>を連打して、インストールを完了させてください。最初の<code>Licence Agreement</code>以外、特に設定を変更する必要はありません。</li>
+            </ol>
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="assets/NodeInstaller.CCYhVUJK.png" alt="Node.jsインストーラー画面" style="max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 8px;">
+                <p style="color: var(--muted); font-size: 0.9rem; margin-top: 8px;">Node.jsインストーラー画面</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>確認</h2>
+            <ol>
+                <li>スタート右クリックから、<code>ターミナル(管理者)</code>をクリックします。</li>
+                <li>ターミナルウィンドウが表示されるので、<code>flutter</code>と入力します。</li>
+                <li>成功していたら、以下のような出力がされます。(あくまで例です。)<code>flutter : 用語 'flutter' は、コマンドレット、関数、スクリプト ファイル、または操作可能なプログラムの名前として認識されません。</code>と表示される場合、どこかで間違っているのでよく見直してもう一度設定してみてください。</li>
+            </ol>
+            <pre><code>Manage your Flutter app development.
+
+Common commands:
+
+  flutter create <output directory>
+    Create a new Flutter project in the specified directory.
+
+  flutter run [options]
+    Run your Flutter application on an attached device or in an emulator.
+
+Usage: flutter <command> [arguments]
+
+Global options:
+-h, --help                  Print this usage information.
+-v, --verbose               Noisy logging, including all shell commands executed.
+                            If used with "--help", shows hidden options. If used with "flutter doctor", shows additional
+                            diagnostic information. (Use "-vv" to force verbose logging in those cases.)
+-d, --device-id             Target device id or name (prefixes allowed).
+    --version               Reports the version of this tool.
+    --enable-analytics      Enable telemetry reporting each time a flutter or dart command runs.
+    --disable-analytics     Disable telemetry reporting each time a flutter or dart command runs, until it is
+                            re-enabled.
+    --suppress-analytics    Suppress analytics reporting for the current CLI invocation.
+
+Available commands:
+
+Flutter SDK
+  bash-completion   Output command line shell completion setup scripts.
+  channel           List or switch Flutter channels.
+  config            Configure Flutter settings.
+  doctor            Show information about the installed tooling.
+  downgrade         Downgrade Flutter to the last active version for the current channel.
+  precache          Populate the Flutter tool's cache of binary artifacts.
+  upgrade           Upgrade your copy of Flutter.
+
+Project
+  analyze           Analyze the project's Dart code.
+  assemble          Assemble and build Flutter resources.
+  build             Build an executable app or install bundle.
+  clean             Delete the build/ and .dart_tool/ directories.
+  create            Create a new Flutter project.
+  drive             Builds and installs the app, and runs a Dart program that connects to the app, often to run
+                    externally facing integration tests, such as with package:test and package:flutter_driver.
+  gen-l10n          Generate localizations for the current project.
+  pub               Commands for managing Flutter packages.
+  run               Run your Flutter app on an attached device.
+  test              Run Flutter unit tests for the current project.
+
+Tools & Devices
+  attach            Attach to a running app.
+  custom-devices    List, reset, add and delete custom devices.
+  devices           List all connected devices.
+  emulators         List, launch and create emulators.
+  install           Install a Flutter app on an attached device.
+  logs              Show log output for running Flutter apps.
+  screenshot        Take a screenshot from a connected device.
+  symbolize         Symbolize a stack trace from an AOT-compiled Flutter app.
+
+Run "flutter help <command>" for more information about a command.
+Run "flutter help -v" for verbose help output, including less commonly used options.</code></pre>
+        </section>
+
+        <div class="nav-links">
+            <a href="about.html" class="nav-link secondary">← 戻る</a>
+            <a href="clone.html" class="nav-link">次へ →</a>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="wrap">
+            <small>© <span id="year"></span> Meiji University Meiji High School & Meiji Junior High School Student Council</small>
+            <br>
+            <small>© <span id="year"></span> <a href="https://x.com/Mamouna_inori">Mamouna_Inori</a></small>
+        </div>
+    </footer>
+
+    <script src="./script.js"></script>
   </body>
 </html>
