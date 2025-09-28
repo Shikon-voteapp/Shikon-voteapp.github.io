@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫紺祭投票アプリ - Shikon Fes Vote App Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            border: none;
+        }
+        .tagline {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-brand {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-brand:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn-alt {
+            background-color: transparent;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+        .btn-alt:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .feature {
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .feature p {
+            color: #666;
+            line-height: 1.5;
+        }
+        .navigation {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        .nav-link:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>紫紺祭投票アプリ</h1>
+            <p class="tagline">Shikon Fes Vote App Guide</p>
+            <div class="actions">
+                <a href="about.html" class="btn btn-brand">Get Started！</a>
+                <a href="https://github.com/Shikon-voteapp/Shikon-voteapp.github.io" class="btn btn-alt">GitHub Repository</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>単一コードベースでマルチプラットフォーム</h3>
+                <p>Flutter製。Web/PWA配信に加え、ElectronでWindows配布も可能。サービスワーカーでオフライン動作に対応</p>
+            </div>
+            <div class="feature">
+                <h3>Firebase連携による安全なリアルタイム集計</h3>
+                <p>Firestore＋セキュリティルール／インデックスを備え、リアルタイム書き込み・集計を安全に実現。ホスティングとキャッシュ最適化で高速応答。</p>
+            </div>
+            <div class="feature">
+                <h3>運用しやすい設計とツール群</h3>
+                <p>models/services/screens/widgetsの分離構成、設定の外部化、PowerShell/Nodeスクリプトでビルド・デプロイ自動化。投票項目エディタやJSON→Excel変換ツールで運用負荷を削減。</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="installation.html" class="nav-link">事前準備</a>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>環境構築</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .navigation {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .nav-link:hover {
+            background-color: #2980b9;
+        }
+        .tip {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        strong {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="about.html" class="nav-link">紫紺祭投票アプリとは？</a>
+            <a href="clone.html" class="nav-link">ソースコードのクローン</a>
+        </div>
+
+        <h1>環境構築</h1>
+
+        <h2>必要なものを用意する</h2>
+        <p>紫紺祭投票アプリの設定を行うには、以下の要件を満たしたデバイス等が必要です。</p>
+        <ul>
+            <li>64ビットバージョンの Windows 10 または Windows 11 を搭載したパソコン</li>
+        </ul>
+        
+        <div class="tip">
+            <strong>ヒント</strong><br>
+            高校Ⅰ年次に購入する学習用ノートPCで正常に動作することを確認しています。<br>
+            5GB 以上の空き容量が必要です。
+        </div>
+        
+        <ul>
+            <li>Google 認証システムがインストールされたスマートフォン</li>
+            <li>Google 認証システム用の QR コードが記された紙</li>
+        </ul>
+        
+        <div class="warning">
+            <strong>注意</strong><br>
+            引継ぎ時に渡されていない場合は、担当教員の先生に相談するか、<a href="mailto:mamouna.inori@outlook.jp">このメールアドレス</a>まで連絡をしてください。
+        </div>
+
+        <h2>必要な知識</h2>
+        <h3>Windows の基本・応用操作</h3>
+        <p>このチュートリアルでは、Windows 11 を使用します。設定やエクスプローラーの開き方、エクスプローラー画面各部の名称をご存じない場合は、まず検索エンジンを使って最低限の操作方法を勉強されることをおすすめします。</p>
+
+        <h2>本項で略して使う言葉</h2>
+        <p><strong>「スタート右クリック」</strong>：タスクバーにあるWindowsロゴ(青い田のロゴ)を右クリックしたメニューを開くこと。画像のようなメニューが表示されます。</p>
+        <img src="img/start.png" alt="スタート右クリックメニュー" class="image">
+
+        <h2>はじめに</h2>
+        <p>文化祭準備委員会　総務部門ないしはそれに類する部門の部門長・副部門長を引き受けてくださり、ありがとうございます。 2025 年度文化祭準備委員会　総務部門長の小川です。</p>
+        <p>紫紺祭では 2025 年度より、教室展示等の各賞を決定する際に生徒・来校者双方へ行われる投票を円滑に運営するため、電子システムによる集計を開発・導入しました。このチュートリアルでは、本システムを各年度用に日程や投票先をカスタムする際に必要となる進め方・知識を解説しています。ぜひ、最後まで目を通していただき、円滑な投票運営へお役立てください。</p>
+        <p>また、本チュートリアルを読んだうえで質問等がある場合には、<a href="mailto:mamouna.inori@outlook.jp">このメールアドレス</a>まで連絡をしてください。</p>
+        
+        <div class="warning">
+            <strong>注意</strong><br>
+            紫紺祭関連であることがわからない場合、迷惑メールとして読み捨てる場合がありますのでご注意ください。
+        </div>
+
+        <h2>開発者モードの有効化</h2>
+        <ol>
+            <li>Windows の設定を開き、左側のメニューから<code>システム</code>を選択します。</li>
+            <li>その中から、<code>開発者向け</code>を選択します。</li>
+            <li><code>開発者モード</code>を有効にします。</li>
+            <li>下にスクロールし、 <code>PowerShell</code> の項目をクリックして展開、<code>署名せずに実行するローカル PowerShell スクリプトを許可するように、実行ポリシーを変更します。リモートスクリプトには署名が必要です。</code>を有効にします。</li>
+        </ol>
+
+        <img src="img/DevMode.png" alt="開発者モード設定" class="image">
+
+        <h2>Git のインストール・設定</h2>
+        <h3>Git のインストール</h3>
+        <ol>
+            <li><a href="https://git-scm.com/downloads">Git のダウンロードページ</a>にアクセスし、右側にある<code> Download for Windows </code>をクリックします。</li>
+            <li>次のページに飛ぶので、本文の一番上にある<code> Click here to download </code>をクリックします。</li>
+            <li><code>Git-(バージョン名)-64-bit.exe</code> がダウンロードされるので、それをダブルクリックして起動します。</li>
+            <li>このような画面が表示されたら、画面右下の <code>Next</code> を連打して、インストールを完了させてください。特に途中で設定を変更する必要はありません。</li>
+        </ol>
+
+        <img src="img/GitInstaller.png" alt="Gitインストーラー" class="image">
+
+        <h3>Git の初期設定</h3>
+        <ol>
+            <li>タスクバーのWindowsロゴ(4つの窓が並んだアイコン)を右クリックし、<code>ターミナル(管理者)</code>をクリックします。</li>
+            <li>ターミナルのウィンドウが表示されるので、以下の2行を入力・コピペし、<kbd>Enter</kbd>を押して実行します。</li>
+        </ol>
+        
+        <div class="code-block">git config --global user.email Meiji.hs.vote@gmail.com
+git config --global user.name ShikonFes_Sohmu</div>
+        
+        <p>以上で、Git の初期設定は完了です。(Gitからの出力はありません。)</p>
+
+        <h2>Flutter SDKのインストール</h2>
+        <ol>
+            <li><a href="https://docs.flutter.dev/get-started/install/windows/web">Flutter SDKのダウンロードページ</a>にアクセスし、 <strong>Install the Flutter SDK</strong> の見出しの項にある「 Download and install 」を押します。</li>
+        </ol>
+        <img src="img/FlutterWebPage.png" alt="Flutter Web Page" class="image">
+        
+        <ol start="2">
+            <li>その下にある青いボタン「flutter_windows_(バージョン名)-stable.zip」を押し、 Zip ファイルをダウンロードします。</li>
+            <li>ダウンロードした Zip ファイルを開き、中にある「<code>flutter</code>」フォルダを<code>C:\</code>以下にコピーします。</li>
+        </ol>
+        
+        <div class="tip">
+            <strong>ヒント</strong><br>
+            エクスプローラー上部の「ダウンロード > flutter_windows_3.35.4-stable」が書かれているところに、<code>C:\</code>と入力すると、<code>C:\</code>に飛ぶことができるので、そこに展開した<code>Flutter</code>フォルダを貼り付けるとよいです。
+        </div>
+
+        <h2>環境変数の設定</h2>
+        <p>先ほどダウンロードし、<code>C:\Flutter</code>以下、または任意の場所へ展開したフォルダ内の<code>bin</code>フォルダを環境変数へ登録します。</p>
+        
+        <h3>1. フォルダ構造の確認</h3>
+        <p>先ほどコピーした<code>flutter</code>フォルダから<code>bin</code>というフォルダを探し、右クリックメニューから<code>パスをコピー</code>を選択します。</p>
+        <img src="img/RightClick.png" alt="右クリックメニュー" class="image">
+        
+        <h3>2. 環境変数の設定</h3>
+        <ol>
+            <li>スタート右クリックから、<code>システム</code>を選択し、表示された設定ウィンドウから<code>システムの詳細設定</code>を探します。</li>
+            <li>このようなウィンドウが表示されたら、右下の<code>環境変数(N)...</code>をクリックします。</li>
+        </ol>
+        <img src="img/property.png" alt="システムプロパティ" class="image">
+        
+        <ol start="3">
+            <li>このようなウィンドウが表示されるので、下の<code>システム環境変数</code>のリストの中から、<code>Path</code>という項目を探し、クリックして青く選択された状態にしたら、右下の<code>編集(I)...</code>をクリックします。</li>
+        </ol>
+        <img src="img/env.png" alt="環境変数" class="image">
+        
+        <ol start="4">
+            <li>このようなウィンドウが表示されたら、右側の<code>新規(N)</code>をクリックし、先ほどコピーしたパスを貼り付けます。</li>
+        </ol>
+        <img src="img/sysenv.png" alt="システム環境変数" class="image">
+        
+        <div class="warning">
+            <strong>注意</strong><br>
+            貼り付けた際に一緒についてくる<code>""</code>(ダブルクォーテーション)は必ず削除してください。
+        </div>
+        
+        <p>以下のような状態になればOKです。ここではやっていませんが、右側の<code>上へ(U)</code>を連打して、今追加したものが一番上になるように設定しておくと安定しやすいです。作業が完了したら、パソコンを再起動してください。</p>
+        <img src="img/fluttersysenv.png" alt="Flutter環境変数設定" class="image">
+
+        <h2>確認</h2>
+        <ol>
+            <li>スタート右クリックから、<code>ターミナル(管理者)</code>をクリックします。</li>
+            <li>ターミナルウィンドウが表示されるので、<code>flutter</code>と入力します。</li>
+            <li>成功していたら、以下のような出力がされます。(あくまで例です。)<code>flutter : 用語 'flutter' は、コマンドレット、関数、スクリプト ファイル、または操作可能なプログラムの名前として認識されません。</code>と表示される場合、どこかで間違っているのでよく見直してもう一度設定してみてください。</li>
+        </ol>
+        
+        <div class="code-block">Manage your Flutter app development.
+
+Common commands:
+
+  flutter create &lt;output directory&gt;
+    Create a new Flutter project in the specified directory.
+
+  flutter run [options]
+    Run your Flutter application on an attached device or in an emulator.
+
+Usage: flutter &lt;command&gt; [arguments]
+
+Global options:
+-h, --help                  Print this usage information.
+-v, --verbose               Noisy logging, including all shell commands executed.
+                            If used with "--help", shows hidden options. If used with "flutter doctor", shows additional
+                            diagnostic information. (Use "-vv" to force verbose logging in those cases.)
+-d, --device-id             Target device id or name (prefixes allowed).
+    --version               Reports the version of this tool.
+    --enable-analytics      Enable telemetry reporting each time a flutter or dart command runs.
+    --disable-analytics     Disable telemetry reporting each time a flutter or dart command runs, until it is
+                            re-enabled.
+    --suppress-analytics    Suppress analytics reporting for the current CLI invocation.
+
+Available commands:
+
+Flutter SDK
+  bash-completion   Output command line shell completion setup scripts.
+  channel           List or switch Flutter channels.
+  config            Configure Flutter settings.
+  doctor            Show information about the installed tooling.
+  downgrade         Downgrade Flutter to the last active version for the current channel.
+  precache          Populate the Flutter tool's cache of binary artifacts.
+  upgrade           Upgrade your copy of Flutter.
+
+Project
+  analyze           Analyze the project's Dart code.
+  assemble          Assemble and build Flutter resources.
+  build             Build an executable app or install bundle.
+  clean             Delete the build/ and .dart_tool/ directories.
+  create            Create a new Flutter project.
+  drive             Builds and installs the app, and runs a Dart program that connects to the app, often to run
+                    externally facing integration tests, such as with package:test and package:flutter_driver.
+  gen-l10n          Generate localizations for the current project.
+  pub               Commands for managing Flutter packages.
+  run               Run your Flutter app on an attached device.
+  test              Run Flutter unit tests for the current project.
+
+Tools &amp; Devices
+  attach            Attach to a running app.
+  custom-devices    List, reset, add and delete custom devices.
+  devices           List all connected devices.
+  emulators         List, launch and create emulators.
+  install           Install a Flutter app on an attached device.
+  logs              Show log output for running Flutter apps.
+  screenshot        Take a screenshot from a connected device.
+  symbolize         Symbolize a stack trace from an AOT-compiled Flutter app.
+
+Run "flutter help &lt;command&gt;" for more information about a command.
+Run "flutter help -v" for verbose help output, including less commonly used options.</div>
+
+        <h2>node.jsのインストール</h2>
+        <ol>
+            <li><a href="https://nodejs.org/ja/download">node.js のダウンロードページ</a>にアクセスし、下のほうの<code>x64 アーキテクチャーで動作する Windows 用のビルド済みの Node.js® も利用できます。</code>と書いてあるところまでスクロールします。</li>
+            <li>左側の<code>Windows インストーラー(.msi)</code>をクリックし、インストーラーをダウンロードします。</li>
+        </ol>
+        <img src="img/node-web-page.png" alt="Node.js Web Page" class="image">
+        
+        <ol start="3">
+            <li><code>node-(バージョン名)-x64.msi</code>がダウンロードされるので、それをダブルクリックして起動します。</li>
+            <li>このような画面が表示されたら、画面右下の<code>Next</code>を連打して、インストールを完了させてください。最初の<code>Licence Agreement</code>以外、特に設定を変更する必要はありません。</li>
+        </ol>
+        <img src="img/nodeinstaller.png" alt="Node.js Installer" class="image">
+    </div>
+</body>
+</html>
+

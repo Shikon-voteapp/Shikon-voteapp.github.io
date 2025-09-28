@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫紺祭投票アプリとは？</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .navigation {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+        .nav-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .nav-link:hover {
+            background-color: #2980b9;
+        }
+        .system-diagram {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+            overflow-x: auto;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navigation">
+            <a href="index.html" class="nav-link">ホーム</a>
+            <a href="installation.html" class="nav-link">環境構築</a>
+        </div>
+
+        <h1>紫紺祭投票アプリとは？</h1>
+        
+        <p>紫紺祭投票アプリは、明治大学付属明治中学校・明治高等学校の文化祭である「紫紺祭」においての展示投票を行うためのシステムです。Flutterをベースに動作し、Firebaseとの連携機能を用い、Google Cloudのサーバー上に投票データを保存します。</p>
+
+        <h2>機能</h2>
+        <p>紫紺祭投票アプリの最大の特徴は、その汎用性にあります。クロスプラットフォーム開発の代表的プラットフォームであるFlutterを採用しているため、1つのコードをベースにさまざまなプラットフォーム(例：iOS、Android、Web、Windows)でアプリケーションを動作させることができます。</p>
+
+        <p>また、コードを直接操作しなくてもデータのアップデートやメンテナンスが行えるよう、ビジュアルベースの設定ユーティリティも充実しています。</p>
+
+        <h2>システム体系図</h2>
+        <div class="system-diagram">┌─────────┐
+│  利用者  │
+└────┬────┘
+     │
+     ├───────────────┐
+     │               │
+┌────▼─────┐   ┌─────▼─────┐
+│ ブラウザ  │   │ Windows   │
+│  (PWA)   │   │ (Electron) │
+└────┬─────┘   └────┬───────┘
+     │               │
+     └──────┬────────┘
+            ▼
+      ┌──────────────────────┐
+      │ Flutter Web UI       │
+      │  lib/screens         │
+      │  lib/widgets         │
+      │  lib/models/services │
+      └─────┬────────────────┘
+            │
+┌───────────┴───────────────────────────────────────────────────────────────┐
+│                         配信/ホスティング（静的）                          │
+│  ┌──────────────────────┐   ┌──────────────────────────────────────────┐  │
+│  │ GitHub Pages         │←──│ docs/（mainブランチ）または gh-pages ブランチ│
+│  └──────────────────────┘   └──────────────────────────────────────────┘  │
+│  ┌────────────────────────────┐                                           │
+│  │ Service Worker（PWA/Cache）│  build 産物: index.html, main.dart.js 他   │
+│  └────────────────────────────┘                                           │
+└────────────────────────────────────────────────────────────────────────────┘
+            │
+            ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│                           バックエンド（データ）                           │
+│  ┌───────────┐   ┌──────────────────────┐                                  │
+│  │ Firestore │←→ │ lib/services/*       │  firestore.rules / indexes      │
+│  └───────────┘   └──────────────────────┘                                  │
+│  ┌──────────────────────────┐                                               │
+│  │ Data Connect（拡張/任意）│  /dataconnect/*                               │
+│  └──────────────────────────┘                                               │
+└───────────────────────────────────────────────────────────────────────────┘
+
+
+                         ┌─────────────────────┐
+                         │    運用 / ツール     │
+                         ├─────────────────────┤
+                         │ build.ps1           │
+                         │ docs/*（Pages用） │
+                         │ vote_options_editor │
+                         │ convert_json_to_xlsx│
+                         │ docs/guide (VitePress)
+                         └─────────────────────┘</div>
+    </div>
+</body>
+</html>
+
