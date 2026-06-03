@@ -299,9 +299,9 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildSmallSNSButton({
+Widget _buildSmallSNSButton({
     required BuildContext context,
-    required IconData icon,
+    required dynamic icon, // 変更点：標準アイコンとFontAwesome両方を受け取れるようにする
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
@@ -322,11 +322,15 @@ class BottomBar extends StatelessWidget {
       child: SizedBox(
         width: 28.0,
         height: 28.0,
-        child: Center(child: Icon(icon, color: iconColor, size: 14.0)),
+        child: Center(
+          // 変更点：アイコンの種類によって使うウィジェットを自動で切り替える
+          child: icon is IconData
+              ? Icon(icon, color: iconColor, size: 14.0)
+              : FaIcon(icon, color: iconColor, size: 14.0),
+        ),
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
