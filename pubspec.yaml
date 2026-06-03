@@ -41,7 +41,7 @@ dependencies:
   flutter_neumorphic_plus: ^3.3.0
   flutter_staggered_animations: ^1.1.1
   web: ^1.1.0
-font_awesome_flutter: any
+font_awesome_flutter: ^11.0.0
 
 flutter:
   uses-material-design: true
