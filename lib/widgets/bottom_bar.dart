@@ -1,6 +1,6 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
 import 'custom_dialog.dart';
@@ -186,7 +186,7 @@ class BottomBar extends StatelessWidget {
                       children: [
                         _buildSmallSNSButton(
                           context: context,
-                          icon: FontAwesome.x_twitter_brand,
+                          icon: FontAwesomeIcons.xTwitter,
                           onPressed:
                               () => PlatformUtils.openUrl(
                                 'https://x.com/meidai_meiji',
@@ -194,7 +194,7 @@ class BottomBar extends StatelessWidget {
                         ),
                         _buildSmallSNSButton(
                           context: context,
-                          icon: FontAwesome.instagram_brand,
+                          icon: FontAwesomeIcons.instagram,
                           onPressed:
                               () => PlatformUtils.openUrl(
                                 'https://www.instagram.com/meidai_meiji/',
@@ -234,7 +234,7 @@ class BottomBar extends StatelessWidget {
                       children: [
                         _buildSmallSNSButton(
                           context: context,
-                          icon: FontAwesome.x_twitter_brand,
+                          icon: FontAwesomeIcons.xTwitter,
                           onPressed:
                               () => PlatformUtils.openUrl(
                                 'https://x.com/Mamouna_inori',
@@ -242,7 +242,7 @@ class BottomBar extends StatelessWidget {
                         ),
                         _buildSmallSNSButton(
                           context: context,
-                          icon: FontAwesome.instagram_brand,
+                          icon: FontAwesomeIcons.instagram,
                           onPressed:
                               () => PlatformUtils.openUrl(
                                 'https://www.instagram.com/mamouna.inori/',
