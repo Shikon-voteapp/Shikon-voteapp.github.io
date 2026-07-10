@@ -29,7 +29,7 @@ Write-Host "3. Major version (1.0.0 -> 2.0.0)"
 Write-Host "4. Build number only (1.0.0.1 -> 1.0.0.2)"
 Write-Host "5. Skip version update"
 
-$choice = "3"
+$choice = Read-Host "`nSelect option (1-5)"
 
 switch ($choice) {
     "1" {
