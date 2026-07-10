@@ -11,6 +11,8 @@ import '../services/accessibility_service.dart';
 class BottomBar extends StatelessWidget {
   final VoidCallback? onBack;
   final VoidCallback? onNext;
+  final String nextLabel;
+  final bool nextLoading;
   final String? helpUrl;
   final String? helpTitle;
   final String? helpContent;
@@ -22,6 +24,8 @@ class BottomBar extends StatelessWidget {
     Key? key,
     this.onBack,
     this.onNext,
+    this.nextLabel = '次へ',
+    this.nextLoading = false,
     this.helpUrl,
     this.helpTitle,
     this.helpContent,
@@ -30,6 +34,7 @@ class BottomBar extends StatelessWidget {
     this.infoExtra2Text,
   }) : super(key: key);
 
+  // ─── ヘルプダイアログ ───────────────────────────────────────────
   void _showHelp(BuildContext context) async {
     if (helpContent != null && helpTitle != null) {
       showCustomDialog(
@@ -42,10 +47,9 @@ class BottomBar extends StatelessWidget {
     } else if (helpUrl != null && helpUrl!.isNotEmpty) {
       try {
         final content = await rootBundle.loadString(helpUrl!);
-        // 簡単なHTMLタグを除去する処理
         final plainText =
             content
-                .replaceAll(RegExp(r'<[^>]*>'), '\n') // タグを改行に
+                .replaceAll(RegExp(r'<[^>]*>'), '\n')
                 .replaceAll('\n\n', '\n')
                 .trim();
         final lines = plainText.split('\n');
@@ -92,12 +96,13 @@ class BottomBar extends StatelessWidget {
       content: '入力中の内容は保存されません。',
       primaryActionText: '再読み込み',
       onPrimaryAction: () {
-        Navigator.of(context).pop(); // Close dialog
+        Navigator.of(context).pop();
         PlatformUtils.reloadApp();
       },
     );
   }
 
+  // ─── アプリ情報ダイアログ ─────────────────────────────────────────
   void _showInfoDialog(BuildContext context) {
     final theme = Theme.of(context);
     showCustomDialog(
@@ -107,45 +112,20 @@ class BottomBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // アクセシビリティ: 文字サイズトグル
           ValueListenableBuilder<bool>(
             valueListenable: AccessibilityService.isZoomed,
             builder: (context, isZoomed, _) {
-              return NeumorphicButton(
-                onPressed: () {
+              return _buildMenuButton(
+                context: context,
+                icon: isZoomed ? Icons.zoom_out : Icons.zoom_in,
+                label: isZoomed ? '文字サイズを元に戻す (100%)' : '文字サイズを大きくする (150%)',
+                onTap: () {
                   AccessibilityService.toggleZoom();
                   Navigator.of(context).pop();
-                  // 直後にダイアログを再度開き、反対操作の文言を表示
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _showInfoDialog(context);
                   });
                 },
-                style: NeumorphicStyle(depth: 4, intensity: 0.7),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isZoomed ? Icons.zoom_out : Icons.zoom_in,
-                      size: 18,
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      isZoomed ? '文字サイズを元に戻す (100%)' : '文字サイズを大きくする (150%)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
               );
             },
           ),
@@ -164,10 +144,8 @@ class BottomBar extends StatelessWidget {
             _buildInfoRow(context, '', infoExtraText!),
           ],
           const SizedBox(height: 16),
-          // SNSリンク（横並び）
           Row(
             children: [
-              // Meiji Official セクション
               Expanded(
                 child: Column(
                   children: [
@@ -176,9 +154,7 @@ class BottomBar extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.8,
-                        ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -188,26 +164,17 @@ class BottomBar extends StatelessWidget {
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.xTwitter,
-                          onPressed:
-                              () => PlatformUtils.openUrl(
-                                'https://x.com/meidai_meiji',
-                              ),
+                          onPressed: () => PlatformUtils.openUrl('https://x.com/meidai_meiji'),
                         ),
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.instagram,
-                          onPressed:
-                              () => PlatformUtils.openUrl(
-                                'https://www.instagram.com/meidai_meiji/',
-                              ),
+                          onPressed: () => PlatformUtils.openUrl('https://www.instagram.com/meidai_meiji/'),
                         ),
                         _buildSmallSNSButton(
                           context: context,
                           icon: Icons.public,
-                          onPressed:
-                              () => PlatformUtils.openUrl(
-                                'https://www.meiji.ac.jp/ko_chu/',
-                              ),
+                          onPressed: () => PlatformUtils.openUrl('https://www.meiji.ac.jp/ko_chu/'),
                         ),
                       ],
                     ),
@@ -215,7 +182,6 @@ class BottomBar extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // Developer セクション
               Expanded(
                 child: Column(
                   children: [
@@ -224,9 +190,7 @@ class BottomBar extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.8,
-                        ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -236,18 +200,12 @@ class BottomBar extends StatelessWidget {
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.xTwitter,
-                          onPressed:
-                              () => PlatformUtils.openUrl(
-                                'https://x.com/Mamouna_inori',
-                              ),
+                          onPressed: () => PlatformUtils.openUrl('https://x.com/Mamouna_inori'),
                         ),
                         _buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.instagram,
-                          onPressed:
-                              () => PlatformUtils.openUrl(
-                                'https://www.instagram.com/mamouna.inori/',
-                              ),
+                          onPressed: () => PlatformUtils.openUrl('https://www.instagram.com/mamouna.inori/'),
                         ),
                       ],
                     ),
@@ -259,6 +217,114 @@ class BottomBar extends StatelessWidget {
         ],
       ),
       closeButtonText: '閉じる',
+    );
+  }
+
+  // ─── ≡ メニューダイアログ（ホーム・ヘルプ・ログイン・詳細情報） ─────────
+  void _showMenuDialog(BuildContext context) {
+    showCustomDialog(
+      context: context,
+      title: 'メニュー',
+      contentWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildMenuButton(
+            context: context,
+            icon: Icons.home_outlined,
+            label: 'ホーム（再読み込み）',
+            onTap: () {
+              Navigator.of(context).pop();
+              if (onHome != null) {
+                onHome!();
+              } else {
+                _showReloadConfirmDialog(context);
+              }
+            },
+          ),
+          const SizedBox(height: 10),
+          _buildMenuButton(
+            context: context,
+            icon: Icons.help_outline,
+            label: 'ヘルプ',
+            onTap: () {
+              Navigator.of(context).pop();
+              _showHelp(context);
+            },
+          ),
+          const SizedBox(height: 10),
+          _buildMenuButton(
+            context: context,
+            icon: Icons.admin_panel_settings,
+            label: '管理者ログイン',
+            onTap: () {
+              Navigator.of(context).pop();
+              showAdminLoginDialog(context: context);
+            },
+          ),
+          const SizedBox(height: 10),
+          _buildMenuButton(
+            context: context,
+            icon: Icons.info_outline,
+            label: 'アプリ情報',
+            onTap: () {
+              Navigator.of(context).pop();
+              _showInfoDialog(context);
+            },
+          ),
+        ],
+      ),
+      closeButtonText: '閉じる',
+    );
+  }
+
+  // ─── ユーティリティ Widget ────────────────────────────────────────
+  Widget _buildMenuButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return LiquidGlassLayer(
+      settings: LiquidGlassSettings(
+        glassColor: isDark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.04),
+        thickness: 8.0,
+        blur: 10.0,
+      ),
+      child: LiquidGlass(
+        shape: LiquidRoundedRectangle(borderRadius: 24.0),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(24.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: theme.colorScheme.onSurface),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -288,10 +354,7 @@ class BottomBar extends StatelessWidget {
             value,
             style: TextStyle(
               fontSize: 14,
-              color:
-                  isClickable
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface,
+              color: isClickable ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               decoration: isClickable ? TextDecoration.underline : null,
             ),
           ),
@@ -300,43 +363,93 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-Widget _buildSmallSNSButton({
+  Widget _buildSmallSNSButton({
     required BuildContext context,
-    required dynamic icon, // 変更点：標準アイコンとFontAwesome両方を受け取れるようにする
+    required dynamic icon,
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final Color backgroundColor =
-        isDark ? theme.colorScheme.surface : theme.colorScheme.surface;
-    final Color iconColor =
-        isDark ? theme.colorScheme.onSurface : theme.colorScheme.onSurface;
-
     return NeumorphicButton(
       onPressed: onPressed,
       style: NeumorphicStyle(
         boxShape: const NeumorphicBoxShape.circle(),
         depth: 2,
         intensity: 0.6,
-        color: backgroundColor,
+        color: theme.colorScheme.surface,
       ),
       child: SizedBox(
         width: 28.0,
         height: 28.0,
         child: Center(
-          // 変更点：アイコンの種類によって使うウィジェットを自動で切り替える
           child: icon is IconData
-              ? Icon(icon, color: iconColor, size: 14.0)
-              : FaIcon(icon, color: iconColor, size: 14.0),
+              ? Icon(icon, color: theme.colorScheme.onSurface, size: 14.0)
+              : FaIcon(icon, color: theme.colorScheme.onSurface, size: 14.0),
         ),
       ),
     );
   }
+
+  // ─── ボトムバーの丸アイコンボタン ──────────────────────────────────
+  Widget _buildCircleButton({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback? onPressed,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.04);
+    final iconColor = onPressed == null
+        ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
+        : (isDark ? Colors.white : Colors.black);
+
+    return LiquidGlassLayer(
+      settings: LiquidGlassSettings(
+        glassColor: glassColor,
+        thickness: 12.0,
+        blur: 18.0,
+      ),
+      child: LiquidGlass(
+        shape: LiquidRoundedRectangle(borderRadius: 28.0),
+        child: GestureDetector(
+          onTap: onPressed,
+          behavior: HitTestBehavior.opaque,
+          child: SizedBox(
+            width: 56.0,
+            height: 56.0,
+            child: Center(
+              child: Icon(icon, color: iconColor, size: 24.0),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final glassColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withOpacity(0.1)
-        : Colors.black.withOpacity(0.05);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primary = theme.colorScheme.primary;
+
+    // 中央ピルのスタイル（フロアフィルターと同じガラス系）
+    final bool hasNext = onNext != null;
+
+    // コンテナのガラスベース色（フロアフィルターと同じ）
+    final Color pillGlassBase = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+
+    // アクティブ時の薄い紫オーバーレイ
+    final Color pillActiveOverlay = hasNext
+        ? primary.withValues(alpha: 0.30)
+        : Colors.transparent;
+
+    // テキスト・アイコン色
+    final Color pillFg = hasNext
+        ? (isDark ? Colors.white : primary)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.35);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -344,168 +457,84 @@ Widget _buildSmallSNSButton({
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Left side navigation
-          LiquidGlassLayer(
-            settings: LiquidGlassSettings(
-              glassColor: glassColor,
-              thickness: 15.0,
-              blur: 20.0,
-            ),
-            child: LiquidGlass(
-              shape: LiquidRoundedRectangle(
-                borderRadius: 28.0,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 6.0,
-                ),
-                child: Row(
-                  children: [
-                    _buildGroupedIcon(
-                      context: context,
-                      icon: Icons.home,
-                      onPressed: onHome ?? () => _showReloadConfirmDialog(context),
-                    ),
-                    _buildGroupedDivider(context),
-                    _buildGroupedIcon(
-                      context: context,
-                      icon: Icons.help_outline,
-                      onPressed: () => _showHelp(context),
-                    ),
-                    _buildGroupedDivider(context),
-                    _buildGroupedIcon(
-                      context: context,
-                      icon: Icons.admin_panel_settings,
-                      onPressed: () => showAdminLoginDialog(context: context),
-                    ),
-                    _buildGroupedDivider(context),
-                    _buildGroupedIcon(
-                      context: context,
-                      icon: Icons.arrow_back,
-                      onPressed: onBack ?? () => _showCantGoBackDialog(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // ─ 左：戻るボタン ─────────────────────────
+          _buildCircleButton(
+            context: context,
+            icon: Icons.arrow_back,
+            onPressed: onBack ?? () => _showCantGoBackDialog(context),
           ),
-          // Right side navigation
-          Row(
-            children: [
-              // Info button (hamburger menu)
-              LiquidGlassLayer(
+
+          // ─ 中央：アクションピルボタン ──────────────
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: LiquidGlassLayer(
                 settings: LiquidGlassSettings(
-                  glassColor: glassColor,
+                  glassColor: pillGlassBase,
                   thickness: 15.0,
                   blur: 20.0,
                 ),
                 child: LiquidGlass(
-                  shape: LiquidRoundedRectangle(
-                    borderRadius: 28.0,
-                  ),
-                  child: SizedBox(
-                    width: 56.0,
-                    height: 56.0,
-                    child: GestureDetector(
-                      onTap: () => _showInfoDialog(context),
-                      behavior: HitTestBehavior.opaque,
-                      child: Center(
-                        child: Icon(
-                          Icons.menu,
-                          color:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                          size: 24.0,
+                  shape: LiquidRoundedRectangle(borderRadius: 28.0),
+                  child: InkWell(
+                    onTap: hasNext ? onNext : null,
+                    borderRadius: BorderRadius.circular(28.0),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: 56.0,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: pillActiveOverlay,
+                        borderRadius: BorderRadius.circular(28.0),
+                        border: Border.all(
+                          color: hasNext
+                              ? primary.withValues(alpha: 0.5)
+                              : Colors.transparent,
+                          width: 1.2,
                         ),
                       ),
+                      child: nextLoading
+                          ? SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: pillFg,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  nextLabel,
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: pillFg,
+                                  ),
+                                ),
+                                if (hasNext) ...[
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward, size: 16, color: pillFg),
+                                ],
+                              ],
+                            ),
                     ),
                   ),
                 ),
               ),
-              if (onNext != null) const SizedBox(width: 12),
-              // Next button
-              if (onNext != null)
-                LiquidGlassLayer(
-                  settings: LiquidGlassSettings(
-                    glassColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
-                    thickness: 15.0,
-                    blur: 20.0,
-                  ),
-                  child: LiquidGlass(
-                    shape: LiquidRoundedRectangle(
-                      borderRadius: 28.0,
-                    ),
-                    child: InkWell(
-                      onTap: onNext,
-                      borderRadius: BorderRadius.circular(28.0),
-                      child: Container(
-                        height: 56.0,
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '次へ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+            ),
+          ),
+
+          // ─ 右：≡ メニューボタン ──────────────────
+          _buildCircleButton(
+            context: context,
+            icon: Icons.menu,
+            onPressed: () => _showMenuDialog(context),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildGroupedIcon({
-    required BuildContext context,
-    required IconData icon,
-    required VoidCallback? onPressed,
-  }) {
-    final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final Color iconColor =
-        onPressed == null
-            ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
-            : (isDark ? Colors.white : Colors.black);
-    return Opacity(
-      opacity: onPressed == null ? 0.5 : 1.0,
-      child: GestureDetector(
-        onTap: onPressed,
-        behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: Icon(icon, color: iconColor, size: 22.0),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGroupedDivider(BuildContext context) {
-    return Container(
-      height: 24,
-      width: 1,
-      color:
-          Theme.of(context).brightness == Brightness.dark
-              ? Colors.white24
-              : Colors.black12,
     );
   }
 }

@@ -29,7 +29,7 @@ Future<void> showCustomDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return CustomDialogWidget(
@@ -68,7 +68,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.5),
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return StatefulBuilder(
@@ -327,7 +327,9 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                   widget.primaryActionText != null) ...[
                 LiquidGlassLayer(
                   settings: LiquidGlassSettings(
-                    glassColor: theme.colorScheme.primary.withValues(alpha: 0.85),
+                    glassColor: isDark
+                        ? Colors.black.withValues(alpha: 0.15)
+                        : Colors.white.withValues(alpha: 0.25),
                     thickness: 10.0,
                     blur: 10.0,
                   ),
@@ -338,16 +340,27 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                     child: InkWell(
                       onTap: _primaryLoading ? null : _handlePrimaryPressed,
                       borderRadius: BorderRadius.circular(30.0),
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
                         height: 48.0,
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.28),
+                          borderRadius: BorderRadius.circular(30.0),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.50),
+                            width: 1.2,
+                          ),
+                        ),
                         child: _primaryLoading
                             ? SizedBox(
                                 width: 22,
                                 height: 22,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.5,
-                                  color: theme.colorScheme.onPrimary,
+                                  color: isDark
+                                      ? Colors.white
+                                      : theme.colorScheme.primary,
                                 ),
                               )
                             : Row(
@@ -357,7 +370,9 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                     widget.primaryActionText!,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: theme.colorScheme.onPrimary,
+                                      color: isDark
+                                          ? Colors.white
+                                          : theme.colorScheme.primary,
                                       fontSize: 15,
                                     ),
                                   ),
@@ -365,7 +380,9 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                   Icon(
                                     Icons.arrow_forward,
                                     size: 16,
-                                    color: theme.colorScheme.onPrimary,
+                                    color: isDark
+                                        ? Colors.white
+                                        : theme.colorScheme.primary,
                                   ),
                                 ],
                               ),
@@ -379,8 +396,8 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                 LiquidGlassLayer(
                   settings: LiquidGlassSettings(
                     glassColor: isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.black.withValues(alpha: 0.05),
+                        ? Colors.black.withValues(alpha: 0.15)
+                        : Colors.white.withValues(alpha: 0.25),
                     thickness: 10.0,
                     blur: 10.0,
                   ),
@@ -394,20 +411,32 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                       child: Container(
                         height: 48.0,
                         alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.06)
+                              : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(30.0),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.18)
+                                : Colors.black.withValues(alpha: 0.12),
+                            width: 1.0,
+                          ),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.close,
                               size: 18,
-                              color: theme.colorScheme.onSurface,
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               widget.closeButtonText!,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.onSurface,
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                 fontSize: 15,
                               ),
                             ),
@@ -514,49 +543,54 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                             ),
                                         if (widget.showWikiLink) ...[
                                           const SizedBox(height: 16),
-                                          NeumorphicButton(
-                                            onPressed: () {
-                                              final url =
-                                                  widget.wikiUrl ??
-                                                  'https://shikon-voteapp.github.io/information/';
-                                              if (kIsWeb) {
-                                                html.window.open(url, '_blank');
-                                              }
-                                            },
-                                            style: NeumorphicStyle(
-                                              depth: 4,
-                                              intensity: 0.7,
+                                          LiquidGlassLayer(
+                                            settings: LiquidGlassSettings(
+                                              glassColor: isDark
+                                                  ? Colors.white.withValues(alpha: 0.08)
+                                                  : Colors.black.withValues(alpha: 0.04),
+                                              thickness: 8.0,
+                                              blur: 10.0,
                                             ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(
-                                                  Icons.open_in_new,
-                                                  size: 16,
-                                                  color:
-                                                      Theme.of(
-                                                                context,
-                                                              ).brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  '詳細情報',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color:
-                                                        Theme.of(
-                                                                  context,
-                                                                ).brightness ==
-                                                                Brightness.dark
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                    fontWeight: FontWeight.w600,
+                                            child: LiquidGlass(
+                                              shape: LiquidRoundedRectangle(
+                                                borderRadius: 24.0,
+                                              ),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  final url =
+                                                      widget.wikiUrl ??
+                                                      'https://shikon-voteapp.github.io/information/';
+                                                  if (kIsWeb) {
+                                                    html.window.open(url, '_blank');
+                                                  }
+                                                },
+                                                borderRadius: BorderRadius.circular(24.0),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: 16.0,
+                                                    vertical: 10.0,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.open_in_new,
+                                                        size: 15,
+                                                        color: theme.colorScheme.onSurface,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        '詳細情報',
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: theme.colorScheme.onSurface,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
+                                              ),
                                             ),
                                           ),
                                         ],

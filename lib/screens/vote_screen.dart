@@ -125,6 +125,111 @@ class _VoteScreenState extends State<VoteScreen> {
     final bool isCompact = size.height < 700;
     final bool isZoomed = AccessibilityService.isZoomed.value;
 
+    // ─── 投票ボタンのラベルとアクション計算 ───────────────────────────
+    VoidCallback? voteOnPressed;
+    String voteButtonText;
+
+    if (_returnToConfirm) {
+      voteButtonText = 'この内容に変更する';
+      voteOnPressed = () {
+        if (_selectedGroup == null && !category.canSkip) {
+          showCustomDialog(
+            context: context,
+            title: '選択してください',
+            content: '${category.name} の投票先を選択してから実行してください。',
+            closeButtonText: 'OK',
+          );
+          return;
+        }
+        final group = _selectedGroup;
+        if (group != null) {
+          showCustomDialog(
+            context: context,
+            imagePath: group.imagePath,
+            title: '${category.name}の変更確認',
+            content: '「${group.name}」に変更します。よろしいですか？',
+            closeButtonText: '戻る',
+            primaryActionText: '変更を反映する',
+            enablePrimaryLoading: true,
+            minLoadingMs: 1000,
+            maxLoadingMs: 1400,
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              currentSelections[category.id] = group.id;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConfirmScreen(
+                    uuid: widget.uuid,
+                    selections: currentSelections,
+                    isGridView: _isGridView,
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          showCustomDialog(
+            context: context,
+            title: '${category.name} を未選択で反映しますか？',
+            content: 'このカテゴリの投票先を未選択として確認画面に戻ります。',
+            closeButtonText: '戻る',
+            primaryActionText: '未選択で反映',
+            enablePrimaryLoading: true,
+            minLoadingMs: 800,
+            maxLoadingMs: 1200,
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              currentSelections.remove(category.id);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConfirmScreen(
+                    uuid: widget.uuid,
+                    selections: currentSelections,
+                    isGridView: _isGridView,
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      };
+    } else if (_selectedGroup != null) {
+      voteButtonText = '投票する';
+      voteOnPressed = () => _showConfirmationDialog(_selectedGroup!);
+    } else {
+      if (category.canSkip) {
+        voteButtonText = 'スキップする';
+        voteOnPressed = () {
+          showCustomDialog(
+            context: context,
+            title: '${category.name} をスキップしますか？',
+            content: 'このカテゴリの投票先を選択せずに次へ進みます。',
+            closeButtonText: '戻る',
+            primaryActionText: 'スキップする',
+            enablePrimaryLoading: true,
+            minLoadingMs: 1300,
+            maxLoadingMs: 1700,
+            onPrimaryAction: () {
+              Navigator.of(context).pop();
+              _navigate(1);
+            },
+          );
+        };
+      } else {
+        voteButtonText = '投票する';
+        voteOnPressed = () {
+          showCustomDialog(
+            context: context,
+            title: '選択してください',
+            content: '${category.name} の投票先を選択してから「投票する」を押してください。',
+            closeButtonText: 'OK',
+          );
+        };
+      }
+    }
+
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
       icon: Icons.how_to_vote,
@@ -135,7 +240,8 @@ class _VoteScreenState extends State<VoteScreen> {
           currentCategoryIndex > 0 && !_returnToConfirm
               ? () => _navigate(-1)
               : null,
-      onNext: null,
+      onNext: voteOnPressed,
+      nextLabel: voteButtonText,
       extendBehindBottomBar: true,
       child: Stack(
         children: [
@@ -198,13 +304,7 @@ class _VoteScreenState extends State<VoteScreen> {
             bottom: 88.0,
             left: 0,
             right: 0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildFloorFilter(),
-                _buildVoteButton(),
-              ],
-            ),
+            child: _buildFloorFilter(),
           ),
         ],
       ),
@@ -307,7 +407,7 @@ class _VoteScreenState extends State<VoteScreen> {
       );
     } else {
       headerContent = SizedBox(
-        height: isCompact ? 100 : 210,
+        height: isCompact ? 100 : 130,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -345,10 +445,11 @@ class _VoteScreenState extends State<VoteScreen> {
             Expanded(
               child: Row(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 1,
+                  SizedBox(
+                    width: 72,
+                    height: 72,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       child: Image.asset(
                         _selectedGroup!.imagePath,
                         fit: BoxFit.cover,
@@ -923,179 +1024,6 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
-  Widget _buildVoteButton() {
-    final category = voteCategories[currentCategoryIndex];
-    final bool isSelected = _selectedGroup != null;
-    final theme = Theme.of(context);
-
-    VoidCallback? onPressed;
-    String buttonText;
-
-    if (_returnToConfirm) {
-      // 確認画面からの単独編集モード
-      buttonText = 'この内容に変更する';
-      onPressed = () {
-        if (_selectedGroup == null && !category.canSkip) {
-          showCustomDialog(
-            context: context,
-            title: '選択してください',
-            content: '${category.name} の投票先を選択してから実行してください。',
-            closeButtonText: 'OK',
-          );
-          return;
-        }
-
-        // 確認ダイアログを表示してから反映
-        final group = _selectedGroup;
-        if (group != null) {
-          showCustomDialog(
-            context: context,
-            imagePath: group.imagePath,
-            title: '${category.name}の変更確認',
-            content: '「${group.name}」に変更します。よろしいですか？',
-            closeButtonText: '戻る',
-            primaryActionText: '変更を反映する',
-            enablePrimaryLoading: true,
-            minLoadingMs: 1000,
-            maxLoadingMs: 1400,
-            onPrimaryAction: () {
-              Navigator.of(context).pop();
-              currentSelections[category.id] = group.id;
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => ConfirmScreen(
-                        uuid: widget.uuid,
-                        selections: currentSelections,
-                        isGridView: _isGridView,
-                      ),
-                ),
-              );
-            },
-          );
-        } else {
-          // スキップ可能カテゴリで未選択→確認してスキップ反映
-          showCustomDialog(
-            context: context,
-            title: '${category.name} を未選択で反映しますか？',
-            content: 'このカテゴリの投票先を未選択として確認画面に戻ります。',
-            closeButtonText: '戻る',
-            primaryActionText: '未選択で反映',
-            enablePrimaryLoading: true,
-            minLoadingMs: 800,
-            maxLoadingMs: 1200,
-            onPrimaryAction: () {
-              Navigator.of(context).pop();
-              currentSelections.remove(category.id);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => ConfirmScreen(
-                        uuid: widget.uuid,
-                        selections: currentSelections,
-                        isGridView: _isGridView,
-                      ),
-                ),
-              );
-            },
-          );
-        }
-      };
-    } else if (isSelected) {
-      buttonText = '投票する';
-      onPressed = () => _showConfirmationDialog(_selectedGroup!);
-    } else {
-      if (category.canSkip) {
-        buttonText = _returnToConfirm ? 'この内容に変更する' : 'スキップする';
-        onPressed = () {
-          if (_returnToConfirm) {
-            currentSelections.remove(category.id);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder:
-                    (context) => ConfirmScreen(
-                      uuid: widget.uuid,
-                      selections: currentSelections,
-                      isGridView: _isGridView,
-                    ),
-              ),
-            );
-          } else {
-            showCustomDialog(
-              context: context,
-              title: '${category.name} をスキップしますか？',
-              content: 'このカテゴリの投票先を選択せずに次へ進みます。',
-              closeButtonText: '戻る',
-              primaryActionText: 'スキップする',
-              enablePrimaryLoading: true,
-              minLoadingMs: 1300,
-              maxLoadingMs: 1700,
-              onPrimaryAction: () {
-                Navigator.of(context).pop();
-                _navigate(1);
-              },
-            );
-          }
-        };
-      } else {
-        // スキップ不可でもボタンはアクティブ。押下時に選択を促す
-        buttonText = _returnToConfirm ? 'この内容に変更する' : '投票する';
-        onPressed = () {
-          showCustomDialog(
-            context: context,
-            title: '選択してください',
-            content: '${category.name} の投票先を選択してから「投票する」を押してください。',
-            closeButtonText: 'OK',
-          );
-        };
-      }
-    }
-
-    final Color activeFgColor = theme.colorScheme.onPrimary;
-    final glassColor = theme.colorScheme.primary.withValues(alpha: 0.85);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 15.0,
-          blur: 25.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(
-            borderRadius: 30.0,
-          ),
-          child: InkWell(
-            onTap: onPressed,
-            borderRadius: BorderRadius.circular(30.0),
-            child: Container(
-              height: 56.0,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    buttonText,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: activeFgColor,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.arrow_forward, size: 16, color: activeFgColor),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   void _showGroupDetailDialog(Group group) {
     final theme = Theme.of(context);

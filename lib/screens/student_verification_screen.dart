@@ -42,6 +42,9 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '生徒の本人確認',
       helpContent: '投票権に記載された学年・クラス・番号を選択してください。',
+      onNext: _isVerifying ? null : _verifyStudent,
+      nextLabel: 'ログイン',
+      nextLoading: _isVerifying,
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -89,63 +92,6 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildDropdownContainer('番号', _buildNumberField()),
-                    const Spacer(),
-                    NeumorphicButton(
-                      onPressed: _isVerifying ? null : _verifyStudent,
-                      style: NeumorphicStyle(
-                        color:
-                            _isVerifying
-                                ? null
-                                : (Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black),
-                        depth: _isVerifying ? -4 : 6,
-                        intensity: 0.8,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Center(
-                        child:
-                            _isVerifying
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 3,
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'ログイン',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.black
-                                                : Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 16,
-                                      color:
-                                          Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.black
-                                              : Colors.white,
-                                    ),
-                                  ],
-                                ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),

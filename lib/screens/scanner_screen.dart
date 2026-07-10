@@ -89,6 +89,29 @@ class _ScannerScreenState extends State<ScannerScreen>
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
       onHome: () {},
+      onNext: _isProcessingCode
+          ? null
+          : () {
+              if (_manualCodeController.text.isNotEmpty) {
+                if (_manualCodeController.text.length == 10) {
+                  _processBarcode(_manualCodeController.text);
+                } else {
+                  showCustomDialog(
+                    context: context,
+                    title: '入力エラー',
+                    content: '10桁の数字を入力してください。',
+                  );
+                }
+              } else {
+                showCustomDialog(
+                  context: context,
+                  title: '入力エラー',
+                  content: 'コードを入力してください。',
+                );
+              }
+            },
+      nextLabel: 'ログイン',
+      nextLoading: _isProcessingCode,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
         child: Column(
@@ -185,91 +208,6 @@ class _ScannerScreenState extends State<ScannerScreen>
                 ],
               ),
             ),
-            const Spacer(),
-            NeumorphicButton(
-              onPressed:
-                  _isProcessingCode
-                      ? null
-                      : () {
-                        if (_manualCodeController.text.isNotEmpty) {
-                          if (_manualCodeController.text.length == 10) {
-                            _processBarcode(_manualCodeController.text);
-                          } else {
-                            showCustomDialog(
-                              context: context,
-                              title: '入力エラー',
-                              content: '10桁の数字を入力してください。',
-                            );
-                          }
-                        } else {
-                          showCustomDialog(
-                            context: context,
-                            title: '入力エラー',
-                            content: 'コードを入力してください。',
-                          );
-                        }
-                      },
-              style: NeumorphicStyle(
-                color:
-                    _isProcessingCode
-                        ? null
-                        : (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black),
-                depth: _isProcessingCode ? -4 : 6,
-                intensity: 0.8,
-                boxShape: NeumorphicBoxShape.roundRect(
-                  BorderRadius.circular(30.0),
-                ),
-              ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                transitionBuilder:
-                    (child, animation) =>
-                        FadeTransition(opacity: animation, child: child),
-                child:
-                    _isProcessingCode
-                        ? SizedBox(
-                          key: const ValueKey('loading'),
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        )
-                        : Row(
-                          key: const ValueKey('label'),
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'ログイン',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color:
-                                    Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.black
-                                        : Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 16,
-                              color:
-                                  Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.black
-                                      : Colors.white,
-                            ),
-                          ],
-                        ),
-              ),
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),

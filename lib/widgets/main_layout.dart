@@ -10,6 +10,8 @@ class MainLayout extends StatelessWidget {
   final VoidCallback? onInfo;
   final VoidCallback? onBack;
   final VoidCallback? onNext;
+  final String nextLabel;
+  final bool nextLoading;
   final String? helpUrl;
   final String? helpTitle;
   final String? helpContent;
@@ -24,6 +26,8 @@ class MainLayout extends StatelessWidget {
     this.onInfo,
     this.onBack,
     this.onNext,
+    this.nextLabel = '次へ',
+    this.nextLoading = false,
     this.helpUrl,
     this.helpTitle,
     this.helpContent,
@@ -36,6 +40,8 @@ class MainLayout extends StatelessWidget {
     final Widget bottomBarWidget = BottomBar(
       onBack: onBack,
       onNext: onNext,
+      nextLabel: nextLabel,
+      nextLoading: nextLoading,
       onHome: onHome,
       helpUrl: helpUrl,
       helpTitle: helpTitle,
