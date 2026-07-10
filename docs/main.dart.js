@@ -32102,9 +32102,9 @@ return A.A($async$aNP,r)},
 aQm(){var s=0,r=A.B(t.H),q
 var $async$aQm=A.C(function(a,b){if(a===1)return A.y(b,r)
 for(;;)switch(s){case 0:if($.aXQ){s=1
-break}$.aXR="1.6.7"
-$.aXP="53"
-A.dj("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 1.6.7.53")
+break}$.aXR="2.0.0"
+$.aXP="54"
+A.dj("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 2.0.0.54")
 $.aXQ=!0
 case 1:return A.z(q,r)}})
 return A.A($async$aQm,r)},
@@ -113961,8 +113961,8 @@ $.aQI=!1
 $.uR=A.c([],A.af("E<oe>"))
 $.beC=A.r(t.N,A.af("Q<~(j?)>"))
 $.auV=null
-$.aXR="1.6.7"
-$.aXP="53"
+$.aXR="2.0.0"
+$.aXP="54"
 $.aXQ=!1
 $.b7G=A.r(t.S,A.af("b7F"))
 $.aVy=null
@@ -114568,7 +114568,7 @@ s($,"blf","aSd",()=>new A.t())
 r($,"baq","aO4",()=>{var q=new A.an0()
 q.uR($.aSd())
 return q})
-s($,"bnY","aSz",()=>A.aOJ(2026,7,11,9,9,0))
+s($,"bnY","aSz",()=>A.aOJ(2026,7,11,9,19,0))
 s($,"bo_","a9i",()=>{var q=A.aOJ(2025,9,26,9,40,0)
 return A.bbB(A.aOJ(2025,9,28,15,0,0),!0,3,0,2,0,q)})
 s($,"bnP","aSx",()=>{var q=t.Yy

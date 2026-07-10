@@ -29,7 +29,7 @@ Write-Host "3. Major version (1.0.0 -> 2.0.0)"
 Write-Host "4. Build number only (1.0.0.1 -> 1.0.0.2)"
 Write-Host "5. Skip version update"
 
-$choice = Read-Host "`nSelect option (1-5)"
+$choice = "3"
 
 switch ($choice) {
     "1" {
@@ -120,6 +120,9 @@ if (!(Test-Path $targetDir)) {
 
 # ファイルをコピー（再帰的、上書きあり）
 Write-Host "Copying files to $targetDir..."
+if (Test-Path "$targetDir/assets") {
+    Remove-Item -Path "$targetDir/assets" -Recurse -Force
+}
 Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
 
 # Git操作
