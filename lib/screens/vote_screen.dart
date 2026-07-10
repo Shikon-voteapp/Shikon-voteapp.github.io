@@ -9,6 +9,7 @@ import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter/material.dart';
+import '../widgets/liquid_glass.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -243,38 +244,34 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildGroupDetailHeader({required bool isCompact}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+
+    Widget headerContent;
     if (_selectedGroup == null) {
-      return neumorphicCard(
-        context: context,
-        // pass size via child Container to control height
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          height: isCompact ? 100 : 140,
-          child: Center(
-            child: Text(
-              '投票先を選択してください',
-              style: TextStyle(
-                fontSize: isCompact ? 16 : 18,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
+      headerContent = SizedBox(
+        height: isCompact ? 100 : 140,
+        child: Center(
+          child: Text(
+            '投票先を選択してください',
+            style: TextStyle(
+              fontSize: isCompact ? 16 : 18,
+              fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),
       );
-    }
-    return GestureDetector(
-      onTap: () {
-        if (_selectedGroup != null) {
-          _showGroupDetailDialog(_selectedGroup!);
-        }
-      },
-      child: neumorphicCard(
-        context: context,
-        // pass size via child Container to control height
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: const EdgeInsets.all(16),
+    } else {
+      headerContent = GestureDetector(
+        onTap: () {
+          if (_selectedGroup != null) {
+            _showGroupDetailDialog(_selectedGroup!);
+          }
+        },
         child: SizedBox(
           height: isCompact ? 100 : 140,
           child: Row(
@@ -337,39 +334,71 @@ class _VoteScreenState extends State<VoteScreen> {
             ],
           ),
         ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 15.0,
+          blur: 20.0,
+        ),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(
+            borderRadius: 12.0,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: headerContent,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildViewToggle() {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Align(
         alignment: Alignment.centerRight,
-        child: Neumorphic(
-          style: NeumorphicStyle(
-            color: theme.colorScheme.surface,
-            depth: 4,
-            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+        child: LiquidGlassLayer(
+          settings: LiquidGlassSettings(
+            glassColor: glassColor,
+            thickness: 15.0,
+            blur: 20.0,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildToggleButton(
-                icon: Icons.grid_view,
-                label: 'グリッド',
-                isSelected: _isGridView,
-                onPressed: () => setState(() => _isGridView = true),
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(
+              borderRadius: 12.0,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildToggleButton(
+                    icon: Icons.grid_view,
+                    label: 'グリッド',
+                    isSelected: _isGridView,
+                    onPressed: () => setState(() => _isGridView = true),
+                  ),
+                  const SizedBox(width: 4),
+                  _buildToggleButton(
+                    icon: Icons.list,
+                    label: 'リスト',
+                    isSelected: !_isGridView,
+                    onPressed: () => setState(() => _isGridView = false),
+                  ),
+                ],
               ),
-              const SizedBox(width: 4),
-              _buildToggleButton(
-                icon: Icons.list,
-                label: 'リスト',
-                isSelected: !_isGridView,
-                onPressed: () => setState(() => _isGridView = false),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -383,40 +412,52 @@ class _VoteScreenState extends State<VoteScreen> {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final Color selectedBg =
-        isDark
-            ? Color.alphaBlend(
-              Colors.white.withValues(alpha: 0.10),
-              theme.colorScheme.surface,
-            )
-            : Color.alphaBlend(
-              Colors.black.withValues(alpha: 0.08),
-              theme.colorScheme.surface,
-            );
-    return NeumorphicButton(
-      style: NeumorphicStyle(
-        color: isSelected ? selectedBg : theme.colorScheme.surface,
-        depth: isSelected ? -3 : 3,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(10)),
-      ),
-      onPressed: onPressed,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 20, color: theme.colorScheme.onSurface),
-            const SizedBox(width: 4),
-          ],
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: theme.colorScheme.onSurface,
+    final isDark = theme.brightness == Brightness.dark;
+    final Color activeColor = theme.colorScheme.primary;
+    final Color bg = isSelected
+        ? activeColor.withValues(alpha: 0.35)
+        : Colors.transparent;
+    final Color textColor = isSelected
+        ? (isDark ? Colors.white : activeColor)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+    final Color iconColor = isSelected
+        ? (isDark ? Colors.white : activeColor)
+        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+    final Border border = Border.all(
+      color: isSelected
+          ? activeColor.withValues(alpha: 0.5)
+          : Colors.transparent,
+      width: 1.0,
+    );
+
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(10),
+          border: border,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 20, color: iconColor),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: textColor,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -745,36 +786,46 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildFloorFilter() {
     final floors = [1, 2, 3, 4]; // 1,2,3階とステージ(4)
     final floorLabels = {1: '1階', 2: '2階', 3: '3階', 4: 'ステージ'};
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       child: Center(
-        child: Neumorphic(
-          style: NeumorphicStyle(
-            depth: 3,
-            color: Theme.of(context).colorScheme.surface,
-            boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+        child: LiquidGlassLayer(
+          settings: LiquidGlassSettings(
+            glassColor: glassColor,
+            thickness: 15.0,
+            blur: 20.0,
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                _buildToggleButton(
-                  label: 'すべて',
-                  isSelected: _selectedFloor == null,
-                  onPressed: () => _filterByFloor(null),
-                ),
-                ...floors.map(
-                  (f) => _buildToggleButton(
-                    label: floorLabels[f]!,
-                    isSelected: _selectedFloor == f,
-                    onPressed: () => _filterByFloor(f),
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(
+              borderRadius: 12.0,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  _buildToggleButton(
+                    label: 'すべて',
+                    isSelected: _selectedFloor == null,
+                    onPressed: () => _filterByFloor(null),
                   ),
-                ),
-              ],
+                  ...floors.map(
+                    (f) => _buildToggleButton(
+                      label: floorLabels[f]!,
+                      isSelected: _selectedFloor == f,
+                      onPressed: () => _filterByFloor(f),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
