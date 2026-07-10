@@ -16,6 +16,8 @@ import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
 import '../services/export_service.dart';
 import '../platform/platform_utils.dart';
+import '../widgets/liquid_glass.dart';
+
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -230,55 +232,36 @@ class _AdminScreenState extends State<AdminScreen>
             context,
           ).pushNamedAndRemoveUntil('/', (route) => false),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           automaticallyImplyLeading: false,
           title: TabBar(
             controller: _tabController,
-            tabs: [
+            dividerColor: Colors.transparent,
+            tabs: const [
               Tab(text: '投票結果', icon: Icon(Icons.poll)),
               Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
             ],
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              child: NeumorphicButton(
-                onPressed: _loadAllData,
-                style: const NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                  depth: 3,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.refresh),
-              ),
+            _buildAppBarCircleButton(
+              icon: Icons.refresh,
+              onPressed: _loadAllData,
+            ),
+            _buildAppBarCircleButton(
+              icon: Icons.file_download,
+              onPressed: _exportResults,
+            ),
+            _buildAppBarCircleButton(
+              icon: Icons.help,
+              onPressed: _showHelpDialog,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              child: NeumorphicButton(
-                onPressed: _exportResults,
-                style: const NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                  depth: 3,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.file_download),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              child: NeumorphicButton(
-                onPressed: _showHelpDialog,
-                style: const NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                  depth: 3,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.help),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: NeumorphicButton(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: _buildAppBarCircleButton(
+                icon: Icons.logout,
                 onPressed: () async {
                   await _auth.signOut();
                   if (mounted) {
@@ -287,12 +270,6 @@ class _AdminScreenState extends State<AdminScreen>
                     ).pushNamedAndRemoveUntil('/', (route) => false);
                   }
                 },
-                style: const NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                  depth: 3,
-                ),
-                padding: const EdgeInsets.all(8),
-                child: const Icon(Icons.logout),
               ),
             ),
           ],
@@ -360,30 +337,33 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   Widget _buildCategoryTabs() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
     return Container(
       margin: const EdgeInsets.all(8.0),
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            spreadRadius: 2,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 10.0,
+          blur: 15.0,
+        ),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(borderRadius: 24.0),
+          child: TabBar(
+            controller: _categoryTabController,
+            isScrollable: true,
+            tabAlignment: TabAlignment.center,
+            labelColor: theme.primaryColor,
+            unselectedLabelColor: Colors.grey,
+            dividerColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs:
+                voteCategories.map((category) => Tab(text: category.name)).toList(),
           ),
-        ],
-      ),
-      child: TabBar(
-        controller: _categoryTabController,
-        isScrollable: true,
-        tabAlignment: TabAlignment.center,
-        labelColor: Theme.of(context).primaryColor,
-        unselectedLabelColor: Colors.grey,
-        indicatorSize: TabBarIndicatorSize.label,
-        tabs:
-            voteCategories.map((category) => Tab(text: category.name)).toList(),
+        ),
       ),
     );
   }
@@ -415,25 +395,11 @@ class _AdminScreenState extends State<AdminScreen>
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
             child: Center(
-              child: NeumorphicButton(
+              child: _buildGlassButton(
+                label: '全投票データをクリア',
+                icon: Icons.delete_sweep,
+                color: Theme.of(context).colorScheme.error,
                 onPressed: _showClearConfirmation,
-                style: const NeumorphicStyle(
-                  color: Colors.black,
-                  depth: 6,
-                  boxShape: NeumorphicBoxShape.stadium(),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.delete_sweep, color: Colors.white),
-                    SizedBox(width: 8),
-                    Text('全投票データをクリア', style: TextStyle(color: Colors.white)),
-                  ],
-                ),
               ),
             ),
           ),
@@ -450,7 +416,9 @@ class _AdminScreenState extends State<AdminScreen>
         children: [
           Text('管理者一覧', style: Theme.of(context).textTheme.headlineSmall),
           SizedBox(height: 16),
-          NeumorphicButton(
+          _buildGlassButton(
+            label: 'QRコードスキャナーを起動',
+            icon: Icons.qr_code_scanner,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -458,67 +426,40 @@ class _AdminScreenState extends State<AdminScreen>
                 ),
               );
             },
-            style: const NeumorphicStyle(
-              color: Colors.black,
-              depth: 6,
-              boxShape: NeumorphicBoxShape.stadium(),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.qr_code_scanner, color: Colors.white),
-                SizedBox(width: 8),
-                Text('QRコードスキャナーを起動', style: TextStyle(color: Colors.white)),
-              ],
-            ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _adminUsers.isEmpty
-              ? Center(child: Text('管理者がいません'))
+              ? const Center(child: Text('管理者がいません'))
               : ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: _adminUsers.length,
                 itemBuilder: (context, index) {
                   final user = _adminUsers[index];
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 8),
+                  return _buildGlassCard(
                     child: ListTile(
-                      leading: CircleAvatar(child: Icon(Icons.person)),
-                      title: Text(user.email),
+                      tileColor: Colors.transparent,
+                      leading: CircleAvatar(
+                        backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                        child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
+                      ),
+                      title: Text(user.email, style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text(
                         '${user.name.isNotEmpty ? user.name + ' • ' : ''}追加日: ${_formatDate(user.createdAt)}',
                       ),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _showDeleteUserConfirmation(user),
                       ),
                     ),
                   );
                 },
               ),
-          SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: NeumorphicButton(
-              onPressed: _showAddUserDialog,
-              style: const NeumorphicStyle(
-                color: Colors.black,
-                depth: 6,
-                boxShape: NeumorphicBoxShape.stadium(),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.person_add, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text('新規管理者を追加', style: TextStyle(color: Colors.white)),
-                ],
-              ),
-            ),
+          const SizedBox(height: 16),
+          _buildGlassButton(
+            label: '新規管理者を追加',
+            icon: Icons.person_add,
+            onPressed: _showAddUserDialog,
           ),
         ],
       ),
@@ -675,7 +616,131 @@ class _AdminScreenState extends State<AdminScreen>
       closeButtonText: 'OK',
     );
   }
+
+  Widget _buildGlassButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onPressed,
+    Color? color,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primary = color ?? theme.colorScheme.primary;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+
+    return LiquidGlassLayer(
+      settings: LiquidGlassSettings(
+        glassColor: glassColor,
+        thickness: 10.0,
+        blur: 15.0,
+      ),
+      child: LiquidGlass(
+        shape: LiquidRoundedRectangle(borderRadius: 24.0),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(24.0),
+          child: Container(
+            height: 48.0,
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: primary.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(24.0),
+              border: Border.all(
+                color: primary.withValues(alpha: 0.4),
+                width: 1.2,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: isDark ? Colors.white : primary, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : primary,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBarCircleButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 10.0,
+          blur: 12.0,
+        ),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(borderRadius: 20.0),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(20.0),
+            child: SizedBox(
+              width: 40.0,
+              height: 40.0,
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: theme.colorScheme.onSurface,
+                  size: 20.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassCard({required Widget child}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 12.0,
+          blur: 15.0,
+        ),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(borderRadius: 16.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
 }
+
 
 class Vote {
   final String id;

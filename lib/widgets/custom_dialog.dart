@@ -482,13 +482,13 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                 child: FadeInAnimation(
                                   child: Center(
                                     child: SizedBox(
-                                      height: 100,
-                                      width: 100,
+                                      height: 120,
+                                      width: double.infinity,
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(10.0),
                                         child: Image.asset(
                                           widget.imagePath!,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.contain,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
                                                   Container(

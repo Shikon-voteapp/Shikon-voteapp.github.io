@@ -355,7 +355,7 @@ class _VoteScreenState extends State<VoteScreen> {
     Widget headerContent;
     if (_selectedGroup == null) {
       headerContent = SizedBox(
-        height: isCompact ? 100 : 210,
+        height: isCompact ? 100 : 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -407,7 +407,7 @@ class _VoteScreenState extends State<VoteScreen> {
       );
     } else {
       headerContent = SizedBox(
-        height: isCompact ? 100 : 130,
+        height: isCompact ? 100 : 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
