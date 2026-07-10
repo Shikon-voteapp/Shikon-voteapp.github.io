@@ -60,6 +60,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                   ),
                 );
               },
+      onNext: _isLoading ? null : _showConfirmationDialog,
+      nextLabel: 'この内容で投票する',
+      nextLoading: _isLoading,
       extendBehindBottomBar: true,
       child: _buildConfirmationView(),
     );
@@ -67,106 +70,46 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
   Widget _buildConfirmationView() {
     final theme = Theme.of(context);
-    final glassColor = theme.colorScheme.primary.withValues(alpha: 0.85);
-    final Color activeFgColor = theme.colorScheme.onPrimary;
 
-    return Stack(
+    return Column(
       key: const ValueKey('confirmation'),
       children: [
-        Positioned.fill(
-          child: Column(
-            children: [
-              if (_errorMessage != null)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    _errorMessage!,
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                ),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 80, 16, 240),
-                  itemCount: voteCategories.length,
-                  itemBuilder: (context, index) {
-                    final category = voteCategories[index];
-                    final groupId = widget.selections[category.id];
-                    if (groupId != null) {
-                      final group = allGroups.firstWhere(
-                        (g) => g.id == groupId,
-                        orElse: () {
-                          // In case of data inconsistency
-                          return Group(
-                            id: 'not-found',
-                            name: '団体が見つかりません',
-                            groupName: '',
-                            description: '',
-                            imagePath: 'assets/Stage/No Select.jpg',
-                            floor: 0,
-                            categories: [],
-                          );
-                        },
-                      );
-                      return _buildGroupCard(index, category, group);
-                    } else {
-                      return _buildSkippedCard(index, category);
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: 88.0,
-          left: 0,
-          right: 0,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: LiquidGlassLayer(
-              settings: LiquidGlassSettings(
-                glassColor: glassColor,
-                thickness: 15.0,
-                blur: 25.0,
-              ),
-              child: LiquidGlass(
-                shape: LiquidRoundedRectangle(
-                  borderRadius: 30.0,
-                ),
-                child: InkWell(
-                  onTap: _isLoading ? null : _showConfirmationDialog,
-                  borderRadius: BorderRadius.circular(30.0),
-                  child: Container(
-                    height: 56.0,
-                    alignment: Alignment.center,
-                    child: _isLoading
-                        ? SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              color: theme.colorScheme.onSurface,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'この内容で投票する',
-                                style: TextStyle(
-                                  color: activeFgColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Icon(Icons.check, size: 16, color: activeFgColor),
-                            ],
-                          ),
-                  ),
-                ),
-              ),
+        if (_errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(color: theme.colorScheme.error),
             ),
+          ),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 80, 16, 120),
+            itemCount: voteCategories.length,
+            itemBuilder: (context, index) {
+              final category = voteCategories[index];
+              final groupId = widget.selections[category.id];
+              if (groupId != null) {
+                final group = allGroups.firstWhere(
+                  (g) => g.id == groupId,
+                  orElse: () {
+                    // In case of data inconsistency
+                    return Group(
+                      id: 'not-found',
+                      name: '団体が見つかりません',
+                      groupName: '',
+                      description: '',
+                      imagePath: 'assets/Stage/No Select.jpg',
+                      floor: 0,
+                      categories: [],
+                    );
+                  },
+                );
+                return _buildGroupCard(index, category, group);
+              } else {
+                return _buildSkippedCard(index, category);
+              }
+            },
           ),
         ),
       ],
