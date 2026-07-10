@@ -55,7 +55,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           selections: widget.selections,
                           isGridView: widget.isGridView,
                           restoreSelection: true,
-                          returnToConfirm: true,
+                          returnToConfirm: false,
                         ),
                   ),
                 );
@@ -86,7 +86,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                 ),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 240),
+                  padding: const EdgeInsets.fromLTRB(16, 80, 16, 240),
                   itemCount: voteCategories.length,
                   itemBuilder: (context, index) {
                     final category = voteCategories[index];

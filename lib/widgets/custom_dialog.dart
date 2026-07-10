@@ -7,6 +7,7 @@ import 'dart:html' as html;
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'liquid_glass.dart';
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -28,7 +29,7 @@ Future<void> showCustomDialog({
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withValues(alpha: 0.5),
+    barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return CustomDialogWidget(
@@ -49,13 +50,10 @@ Future<void> showCustomDialog({
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
       final slide = Tween<Offset>(
-        begin: const Offset(0, 0.08),
+        begin: const Offset(0, 0.15),
         end: Offset.zero,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-      return FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        child: SlideTransition(position: slide, child: child),
-      );
+      return SlideTransition(position: slide, child: child);
     },
   );
 }
@@ -70,7 +68,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     context: context,
     barrierDismissible: true,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withValues(alpha: 0.5),
+    barrierColor: Colors.transparent,
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       return StatefulBuilder(
@@ -241,13 +239,10 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
     },
     transitionBuilder: (context, animation, secondaryAnimation, child) {
       final slide = Tween<Offset>(
-        begin: const Offset(0, 0.08),
+        begin: const Offset(0, 0.15),
         end: Offset.zero,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-      return FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        child: SlideTransition(position: slide, child: child),
-      );
+      return SlideTransition(position: slide, child: child);
     },
   );
 }
@@ -313,133 +308,231 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
     final isSmallHeight = media.size.height < 700;
-    return SafeArea(
-      child: Neumorphic(
-        style: NeumorphicStyle(color: Colors.transparent, depth: 0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+    final isDark = theme.brightness == Brightness.dark;
+    final glassColor = isDark
+        ? Colors.black.withValues(alpha: 0.15)
+        : Colors.white.withValues(alpha: 0.25);
+
+    final Widget actionsWidget = widget.actions != null
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: widget.actions!,
+          )
+        : Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Flexible(
-                child: AnimationLimiter(
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      color: theme.colorScheme.surface,
-                      depth: 4,
-                      intensity: 0.8,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                        BorderRadius.circular(30.0),
+              if (widget.onPrimaryAction != null &&
+                  widget.primaryActionText != null) ...[
+                LiquidGlassLayer(
+                  settings: LiquidGlassSettings(
+                    glassColor: theme.colorScheme.primary.withValues(alpha: 0.85),
+                    thickness: 10.0,
+                    blur: 10.0,
+                  ),
+                  child: LiquidGlass(
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: 30.0,
+                    ),
+                    child: InkWell(
+                      onTap: _primaryLoading ? null : _handlePrimaryPressed,
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: Container(
+                        height: 48.0,
+                        alignment: Alignment.center,
+                        child: _primaryLoading
+                            ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: theme.colorScheme.onPrimary,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.primaryActionText!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.onPrimary,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    size: 16,
+                                    color: theme.colorScheme.onPrimary,
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
-                    padding: const EdgeInsets.all(24.0),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // 画像（指定があれば常に表示。小さい縦幅では非表示）
-                          if (widget.imagePath != null && !isSmallHeight) ...[
-                            AnimationConfiguration.synchronized(
-                              duration: const Duration(milliseconds: 300),
-                              child: FadeInAnimation(
-                                child: Center(
-                                  child: SizedBox(
-                                    height: 100,
-                                    width: 100,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      child: Image.asset(
-                                        widget.imagePath!,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Container(
-                                                  color:
-                                                      theme
-                                                          .colorScheme
-                                                          .secondaryContainer,
-                                                ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              if (widget.closeButtonText != null)
+                LiquidGlassLayer(
+                  settings: LiquidGlassSettings(
+                    glassColor: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.black.withValues(alpha: 0.05),
+                    thickness: 10.0,
+                    blur: 10.0,
+                  ),
+                  child: LiquidGlass(
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: 30.0,
+                    ),
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(30.0),
+                      child: Container(
+                        height: 48.0,
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.close,
+                              size: 18,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.closeButtonText!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.onSurface,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Flexible(
+              child: AnimationLimiter(
+                child: LiquidGlassLayer(
+                  settings: LiquidGlassSettings(
+                    glassColor: glassColor,
+                    thickness: 15.0,
+                    blur: 20.0,
+                  ),
+                  child: LiquidGlass(
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: 30.0,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.imagePath != null && !isSmallHeight) ...[
+                              AnimationConfiguration.synchronized(
+                                duration: const Duration(milliseconds: 300),
+                                child: FadeInAnimation(
+                                  child: Center(
+                                    child: SizedBox(
+                                      height: 100,
+                                      width: 100,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        child: Image.asset(
+                                          widget.imagePath!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Container(
+                                                    color:
+                                                        theme
+                                                            .colorScheme
+                                                            .secondaryContainer,
+                                                  ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 16),
+                            ],
+                            Text(
+                              widget.title,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: theme.textTheme.titleLarge?.color,
+                              ),
                             ),
                             const SizedBox(height: 16),
-                          ],
-                          Text(
-                            widget.title,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: theme.textTheme.titleLarge?.color,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              final maxScrollHeight =
-                                  MediaQuery.of(context).size.height * 0.6;
-                              return ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxHeight: maxScrollHeight,
-                                ),
-                                child: SingleChildScrollView(
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      widget.contentWidget ??
-                                          Text(
-                                            widget.content ?? '',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color:
-                                                  theme
-                                                      .textTheme
-                                                      .bodyMedium
-                                                      ?.color,
-                                            ),
-                                          ),
-                                      if (widget.showWikiLink) ...[
-                                        const SizedBox(height: 16),
-                                        NeumorphicButton(
-                                          onPressed: () {
-                                            final url =
-                                                widget.wikiUrl ??
-                                                'https://shikon-voteapp.github.io/information/';
-                                            if (kIsWeb) {
-                                              html.window.open(url, '_blank');
-                                            }
-                                          },
-                                          style: NeumorphicStyle(
-                                            depth: 4,
-                                            intensity: 0.7,
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.open_in_new,
-                                                size: 16,
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final maxScrollHeight =
+                                    MediaQuery.of(context).size.height * 0.45;
+                                return ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxHeight: maxScrollHeight,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    physics: const BouncingScrollPhysics(),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        widget.contentWidget ??
+                                            Text(
+                                              widget.content ?? '',
+                                              style: TextStyle(
+                                                fontSize: 16,
                                                 color:
-                                                    Theme.of(
-                                                              context,
-                                                            ).brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.white
-                                                        : Colors.black,
+                                                    theme
+                                                        .textTheme
+                                                        .bodyMedium
+                                                        ?.color,
                                               ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                '詳細情報',
-                                                style: TextStyle(
-                                                  fontSize: 14,
+                                            ),
+                                        if (widget.showWikiLink) ...[
+                                          const SizedBox(height: 16),
+                                          NeumorphicButton(
+                                            onPressed: () {
+                                              final url =
+                                                  widget.wikiUrl ??
+                                                  'https://shikon-voteapp.github.io/information/';
+                                              if (kIsWeb) {
+                                                html.window.open(url, '_blank');
+                                              }
+                                            },
+                                            style: NeumorphicStyle(
+                                              depth: 4,
+                                              intensity: 0.7,
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.open_in_new,
+                                                  size: 16,
                                                   color:
                                                       Theme.of(
                                                                 context,
@@ -447,99 +540,43 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                                                               Brightness.dark
                                                           ? Colors.white
                                                           : Colors.black,
-                                                  fontWeight: FontWeight.w600,
                                                 ),
-                                              ),
-                                            ],
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  '詳細情報',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        Theme.of(
+                                                                  context,
+                                                                ).brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ],
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            actionsWidget,
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              if (widget.actions != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: widget.actions!,
-                )
-              else
-                Row(
-                  mainAxisAlignment:
-                      widget.onPrimaryAction == null
-                          ? MainAxisAlignment.center
-                          : MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (widget.closeButtonText != null)
-                      NeumorphicButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: NeumorphicStyle(
-                          depth: 2,
-                          boxShape: NeumorphicBoxShape.roundRect(
-                            BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.close),
-                            const SizedBox(width: 8),
-                            Text(widget.closeButtonText!),
-                          ],
-                        ),
-                      ),
-                    if (widget.onPrimaryAction != null &&
-                        widget.primaryActionText != null)
-                      NeumorphicButton(
-                        onPressed:
-                            _primaryLoading ? null : _handlePrimaryPressed,
-                        style: NeumorphicStyle(
-                          color: Colors.black,
-                          depth: 6,
-                          boxShape: NeumorphicBoxShape.roundRect(
-                            BorderRadius.circular(30.0),
-                          ),
-                        ),
-                        child:
-                            _primaryLoading
-                                ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      widget.primaryActionText!,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    const Icon(
-                                      Icons.arrow_forward,
-                                      size: 16,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ),
-                      ),
-                  ],
-                ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
