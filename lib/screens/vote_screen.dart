@@ -91,7 +91,7 @@ class _VoteScreenState extends State<VoteScreen> {
       content: helpContent,
       closeButtonText: '閉じる',
       showWikiLink: true,
-      imagePath: 'assets/sho_setsumei.png',
+      imagePath: 'resources/sho_setsumei.png',
     );
   }
 
@@ -136,75 +136,76 @@ class _VoteScreenState extends State<VoteScreen> {
               ? () => _navigate(-1)
               : null,
       onNext: null,
-      child: Column(
+      extendBehindBottomBar: true,
+      child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: theme.textTheme.bodyMedium,
-                children: [
-                  TextSpan(
-                    text: category.name,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color:
-                          theme.brightness == Brightness.dark
-                              ? theme.colorScheme.onSurface
-                              : theme.colorScheme.primary,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'に選びたい団体を選択してください',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
-              ),
+          Positioned.fill(
+            child: _buildAnimatedGroupView(
+              isOverlayFilter: true,
+              forceList: isCompact || isZoomed,
             ),
           ),
-          // 縦幅が小さい場合は上部詳細表示を無効化
-          if (!isCompact) _buildGroupDetailHeader(isCompact: isCompact),
-          // コンパクト時やズーム時は強制的にリスト表示・トグルは無効化
-          if (!isCompact && !isZoomed) ...[
-            _buildViewToggle(),
-            const SizedBox(height: 12),
-          ] else
-            const SizedBox(height: 8),
-          Expanded(
-            child:
-                (isCompact || isZoomed)
-                    ? Column(
-                      children: [
-                        _buildFloorFilter(),
-                        Expanded(
-                          child: _buildAnimatedGroupView(
-                            isOverlayFilter: false,
-                            forceList: true,
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 72.0),
+                if (isCompact)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16, bottom: 12),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: theme.textTheme.bodyMedium,
+                        children: [
+                          TextSpan(
+                            text: category.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  theme.brightness == Brightness.dark
+                                      ? theme.colorScheme.onSurface
+                                      : theme.colorScheme.primary,
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                    : Stack(
-                      children: [
-                        Positioned.fill(
-                          child: _buildAnimatedGroupView(isOverlayFilter: true),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: _buildFloorFilter(),
-                        ),
-                      ],
+                          TextSpan(
+                            text: 'に選びたい団体を選択してください',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+                if (!isCompact) _buildGroupDetailHeader(isCompact: isCompact),
+                if (!isCompact && !isZoomed) ...[
+                  _buildViewToggle(),
+                  const SizedBox(height: 12),
+                ] else
+                  const SizedBox(height: 8),
+              ],
+            ),
           ),
-          _buildVoteButton(),
+          Positioned(
+            bottom: 88.0,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildFloorFilter(),
+                _buildVoteButton(),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -245,6 +246,7 @@ class _VoteScreenState extends State<VoteScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final category = voteCategories[currentCategoryIndex];
 
     final glassColor = isDark
         ? Colors.black.withValues(alpha: 0.15)
@@ -253,105 +255,180 @@ class _VoteScreenState extends State<VoteScreen> {
     Widget headerContent;
     if (_selectedGroup == null) {
       headerContent = SizedBox(
-        height: isCompact ? 100 : 140,
-        child: Center(
-          child: Text(
-            '投票先を選択してください',
-            style: TextStyle(
-              fontSize: isCompact ? 16 : 18,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
-      );
-    } else {
-      headerContent = GestureDetector(
-        onTap: () {
-          if (_selectedGroup != null) {
-            _showGroupDetailDialog(_selectedGroup!);
-          }
-        },
-        child: SizedBox(
-          height: isCompact ? 100 : 140,
-          child: Row(
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    _selectedGroup!.imagePath,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+        height: isCompact ? 100 : 210,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: theme.textTheme.bodyMedium,
                   children: [
-                    Text(
-                      _selectedGroup!.name,
-                      style: const TextStyle(
-                        fontSize: 16,
+                    TextSpan(
+                      text: category.name,
+                      style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      _selectedGroup!.groupName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.brightness == Brightness.dark
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.primary,
                       ),
                     ),
-                    Text(
-                      _selectedGroup!.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    TextSpan(
+                      text: 'に選びたい団体を選択してください',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${_selectedGroup!.floor == 4 ? '' : '${_selectedGroup!.floor}階・'}${groupCategoryNames[_selectedGroup!.categories.first]!}'
-                      '${_selectedGroup!.pamphletPage != null ? '・パンフレット P${_selectedGroup!.pamphletPage}' : ''}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            const Divider(height: 16),
+            const Expanded(
+              child: Center(
+                child: Text(
+                  '投票先を選択してください',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      headerContent = SizedBox(
+        height: isCompact ? 100 : 210,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: theme.textTheme.bodyMedium,
+                  children: [
+                    TextSpan(
+                      text: category.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.brightness == Brightness.dark
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.primary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'に選びたい団体を選択してください',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(height: 16),
+            Expanded(
+              child: Row(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        _selectedGroup!.imagePath,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _selectedGroup!.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          _selectedGroup!.groupName,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        Text(
+                          _selectedGroup!.description,
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${_selectedGroup!.floor == 4 ? '' : '${_selectedGroup!.floor}階・'}${groupCategoryNames[_selectedGroup!.categories.first]!}'
+                          '${_selectedGroup!.pamphletPage != null ? '・パンフレット P${_selectedGroup!.pamphletPage}' : ''}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 15.0,
-          blur: 20.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(
-            borderRadius: 12.0,
+      child: GestureDetector(
+        onTap: _selectedGroup == null
+            ? null
+            : () => _showGroupDetailDialog(_selectedGroup!),
+        behavior: HitTestBehavior.opaque,
+        child: LiquidGlassLayer(
+          settings: LiquidGlassSettings(
+            glassColor: glassColor,
+            thickness: 15.0,
+            blur: 20.0,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: headerContent,
+          child: LiquidGlass(
+            shape: LiquidRoundedRectangle(
+              borderRadius: 22.0,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: headerContent,
+            ),
           ),
         ),
       ),
@@ -376,7 +453,7 @@ class _VoteScreenState extends State<VoteScreen> {
           ),
           child: LiquidGlass(
             shape: LiquidRoundedRectangle(
-              borderRadius: 12.0,
+              borderRadius: 16.0,
             ),
             child: Padding(
               padding: const EdgeInsets.all(6.0),
@@ -432,13 +509,13 @@ class _VoteScreenState extends State<VoteScreen> {
 
     return InkWell(
       onTap: onPressed,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(14.0),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14.0),
           border: border,
         ),
         child: Row(
@@ -485,13 +562,20 @@ class _VoteScreenState extends State<VoteScreen> {
             : 4;
     final double childAspectRatio = width < 380 ? 0.7 : 0.8;
 
+    final height = MediaQuery.of(context).size.height;
+    final bool isCompact = height < 700;
     return AnimationLimiter(
       child: Scrollbar(
         thumbVisibility: true,
         thickness: 4.0,
         radius: const Radius.circular(8),
         child: GridView.builder(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, isOverlayFilter ? 80 : 16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            isCompact ? 132.0 : 400.0,
+            16,
+            isOverlayFilter ? 240 : 16,
+          ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             crossAxisSpacing: 8,
@@ -624,13 +708,20 @@ class _VoteScreenState extends State<VoteScreen> {
         ),
       );
     }
+    final height = MediaQuery.of(context).size.height;
+    final bool isCompact = height < 700;
     return AnimationLimiter(
       child: Scrollbar(
         thumbVisibility: true,
         thickness: 4.0,
         radius: const Radius.circular(8),
         child: ListView.builder(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            isCompact ? 132.0 : 400.0,
+            16,
+            isOverlayFilter ? 240 : 16,
+          ),
           itemCount: _filteredGroups.length,
           itemBuilder: (context, index) {
             final group = _filteredGroups[index];
@@ -794,38 +885,37 @@ class _VoteScreenState extends State<VoteScreen> {
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Center(
-        child: LiquidGlassLayer(
-          settings: LiquidGlassSettings(
-            glassColor: glassColor,
-            thickness: 15.0,
-            blur: 20.0,
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 15.0,
+          blur: 20.0,
+        ),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(
+            borderRadius: 20.0,
           ),
-          child: LiquidGlass(
-            shape: LiquidRoundedRectangle(
-              borderRadius: 12.0,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  _buildToggleButton(
-                    label: 'すべて',
-                    isSelected: _selectedFloor == null,
-                    onPressed: () => _filterByFloor(null),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                _buildToggleButton(
+                  label: 'すべて',
+                  isSelected: _selectedFloor == null,
+                  onPressed: () => _filterByFloor(null),
+                ),
+                ...floors.map(
+                  (f) => _buildToggleButton(
+                    label: floorLabels[f]!,
+                    isSelected: _selectedFloor == f,
+                    onPressed: () => _filterByFloor(f),
                   ),
-                  ...floors.map(
-                    (f) => _buildToggleButton(
-                      label: floorLabels[f]!,
-                      isSelected: _selectedFloor == f,
-                      onPressed: () => _filterByFloor(f),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -964,31 +1054,43 @@ class _VoteScreenState extends State<VoteScreen> {
       }
     }
 
-    final bool isDark = theme.brightness == Brightness.dark;
-    final Color activeBgColor = isDark ? Colors.white : Colors.black;
-    final Color activeFgColor = isDark ? Colors.black : Colors.white;
+    final Color activeFgColor = theme.colorScheme.onPrimary;
+    final glassColor = theme.colorScheme.primary.withValues(alpha: 0.85);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: NeumorphicButton(
-        onPressed: onPressed,
-        style: NeumorphicStyle(
-          color: activeBgColor,
-          depth: 6,
-          intensity: 0.8,
-          boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: LiquidGlassLayer(
+        settings: LiquidGlassSettings(
+          glassColor: glassColor,
+          thickness: 15.0,
+          blur: 25.0,
         ),
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                buttonText,
-                style: TextStyle(fontSize: 18, color: activeFgColor),
+        child: LiquidGlass(
+          shape: LiquidRoundedRectangle(
+            borderRadius: 30.0,
+          ),
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(30.0),
+            child: Container(
+              height: 56.0,
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    buttonText,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: activeFgColor,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.arrow_forward, size: 16, color: activeFgColor),
+                ],
               ),
-              const SizedBox(width: 6),
-              Icon(Icons.arrow_forward, size: 16, color: activeFgColor),
-            ],
+            ),
           ),
         ),
       ),

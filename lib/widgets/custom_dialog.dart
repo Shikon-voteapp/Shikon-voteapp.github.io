@@ -345,22 +345,24 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                             AnimationConfiguration.synchronized(
                               duration: const Duration(milliseconds: 300),
                               child: FadeInAnimation(
-                                child: SizedBox(
-                                  height: 150,
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.asset(
-                                      widget.imagePath!,
-                                      fit: BoxFit.contain,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Container(
-                                                color:
-                                                    theme
-                                                        .colorScheme
-                                                        .secondaryContainer,
-                                              ),
+                                child: Center(
+                                  child: SizedBox(
+                                    height: 100,
+                                    width: 100,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Image.asset(
+                                        widget.imagePath!,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Container(
+                                                  color:
+                                                      theme
+                                                          .colorScheme
+                                                          .secondaryContainer,
+                                                ),
+                                      ),
                                     ),
                                   ),
                                 ),

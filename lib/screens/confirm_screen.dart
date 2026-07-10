@@ -5,6 +5,7 @@ import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
 import '../services/database_service.dart';
 import '../widgets/main_layout.dart';
+import '../widgets/liquid_glass.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -59,87 +60,112 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                   ),
                 );
               },
+      extendBehindBottomBar: true,
       child: _buildConfirmationView(),
     );
   }
 
   Widget _buildConfirmationView() {
-    return Column(
+    final theme = Theme.of(context);
+    final glassColor = theme.colorScheme.primary.withValues(alpha: 0.85);
+    final Color activeFgColor = theme.colorScheme.onPrimary;
+
+    return Stack(
       key: const ValueKey('confirmation'),
       children: [
-        if (_errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              _errorMessage!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            itemCount: voteCategories.length,
-            itemBuilder: (context, index) {
-              final category = voteCategories[index];
-              final groupId = widget.selections[category.id];
-              if (groupId != null) {
-                final group = allGroups.firstWhere(
-                  (g) => g.id == groupId,
-                  orElse: () {
-                    // In case of data inconsistency
-                    return Group(
-                      id: 'not-found',
-                      name: '団体が見つかりません',
-                      groupName: '',
-                      description: '',
-                      imagePath: 'assets/Stage/No Select.jpg',
-                      floor: 0,
-                      categories: [],
-                    );
+        Positioned.fill(
+          child: Column(
+            children: [
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: theme.colorScheme.error),
+                  ),
+                ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 240),
+                  itemCount: voteCategories.length,
+                  itemBuilder: (context, index) {
+                    final category = voteCategories[index];
+                    final groupId = widget.selections[category.id];
+                    if (groupId != null) {
+                      final group = allGroups.firstWhere(
+                        (g) => g.id == groupId,
+                        orElse: () {
+                          // In case of data inconsistency
+                          return Group(
+                            id: 'not-found',
+                            name: '団体が見つかりません',
+                            groupName: '',
+                            description: '',
+                            imagePath: 'assets/Stage/No Select.jpg',
+                            floor: 0,
+                            categories: [],
+                          );
+                        },
+                      );
+                      return _buildGroupCard(index, category, group);
+                    } else {
+                      return _buildSkippedCard(index, category);
+                    }
                   },
-                );
-                return _buildGroupCard(index, category, group);
-              } else {
-                return _buildSkippedCard(index, category);
-              }
-            },
+                ),
+              ),
+            ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: NeumorphicButton(
-            onPressed: _isLoading ? null : _showConfirmationDialog,
-            style: NeumorphicStyle(
-              color: _isLoading ? null : Colors.black,
-              depth: _isLoading ? -4 : 6,
-              intensity: 0.8,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
-            ),
-            child: Center(
-              child:
-                  _isLoading
-                      ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          strokeWidth: 2,
-                        ),
-                      )
-                      : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'この内容で投票する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+        Positioned(
+          bottom: 88.0,
+          left: 0,
+          right: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: LiquidGlassLayer(
+              settings: LiquidGlassSettings(
+                glassColor: glassColor,
+                thickness: 15.0,
+                blur: 25.0,
+              ),
+              child: LiquidGlass(
+                shape: LiquidRoundedRectangle(
+                  borderRadius: 30.0,
+                ),
+                child: InkWell(
+                  onTap: _isLoading ? null : _showConfirmationDialog,
+                  borderRadius: BorderRadius.circular(30.0),
+                  child: Container(
+                    height: 56.0,
+                    alignment: Alignment.center,
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: theme.colorScheme.onSurface,
+                              strokeWidth: 2,
                             ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'この内容で投票する',
+                                style: TextStyle(
+                                  color: activeFgColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Icon(Icons.check, size: 16, color: activeFgColor),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Icon(Icons.check, size: 16, color: Colors.white),
-                        ],
-                      ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

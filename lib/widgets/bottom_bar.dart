@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/material.dart';
+import 'liquid_glass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
@@ -333,6 +334,10 @@ Widget _buildSmallSNSButton({
   }
   @override
   Widget build(BuildContext context) {
+    final glassColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white.withOpacity(0.1)
+        : Colors.black.withOpacity(0.05);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
@@ -340,118 +345,125 @@ Widget _buildSmallSNSButton({
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left side navigation
-          Neumorphic(
-            style: NeumorphicStyle(
-              color:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF1E1E1E)
-                      : Colors.white,
-              depth: 6,
-              boxShape: const NeumorphicBoxShape.stadium(),
+          LiquidGlassLayer(
+            settings: LiquidGlassSettings(
+              glassColor: glassColor,
+              thickness: 15.0,
+              blur: 20.0,
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 6.0,
-            ),
-            child: Row(
-              children: [
-                _buildGroupedIcon(
-                  context: context,
-                  icon: Icons.home,
-                  onPressed: onHome ?? () => _showReloadConfirmDialog(context),
+            child: LiquidGlass(
+              shape: LiquidRoundedRectangle(
+                borderRadius: 28.0,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 6.0,
                 ),
-                _buildGroupedDivider(context),
-                _buildGroupedIcon(
-                  context: context,
-                  icon: Icons.help_outline,
-                  onPressed: () => _showHelp(context),
+                child: Row(
+                  children: [
+                    _buildGroupedIcon(
+                      context: context,
+                      icon: Icons.home,
+                      onPressed: onHome ?? () => _showReloadConfirmDialog(context),
+                    ),
+                    _buildGroupedDivider(context),
+                    _buildGroupedIcon(
+                      context: context,
+                      icon: Icons.help_outline,
+                      onPressed: () => _showHelp(context),
+                    ),
+                    _buildGroupedDivider(context),
+                    _buildGroupedIcon(
+                      context: context,
+                      icon: Icons.admin_panel_settings,
+                      onPressed: () => showAdminLoginDialog(context: context),
+                    ),
+                    _buildGroupedDivider(context),
+                    _buildGroupedIcon(
+                      context: context,
+                      icon: Icons.arrow_back,
+                      onPressed: onBack ?? () => _showCantGoBackDialog(context),
+                    ),
+                  ],
                 ),
-                _buildGroupedDivider(context),
-                _buildGroupedIcon(
-                  context: context,
-                  icon: Icons.admin_panel_settings,
-                  onPressed: () => showAdminLoginDialog(context: context),
-                ),
-                _buildGroupedDivider(context),
-                _buildGroupedIcon(
-                  context: context,
-                  icon: Icons.arrow_back,
-                  onPressed: onBack ?? () => _showCantGoBackDialog(context),
-                ),
-              ],
+              ),
             ),
           ),
           // Right side navigation
           Row(
             children: [
               // Info button (hamburger menu)
-              Neumorphic(
-                style: NeumorphicStyle(
-                  boxShape: const NeumorphicBoxShape.circle(),
-                  depth: 4,
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const Color(0xFF1E1E1E)
-                          : null,
+              LiquidGlassLayer(
+                settings: LiquidGlassSettings(
+                  glassColor: glassColor,
+                  thickness: 15.0,
+                  blur: 20.0,
                 ),
-                child: SizedBox(
-                  width: 56.0,
-                  height: 56.0,
-                  child: GestureDetector(
-                    onTap: () => _showInfoDialog(context),
-                    behavior: HitTestBehavior.opaque,
-                    child: Center(
-                      child: Icon(
-                        Icons.menu,
-                        color:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                        size: 24.0,
+                child: LiquidGlass(
+                  shape: LiquidRoundedRectangle(
+                    borderRadius: 28.0,
+                  ),
+                  child: SizedBox(
+                    width: 56.0,
+                    height: 56.0,
+                    child: GestureDetector(
+                      onTap: () => _showInfoDialog(context),
+                      behavior: HitTestBehavior.opaque,
+                      child: Center(
+                        child: Icon(
+                          Icons.menu,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                          size: 24.0,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              if (onNext != null) const SizedBox(width: 12),
               // Next button
               if (onNext != null)
-                SizedBox(
-                  height: 56.0,
-                  child: NeumorphicButton(
-                    onPressed: onNext,
-                    style: NeumorphicStyle(
-                      color:
-                          Theme.of(context).brightness == Brightness.dark
-                              ? const Color(0xFF1E1E1E)
-                              : Colors.white,
-                      depth: 6,
-                      boxShape: const NeumorphicBoxShape.stadium(),
+                LiquidGlassLayer(
+                  settings: LiquidGlassSettings(
+                    glassColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+                    thickness: 15.0,
+                    blur: 20.0,
+                  ),
+                  child: LiquidGlass(
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: 28.0,
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '次へ',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                          ),
+                    child: InkWell(
+                      onTap: onNext,
+                      borderRadius: BorderRadius.circular(28.0),
+                      child: Container(
+                        height: 56.0,
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '次へ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 8),
-                        Icon(
-                          Icons.arrow_forward,
-                          size: 16,
-                          color:
-                              Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
