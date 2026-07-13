@@ -85,7 +85,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 7, 11, 11, 51, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 7, 14, 14, 32, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
@@ -594,15 +594,6 @@ shape of you/Ed Sheeran
     imagePath: 'assets/ⅢG.jpeg',
     floor: 3,
     categories: [GroupCategory.Moyoshi],
-  ),
-  Group(
-    id: 'new_639124744070849824',
-    name: '新しい団体',
-    groupName: 'New',
-    description: '''新しい団体''',
-    imagePath: 'resources/sho_setsumei.png',
-    floor: 2,
-    categories: [GroupCategory.Tenji, GroupCategory.Moyoshi, GroupCategory.Gakunen, GroupCategory.Roten, GroupCategory.Stage, GroupCategory.Performance, GroupCategory.Band, GroupCategory.other],
   )
 ];
 
