@@ -1,7 +1,7 @@
 ﻿name: shikon_voteapp
 description: "A flutter project that provides voting service on the Shikon Fes."
 publish_to: 'none'
-version: 2.0.1+59
+version: 2.0.1+60
 environment:
   sdk: ^3.7.2
 dependencies:
@@ -46,13 +46,23 @@ flutter:
     - assets/
     - resources/
   fonts:
-    - family: A-OTF-ShinGoPr6
+    - family: SFProDisplay
       fonts:
-        - asset: resources/fonts/A-OTF-ShinGoPr6-Light.otf
-          weight: 300
-        - asset: resources/fonts/A-OTF-ShinGoPr6-Regular.otf
+        - asset: resources/fonts/SF-Pro-Display-Regular.otf
           weight: 400
-        - asset: resources/fonts/A-OTF-ShinGoPr6-Medium.otf
+        - asset: resources/fonts/SF-Pro-Display-Medium.otf
           weight: 500
-        - asset: resources/fonts/A-OTF-ShinGoPr6-Bold.otf
+        - asset: resources/fonts/SF-Pro-Display-Bold.otf
           weight: 700
+    - family: HiraginoSans
+      fonts:
+        - asset: resources/fonts/ヒラギノ角ゴ Std W3.otf
+          weight: 300
+        - asset: resources/fonts/ヒラギノ角ゴ Std W4.otf
+          weight: 400
+        - asset: resources/fonts/ヒラギノ角ゴ Std W5.otf
+          weight: 500
+        - asset: resources/fonts/ヒラギノ角ゴ Std W6.otf
+          weight: 600
+        - asset: resources/fonts/ヒラギノ角ゴ Std W8.otf
+          weight: 800
