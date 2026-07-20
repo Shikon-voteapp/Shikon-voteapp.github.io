@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'liquid_glass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -369,13 +369,13 @@ class BottomBar extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    return NeumorphicButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      style: NeumorphicStyle(
-        boxShape: const NeumorphicBoxShape.circle(),
-        depth: 2,
-        intensity: 0.6,
-        color: theme.colorScheme.surface,
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+        backgroundColor: theme.colorScheme.surface,
+        elevation: 2,
+        padding: EdgeInsets.zero,
       ),
       child: SizedBox(
         width: 28.0,

@@ -1,4 +1,5 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
+import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter/material.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
@@ -123,13 +124,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Neumorphic(
+    return neumorphicCard(
+      context: context,
       margin: const EdgeInsets.only(bottom: 16),
-      style: NeumorphicStyle(
-        color: colorScheme.surface,
-        depth: 4,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
-      ),
+      depth: 4,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -147,7 +146,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                 ),
-                NeumorphicButton(
+                ElevatedButton.icon(
                   onPressed:
                       _isLoading
                           ? null
@@ -167,19 +166,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               ),
                             );
                           },
-                  style: const NeumorphicStyle(depth: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 6),
-                      Text('編集'),
-                    ],
-                  ),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('編集'),
                 ),
               ],
             ),
@@ -242,13 +236,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget _buildSkippedCard(int categoryIndex, VoteCategory category) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Neumorphic(
+    return neumorphicCard(
+      context: context,
       margin: const EdgeInsets.only(bottom: 16),
-      style: NeumorphicStyle(
-        color: colorScheme.surface,
-        depth: 2,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
-      ),
+      depth: 2,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -266,7 +258,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                 ),
-                NeumorphicButton(
+                ElevatedButton.icon(
                   onPressed:
                       _isLoading
                           ? null
@@ -286,19 +278,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               ),
                             );
                           },
-                  style: const NeumorphicStyle(depth: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 6),
-                      Text('編集'),
-                    ],
-                  ),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('編集'),
                 ),
               ],
             ),

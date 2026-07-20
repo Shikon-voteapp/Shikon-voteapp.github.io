@@ -1,4 +1,5 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
+import 'neumorphic_wrappers.dart';
 // import 'package:hugeicons/hugeicons.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
@@ -28,11 +29,10 @@ class AdminDashboard extends StatelessWidget {
 
         return GestureDetector(
           onTap: () => onCategorySelected(index),
-          child: Neumorphic(
-            style: NeumorphicStyle(
-              depth: 4,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-            ),
+          child: neumorphicCard(
+            context: context,
+            depth: 4,
+            borderRadius: BorderRadius.circular(12),
             padding: const EdgeInsets.all(12.0),
             child: Padding(
               padding: const EdgeInsets.all(12.0),

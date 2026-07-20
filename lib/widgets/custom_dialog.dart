@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // TODO: Migrate to package:web when stable
 // ignore: deprecated_member_use
 import 'dart:html' as html;
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'liquid_glass.dart';
@@ -92,31 +91,29 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Neumorphic(
-                      style: NeumorphicStyle(
-                        depth: -4,
-                        intensity: 0.8,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.black.withValues(alpha: 0.2) 
+                          : Colors.black.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                         ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: TextField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
-                            ),
+                      child: TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          filled: false,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
                           ),
                         ),
                       ),
@@ -138,31 +135,29 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Neumorphic(
-                      style: NeumorphicStyle(
-                        depth: -4,
-                        intensity: 0.8,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.black.withValues(alpha: 0.2) 
+                          : Colors.black.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
                         ),
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 12,
-                            ),
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: true,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          filled: false,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
                           ),
                         ),
                       ),

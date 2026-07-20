@@ -5,7 +5,7 @@ import '../platform/platform_utils.dart';
 import 'confirm_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../services/accessibility_service.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter/material.dart';
@@ -727,25 +727,19 @@ class _VoteScreenState extends State<VoteScreen> {
                 },
                 child: Opacity(
                   opacity: isVotedInOtherCategory ? 0.5 : 1.0,
-                  child: Neumorphic(
-                    style: NeumorphicStyle(
-                      color: theme.colorScheme.surface,
-                      depth: isSelected ? -6.0 : 6.0,
-                      intensity: 0.7,
-                      lightSource: LightSource.topLeft,
-                      boxShape: NeumorphicBoxShape.roundRect(
-                        BorderRadius.circular(12),
+                  child: neumorphicCard(
+                    context: context,
+                    depth: isSelected ? 2.0 : 6.0,
+                    padding: EdgeInsets.zero,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
+                          width: isSelected ? 2 : 1,
+                        ),
                       ),
-                      border: NeumorphicBorder(
-                        isEnabled: isSelected,
-                        color:
-                            isSelected
-                                ? theme.colorScheme.primary
-                                : theme.dividerColor,
-                        width: isSelected ? 2 : 1,
-                      ),
-                    ),
-                    child: Column(
+                      child: Column(
                       children: [
                         Expanded(
                           child: ClipRRect(
@@ -788,8 +782,9 @@ class _VoteScreenState extends State<VoteScreen> {
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          );
+        },
         ),
       ),
     );
@@ -869,34 +864,19 @@ class _VoteScreenState extends State<VoteScreen> {
                   opacity: isVotedInOtherCategory ? 0.5 : 1.0,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 24),
-                    child: Neumorphic(
-                      style: NeumorphicStyle(
-                        color: colorScheme.surface,
-                        depth:
-                            isSelected
-                                ? -((Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? 6.0
-                                    : 10.0))
-                                : (Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? 6.0
-                                    : 10.0),
-                        intensity: 0.8,
-                        lightSource: LightSource.topLeft,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(12),
+                    child: neumorphicCard(
+                      context: context,
+                      depth: isSelected ? 2.0 : 8.0,
+                      padding: EdgeInsets.zero,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? colorScheme.primary : theme.dividerColor,
+                            width: isSelected ? 2 : 1,
+                          ),
                         ),
-                        border: NeumorphicBorder(
-                          isEnabled: isSelected,
-                          color:
-                              isSelected
-                                  ? colorScheme.primary
-                                  : theme.dividerColor,
-                          width: isSelected ? 2 : 1,
-                        ),
-                      ),
-                      child: Padding(
+                        child: Padding(
                         padding: const EdgeInsets.all(8),
                         child: Row(
                           children: [
@@ -968,8 +948,9 @@ class _VoteScreenState extends State<VoteScreen> {
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          );
+        },
         ),
       ),
     );

@@ -3,7 +3,6 @@ import '../services/student_verification_service.dart';
 import 'package:flutter/services.dart';
 import '../models/student.dart';
 import '../widgets/main_layout.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -180,60 +179,58 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Neumorphic(
-          style: NeumorphicStyle(
-            depth: -4,
-            intensity: 0.8,
-            boxShape: NeumorphicBoxShape.roundRect(
-              BorderRadius.all(Radius.circular(12)),
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark 
+              ? Colors.black.withValues(alpha: 0.2) 
+              : Colors.black.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
             ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: TextField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(2),
-                ],
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: InputDecoration(
-                  counterText: '',
-                  border: InputBorder.none,
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  hintText: '番号を入力...',
-                  hintStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                ),
-                onChanged: (value) {
-                  final trimmed =
-                      value.length > 2 ? value.substring(0, 2) : value;
-                  if (trimmed != value) {
-                    // TextFieldが自動で切り詰めるため、stateだけ更新
-                  }
-                  setState(() => _selectedNumber = int.tryParse(trimmed));
-                },
-                textAlign: TextAlign.center,
-                maxLength: 2,
-                buildCounter:
-                    (
-                      context, {
-                      required currentLength,
-                      required isFocused,
-                      maxLength,
-                    }) => null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(2),
+              ],
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
               ),
+              decoration: InputDecoration(
+                counterText: '',
+                border: InputBorder.none,
+                filled: false,
+                hintText: '番号を入力...',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+              ),
+              onChanged: (value) {
+                final trimmed =
+                    value.length > 2 ? value.substring(0, 2) : value;
+                if (trimmed != value) {
+                  // TextFieldが自動で切り詰めるため、stateだけ更新
+                }
+                setState(() => _selectedNumber = int.tryParse(trimmed));
+              },
+              textAlign: TextAlign.center,
+              maxLength: 2,
+              buildCounter:
+                  (
+                    context, {
+                    required currentLength,
+                    required isFocused,
+                    maxLength,
+                  }) => null,
             ),
           ),
         ),

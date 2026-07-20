@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import 'neumorphic_wrappers.dart';
 import '../models/group.dart';
 import './group_selection_area.dart'; // group_selection_area.dart をインポート
