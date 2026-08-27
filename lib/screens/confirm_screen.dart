@@ -1,10 +1,12 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
+import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter/material.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';
 import '../services/database_service.dart';
 import '../widgets/main_layout.dart';
+import '../widgets/liquid_glass.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -54,16 +56,22 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           selections: widget.selections,
                           isGridView: widget.isGridView,
                           restoreSelection: true,
-                          returnToConfirm: true,
+                          returnToConfirm: false,
                         ),
                   ),
                 );
               },
+      onNext: _isLoading ? null : _showConfirmationDialog,
+      nextLabel: 'この内容で投票する',
+      nextLoading: _isLoading,
+      extendBehindBottomBar: true,
       child: _buildConfirmationView(),
     );
   }
 
   Widget _buildConfirmationView() {
+    final theme = Theme.of(context);
+
     return Column(
       key: const ValueKey('confirmation'),
       children: [
@@ -72,12 +80,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               _errorMessage!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(color: theme.colorScheme.error),
             ),
           ),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 80, 16, 120),
             itemCount: voteCategories.length,
             itemBuilder: (context, index) {
               final category = voteCategories[index];
@@ -105,44 +113,6 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: NeumorphicButton(
-            onPressed: _isLoading ? null : _showConfirmationDialog,
-            style: NeumorphicStyle(
-              color: _isLoading ? null : Colors.black,
-              depth: _isLoading ? -4 : 6,
-              intensity: 0.8,
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(30)),
-            ),
-            child: Center(
-              child:
-                  _isLoading
-                      ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          strokeWidth: 2,
-                        ),
-                      )
-                      : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'この内容で投票する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(Icons.check, size: 16, color: Colors.white),
-                        ],
-                      ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -154,13 +124,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Neumorphic(
+    return neumorphicCard(
+      context: context,
       margin: const EdgeInsets.only(bottom: 16),
-      style: NeumorphicStyle(
-        color: colorScheme.surface,
-        depth: 4,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
-      ),
+      depth: 4,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -178,7 +146,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                 ),
-                NeumorphicButton(
+                ElevatedButton.icon(
                   onPressed:
                       _isLoading
                           ? null
@@ -198,19 +166,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               ),
                             );
                           },
-                  style: const NeumorphicStyle(depth: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 6),
-                      Text('編集'),
-                    ],
-                  ),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('編集'),
                 ),
               ],
             ),
@@ -273,13 +236,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   Widget _buildSkippedCard(int categoryIndex, VoteCategory category) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return Neumorphic(
+    return neumorphicCard(
+      context: context,
       margin: const EdgeInsets.only(bottom: 16),
-      style: NeumorphicStyle(
-        color: colorScheme.surface,
-        depth: 2,
-        boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(16)),
-      ),
+      depth: 2,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -297,7 +258,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                     ),
                   ),
                 ),
-                NeumorphicButton(
+                ElevatedButton.icon(
                   onPressed:
                       _isLoading
                           ? null
@@ -317,19 +278,14 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               ),
                             );
                           },
-                  style: const NeumorphicStyle(depth: 2),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                   ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.edit, size: 16),
-                      SizedBox(width: 6),
-                      Text('編集'),
-                    ],
-                  ),
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('編集'),
                 ),
               ],
             ),

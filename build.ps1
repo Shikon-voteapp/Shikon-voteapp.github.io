@@ -120,6 +120,9 @@ if (!(Test-Path $targetDir)) {
 
 # ファイルをコピー（再帰的、上書きあり）
 Write-Host "Copying files to $targetDir..."
+if (Test-Path "$targetDir/assets") {
+    Remove-Item -Path "$targetDir/assets" -Recurse -Force
+}
 Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
 
 # Git操作

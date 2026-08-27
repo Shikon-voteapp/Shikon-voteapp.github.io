@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import 'group_tile.dart';

@@ -3,7 +3,6 @@ import '../services/student_verification_service.dart';
 import 'package:flutter/services.dart';
 import '../models/student.dart';
 import '../widgets/main_layout.dart';
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'vote_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -42,6 +41,9 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '生徒の本人確認',
       helpContent: '投票権に記載された学年・クラス・番号を選択してください。',
+      onNext: _isVerifying ? null : _verifyStudent,
+      nextLabel: 'ログイン',
+      nextLoading: _isVerifying,
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -89,63 +91,6 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildDropdownContainer('番号', _buildNumberField()),
-                    const Spacer(),
-                    NeumorphicButton(
-                      onPressed: _isVerifying ? null : _verifyStudent,
-                      style: NeumorphicStyle(
-                        color:
-                            _isVerifying
-                                ? null
-                                : (Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black),
-                        depth: _isVerifying ? -4 : 6,
-                        intensity: 0.8,
-                        boxShape: NeumorphicBoxShape.roundRect(
-                          BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: Center(
-                        child:
-                            _isVerifying
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 3,
-                                  ),
-                                )
-                                : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'ログイン',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color:
-                                            Theme.of(context).brightness ==
-                                                    Brightness.dark
-                                                ? Colors.black
-                                                : Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Icon(
-                                      Icons.arrow_forward,
-                                      size: 16,
-                                      color:
-                                          Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.black
-                                              : Colors.white,
-                                    ),
-                                  ],
-                                ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -234,60 +179,58 @@ class _StudentVerificationScreenState extends State<StudentVerificationScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Neumorphic(
-          style: NeumorphicStyle(
-            depth: -4,
-            intensity: 0.8,
-            boxShape: NeumorphicBoxShape.roundRect(
-              BorderRadius.all(Radius.circular(12)),
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark 
+              ? Colors.black.withValues(alpha: 0.2) 
+              : Colors.black.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
             ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: TextField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(2),
-                ],
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-                decoration: InputDecoration(
-                  counterText: '',
-                  border: InputBorder.none,
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  hintText: '番号を入力...',
-                  hintStyle: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                ),
-                onChanged: (value) {
-                  final trimmed =
-                      value.length > 2 ? value.substring(0, 2) : value;
-                  if (trimmed != value) {
-                    // TextFieldが自動で切り詰めるため、stateだけ更新
-                  }
-                  setState(() => _selectedNumber = int.tryParse(trimmed));
-                },
-                textAlign: TextAlign.center,
-                maxLength: 2,
-                buildCounter:
-                    (
-                      context, {
-                      required currentLength,
-                      required isFocused,
-                      maxLength,
-                    }) => null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(2),
+              ],
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
               ),
+              decoration: InputDecoration(
+                counterText: '',
+                border: InputBorder.none,
+                filled: false,
+                hintText: '番号を入力...',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+              ),
+              onChanged: (value) {
+                final trimmed =
+                    value.length > 2 ? value.substring(0, 2) : value;
+                if (trimmed != value) {
+                  // TextFieldが自動で切り詰めるため、stateだけ更新
+                }
+                setState(() => _selectedNumber = int.tryParse(trimmed));
+              },
+              textAlign: TextAlign.center,
+              maxLength: 2,
+              buildCounter:
+                  (
+                    context, {
+                    required currentLength,
+                    required isFocused,
+                    maxLength,
+                  }) => null,
             ),
           ),
         ),

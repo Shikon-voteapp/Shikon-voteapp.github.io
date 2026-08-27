@@ -1,9 +1,7 @@
 ﻿name: shikon_voteapp
 description: "A flutter project that provides voting service on the Shikon Fes."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.6.7+27
+publish_to: 'none'
+version: 3.0.0+61
 environment:
   sdk: ^3.7.2
 dependencies:
@@ -38,33 +36,33 @@ dependencies:
   file_picker: ^10.3.3
   package_info_plus: ^9.0.0
   flutter_screenutil: ^5.9.3
-  flutter_neumorphic_plus: ^3.3.0
   flutter_staggered_animations: ^1.1.1
   web: ^1.1.0
-  icons_plus: ^5.0.0
+  font_awesome_flutter: ^11.0.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+    - resources/
   fonts:
-    - family: A-OTF-ShinGoPr6
+    - family: SFProDisplay
       fonts:
-        - asset: assets/Fonts/A-OTF-ShinGoPr6-Light.otf
+        - asset: resources/fonts/SF-Pro-Display-Regular.otf
+          weight: 400
+        - asset: resources/fonts/SF-Pro-Display-Medium.otf
+          weight: 500
+        - asset: resources/fonts/SF-Pro-Display-Bold.otf
+          weight: 700
+    - family: HiraginoSans
+      fonts:
+        - asset: resources/fonts/ヒラギノ角ゴ Std W3.otf
           weight: 300
-        - asset: assets/Fonts/A-OTF-ShinGoPr6-Regular.otf
+        - asset: resources/fonts/ヒラギノ角ゴ Std W4.otf
           weight: 400
-        - asset: assets/Fonts/A-OTF-ShinGoPr6-Medium.otf
+        - asset: resources/fonts/ヒラギノ角ゴ Std W5.otf
           weight: 500
-        - asset: assets/Fonts/A-OTF-ShinGoPr6-Bold.otf
-          weight: 700
-    - family: Triumvirate
-      fonts:
-        - asset: assets/Fonts/Triumvirate.ttf
-          weight: 400
-        - asset: assets/Fonts/Triumvirate.ttf
-          weight: 500
-        - asset: assets/Fonts/Triumvirate Bold.ttf
+        - asset: resources/fonts/ヒラギノ角ゴ Std W6.otf
           weight: 600
-        - asset: assets/Fonts/Triumvirate Bold.ttf
-          weight: 700
+        - asset: resources/fonts/ヒラギノ角ゴ Std W8.otf
+          weight: 800

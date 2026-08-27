@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
+import 'package:flutter/material.dart';
 import '../platform/platform_utils.dart';
 
 class ErrorScreen extends StatelessWidget {
@@ -29,17 +29,17 @@ class ErrorScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            NeumorphicButton(
+            ElevatedButton(
               onPressed: () {
                 PlatformUtils.reloadApp();
               },
-              style: const NeumorphicStyle(
-                depth: 6,
-                color: Colors.black,
-                boxShape: NeumorphicBoxShape.stadium(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                shape: const StadiumBorder(),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: const Text('再試行', style: TextStyle(color: Colors.white)),
+              child: const Text('再試行'),
             ),
           ],
         ),
