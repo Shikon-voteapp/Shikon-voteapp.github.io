@@ -25,6 +25,9 @@ analyzer:
     invalid_null_aware_operator: ignore
     # TODOコメントを抑制
     todo: ignore
+  exclude:
+    - build/**
+    - web/**
 
 linter:
   # The lint rules applied to this project can be customized in the
