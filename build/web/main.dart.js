@@ -32106,8 +32106,8 @@ aPU(){var s=0,r=A.B(t.H),q
 var $async$aPU=A.C(function(a,b){if(a===1)return A.y(b,r)
 for(;;)switch(s){case 0:if($.aXx){s=1
 break}$.aXy="3.0.0"
-$.aXw="64"
-A.ds("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 3.0.0.64")
+$.aXw="65"
+A.ds("Web\u74b0\u5883\u306e\u305f\u3081\u3001\u30d0\u30fc\u30b8\u30e7\u30f3\u60c5\u5831\u3092\u76f4\u63a5\u8a2d\u5b9a\u3057\u307e\u3059: 3.0.0.65")
 $.aXx=!0
 case 1:return A.z(q,r)}})
 return A.A($async$aPU,r)},
@@ -113405,7 +113405,7 @@ $.uI=A.c([],A.ae("F<o5>"))
 $.bef=A.q(t.N,A.ae("Q<~(j?)>"))
 $.aum=null
 $.aXy="3.0.0"
-$.aXw="64"
+$.aXw="65"
 $.aXx=!1
 $.b7o=A.q(t.S,A.ae("b7n"))
 $.aVd=null
@@ -114009,7 +114009,7 @@ s($,"bkV","aRM",()=>new A.t())
 r($,"ba4","aNw",()=>{var q=new A.amB()
 q.uS($.aRM())
 return q})
-s($,"bnG","aSa",()=>A.aOc(2026,8,30,8,40,0))
+s($,"bnG","aSa",()=>A.aOc(2026,9,8,6,16,0))
 s($,"bnI","a8K",()=>{var q=A.aOc(2026,8,28,0,0,0)
 return A.bbf(A.aOc(2026,8,29,0,0,0),!0,3,0,2,0,q)})
 s($,"bnw","aS7",()=>{var q="assets/\u2160F.jpg",p=t.Yy
