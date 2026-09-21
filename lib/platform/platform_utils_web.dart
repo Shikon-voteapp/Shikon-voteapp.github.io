@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-// TODO: Migrate to package:web when stable
-// ignore: deprecated_member_use
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
+import 'dart:js_interop';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'platform_utils.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -10,16 +10,17 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class PlatformUtilsImpl {
   static Future<PermissionResult> requestCameraPermission() async {
     try {
-      final userMedia = await html.window.navigator.mediaDevices?.getUserMedia({
-        'video': true,
-        'audio': false,
-      });
-
-      if (userMedia != null) {
-        userMedia.getTracks().forEach((track) => track.stop());
-        return PermissionResult(granted: true);
+      final mediaDevices = web.window.navigator.mediaDevices;
+      final constraints = web.MediaStreamConstraints(
+        video: true.toJS,
+        audio: false.toJS,
+      );
+      final userMedia = await mediaDevices.getUserMedia(constraints).toDart;
+      final tracks = userMedia.getTracks().toDart;
+      for (final track in tracks) {
+        track.stop();
       }
-      return PermissionResult(granted: false, errorMessage: 'カメラへのアクセスができません');
+      return PermissionResult(granted: true);
     } catch (e) {
       return PermissionResult(granted: false, errorMessage: e.toString());
     }
@@ -28,26 +29,14 @@ class PlatformUtilsImpl {
   static void reloadApp() {
     // DDC 開発モードでのモジュール初期化エラーを避けるため、
     // `reload()` ではなくアプリのルートURLへ遷移する。
-    final href = html.window.location.origin + (html.window.location.pathname ?? '/');
-    html.window.location.assign(href);
+    final href = web.window.location.origin + (web.window.location.pathname.isEmpty ? '/' : web.window.location.pathname);
+    web.window.location.assign(href);
   }
 
   static void downloadFile(String content, String filename) {
     try {
-      // Create blob
       final bytes = utf8.encode(content);
-      final blob = html.Blob([bytes]);
-
-      // Create download URL
-      final url = html.Url.createObjectUrlFromBlob(blob);
-
-      // Create and trigger download
-      html.AnchorElement(href: url)
-        ..setAttribute('download', filename)
-        ..click();
-
-      // Cleanup
-      html.Url.revokeObjectUrl(url);
+      downloadBytes(bytes, filename, mimeType: 'text/plain');
     } catch (e) {
       print('ファイルダウンロードエラー: $e');
     }
@@ -59,12 +48,18 @@ class PlatformUtilsImpl {
     String mimeType = 'application/octet-stream',
   }) {
     try {
-      final blob = html.Blob([bytes], mimeType);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      html.AnchorElement(href: url)
-        ..setAttribute('download', filename)
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      final blob = web.Blob(
+        [Uint8List.fromList(bytes).toJS].toJS,
+        web.BlobPropertyBag(type: mimeType),
+      );
+      final url = web.URL.createObjectURL(blob);
+      final anchor = web.HTMLAnchorElement()
+        ..href = url
+        ..download = filename;
+      web.document.body?.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      web.URL.revokeObjectURL(url);
     } catch (e) {
       print('ファイルダウンロードエラー: $e');
     }
@@ -72,7 +67,7 @@ class PlatformUtilsImpl {
 
   static void openUrl(String url) {
     try {
-      html.window.open(url, '_blank');
+      web.window.open(url, '_blank');
     } catch (e) {
       print('URLを開くエラー: $e');
     }
@@ -81,46 +76,49 @@ class PlatformUtilsImpl {
   static void closeTab() {
     try {
       // ブラウザのセキュリティ制限を回避: _selfで開いてからclose()する
-      html.window.open('', '_self', '');
-      html.window.close();
+      web.window.open('', '_self', '');
+      web.window.close();
     } catch (e) {
       // フォールバック: ユーザーに手動で閉じるよう案内
-      html.window.alert('投票が完了しました。このタブを手動で閉じてください。\n（ブラウザの制限により自動では閉じられない場合があります）');
+      web.window.alert('投票が完了しました。このタブを手動で閉じてください。\n（ブラウザの制限により自動では閉じられない場合があります）');
     }
   }
 
   static Future<void> clearCacheAndReload() async {
     try {
       // Unregister all service workers
-      if (html.window.navigator.serviceWorker != null) {
-        final registrations =
-            await html.window.navigator.serviceWorker!.getRegistrations();
-        for (final reg in registrations) {
-          await reg.unregister();
+      try {
+        final sw = web.window.navigator.serviceWorker;
+        final registrations = await sw.getRegistrations().toDart;
+        final regList = registrations.toDart;
+        for (final reg in regList) {
+          await reg.unregister().toDart;
         }
-      }
+      } catch (_) {}
 
       // Delete all caches
-      if (html.window.caches != null) {
-        final cacheNames = await html.window.caches!.keys();
-        for (final name in cacheNames) {
-          await html.window.caches!.delete(name);
+      try {
+        final caches = web.window.caches;
+        final cacheKeys = await caches.keys().toDart;
+        final keysList = cacheKeys.toDart;
+        for (final key in keysList) {
+          await caches.delete(key.toDart).toDart;
         }
-      }
+      } catch (_) {}
 
       // Clear localStorage/sessionStorage as a safety (optional)
       try {
-        html.window.localStorage.clear();
-        html.window.sessionStorage.clear();
+        web.window.localStorage.clear();
+        web.window.sessionStorage.clear();
       } catch (_) {}
 
       // キャッシュ削除後も同じ理由でルートURLへ遷移する。
-      final href = html.window.location.origin + (html.window.location.pathname ?? '/');
-      html.window.location.assign(href);
+      final href = web.window.location.origin + (web.window.location.pathname.isEmpty ? '/' : web.window.location.pathname);
+      web.window.location.assign(href);
     } catch (e) {
       print('キャッシュ破棄に失敗しました: $e');
-      final href = html.window.location.origin + (html.window.location.pathname ?? '/');
-      html.window.location.assign(href);
+      final href = web.window.location.origin + (web.window.location.pathname.isEmpty ? '/' : web.window.location.pathname);
+      web.window.location.assign(href);
     }
   }
 }

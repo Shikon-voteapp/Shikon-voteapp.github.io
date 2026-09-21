@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-// TODO: Migrate to package:web when stable
-// ignore: deprecated_member_use
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
+import '../platform/platform_utils.dart';
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -450,9 +448,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                         M3EButton.icon(
                           onPressed: () {
                             final url = widget.wikiUrl ?? 'https://shikon-voteapp.github.io/information/';
-                            if (kIsWeb) {
-                              html.window.open(url, '_blank');
-                            }
+                            PlatformUtils.openUrl(url);
                           },
                           icon: const Icon(Icons.open_in_new, size: 16),
                           label: const Text(

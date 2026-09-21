@@ -1,11 +1,8 @@
-// lib/utils/cache_manager.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-// ignore: uri_does_not_exist, deprecated_member_use
-import 'dart:js_util' as js_util;
-// ignore: deprecated_member_use
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
+import 'dart:js_interop';
 
 /// アプリのキャッシュを管理するクラス
 class CacheManager {
@@ -58,26 +55,20 @@ class CacheManager {
   static Future<void> _clearWebCache() async {
     try {
       // Service Workerのキャッシュをクリア
-      if (js_util.hasProperty(html.window, 'caches')) {
-        final caches = js_util.getProperty(html.window, 'caches');
-        if (caches != null) {
-          final cacheNames = await js_util.promiseToFuture(
-            js_util.callMethod(caches, 'keys', []),
-          );
-
-          for (final cacheName in cacheNames) {
-            await js_util.promiseToFuture(
-              js_util.callMethod(caches, 'delete', [cacheName]),
-            );
-          }
+      try {
+        final caches = web.window.caches;
+        final cacheKeys = await caches.keys().toDart;
+        final keysList = cacheKeys.toDart;
+        for (final key in keysList) {
+          await caches.delete(key.toDart).toDart;
         }
-      }
+      } catch (_) {}
 
-      // LocalStorageをクリア
-      html.window.localStorage.clear();
-
-      // SessionStorageをクリア
-      html.window.sessionStorage.clear();
+      // LocalStorage / SessionStorageをクリア
+      try {
+        web.window.localStorage.clear();
+        web.window.sessionStorage.clear();
+      } catch (_) {}
 
       print('Webブラウザキャッシュをクリアしました');
     } catch (e) {

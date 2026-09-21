@@ -101,7 +101,7 @@ Write-Host "=== Version Management Complete ==="
 
 # Flutter Web をビルド
 Write-Host "=== Flutter Web Build Start ==="
-flutter build web
+flutter build web --wasm
 
 # ビルドに失敗したら終了
 if ($LASTEXITCODE -ne 0) {

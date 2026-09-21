@@ -11,27 +11,23 @@ import 'screens/splash_screen.dart';
 import 'theme.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-// ignore: uri_does_not_exist, deprecated_member_use
-import 'dart:js_util' as js_util;
-// TODO: Migrate to package:web when stable
-// ignore: deprecated_member_use
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 import 'utils/version_info.dart';
 import 'utils/cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services/accessibility_service.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
-import 'platform/platform_utils_desktop.dart'
-    if (dart.library.html) 'platform/platform_utils_web_key.dart';
+import 'platform/platform_utils_web_key.dart'
+    if (dart.library.io) 'platform/platform_utils_desktop.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (kIsWeb) {
-    if (js_util.hasProperty(html.window, "flutterReady")) {
-      js_util.callMethod(html.window, "flutterReady", []);
-    }
+    try {
+      web.window.dispatchEvent(web.Event('flutter-first-frame'));
+    } catch (_) {}
   }
 
   // アプリ起動時にキャッシュを強制的にクリア

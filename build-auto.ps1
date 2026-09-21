@@ -64,7 +64,7 @@ Write-Host "=== Auto Version Management Complete ==="
 
 # Flutter Web をビルド
 Write-Host "=== Flutter Web Build Start ==="
-flutter build web
+flutter build web --wasm
 
 # ビルドに失敗したら終了
 if ($LASTEXITCODE -ne 0) {
@@ -84,6 +84,7 @@ if (!(Test-Path $targetDir)) {
 # ファイルをコピー（再帰的、上書きあり）
 Write-Host "Copying files to $targetDir..."
 Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
+"mkc.mamouna.net" | Set-Content "$targetDir/CNAME" -NoNewline
 
 # Git操作
 Write-Host "=== Git Operations Start ==="
