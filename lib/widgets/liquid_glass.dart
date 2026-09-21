@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class LiquidGlassSettings {
@@ -64,32 +65,39 @@ class LiquidGlass extends StatelessWidget {
     final Color glassColor = settings.glassColor;
     final double blur = settings.blur;
 
-    // Premium glassmorphism decoration:
-    // 1. Subtle blur using BackdropFilter.
-    // 2. Translucent background with a slight gradient.
-    // 3. Highlighted border simulating light catching the edges.
+    final boxDecoration = BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          glassColor.withAlpha((glassColor.alpha * 1.3).clamp(0, 255).toInt()),
+          glassColor.withAlpha((glassColor.alpha * 0.85).clamp(0, 255).toInt()),
+        ],
+      ),
+      borderRadius: shape.borderRadius,
+      border: Border.all(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.15)
+            : Colors.white.withValues(alpha: 0.4),
+        width: 1.2,
+      ),
+    );
+
+    // Web環境ではBackdropFilterが大量のGPUメモリリーク(1.5GB超)を引き起こすため、
+    // 軽量かつ高速な半透明グラデーション装飾を使用
+    if (kIsWeb || blur <= 0) {
+      return Container(
+        decoration: boxDecoration,
+        child: child,
+      );
+    }
+
     return ClipRRect(
       borderRadius: shape.borderRadius,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                glassColor.withAlpha((glassColor.alpha * 1.2).clamp(0, 255).toInt()),
-                glassColor.withAlpha((glassColor.alpha * 0.8).clamp(0, 255).toInt()),
-              ],
-            ),
-            borderRadius: shape.borderRadius,
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : Colors.white.withValues(alpha: 0.4),
-              width: 1.2,
-            ),
-          ),
+          decoration: boxDecoration,
           child: child,
         ),
       ),

@@ -374,7 +374,113 @@ class _AdminScreenState extends State<AdminScreen>
               },
               isDark: isDark,
             ),
-            Expanded(child: mainContent),
+            Expanded(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  automaticallyImplyLeading: false,
+                  title: Text(
+                    _appBarTitle,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  centerTitle: false,
+                  actions: [
+                    _buildAppBarCircleButton(
+                      icon: Icons.refresh,
+                      onPressed: _loadAllData,
+                    ),
+                    if (_currentMode == AdminMode.results)
+                      _buildAppBarCircleButton(
+                        icon: Icons.file_download,
+                        onPressed: _exportResults,
+                      ),
+                    _buildAppBarCircleButton(
+                      icon: Icons.help,
+                      onPressed: _showHelpDialog,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: _buildAppBarCircleButton(
+                        icon: Icons.logout,
+                        onPressed: () async {
+                          await _auth.signOut();
+                          if (mounted) {
+                            Navigator.of(
+                              context,
+                            ).pushNamedAndRemoveUntil('/', (route) => false);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                body: _buildBody(),
+                bottomNavigationBar: _currentMode == AdminMode.batchVote
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF1E1E24).withValues(alpha: 0.95)
+                              : Colors.white.withValues(alpha: 0.95),
+                          border: Border(
+                            top: BorderSide(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.08),
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: 280,
+                            height: 48,
+                            child: ElevatedButton(
+                              onPressed: _isBatchVoteSubmitting
+                                  ? null
+                                  : () => _batchVoteKey.currentState?.submitVotes(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isDark
+                                    ? const Color(0xFF8B5CF6)
+                                    : const Color(0xFF6D28D9),
+                                foregroundColor: Colors.white,
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24.0),
+                                ),
+                              ),
+                              child: _isBatchVoteSubmitting
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '登録',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 2.0,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Icon(Icons.arrow_forward_rounded, size: 18),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : null,
+              ),
+            ),
           ],
         ),
       );

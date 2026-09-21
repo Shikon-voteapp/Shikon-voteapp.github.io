@@ -281,13 +281,12 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
     final borderColor = isDark ? Colors.white70 : Colors.black87;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ツールバー（ステータス表示・全クリア）
           Container(
-            constraints: const BoxConstraints(maxWidth: 1060),
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             decoration: BoxDecoration(
               color: isDark
@@ -344,35 +343,42 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
           ),
           const SizedBox(height: 18),
 
-          // テーブルマトリックス（横スクロール対応）
+          // テーブルマトリックス（左側固定見出し + 右側全幅横スクロール）
           Container(
-            constraints: const BoxConstraints(maxWidth: 1100),
-            child: Scrollbar(
-              controller: _horizontalScrollController,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: _horizontalScrollController,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 左側の固定見出し列
-                    _buildRowLabelsColumn(),
+            width: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 左側の固定行見出し列（スクロールしても見出しが見える）
+                _buildRowLabelsColumn(),
 
-                    // 右側の10列（各列を独立したウィジェットとして高速レンダリング）
-                    for (int i = 0; i < columnCount; i++)
-                      _BatchVoteColumnWidget(
-                        key: ValueKey(i),
-                        data: _columns[i],
-                        borderColor: borderColor,
-                        isDark: isDark,
-                        dropdownItemsCache: _dropdownItemsCache,
-                        onClear: () => clearColumn(i),
+                // 右側の10列（画面幅いっぱいまで広がり横スクロール可能）
+                Expanded(
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0; i < columnCount; i++)
+                            _BatchVoteColumnWidget(
+                              key: ValueKey(i),
+                              data: _columns[i],
+                              borderColor: borderColor,
+                              isDark: isDark,
+                              dropdownItemsCache: _dropdownItemsCache,
+                              onClear: () => clearColumn(i),
+                            ),
+                        ],
                       ),
-                  ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -587,6 +593,7 @@ class _BatchDropdownCell extends StatelessWidget {
                 child: DropdownButton<String?>(
                   value: selectedValue,
                   isExpanded: true,
+                  menuMaxHeight: 260,
                   icon: Icon(Icons.arrow_drop_down, color: borderColor, size: 24),
                   hint: Text(
                     '選択なし',
