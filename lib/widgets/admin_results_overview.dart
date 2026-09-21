@@ -13,6 +13,8 @@ class AdminResultsOverview extends StatelessWidget {
   final List<MapEntry<Group, int>> Function(String categoryId, {bool? applyShikonExclusion}) getSortedResults;
   final int Function(String categoryId) getTotalCategoryVotes;
   final Set<String> Function() getShikonTop2GroupIds;
+  final int? selectedCategoryIndex;
+  final bool isCompact;
 
   const AdminResultsOverview({
     super.key,
@@ -23,6 +25,8 @@ class AdminResultsOverview extends StatelessWidget {
     required this.getSortedResults,
     required this.getTotalCategoryVotes,
     required this.getShikonTop2GroupIds,
+    this.selectedCategoryIndex,
+    this.isCompact = false,
   });
 
   @override
@@ -43,10 +47,13 @@ class AdminResultsOverview extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 12 : 16,
+        vertical: 16,
+      ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
+          constraints: BoxConstraints(maxWidth: isCompact ? double.infinity : 800),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -122,81 +129,108 @@ class AdminResultsOverview extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final displayEntries = results.take(maxDisplayRank).toList();
+    final bool isSelected = selectedCategoryIndex == categoryIndex;
 
-    return M3ECard(
-      variant: M3ECardVariant.elevated,
-      elevation: 1.0,
-      borderRadius: BorderRadius.circular(24.0),
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      onPressed: () => onSelectCategory(categoryIndex),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 表題（賞名）
-          Text(
-            category.name,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          // コンテンツ部（左：順位、右：総投票数と ▶）
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 順位一覧
-              Expanded(
-                child: displayEntries.isEmpty
-                    ? Text(
-                        '1位 : -',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.outline,
-                        ),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(maxDisplayRank, (idx) {
-                          final rank = idx + 1;
-                          final entry = idx < displayEntries.length ? displayEntries[idx] : null;
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3.0),
-                            child: _buildRankRow(
-                              context,
-                              rank: rank,
-                              entry: entry,
-                            ),
-                          );
-                        }),
-                      ),
+    return Container(
+      decoration: isSelected
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(24.0),
+              border: Border.all(
+                color: colorScheme.primary,
+                width: 2.0,
               ),
-
-              const SizedBox(width: 16),
-
-              // 総投票数と ▶ アイコン
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '総投票数 : $totalVotes票',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+            )
+          : null,
+      child: M3ECard(
+        variant: isSelected ? M3ECardVariant.filled : M3ECardVariant.elevated,
+        elevation: isSelected ? 2.0 : 1.0,
+        borderRadius: BorderRadius.circular(24.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 18.0 : 24.0,
+          vertical: isCompact ? 16.0 : 20.0,
+        ),
+        onPressed: () => onSelectCategory(categoryIndex),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 表題（賞名）
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    category.name,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                ),
+                if (isSelected)
                   Icon(
-                    Icons.play_arrow_rounded,
-                    size: 28,
-                    color: colorScheme.onSurface,
+                    Icons.check_circle_rounded,
+                    size: 20,
+                    color: colorScheme.primary,
                   ),
-                ],
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // コンテンツ部（左：順位、右：総投票数と ▶）
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 順位一覧
+                Expanded(
+                  child: displayEntries.isEmpty
+                      ? Text(
+                          '1位 : -',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.outline,
+                          ),
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(maxDisplayRank, (idx) {
+                            final rank = idx + 1;
+                            final entry = idx < displayEntries.length ? displayEntries[idx] : null;
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 3.0),
+                              child: _buildRankRow(
+                                context,
+                                rank: rank,
+                                entry: entry,
+                              ),
+                            );
+                          }),
+                        ),
+                ),
+
+                const SizedBox(width: 14),
+
+                // 総投票数と ▶ アイコン
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '総投票数 : $totalVotes票',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.play_arrow_rounded,
+                      size: 26,
+                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

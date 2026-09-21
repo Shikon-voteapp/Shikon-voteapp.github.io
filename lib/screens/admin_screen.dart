@@ -276,10 +276,16 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   String get _appBarTitle {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isWide = screenWidth >= 720;
+
     switch (_currentMode) {
       case AdminMode.menu:
         return '管理者パネル';
       case AdminMode.results:
+        if (isWide) {
+          return '投票結果の確認';
+        }
         if (_detailedCategoryIndex != null && _detailedCategoryIndex! < voteCategories.length) {
           return '${voteCategories[_detailedCategoryIndex!].name} の詳細結果';
         }
@@ -440,11 +446,7 @@ class _AdminScreenState extends State<AdminScreen>
             // ─ 右：縦型ナビゲーションレール（FoldやPC用） ─────────────
             VerticalNavBar(
               onBack: () {
-                if (_currentMode == AdminMode.results && _detailedCategoryIndex != null) {
-                  setState(() {
-                    _detailedCategoryIndex = null;
-                  });
-                } else if (_currentMode != AdminMode.menu) {
+                if (_currentMode != AdminMode.menu) {
                   setState(() {
                     _currentMode = AdminMode.menu;
                   });
@@ -794,11 +796,67 @@ class _AdminScreenState extends State<AdminScreen>
   Widget _buildResultsTab() {
     _excludeShikonTop2 ??= true;
     final bool isExcludingShikon = (_excludeShikonTop2 ?? true) == true;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isWide = screenWidth >= 720;
 
+    if (isWide) {
+      // PC & タブレット: 2カラム表示（左: サマリー, 右: それぞれの結果）
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 左カラム（サマリー一覧）
+          SizedBox(
+            width: 410,
+            child: AdminResultsOverview(
+              votes: _votes,
+              excludeShikonTop2: isExcludingShikon,
+              selectedCategoryIndex: _selectedCategoryIndex,
+              isCompact: true,
+              onExcludeShikonTop2Changed: (val) {
+                setState(() {
+                  _excludeShikonTop2 = val;
+                });
+              },
+              onSelectCategory: (index) {
+                setState(() {
+                  _selectedCategoryIndex = index;
+                  _categoryTabController.index = index;
+                });
+              },
+              getSortedResults: _getSortedResults,
+              getTotalCategoryVotes: _getTotalCategoryVotes,
+              getShikonTop2GroupIds: _getShikonTop2GroupIds,
+            ),
+          ),
+          VerticalDivider(
+            width: 1,
+            thickness: 1,
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4),
+          ),
+          // 右カラム（選択された賞の詳細結果）
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildCategoryTabs(),
+                Expanded(
+                  child: _votes == null || _votes!.isEmpty
+                      ? const Center(child: Text('投票データがありません'))
+                      : _buildCategoryResults(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+    // スマートフォン: 1カラム表示（サマリー ⇄ 詳細ドリルダウン）
     if (_detailedCategoryIndex == null) {
       return AdminResultsOverview(
         votes: _votes,
         excludeShikonTop2: isExcludingShikon,
+        selectedCategoryIndex: null,
         onExcludeShikonTop2Changed: (val) {
           setState(() {
             _excludeShikonTop2 = val;
@@ -923,8 +981,10 @@ class _AdminScreenState extends State<AdminScreen>
           ),
           SizedBox(height: 8),
           Text(
-            '総投票数: ${_votes?.length ?? 0}票',
-            style: Theme.of(context).textTheme.titleMedium,
+            '部門有効投票数: ${_getTotalCategoryVotes(category.id)}票（総投票者数: ${_votes?.length ?? 0}人）',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           SizedBox(height: 24),
           AdminCategoryResults(results: results),
