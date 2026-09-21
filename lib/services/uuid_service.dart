@@ -21,6 +21,12 @@ class UuidService {
         return false;
       }
 
+      // 無効化されたUUIDかチェック
+      bool isInvalidated = await _dbService.isUuidInvalidated(uuid);
+      if (isInvalidated) {
+        return false;
+      }
+
       bool hasVoted = await _dbService.hasVoted(uuid);
       return !hasVoted;
     } catch (e) {
@@ -28,6 +34,9 @@ class UuidService {
       return false;
     }
   }
+
+  /// 指定UUIDが無効化されているかをチェック
+  Future<bool> isUuidInvalidated(String uuid) => _dbService.isUuidInvalidated(uuid);
 
   bool _isValidUuidFormat(String uuid) {
     RegExp uuidRegex = RegExp(r'^[0-9]{10}$');

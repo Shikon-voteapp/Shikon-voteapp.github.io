@@ -158,7 +158,15 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
           continue;
         }
 
-        // 4. 重複投票チェック（Firebase / DatabaseService）
+        // 4. 無効化番号チェック
+        final bool isInvalidated = await _dbService.isUuidInvalidated(rawNumber);
+        if (isInvalidated) {
+          col.errorNotifier.value = '無効化された番号';
+          rejectedMessages.add('列 ${col.index + 1} ($rawNumber): 管理者により無効化されています');
+          continue;
+        }
+
+        // 5. 重複投票チェック（Firebase / DatabaseService）
         final bool hasAlreadyVoted = await _dbService.hasVoted(rawNumber);
         if (hasAlreadyVoted) {
           col.errorNotifier.value = '投票済み';

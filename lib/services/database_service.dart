@@ -137,4 +137,125 @@ class DatabaseService {
       print('Firebaseへの同期エラー: $e');
     }
   }
+
+  static const String _invalidatedPath = 'invalidated_uuids';
+
+  // ─── 投票番号の無効化関連メソッド ──────────────────────────────────
+
+  /// 指定UUIDが無効化されているかチェック
+  Future<bool> isUuidInvalidated(String uuid) async {
+    try {
+      final snapshot = await _database.ref('$_invalidatedPath/$uuid').get();
+      return snapshot.exists;
+    } catch (e) {
+      print('無効化UUIDチェックエラー: $e');
+      return false;
+    }
+  }
+
+  /// 無効化されたすべてのUUID情報を取得
+  Future<List<Map<String, dynamic>>> getInvalidatedUuids() async {
+    try {
+      final snapshot = await _database.ref(_invalidatedPath).get();
+      if (!snapshot.exists || snapshot.value == null) {
+        return [];
+      }
+      final data = snapshot.value as Map<dynamic, dynamic>;
+      List<Map<String, dynamic>> list = [];
+      data.forEach((key, value) {
+        if (value is Map) {
+          list.add({
+            'uuid': key.toString(),
+            'invalidatedAt': value['invalidatedAt']?.toString() ?? '',
+            'reason': value['reason']?.toString() ?? '理由なし',
+            'hadVote': value['hadVote'] == true,
+          });
+        } else {
+          list.add({
+            'uuid': key.toString(),
+            'invalidatedAt': '',
+            'reason': '理由なし',
+            'hadVote': false,
+          });
+        }
+      });
+      // 新しい順にソート
+      list.sort((a, b) => (b['invalidatedAt'] ?? '').compareTo(a['invalidatedAt'] ?? ''));
+      return list;
+    } catch (e) {
+      print('無効化UUID一覧取得エラー: $e');
+      return [];
+    }
+  }
+
+  /// 投票番号を無効化する（オプションで既存の投票データを削除）
+  Future<bool> invalidateUuid(
+    String uuid, {
+    String? reason,
+    bool deleteExistingVote = true,
+  }) async {
+    try {
+      // 既存の投票データが存在するかチェック
+      final voteSnapshot = await _database.ref('$_votesPath/$uuid').get();
+      final bool hadVote = voteSnapshot.exists;
+
+      // 無効化リストに登録
+      await _database.ref('$_invalidatedPath/$uuid').set({
+        'uuid': uuid,
+        'invalidatedAt': DateTime.now().toIso8601String(),
+        'reason': reason ?? '管理者による無効化',
+        'hadVote': hadVote,
+      });
+
+      // 既存の投票データがあり、削除指定されている場合はvotesから削除
+      if (hadVote && deleteExistingVote) {
+        await _database.ref('$_votesPath/$uuid').remove();
+
+        // ローカルキャッシュからも削除
+        final prefs = await SharedPreferences.getInstance();
+        final localVotes = prefs.getStringList('votes') ?? [];
+        localVotes.removeWhere((voteJson) {
+          try {
+            final Map<String, dynamic> voteMap = json.decode(voteJson);
+            return voteMap['uuid'] == uuid;
+          } catch (_) {
+            return false;
+          }
+        });
+        await prefs.setStringList('votes', localVotes);
+      }
+
+      return true;
+    } catch (e) {
+      print('UUID無効化エラー: $e');
+      return false;
+    }
+  }
+
+  /// 無効化を解除（復元）する
+  Future<bool> restoreUuid(String uuid) async {
+    try {
+      await _database.ref('$_invalidatedPath/$uuid').remove();
+      return true;
+    } catch (e) {
+      print('UUID無効化解除エラー: $e');
+      return false;
+    }
+  }
+
+  /// UUIDの現在の状態を取得（'invalidated', 'voted', 'unused'）
+  Future<String> checkUuidStatus(String uuid) async {
+    try {
+      final isInv = await isUuidInvalidated(uuid);
+      if (isInv) return 'invalidated';
+
+      final hasV = await hasVoted(uuid);
+      if (hasV) return 'voted';
+
+      return 'unused';
+    } catch (e) {
+      return 'unknown';
+    }
+  }
 }
+

@@ -14,6 +14,7 @@ import '../widgets/admin_pie_chart.dart';
 import '../widgets/admin_mode_selection.dart';
 import '../widgets/admin_batch_vote_entry.dart';
 import '../widgets/admin_sidebar.dart';
+import '../widgets/admin_invalidate_vote.dart';
 import '../main.dart' show themeModeNotifier;
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
@@ -231,6 +232,8 @@ class _AdminScreenState extends State<AdminScreen>
         return '管理者ユーザー管理';
       case AdminMode.batchVote:
         return '投票の一括追加';
+      case AdminMode.invalidateVote:
+        return '投票番号の無効化';
     }
   }
 
@@ -264,6 +267,10 @@ class _AdminScreenState extends State<AdminScreen>
               _isBatchVoteSubmitting = submitting;
             });
           },
+        );
+      case AdminMode.invalidateVote:
+        return AdminInvalidateVote(
+          onDataChanged: _loadAllData,
         );
     }
   }
@@ -488,6 +495,17 @@ class _AdminScreenState extends State<AdminScreen>
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     setState(() => _currentMode = AdminMode.userManagement);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.block_rounded,
+                  title: '投票番号の無効化',
+                  subtitle: '紛失・汚損・不正利用等の番号無効化',
+                  isSelected: _currentMode == AdminMode.invalidateVote,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.invalidateVote);
                   },
                 ),
                 _buildMenuModeTile(

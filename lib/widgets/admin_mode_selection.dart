@@ -7,6 +7,7 @@ enum AdminMode {
   results,
   userManagement,
   batchVote,
+  invalidateVote,
 }
 
 class AdminModeSelection extends StatelessWidget {
@@ -118,6 +119,17 @@ class AdminModeSelection extends StatelessWidget {
                         accentColor: const Color(0xFFD97706),
                         actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.userManagement),
+                      ),
+                      _buildModeCard(
+                        context: context,
+                        width: cardWidth,
+                        icon: Icons.block_rounded,
+                        title: '投票番号の無効化',
+                        subtitle: '紛失・汚損・再発行・不正利用等の投票番号を無効化および復元',
+                        badgeText: '新機能',
+                        accentColor: const Color(0xFFDC2626),
+                        actionLabel: '開く',
+                        onTap: () => onSelectMode(AdminMode.invalidateVote),
                       ),
                       _buildModeCard(
                         context: context,

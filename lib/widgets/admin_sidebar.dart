@@ -83,6 +83,14 @@ class AdminSidebar extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
                     _buildNavItem(
+                      icon: Icons.block_rounded,
+                      label: '番号無効化',
+                      isSelected: currentMode == AdminMode.invalidateVote,
+                      onTap: () => onSelectMode(AdminMode.invalidateVote),
+                      theme: theme,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildNavItem(
                       icon: Icons.menu_book_rounded,
                       label: 'マニュアル',
                       isSelected: false,
