@@ -8,7 +8,6 @@ import '../services/accessibility_service.dart';
 import 'package:flutter/material.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:flutter/material.dart';
 import '../widgets/liquid_glass.dart';
 
 class VoteScreen extends StatefulWidget {

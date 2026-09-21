@@ -1,6 +1,5 @@
-import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 
 class LiquidGlassSettings {
   final Color glassColor;
@@ -44,6 +43,8 @@ class LiquidRoundedRectangle extends LiquidShape {
   BorderRadius get borderRadius => BorderRadius.circular(borderRadiusValue);
 }
 
+/// Material 3 Expressive に刷新された Expressive Surface コンテナ
+/// Liquid Glass (BackdropFilter) を廃止し、M3Eの表現力豊かなトナルサーフェスと角丸シェイプを提供
 class LiquidGlass extends StatelessWidget {
   final LiquidShape shape;
   final Widget child;
@@ -57,50 +58,48 @@ class LiquidGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
     final layer = context.findAncestorWidgetOfExactType<LiquidGlassLayer>();
-    final settings = layer?.settings ?? const LiquidGlassSettings();
+    final settings = layer?.settings;
 
-    final Color glassColor = settings.glassColor;
-    final double blur = settings.blur;
+    // Material 3 Expressive トナルサーフェス装飾
+    var surfaceColor = isDark
+        ? Color.alphaBlend(
+            colorScheme.primary.withValues(alpha: 0.08),
+            colorScheme.surfaceContainerHigh,
+          )
+        : Color.alphaBlend(
+            colorScheme.primary.withValues(alpha: 0.05),
+            colorScheme.surfaceContainerHighest.withValues(alpha: 0.75),
+          );
 
-    final boxDecoration = BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          glassColor.withAlpha((glassColor.alpha * 1.3).clamp(0, 255).toInt()),
-          glassColor.withAlpha((glassColor.alpha * 0.85).clamp(0, 255).toInt()),
-        ],
-      ),
-      borderRadius: shape.borderRadius,
-      border: Border.all(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.15)
-            : Colors.white.withValues(alpha: 0.4),
-        width: 1.2,
-      ),
-    );
-
-    // Web環境ではBackdropFilterが大量のGPUメモリリーク(1.5GB超)を引き起こすため、
-    // 軽量かつ高速な半透明グラデーション装飾を使用
-    if (kIsWeb || blur <= 0) {
-      return Container(
-        decoration: boxDecoration,
-        child: child,
-      );
+    if (settings != null && settings.glassColor != const Color(0x1AFFFFFF)) {
+      surfaceColor = Color.alphaBlend(settings.glassColor, surfaceColor);
     }
 
-    return ClipRRect(
-      borderRadius: shape.borderRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          decoration: boxDecoration,
-          child: child,
+    final borderColor = isDark
+        ? colorScheme.outlineVariant.withValues(alpha: 0.25)
+        : colorScheme.outlineVariant.withValues(alpha: 0.4);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: shape.borderRadius,
+        border: Border.all(
+          color: borderColor,
+          width: 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
+      child: child,
     );
   }
 }

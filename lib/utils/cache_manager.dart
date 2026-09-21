@@ -2,7 +2,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:js/js_util.dart' as js_util;
+// ignore: uri_does_not_exist, deprecated_member_use
+import 'dart:js_util' as js_util;
 // ignore: deprecated_member_use
 import 'dart:html' as html;
 

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'liquid_glass.dart';
 
 Future<void> showCustomDialog({
@@ -167,7 +168,10 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                 if (isLoading)
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
-                    child: CircularProgressIndicator(),
+                    child: M3ELoadingIndicator(
+                      variant: M3ELoadingIndicatorVariant.defaultStyle,
+                      elevation: 0,
+                    ),
                   ),
               ],
             ),
@@ -348,14 +352,12 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                           ),
                         ),
                         child: _primaryLoading
-                            ? SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: isDark
-                                      ? Colors.white
-                                      : theme.colorScheme.primary,
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: M3ELoadingIndicator(
+                                  variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                  elevation: 0,
                                 ),
                               )
                             : Row(

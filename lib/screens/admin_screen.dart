@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 // import 'package:hugeicons/hugeicons.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -272,7 +273,14 @@ class _AdminScreenState extends State<AdminScreen>
   @override
   Widget build(BuildContext context) {
     if (_isLoading || !_isLoggedIn) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(
+          child: M3ELoadingIndicator(
+            variant: M3ELoadingIndicatorVariant.defaultStyle,
+            elevation: 0,
+          ),
+        ),
+      );
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
@@ -671,7 +679,12 @@ class _AdminScreenState extends State<AdminScreen>
               context: context,
               barrierDismissible: false,
               builder:
-                  (context) => const Center(child: CircularProgressIndicator()),
+                  (context) => const Center(
+                    child: M3ELoadingIndicator(
+                      variant: M3ELoadingIndicatorVariant.defaultStyle,
+                      elevation: 0,
+                    ),
+                  ),
             );
 
             await _createAdminUser(

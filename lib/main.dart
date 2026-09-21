@@ -9,8 +9,10 @@ import 'widgets/error_screen.dart';
 import 'screens/splash_screen.dart';
 
 import 'theme.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:js/js_util.dart' as js_util;
+// ignore: uri_does_not_exist, deprecated_member_use
+import 'dart:js_util' as js_util;
 // TODO: Migrate to package:web when stable
 // ignore: deprecated_member_use
 import 'dart:html' as html;
@@ -90,17 +92,25 @@ class MyApp extends StatelessWidget {
               home: SplashScreen(dateRangeService: dateRangeService),
               routes: {'/admin': (context) => AdminScreen()},
           builder: (context, child) {
-            return ValueListenableBuilder<bool>(
-              valueListenable: AccessibilityService.isZoomed,
-              builder: (context, isZoomed, _) {
-                final media = MediaQuery.of(context);
-                return MediaQuery(
-                  data: media.copyWith(
-                    textScaler: TextScaler.linear(isZoomed ? 1.5 : 1.0),
-                  ),
-                  child: child!,
-                );
-              },
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            final m3eThemeData = isDark
+                ? M3EThemeData.dark(seedColor: shikonPurple)
+                : M3EThemeData.light(seedColor: shikonPurple);
+
+            return M3ETheme(
+              data: m3eThemeData,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: AccessibilityService.isZoomed,
+                builder: (context, isZoomed, _) {
+                  final media = MediaQuery.of(context);
+                  return MediaQuery(
+                    data: media.copyWith(
+                      textScaler: TextScaler.linear(isZoomed ? 1.5 : 1.0),
+                    ),
+                    child: child!,
+                  );
+                },
+              ),
             );
           },
         );

@@ -1,4 +1,4 @@
-﻿name: shikon_voteapp
+name: shikon_voteapp
 description: "A flutter project that provides voting service on the Shikon Fes."
 publish_to: 'none'
 version: 3.0.0+65
@@ -39,6 +39,7 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   web: ^1.1.0
   font_awesome_flutter: ^11.0.0
+  material_3_expressive: ^1.1.2
 
 flutter:
   uses-material-design: true

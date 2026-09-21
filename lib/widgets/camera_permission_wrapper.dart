@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import '../platform/platform_utils.dart';
 
 class CameraPermissionWrapper extends StatefulWidget {
@@ -77,7 +78,10 @@ class CameraPermissionLoadingScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            CircularProgressIndicator(),
+            const M3ELoadingIndicator(
+              variant: M3ELoadingIndicatorVariant.defaultStyle,
+              elevation: 0,
+            ),
             SizedBox(height: 24),
             Text(
               'カメラへのアクセスを許可してください',

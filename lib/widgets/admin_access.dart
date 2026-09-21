@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/custom_dialog.dart';
 
@@ -56,9 +57,16 @@ class AdminAccessButton extends StatelessWidget {
                           ),
                         ),
                         if (isLoading)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: CircularProgressIndicator(),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 16.0),
+                            child: SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: M3ELoadingIndicator(
+                                variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                elevation: 0,
+                              ),
+                            ),
                           ),
                       ],
                     ),

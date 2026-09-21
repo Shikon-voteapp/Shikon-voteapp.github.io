@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/neumorphic_wrappers.dart';
-import 'package:flutter/material.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../config/vote_options.dart';

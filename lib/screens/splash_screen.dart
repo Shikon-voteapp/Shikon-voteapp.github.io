@@ -1,5 +1,5 @@
-// duplicate removed
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'dart:async';
 import '../config/data_range_service.dart';
 import 'selection_screen.dart';
@@ -91,13 +91,10 @@ class _SplashScreenState extends State<SplashScreen> {
                         : Colors.black,
               ),
             ),
-            SizedBox(height: 50),
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black,
-              ),
+            const SizedBox(height: 50),
+            const M3ELoadingIndicator(
+              variant: M3ELoadingIndicatorVariant.defaultStyle,
+              elevation: 0,
             ),
             SizedBox(height: 20),
             Text(

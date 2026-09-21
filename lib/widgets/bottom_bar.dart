@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'liquid_glass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -494,12 +494,12 @@ class BottomBar extends StatelessWidget {
                         ),
                       ),
                       child: nextLoading
-                          ? SizedBox(
+                          ? const SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: pillFg,
+                              child: M3ELoadingIndicator(
+                                variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                elevation: 0,
                               ),
                             )
                           : Row(
