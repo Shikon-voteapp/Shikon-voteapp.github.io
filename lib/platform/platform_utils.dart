@@ -52,4 +52,9 @@ abstract class PlatformUtils {
   static void openUrl(String url) {
     PlatformUtilsImpl.openUrl(url);
   }
+
+  // Close current tab (web only, no-op on desktop)
+  static void closeTab() {
+    PlatformUtilsImpl.closeTab();
+  }
 }

@@ -75,6 +75,14 @@ class PlatformUtilsImpl {
     }
   }
 
+  static void closeTab() {
+    try {
+      html.window.close();
+    } catch (e) {
+      print('タブを閉じるエラー: $e');
+    }
+  }
+
   static Future<void> clearCacheAndReload() async {
     try {
       // Unregister all service workers

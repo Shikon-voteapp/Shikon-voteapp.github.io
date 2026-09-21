@@ -1,5 +1,6 @@
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/uuid_service.dart';
+import '../services/database_service.dart';
 import '../config/data_range_service.dart';
 import '../widgets/main_layout.dart';
 import '../widgets/neumorphic_wrappers.dart';
@@ -8,7 +9,11 @@ import 'vote_screen.dart';
 import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
+import '../config/vote_options.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../models/vote_category.dart';
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 
 class ScannerScreen extends StatefulWidget {
   final bool startWithScanner;
@@ -22,6 +27,7 @@ class ScannerScreen extends StatefulWidget {
 class _ScannerScreenState extends State<ScannerScreen>
     with WidgetsBindingObserver {
   final UuidService _uuidService = UuidService();
+  final DatabaseService _dbService = DatabaseService();
   final DateRangeService _dateRangeService = DateRangeService();
   final TextEditingController _manualCodeController = TextEditingController();
   late bool _showManualInput;
@@ -146,12 +152,14 @@ class _ScannerScreenState extends State<ScannerScreen>
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.black.withValues(alpha: 0.2) 
-                            : Colors.black.withValues(alpha: 0.05),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black.withValues(alpha: 0.2)
+                              : Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+                            color: Theme.of(context)
+                                .dividerColor
+                                .withValues(alpha: 0.3),
                           ),
                         ),
                         child: Padding(
@@ -172,13 +180,13 @@ class _ScannerScreenState extends State<ScannerScreen>
                             keyboardType: TextInputType.number,
                             autofocus: true,
                             maxLength: 10,
-                            buildCounter:
-                                (
-                                  context, {
-                                  required currentLength,
-                                  required isFocused,
-                                  maxLength,
-                                }) => null,
+                            buildCounter: (
+                              context, {
+                              required currentLength,
+                              required isFocused,
+                              maxLength,
+                            }) =>
+                                null,
                             style: const TextStyle(
                               fontSize: 27,
                               fontWeight: FontWeight.bold,
@@ -256,18 +264,92 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
-  void _showPermissionDeniedDialog() {
+  /// 無効・エラー理由を区別して表示するダイアログ
+  void _showInvalidUuidDialog(UuidValidationResult reason) {
+    final String title;
+    final Widget contentWidget;
+    final theme = Theme.of(context);
+
+    switch (reason) {
+      case UuidValidationResult.invalidFormat:
+        title = '番号の形式が正しくありません';
+        contentWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildErrorBadge(
+              icon: Icons.format_clear_rounded,
+              label: '形式エラー',
+              color: theme.colorScheme.error,
+              theme: theme,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '入力された番号が10桁の数字ではありません。投票券に記載されている10桁の番号を正しく入力してください。',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        );
+        break;
+      case UuidValidationResult.outOfRange:
+        title = '使用できない番号です';
+        contentWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildErrorBadge(
+              icon: Icons.block_rounded,
+              label: '番号範囲外',
+              color: theme.colorScheme.error,
+              theme: theme,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'この番号は紫紺祭で発行された投票券の番号ではありません。パンフレット同封の投票券をご確認いただくか、文準本部室にお越しください。',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        );
+        break;
+      case UuidValidationResult.invalidated:
+        title = 'この番号は無効化されています';
+        contentWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildErrorBadge(
+              icon: Icons.remove_circle_outline_rounded,
+              label: '番号無効',
+              color: Colors.orange,
+              theme: theme,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'この番号は管理者により無効化されています。紛失・汚損・再発行等の理由により使用できません。\nお心当たりがある場合は、文準本部室にお越しください。',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        );
+        break;
+      default:
+        title = '番号エラー';
+        contentWidget = Text(
+          'このコードは無効か、すでに使われているかもしれません。\nお手数ですが、文準本部室までお越しください。',
+          style: theme.textTheme.bodyMedium,
+        );
+    }
+
     showCustomDialog(
       context: context,
-      title: 'アクセス権限エラー',
-      content: 'このコードは無効か、すでに使われているかもしれません。\nお手数ですが、文準本部室までお越しください。',
-      primaryActionText: '再試行',
+      title: title,
+      contentWidget: contentWidget,
+      primaryActionText: '再入力する',
       onPrimaryAction: () {
         Navigator.of(context).pop();
         if (_showManualInput) {
-          if (_manualCodeController.text.isNotEmpty) {
-            _processBarcode(_manualCodeController.text);
-          }
+          setState(() {
+            _isProcessingCode = false;
+          });
         } else {
           setState(() {
             _isProcessingCode = false;
@@ -276,6 +358,300 @@ class _ScannerScreenState extends State<ScannerScreen>
         }
       },
       closeButtonText: '閉じる',
+    );
+  }
+
+  Widget _buildErrorBadge({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required ThemeData theme,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1.2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 既投票番号でログインした場合の投票内容確認UI
+  Future<void> _showAlreadyVotedDialog(String uuid) async {
+    final theme = Theme.of(context);
+
+    // Firebase から投票データを取得
+    Vote? existingVote;
+    try {
+      existingVote = await _dbService.getVoteByUuid(uuid);
+    } catch (_) {}
+
+    if (!mounted) return;
+
+    await M3ESideSheet.show<void>(
+      context,
+      title: 'この番号は投票済みです',
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 警告バナー
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: theme.colorScheme.error.withValues(alpha: 0.35),
+                  width: 1.2,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.how_to_vote_rounded,
+                    color: theme.colorScheme.error,
+                    size: 28,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'この投票券はすでに使用済みです',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.error,
+                          ),
+                        ),
+                        if (existingVote != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            '投票日時: ${_formatDateTime(existingVote.timestamp)}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onErrorContainer,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 投票内容の表示
+            if (existingVote != null && existingVote.selections.isNotEmpty) ...[
+              Text(
+                '記録されている投票内容',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...voteCategories.map((category) {
+                final groupId = existingVote!.selections[category.id];
+                if (groupId == null) {
+                  return _buildVoteItemTile(
+                    theme: theme,
+                    categoryName: category.name,
+                    groupName: '選択なし',
+                    isSkipped: true,
+                  );
+                }
+                final group = allGroups.firstWhere(
+                  (g) => g.id == groupId,
+                  orElse: () => Group(
+                    id: 'unknown',
+                    name: '不明な団体',
+                    groupName: '',
+                    description: '',
+                    imagePath: 'assets/Stage/No Select.jpg',
+                    floor: 0,
+                    categories: [],
+                  ),
+                );
+                return _buildVoteItemTile(
+                  theme: theme,
+                  categoryName: category.name,
+                  groupName: group.name,
+                  groupSubName: group.groupName,
+                  isSkipped: false,
+                );
+              }),
+              const SizedBox(height: 16),
+            ] else ...[
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '投票内容の詳細を取得できませんでした。',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // 案内テキスト
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '投票内容を修正したい場合は「投票を編集する」を押してください。投票内容は上書き保存されます。\n不正な使用と判断された場合はご連絡させていただく場合があります。',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onPrimaryContainer,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Expanded(
+          child: M3EButton.icon(
+            style: M3EButtonStyle.filled,
+            size: M3EButtonSize.md,
+            shape: M3EButtonShape.round,
+            icon: const Icon(Icons.edit_rounded, size: 18),
+            label: const Text('投票を編集する'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              // 既存の投票内容を持たせて投票画面へ遷移
+              final existingSelections = existingVote?.selections ?? {};
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VoteScreen(
+                    uuid: uuid,
+                    categoryIndex: 0,
+                    selections: existingSelections,
+                    restoreSelection: existingSelections.isNotEmpty,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+
+    // Side sheet が閉じられた（編集しない場合）
+    if (mounted) {
+      setState(() {
+        _isProcessingCode = false;
+      });
+    }
+  }
+
+  Widget _buildVoteItemTile({
+    required ThemeData theme,
+    required String categoryName,
+    String? groupName,
+    String? groupSubName,
+    required bool isSkipped,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSkipped
+            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
+            : theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSkipped
+              ? theme.colorScheme.outlineVariant.withValues(alpha: 0.4)
+              : theme.colorScheme.primary.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isSkipped
+                ? Icons.do_not_disturb_on_outlined
+                : Icons.check_circle_outline_rounded,
+            color: isSkipped
+                ? theme.colorScheme.onSurface.withValues(alpha: 0.35)
+                : theme.colorScheme.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  categoryName,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  isSkipped ? '選択なし' : (groupName ?? ''),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isSkipped
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.45)
+                        : theme.colorScheme.onSurface,
+                  ),
+                ),
+                if (!isSkipped && groupSubName != null && groupSubName.isNotEmpty)
+                  Text(
+                    groupSubName,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -386,15 +762,27 @@ class _ScannerScreenState extends State<ScannerScreen>
         await _showOutOfPeriodDialog();
         return;
       }
-      final bool isValid = await _uuidService.validateUuid(code);
-      if (!isValid) {
-        _showPermissionDeniedDialog();
+
+      // 詳細な検証結果を取得
+      final validationResult = await _uuidService.validateUuidWithReason(code);
+
+      if (validationResult == UuidValidationResult.alreadyVoted) {
+        // 既投票番号：投票内容を表示して編集するか問う
+        if (mounted) {
+          await _showAlreadyVotedDialog(code);
+        }
         return;
       }
 
-      final bool isStudent = await _uuidService.requiresStudentVerification(
-        code,
-      );
+      if (validationResult != UuidValidationResult.valid) {
+        // 無効番号：理由を区別して表示
+        if (mounted) {
+          _showInvalidUuidDialog(validationResult);
+        }
+        return;
+      }
+
+      final bool isStudent = await _uuidService.requiresStudentVerification(code);
       if (mounted) {
         if (isStudent) {
           Navigator.pushReplacement(
@@ -413,7 +801,9 @@ class _ScannerScreenState extends State<ScannerScreen>
         }
       }
     } catch (e) {
-      _showPermissionDeniedDialog();
+      if (mounted) {
+        _showInvalidUuidDialog(UuidValidationResult.outOfRange);
+      }
     } finally {
       if (mounted) {
         setState(() {

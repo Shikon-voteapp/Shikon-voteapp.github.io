@@ -100,6 +100,25 @@ class DatabaseService {
     }
   }
 
+  /// 特定UUIDの投票データをFirebaseから取得（既投票ログイン時の投票内容確認用）
+  Future<Vote?> getVoteByUuid(String uuid) async {
+    try {
+      final snapshot = await _database.ref('$_votesPath/$uuid').get();
+      if (!snapshot.exists || snapshot.value == null) return null;
+      final data = Map<String, dynamic>.from(snapshot.value as Map);
+      return Vote(
+        uuid: uuid,
+        selections: Map<String, String>.from(data['selections'] ?? {}),
+        timestamp: data['timestamp'] != null
+            ? DateTime.parse(data['timestamp'].toString())
+            : DateTime.now(),
+      );
+    } catch (e) {
+      print('投票データ取得エラー: $e');
+      return null;
+    }
+  }
+
   Future<void> clearAllVotes() async {
     try {
       final prefs = await SharedPreferences.getInstance();

@@ -100,6 +100,11 @@ class PlatformUtilsImpl {
     }
   }
 
+  static void closeTab() {
+    // Desktop: no-op (タブの概念がないため何もしない)
+    print('closeTab: デスクトップ環境では無効です');
+  }
+
   static Future<void> clearCacheAndReload() async {
     try {
       // On desktop, there is no SW/cache API. Clear simple storages.

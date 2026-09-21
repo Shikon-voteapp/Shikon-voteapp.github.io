@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import '../models/vote_category.dart';
 import '../models/group.dart' hide VoteCategory;
@@ -8,6 +9,7 @@ import '../widgets/main_layout.dart';
 import '../widgets/liquid_glass.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
+import 'scanner_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
 
@@ -332,12 +334,93 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _showVoteCompletedDialog() {
+    final theme = Theme.of(context);
+    final BuildContext capturedContext = context;
     showCustomDialog(
       context: context,
       title: '投票完了',
-      content: '投票が完了しました。ご協力ありがとうございました。',
-      primaryActionText: 'トップへ戻る',
-      onPrimaryAction: _resetToTop,
+      contentWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 32,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '投票が完了しました',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ご協力ありがとうございました。',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '別の投票券をお持ちの場合は、引き続き投票を行えます。',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            M3EButton.icon(
+              onPressed: () {
+                Navigator.of(capturedContext).pop();
+                _resetToScanner();
+              },
+              style: M3EButtonStyle.filled,
+              size: M3EButtonSize.md,
+              shape: M3EButtonShape.round,
+              icon: const Icon(Icons.confirmation_number_rounded, size: 18),
+              label: const Text('続けて別の投票券を使う'),
+            ),
+            const SizedBox(height: 10),
+            M3EButton.icon(
+              onPressed: () {
+                Navigator.of(capturedContext).pop();
+                PlatformUtils.closeTab();
+              },
+              style: M3EButtonStyle.tonal,
+              size: M3EButtonSize.md,
+              shape: M3EButtonShape.round,
+              icon: const Icon(Icons.close_rounded, size: 18),
+              label: const Text('閉じる（このタブを閉じる）'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -404,7 +487,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     }
   }
 
-  void _resetToTop() {
-    PlatformUtils.reloadApp();
+  void _resetToScanner() {
+    if (!mounted) return;
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const ScannerScreen()),
+      (route) => false,
+    );
   }
 }
