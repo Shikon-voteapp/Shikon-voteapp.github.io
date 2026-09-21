@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 // import 'package:hugeicons/hugeicons.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +9,8 @@ import '../widgets/main_layout.dart';
 import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
 import '../widgets/admin_pie_chart.dart';
+import '../widgets/admin_mode_selection.dart';
+import '../widgets/admin_batch_vote_entry.dart';
 import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -37,8 +38,8 @@ class _AdminScreenState extends State<AdminScreen>
   bool _isLoading = true;
   bool _isLoggedIn = false;
   int _selectedCategoryIndex = 0;
+  AdminMode _currentMode = AdminMode.menu;
 
-  late TabController _tabController;
   late TabController _categoryTabController;
 
   @override
@@ -85,7 +86,6 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   void _initializeControllers() {
-    _tabController = TabController(length: 2, vsync: this);
     _categoryTabController = TabController(
       length: voteCategories.length,
       vsync: this,
@@ -114,7 +114,6 @@ class _AdminScreenState extends State<AdminScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
     _categoryTabController.dispose();
     super.dispose();
   }
@@ -218,6 +217,42 @@ class _AdminScreenState extends State<AdminScreen>
     return sortedResults;
   }
 
+  String get _appBarTitle {
+    switch (_currentMode) {
+      case AdminMode.menu:
+        return '管理者パネル';
+      case AdminMode.results:
+        return '投票結果の確認';
+      case AdminMode.userManagement:
+        return '管理者ユーザー管理';
+      case AdminMode.batchVote:
+        return '投票の一括追加';
+    }
+  }
+
+  Widget _buildBody() {
+    switch (_currentMode) {
+      case AdminMode.menu:
+        return AdminModeSelection(
+          onSelectMode: (mode) {
+            setState(() {
+              _currentMode = mode;
+            });
+          },
+          voteCount: _votes?.length ?? 0,
+          adminUserCount: _adminUsers.length,
+        );
+      case AdminMode.results:
+        return _buildResultsTab();
+      case AdminMode.userManagement:
+        return _buildUserManagementTab();
+      case AdminMode.batchVote:
+        return AdminBatchVoteEntry(
+          onVotesSubmitted: _loadAllData,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading || !_isLoggedIn) {
@@ -225,7 +260,7 @@ class _AdminScreenState extends State<AdminScreen>
     }
 
     return MainLayout(
-      title: '管理者パネル',
+      title: _appBarTitle,
       icon: Icons.admin_panel_settings,
       onHome:
           () => Navigator.of(
@@ -237,23 +272,31 @@ class _AdminScreenState extends State<AdminScreen>
           backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
-          title: TabBar(
-            controller: _tabController,
-            dividerColor: Colors.transparent,
-            tabs: const [
-              Tab(text: '投票結果', icon: Icon(Icons.poll)),
-              Tab(text: 'ユーザー管理', icon: Icon(Icons.people)),
-            ],
+          leading: _currentMode != AdminMode.menu
+              ? _buildAppBarCircleButton(
+                  icon: Icons.arrow_back,
+                  onPressed: () {
+                    setState(() {
+                      _currentMode = AdminMode.menu;
+                    });
+                  },
+                )
+              : null,
+          title: Text(
+            _appBarTitle,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
+          centerTitle: true,
           actions: [
             _buildAppBarCircleButton(
               icon: Icons.refresh,
               onPressed: _loadAllData,
             ),
-            _buildAppBarCircleButton(
-              icon: Icons.file_download,
-              onPressed: _exportResults,
-            ),
+            if (_currentMode == AdminMode.results)
+              _buildAppBarCircleButton(
+                icon: Icons.file_download,
+                onPressed: _exportResults,
+              ),
             _buildAppBarCircleButton(
               icon: Icons.help,
               onPressed: _showHelpDialog,
@@ -274,10 +317,7 @@ class _AdminScreenState extends State<AdminScreen>
             ),
           ],
         ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [_buildResultsTab(), _buildUserManagementTab()],
-        ),
+        body: _buildBody(),
       ),
     );
   }
