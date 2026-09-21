@@ -540,6 +540,7 @@ class VerticalNavBar extends StatelessWidget {
 
     return Container(
       width: 76.0,
+      height: double.infinity,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
         border: Border(
@@ -554,7 +555,6 @@ class VerticalNavBar extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // ─ 上：≡ メニューボタン ──────────────────
@@ -571,79 +571,68 @@ class VerticalNavBar extends StatelessWidget {
                   infoExtra2Text: infoExtra2Text,
                 ),
               ),
+              const SizedBox(height: 12.0),
 
-              // ─ 中央：縦型アクションピルボタン ──────────
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: hasNext ? onNext : null,
-                  borderRadius: BorderRadius.circular(28.0),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 52.0,
-                    constraints: const BoxConstraints(
-                      minHeight: 120.0,
-                      maxHeight: 220.0,
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 6.0),
-                    decoration: BoxDecoration(
-                      color: hasNext
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.secondaryContainer,
-                      borderRadius: BorderRadius.circular(28.0),
-                      boxShadow: hasNext
-                          ? [
-                              BoxShadow(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.35),
-                                blurRadius: 10.0,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Center(
-                      child: nextLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: M3ELoadingIndicator(
-                                variant: M3ELoadingIndicatorVariant.defaultStyle,
-                                elevation: 0,
-                              ),
-                            )
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  hasNext ? Icons.arrow_downward : Icons.how_to_vote,
-                                  size: 18.0,
-                                  color: hasNext
-                                      ? theme.colorScheme.onPrimary
-                                      : theme.colorScheme.onSecondaryContainer,
+              // ─ 中央：縦型アクションピルボタン（上下全幅） ──────────
+              Expanded(
+                child: SizedBox(
+                  width: 52.0,
+                  height: double.infinity,
+                  child: Material(
+                    color: hasNext
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(26.0),
+                    elevation: hasNext ? 2.0 : 0.0,
+                    shadowColor: theme.colorScheme.primary.withValues(alpha: 0.35),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: hasNext ? onNext : null,
+                      child: Center(
+                        child: nextLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: M3ELoadingIndicator(
+                                  variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                  elevation: 0,
                                 ),
-                                const SizedBox(height: 8.0),
-                                ...nextLabel.characters.map(
-                                  (char) => Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 1.0),
-                                    child: Text(
-                                      char,
-                                      style: TextStyle(
-                                        fontSize: 13.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: hasNext
-                                            ? theme.colorScheme.onPrimary
-                                            : theme.colorScheme.onSecondaryContainer,
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ...nextLabel.characters.map(
+                                    (char) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 2.5),
+                                      child: Text(
+                                        char,
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: hasNext
+                                              ? theme.colorScheme.onPrimary
+                                              : theme.colorScheme.onSecondaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(height: 10.0),
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    size: 18.0,
+                                    color: hasNext
+                                        ? theme.colorScheme.onPrimary
+                                        : theme.colorScheme.onSecondaryContainer,
+                                  ),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
                 ),
               ),
+              const SizedBox(height: 12.0),
 
               // ─ 下：戻るボタン ─────────────────────────
               NavBarActions.buildCircleButton(

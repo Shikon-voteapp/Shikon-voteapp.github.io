@@ -67,6 +67,7 @@ class MainLayout extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: isWide
           ? Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: Column(
