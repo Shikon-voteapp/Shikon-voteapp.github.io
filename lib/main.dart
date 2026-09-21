@@ -64,6 +64,8 @@ void main() async {
   }
 }
 
+final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+
 class MyApp extends StatelessWidget {
   final DateRangeService dateRangeService;
 
@@ -76,14 +78,17 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          title: '紫紺祭投票アプリ',
-          theme: AppTheme.lightThemeData,
-          darkTheme: AppTheme.darkThemeData,
-          themeMode: ThemeMode.system,
-          navigatorKey: navigatorKey,
-          home: SplashScreen(dateRangeService: dateRangeService),
-          routes: {'/admin': (context) => AdminScreen()},
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: themeModeNotifier,
+          builder: (context, currentThemeMode, _) {
+            return MaterialApp(
+              title: '紫紺祭投票アプリ',
+              theme: AppTheme.lightThemeData,
+              darkTheme: AppTheme.darkThemeData,
+              themeMode: currentThemeMode,
+              navigatorKey: navigatorKey,
+              home: SplashScreen(dateRangeService: dateRangeService),
+              routes: {'/admin': (context) => AdminScreen()},
           builder: (context, child) {
             return ValueListenableBuilder<bool>(
               valueListenable: AccessibilityService.isZoomed,
@@ -101,5 +106,7 @@ class MyApp extends StatelessWidget {
         );
       },
     );
+  },
+);
   }
 }

@@ -11,6 +11,8 @@ import '../widgets/admin_chart.dart';
 import '../widgets/admin_pie_chart.dart';
 import '../widgets/admin_mode_selection.dart';
 import '../widgets/admin_batch_vote_entry.dart';
+import '../widgets/admin_sidebar.dart';
+import '../main.dart' show themeModeNotifier;
 import 'scanner_screen.dart';
 // import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
@@ -272,7 +274,11 @@ class _AdminScreenState extends State<AdminScreen>
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return MainLayout(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 800;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final Widget mainContent = MainLayout(
       title: _appBarTitle,
       icon: Icons.admin_panel_settings,
       onHome:
@@ -337,6 +343,44 @@ class _AdminScreenState extends State<AdminScreen>
         body: _buildBody(),
       ),
     );
+
+    if (isDesktop) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: Row(
+          children: [
+            AdminSidebar(
+              currentMode: _currentMode,
+              onSelectMode: (mode) {
+                setState(() {
+                  _currentMode = mode;
+                });
+              },
+              onDownloadManual: () {
+                PlatformUtils.openUrl(
+                  'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
+                );
+              },
+              onRefresh: _loadAllData,
+              onToggleTheme: () {
+                final isCurrentDark = Theme.of(context).brightness == Brightness.dark;
+                themeModeNotifier.value = isCurrentDark ? ThemeMode.light : ThemeMode.dark;
+              },
+              onLogout: () async {
+                await _auth.signOut();
+                if (mounted) {
+                  Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                }
+              },
+              isDark: isDark,
+            ),
+            Expanded(child: mainContent),
+          ],
+        ),
+      );
+    }
+
+    return mainContent;
   }
 
   Future<void> _exportResults() async {
