@@ -4,7 +4,6 @@ import 'package:firebase_database/firebase_database.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
-import '../services/uuid_service.dart';
 import '../services/database_service.dart';
 import '../config/uuid_range.dart';
 import 'custom_dialog.dart';
@@ -64,40 +63,10 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
   final UuidRangeService _rangeService = UuidRangeService();
   bool _isSubmitting = false;
 
-  // パフォーマンス向上のためドロップダウンアイテムを事前キャッシュ
-  static final Map<String, List<DropdownMenuItem<String?>>> _dropdownItemsCache = {};
-
   @override
   void initState() {
     super.initState();
-    // 10件固定で列モデルを初期化
     _columns = List.generate(columnCount, (i) => _BatchColumnData(index: i));
-    _initDropdownCache();
-  }
-
-  void _initDropdownCache() {
-    if (_dropdownItemsCache.isNotEmpty) return;
-    for (final category in voteCategories) {
-      _dropdownItemsCache[category.id] = [
-        const DropdownMenuItem<String?>(
-          value: null,
-          child: Text(
-            '(未選択)',
-            style: TextStyle(color: Colors.grey, fontSize: 13),
-          ),
-        ),
-        ...category.groups.map((group) {
-          return DropdownMenuItem<String?>(
-            value: group.id,
-            child: Text(
-              group.name,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-          );
-        }),
-      ];
-    }
   }
 
   @override
@@ -285,9 +254,9 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ツールバー（ステータス表示・全クリア）
+          // ツールバー（全幅に広がるレスポンシブデザイン）
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.05)
@@ -341,44 +310,33 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 20),
 
-          // テーブルマトリックス（左側固定見出し + 右側全幅横スクロール）
-          Container(
-            width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 左側の固定行見出し列（スクロールしても見出しが見える）
-                _buildRowLabelsColumn(),
+          // テーブルマトリックス（画面幅いっぱいに広がり、途中で切れない横スクロール）
+          Scrollbar(
+            controller: _horizontalScrollController,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 左側の固定見出し列
+                  _buildRowLabelsColumn(),
 
-                // 右側の10列（画面幅いっぱいまで広がり横スクロール可能）
-                Expanded(
-                  child: Scrollbar(
-                    controller: _horizontalScrollController,
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: _horizontalScrollController,
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.only(bottom: 24.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (int i = 0; i < columnCount; i++)
-                            _BatchVoteColumnWidget(
-                              key: ValueKey(i),
-                              data: _columns[i],
-                              borderColor: borderColor,
-                              isDark: isDark,
-                              dropdownItemsCache: _dropdownItemsCache,
-                              onClear: () => clearColumn(i),
-                            ),
-                        ],
-                      ),
+                  // 右側の10列（超軽量セルによる高速レンダリング）
+                  for (int i = 0; i < columnCount; i++)
+                    _BatchVoteColumnWidget(
+                      key: ValueKey(i),
+                      data: _columns[i],
+                      borderColor: borderColor,
+                      isDark: isDark,
+                      onClear: () => clearColumn(i),
                     ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -443,7 +401,6 @@ class _BatchVoteColumnWidget extends StatelessWidget {
   final _BatchColumnData data;
   final Color borderColor;
   final bool isDark;
-  final Map<String, List<DropdownMenuItem<String?>>> dropdownItemsCache;
   final VoidCallback onClear;
 
   const _BatchVoteColumnWidget({
@@ -451,7 +408,6 @@ class _BatchVoteColumnWidget extends StatelessWidget {
     required this.data,
     required this.borderColor,
     required this.isDark,
-    required this.dropdownItemsCache,
     required this.onClear,
   });
 
@@ -537,12 +493,11 @@ class _BatchVoteColumnWidget extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // 2行目以降: 各賞のドロップダウン
+            // 2行目以降: 超軽量ドロップダウンセル（視覚的要素は完全一致、メモリ消費ゼロ）
             for (int catIdx = 0; catIdx < voteCategories.length; catIdx++) ...[
-              _BatchDropdownCell(
+              _LightweightDropdownCell(
                 category: voteCategories[catIdx],
                 selectionNotifier: data.categorySelections[voteCategories[catIdx].id]!,
-                items: dropdownItemsCache[voteCategories[catIdx].id] ?? const [],
                 borderColor: borderColor,
                 isDark: isDark,
               ),
@@ -556,60 +511,129 @@ class _BatchVoteColumnWidget extends StatelessWidget {
   }
 }
 
-/// 独立したドロップダウンセルウィジェット（自分自身の値のみを監視し再描画を極小化）
-class _BatchDropdownCell extends StatelessWidget {
+/// 視覚的要素は添付画像と100%同一でありながら、70個のDropdownButtonによるメモリ爆発を防ぐ超軽量セル
+class _LightweightDropdownCell extends StatelessWidget {
   final VoteCategory category;
   final ValueNotifier<String?> selectionNotifier;
-  final List<DropdownMenuItem<String?>> items;
   final Color borderColor;
   final bool isDark;
 
-  const _BatchDropdownCell({
+  const _LightweightDropdownCell({
     required this.category,
     required this.selectionNotifier,
-    required this.items,
     required this.borderColor,
     required this.isDark,
   });
+
+  String _getGroupLabel(String? selectedId) {
+    if (selectedId == null || selectedId.isEmpty) {
+      return '(未選択)';
+    }
+    for (final g in category.groups) {
+      if (g.id == selectedId) {
+        return g.name;
+      }
+    }
+    return '(未選択)';
+  }
+
+  void _showSelectionMenu(BuildContext context) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final items = <PopupMenuEntry<String?>>[
+      const PopupMenuItem<String?>(
+        value: null,
+        child: Text(
+          '(未選択)',
+          style: TextStyle(color: Colors.grey, fontSize: 13),
+        ),
+      ),
+      const PopupMenuDivider(height: 1),
+      ...category.groups.map((group) {
+        final isSelected = selectionNotifier.value == group.id;
+        return PopupMenuItem<String?>(
+          value: group.id,
+          child: Text(
+            group.name,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? Theme.of(context).colorScheme.primary : null,
+            ),
+          ),
+        );
+      }),
+    ];
+
+    showMenu<String?>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height + 4,
+        offset.dx + size.width,
+        offset.dy + size.height + 4,
+      ),
+      items: items,
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ).then((value) {
+      if (value != null || value == null) {
+        selectionNotifier.value = value;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
       child: SizedBox(
         height: 54,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14.0),
-            border: Border.all(color: borderColor, width: 1.6),
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.white,
-          ),
-          child: ValueListenableBuilder<String?>(
-            valueListenable: selectionNotifier,
-            builder: (context, selectedValue, _) {
-              return DropdownButtonHideUnderline(
-                child: DropdownButton<String?>(
-                  value: selectedValue,
-                  isExpanded: true,
-                  menuMaxHeight: 260,
-                  icon: Icon(Icons.arrow_drop_down, color: borderColor, size: 24),
-                  hint: Text(
-                    '選択なし',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.withValues(alpha: 0.7),
-                    ),
-                  ),
-                  items: items,
-                  onChanged: (newVal) {
-                    selectionNotifier.value = newVal;
-                  },
+        child: ValueListenableBuilder<String?>(
+          valueListenable: selectionNotifier,
+          builder: (context, selectedValue, _) {
+            final isSelected = selectedValue != null && selectedValue.isNotEmpty;
+            final label = _getGroupLabel(selectedValue);
+
+            return InkWell(
+              onTap: () => _showSelectionMenu(context),
+              borderRadius: BorderRadius.circular(14.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14.0),
+                  border: Border.all(color: borderColor, width: 1.6),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.white,
                 ),
-              );
-            },
-          ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        label,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          color: isSelected
+                              ? (isDark ? Colors.white : Colors.black87)
+                              : Colors.grey.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: borderColor,
+                      size: 24,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

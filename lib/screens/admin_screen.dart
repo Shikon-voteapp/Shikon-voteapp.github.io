@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart';
 import '../widgets/main_layout.dart';
+import '../widgets/bottom_bar.dart';
 import '../widgets/admin_category_results.dart';
 import '../widgets/admin_chart.dart';
 import '../widgets/admin_pie_chart.dart';
@@ -278,72 +279,6 @@ class _AdminScreenState extends State<AdminScreen>
     final isDesktop = screenWidth >= 800;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final Widget mainContent = MainLayout(
-      title: _appBarTitle,
-      icon: Icons.admin_panel_settings,
-      onHome:
-          () => Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil('/', (route) => false),
-      onBack: _currentMode != AdminMode.menu
-          ? () {
-              setState(() {
-                _currentMode = AdminMode.menu;
-              });
-            }
-          : () {
-              Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-            },
-      onNext: _currentMode == AdminMode.batchVote
-          ? () => _batchVoteKey.currentState?.submitVotes()
-          : null,
-      nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
-      nextLoading: _isBatchVoteSubmitting,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          title: Text(
-            _appBarTitle,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          actions: [
-            _buildAppBarCircleButton(
-              icon: Icons.refresh,
-              onPressed: _loadAllData,
-            ),
-            if (_currentMode == AdminMode.results)
-              _buildAppBarCircleButton(
-                icon: Icons.file_download,
-                onPressed: _exportResults,
-              ),
-            _buildAppBarCircleButton(
-              icon: Icons.help,
-              onPressed: _showHelpDialog,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: _buildAppBarCircleButton(
-                icon: Icons.logout,
-                onPressed: () async {
-                  await _auth.signOut();
-                  if (mounted) {
-                    Navigator.of(
-                      context,
-                    ).pushNamedAndRemoveUntil('/', (route) => false);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-        body: _buildBody(),
-      ),
-    );
-
     if (isDesktop) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -375,110 +310,71 @@ class _AdminScreenState extends State<AdminScreen>
               isDark: isDark,
             ),
             Expanded(
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  automaticallyImplyLeading: false,
-                  title: Text(
-                    _appBarTitle,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+              child: Column(
+                children: [
+                  // PC用の上部ヘッダー（二重表示を防止したすっきりしたバー）
+                  Container(
+                    height: 56,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Text(
+                          _appBarTitle,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        _buildAppBarCircleButton(
+                          icon: Icons.refresh,
+                          onPressed: _loadAllData,
+                        ),
+                        if (_currentMode == AdminMode.results)
+                          _buildAppBarCircleButton(
+                            icon: Icons.file_download,
+                            onPressed: _exportResults,
+                          ),
+                        _buildAppBarCircleButton(
+                          icon: Icons.help,
+                          onPressed: _showHelpDialog,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _buildAppBarCircleButton(
+                            icon: Icons.logout,
+                            onPressed: () async {
+                              await _auth.signOut();
+                              if (mounted) {
+                                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  centerTitle: false,
-                  actions: [
-                    _buildAppBarCircleButton(
-                      icon: Icons.refresh,
-                      onPressed: _loadAllData,
-                    ),
-                    if (_currentMode == AdminMode.results)
-                      _buildAppBarCircleButton(
-                        icon: Icons.file_download,
-                        onPressed: _exportResults,
-                      ),
-                    _buildAppBarCircleButton(
-                      icon: Icons.help,
-                      onPressed: _showHelpDialog,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: _buildAppBarCircleButton(
-                        icon: Icons.logout,
-                        onPressed: () async {
-                          await _auth.signOut();
-                          if (mounted) {
-                            Navigator.of(
-                              context,
-                            ).pushNamedAndRemoveUntil('/', (route) => false);
+                  const Divider(height: 1),
+                  Expanded(child: _buildBody()),
+                  // 下部アクションバー（一括登録ボタン等）
+                  BottomBar(
+                    onBack: _currentMode != AdminMode.menu
+                        ? () {
+                            setState(() {
+                              _currentMode = AdminMode.menu;
+                            });
                           }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                body: _buildBody(),
-                bottomNavigationBar: _currentMode == AdminMode.batchVote
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1E1E24).withValues(alpha: 0.95)
-                              : Colors.white.withValues(alpha: 0.95),
-                          border: Border(
-                            top: BorderSide(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.1)
-                                  : Colors.black.withValues(alpha: 0.08),
-                            ),
-                          ),
-                        ),
-                        child: Center(
-                          child: SizedBox(
-                            width: 280,
-                            height: 48,
-                            child: ElevatedButton(
-                              onPressed: _isBatchVoteSubmitting
-                                  ? null
-                                  : () => _batchVoteKey.currentState?.submitVotes(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isDark
-                                    ? const Color(0xFF8B5CF6)
-                                    : const Color(0xFF6D28D9),
-                                foregroundColor: Colors.white,
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                ),
-                              ),
-                              child: _isBatchVoteSubmitting
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '登録',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 2.0,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Icon(Icons.arrow_forward_rounded, size: 18),
-                                      ],
-                                    ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : null,
+                        : () {
+                            Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                          },
+                    onNext: _currentMode == AdminMode.batchVote
+                        ? () => _batchVoteKey.currentState?.submitVotes()
+                        : null,
+                    nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
+                    nextLoading: _isBatchVoteSubmitting,
+                    onHome: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
+                  ),
+                ],
               ),
             ),
           ],
@@ -486,7 +382,30 @@ class _AdminScreenState extends State<AdminScreen>
       );
     }
 
-    return mainContent;
+    // モバイル用表示
+    return MainLayout(
+      title: _appBarTitle,
+      icon: Icons.admin_panel_settings,
+      onHome:
+          () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/', (route) => false),
+      onBack: _currentMode != AdminMode.menu
+          ? () {
+              setState(() {
+                _currentMode = AdminMode.menu;
+              });
+            }
+          : () {
+              Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+            },
+      onNext: _currentMode == AdminMode.batchVote
+          ? () => _batchVoteKey.currentState?.submitVotes()
+          : null,
+      nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
+      nextLoading: _isBatchVoteSubmitting,
+      child: _buildBody(),
+    );
   }
 
   Future<void> _exportResults() async {

@@ -13,22 +13,16 @@ class UuidRange {
 }
 
 class UuidRangeService {
-  final List<UuidRange> _validRanges = [];
+  static final List<UuidRange> _sharedValidRanges = _initRanges();
+  final List<UuidRange> _validRanges;
 
-  UuidRangeService() {
-    _loadRangesFromUuidList(validUuids);
-  }
+  UuidRangeService() : _validRanges = _sharedValidRanges;
 
-  void addRange(int start, int end) {
-    if (start <= end && start >= 0) {
-      _validRanges.add(UuidRange(start, end));
-    }
-  }
+  static List<UuidRange> _initRanges() {
+    final List<UuidRange> ranges = [];
+    if (validUuids.isEmpty) return ranges;
 
-  void _loadRangesFromUuidList(List<int> uuids) {
-    if (uuids.isEmpty) return;
-
-    final sortedUuids = uuids.toSet().toList()..sort();
+    final sortedUuids = validUuids.toSet().toList()..sort();
 
     int? start;
     int? previous;
@@ -40,15 +34,25 @@ class UuidRangeService {
       } else if (uuid == previous! + 1) {
         previous = uuid;
       } else {
-        addRange(start, previous);
+        if (start <= previous && start >= 0) {
+          ranges.add(UuidRange(start, previous));
+        }
         start = uuid;
         previous = uuid;
       }
     }
 
-    // 最後の範囲を追加
     if (start != null && previous != null) {
-      addRange(start, previous);
+      if (start <= previous && start >= 0) {
+        ranges.add(UuidRange(start, previous));
+      }
+    }
+    return ranges;
+  }
+
+  void addRange(int start, int end) {
+    if (start <= end && start >= 0) {
+      _validRanges.add(UuidRange(start, end));
     }
   }
 
