@@ -161,13 +161,14 @@ class AdminResultsOverview extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final bool isShikonCard = isShikon == true;
 
     // 紫紺賞カードは特別感のあるボーダーと背景
-    final borderColor = isShikon
+    final borderColor = isShikonCard
         ? (isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5))
         : colorScheme.outlineVariant.withValues(alpha: 0.6);
 
-    final cardBgColor = isShikon
+    final cardBgColor = isShikonCard
         ? (isDark
             ? colorScheme.surfaceContainerHigh
             : const Color(0xFFF5F3FF)) // ほんのり紫がかった背景
@@ -182,10 +183,10 @@ class AdminResultsOverview extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
           color: borderColor,
-          width: isShikon ? 1.8 : 1.0,
+          width: isShikonCard ? 1.8 : 1.0,
         ),
       ),
-      elevation: isShikon ? 2 : 1,
+      elevation: isShikonCard ? 2 : 1,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => onSelectCategory(categoryIndex),
@@ -199,60 +200,16 @@ class AdminResultsOverview extends StatelessWidget {
               // カードヘッダー（賞の名前）
               Row(
                 children: [
-                  if (isShikon) ...[
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEF3C7),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.military_tech_rounded, color: Color(0xFFD97706), size: 18),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
                   Text(
                     category.name,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isShikon
+                      color: isShikonCard
                           ? (isDark ? const Color(0xFFA5B4FC) : const Color(0xFF4338CA))
                           : colorScheme.onSurface,
-                      fontSize: 17,
+                      fontSize: 18,
                     ),
                   ),
-                  if (isShikon) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF312E81) : const Color(0xFFEEF2FF),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isDark ? const Color(0xFF6366F1) : const Color(0xFFC7D2FE),
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Text(
-                        '最優秀グランプリ',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? const Color(0xFFC7D2FE) : const Color(0xFF4338CA),
-                        ),
-                      ),
-                    ),
-                  ],
-                  const Spacer(),
-                  // ホバーや視線誘導のためのカテゴリ詳細バッジ
-                  Text(
-                    '詳細を表示',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  Icon(Icons.chevron_right_rounded, size: 16, color: colorScheme.primary),
                 ],
               ),
               const SizedBox(height: 12),
@@ -431,19 +388,20 @@ class AdminResultsOverview extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final bool isExcluded = excludeShikonTop2 == true;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
-        color: excludeShikonTop2
+        color: isExcluded
             ? (isDark ? const Color(0xFF1E1B4B).withValues(alpha: 0.5) : const Color(0xFFEEF2FF))
             : colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: excludeShikonTop2
+          color: isExcluded
               ? (isDark ? const Color(0xFF6366F1).withValues(alpha: 0.5) : const Color(0xFFC7D2FE))
               : colorScheme.outlineVariant.withValues(alpha: 0.4),
-          width: excludeShikonTop2 ? 1.5 : 1.0,
+          width: isExcluded ? 1.5 : 1.0,
         ),
       ),
       child: Row(
@@ -451,7 +409,7 @@ class AdminResultsOverview extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: excludeShikonTop2
+              color: isExcluded
                   ? (isDark ? const Color(0xFF312E81) : const Color(0xFFE0E7FF))
                   : colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(10),
@@ -459,7 +417,7 @@ class AdminResultsOverview extends StatelessWidget {
             child: Icon(
               Icons.filter_alt_rounded,
               size: 20,
-              color: excludeShikonTop2
+              color: isExcluded
                   ? (isDark ? const Color(0xFFA5B4FC) : const Color(0xFF4338CA))
                   : colorScheme.onSurfaceVariant,
             ),
@@ -473,13 +431,13 @@ class AdminResultsOverview extends StatelessWidget {
                   '紫紺賞1位・2位を除外する',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: excludeShikonTop2
+                    color: isExcluded
                         ? (isDark ? const Color(0xFFE0E7FF) : const Color(0xFF3730A3))
                         : colorScheme.onSurface,
                   ),
                 ),
                 Text(
-                  excludeShikonTop2
+                  isExcluded
                       ? 'ON: 紫紺賞の上位2団体を以下の部門賞から除外して集計中'
                       : 'OFF: すべての部門賞で除外を行わずに集計中',
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -491,7 +449,7 @@ class AdminResultsOverview extends StatelessWidget {
             ),
           ),
           Switch.adaptive(
-            value: excludeShikonTop2,
+            value: isExcluded,
             activeColor: isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5),
             onChanged: onExcludeShikonTop2Changed,
           ),

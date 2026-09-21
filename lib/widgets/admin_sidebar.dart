@@ -94,7 +94,6 @@ class AdminSidebar extends StatelessWidget {
                       icon: Icons.menu_book_rounded,
                       label: 'マニュアル',
                       isSelected: false,
-                      badgeDot: true,
                       onTap: onDownloadManual,
                       theme: theme,
                     ),

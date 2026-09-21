@@ -104,7 +104,6 @@ class AdminModeSelection extends StatelessWidget {
                         icon: Icons.playlist_add_check_rounded,
                         title: '投票の一括追加',
                         subtitle: '10件までの投票データをマトリックス形式で一括入力・登録',
-                        badgeText: '新機能',
                         accentColor: const Color(0xFF059669),
                         actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.batchVote),
@@ -126,7 +125,6 @@ class AdminModeSelection extends StatelessWidget {
                         icon: Icons.block_rounded,
                         title: '投票番号の無効化',
                         subtitle: '紛失・汚損・再発行・不正利用等の投票番号を無効化および復元',
-                        badgeText: '新機能',
                         accentColor: const Color(0xFFDC2626),
                         actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.invalidateVote),
@@ -160,7 +158,7 @@ class AdminModeSelection extends StatelessWidget {
     required IconData icon,
     required String title,
     required String subtitle,
-    required String badgeText,
+    String? badgeText,
     required Color accentColor,
     required String actionLabel,
     IconData actionIcon = Icons.arrow_forward_rounded,
@@ -198,24 +196,25 @@ class AdminModeSelection extends StatelessWidget {
                   child: Icon(icon, color: accentColor, size: 28),
                 ),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0,
-                    vertical: 4.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Text(
-                    badgeText,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: accentColor,
+                if (badgeText != null && badgeText.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 4.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Text(
+                      badgeText,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: accentColor,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 18),

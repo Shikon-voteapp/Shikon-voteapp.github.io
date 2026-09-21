@@ -42,7 +42,7 @@ class _AdminScreenState extends State<AdminScreen>
   bool _isLoading = true;
   bool _isLoggedIn = false;
   int _selectedCategoryIndex = 0;
-  bool _excludeShikonTop2 = true;
+  bool? _excludeShikonTop2 = true;
   int? _detailedCategoryIndex;
   AdminMode _currentMode = AdminMode.menu;
   final GlobalKey<AdminBatchVoteEntryState> _batchVoteKey = GlobalKey<AdminBatchVoteEntryState>();
@@ -53,6 +53,7 @@ class _AdminScreenState extends State<AdminScreen>
   @override
   void initState() {
     super.initState();
+    _excludeShikonTop2 = true;
     _checkLoginAndLoadData();
   }
 
@@ -263,7 +264,7 @@ class _AdminScreenState extends State<AdminScreen>
     sortedResults.sort((a, b) => b.value.compareTo(a.value));
 
     // 紫紺賞1位・2位の除外集計処理
-    final bool shouldExclude = applyShikonExclusion ?? _excludeShikonTop2;
+    final bool shouldExclude = (applyShikonExclusion ?? _excludeShikonTop2 ?? true) == true;
     if (shouldExclude && categoryId != 'Shikon_award') {
       final excludedIds = _getShikonTop2GroupIds();
       if (excludedIds.isNotEmpty) {
@@ -791,10 +792,13 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   Widget _buildResultsTab() {
+    _excludeShikonTop2 ??= true;
+    final bool isExcludingShikon = (_excludeShikonTop2 ?? true) == true;
+
     if (_detailedCategoryIndex == null) {
       return AdminResultsOverview(
         votes: _votes,
-        excludeShikonTop2: _excludeShikonTop2,
+        excludeShikonTop2: isExcludingShikon,
         onExcludeShikonTop2Changed: (val) {
           setState(() {
             _excludeShikonTop2 = val;
@@ -865,7 +869,7 @@ class _AdminScreenState extends State<AdminScreen>
             ),
             const SizedBox(width: 4),
             Switch.adaptive(
-              value: _excludeShikonTop2,
+              value: (_excludeShikonTop2 ?? true) == true,
               onChanged: (val) {
                 setState(() {
                   _excludeShikonTop2 = val;
