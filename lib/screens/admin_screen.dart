@@ -15,6 +15,7 @@ import '../widgets/admin_mode_selection.dart';
 import '../widgets/admin_batch_vote_entry.dart';
 import '../widgets/admin_sidebar.dart';
 import '../widgets/admin_invalidate_vote.dart';
+import '../widgets/admin_results_overview.dart';
 import '../main.dart' show themeModeNotifier;
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
@@ -41,6 +42,8 @@ class _AdminScreenState extends State<AdminScreen>
   bool _isLoading = true;
   bool _isLoggedIn = false;
   int _selectedCategoryIndex = 0;
+  bool _excludeShikonTop2 = true;
+  int? _detailedCategoryIndex;
   AdminMode _currentMode = AdminMode.menu;
   final GlobalKey<AdminBatchVoteEntryState> _batchVoteKey = GlobalKey<AdminBatchVoteEntryState>();
   bool _isBatchVoteSubmitting = false;
@@ -99,6 +102,9 @@ class _AdminScreenState extends State<AdminScreen>
       if (mounted && !_categoryTabController.indexIsChanging) {
         setState(() {
           _selectedCategoryIndex = _categoryTabController.index;
+          if (_detailedCategoryIndex != null) {
+            _detailedCategoryIndex = _categoryTabController.index;
+          }
         });
       }
     });
@@ -211,7 +217,43 @@ class _AdminScreenState extends State<AdminScreen>
     return results;
   }
 
-  List<MapEntry<Group, int>> _getSortedResults(String categoryId) {
+  int _getTotalCategoryVotes(String categoryId) {
+    if (_votes == null) return 0;
+    int count = 0;
+    for (var vote in _votes!) {
+      if (vote.selections.containsKey(categoryId) && vote.selections[categoryId]!.isNotEmpty) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  Set<String> _getShikonTop2GroupIds() {
+    if (_votes == null || _votes!.isEmpty) return {};
+    final results = _getCategoryResults('Shikon_award');
+    final shikonCat = voteCategories.firstWhere(
+      (c) => c.id == 'Shikon_award',
+      orElse: () => voteCategories.first,
+    );
+    List<MapEntry<Group, int>> shikonSorted = [];
+    for (var group in shikonCat.groups) {
+      shikonSorted.add(MapEntry(group, results[group.id] ?? 0));
+    }
+    shikonSorted.sort((a, b) => b.value.compareTo(a.value));
+
+    // 票数を獲得している上位2団体IDを特定
+    final top2 = shikonSorted
+        .where((e) => e.value > 0)
+        .take(2)
+        .map((e) => e.key.id)
+        .toSet();
+    return top2;
+  }
+
+  List<MapEntry<Group, int>> _getSortedResults(
+    String categoryId, {
+    bool? applyShikonExclusion,
+  }) {
     final results = _getCategoryResults(categoryId);
     final category = voteCategories.firstWhere((c) => c.id == categoryId);
     List<MapEntry<Group, int>> sortedResults = [];
@@ -219,6 +261,16 @@ class _AdminScreenState extends State<AdminScreen>
       sortedResults.add(MapEntry(group, results[group.id] ?? 0));
     }
     sortedResults.sort((a, b) => b.value.compareTo(a.value));
+
+    // 紫紺賞1位・2位の除外集計処理
+    final bool shouldExclude = applyShikonExclusion ?? _excludeShikonTop2;
+    if (shouldExclude && categoryId != 'Shikon_award') {
+      final excludedIds = _getShikonTop2GroupIds();
+      if (excludedIds.isNotEmpty) {
+        sortedResults = sortedResults.where((e) => !excludedIds.contains(e.key.id)).toList();
+      }
+    }
+
     return sortedResults;
   }
 
@@ -227,7 +279,10 @@ class _AdminScreenState extends State<AdminScreen>
       case AdminMode.menu:
         return '管理者パネル';
       case AdminMode.results:
-        return '投票結果の確認';
+        if (_detailedCategoryIndex != null && _detailedCategoryIndex! < voteCategories.length) {
+          return '${voteCategories[_detailedCategoryIndex!].name} の詳細結果';
+        }
+        return '投票結果サマリー';
       case AdminMode.userManagement:
         return '管理者ユーザー管理';
       case AdminMode.batchVote:
@@ -244,6 +299,9 @@ class _AdminScreenState extends State<AdminScreen>
           onSelectMode: (mode) {
             setState(() {
               _currentMode = mode;
+              if (mode == AdminMode.results) {
+                _detailedCategoryIndex = null;
+              }
             });
           },
           onDownloadManual: () {
@@ -304,6 +362,9 @@ class _AdminScreenState extends State<AdminScreen>
               onSelectMode: (mode) {
                 setState(() {
                   _currentMode = mode;
+                  if (mode == AdminMode.results) {
+                    _detailedCategoryIndex = null;
+                  }
                 });
               },
               onDownloadManual: () {
@@ -377,15 +438,19 @@ class _AdminScreenState extends State<AdminScreen>
             ),
             // ─ 右：縦型ナビゲーションレール（FoldやPC用） ─────────────
             VerticalNavBar(
-              onBack: _currentMode != AdminMode.menu
-                  ? () {
-                      setState(() {
-                        _currentMode = AdminMode.menu;
-                      });
-                    }
-                  : () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-                    },
+              onBack: () {
+                if (_currentMode == AdminMode.results && _detailedCategoryIndex != null) {
+                  setState(() {
+                    _detailedCategoryIndex = null;
+                  });
+                } else if (_currentMode != AdminMode.menu) {
+                  setState(() {
+                    _currentMode = AdminMode.menu;
+                  });
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                }
+              },
               onNext: _currentMode == AdminMode.batchVote
                   ? () => _batchVoteKey.currentState?.submitVotes()
                   : null,
@@ -408,15 +473,19 @@ class _AdminScreenState extends State<AdminScreen>
           () => Navigator.of(
             context,
           ).pushNamedAndRemoveUntil('/', (route) => false),
-      onBack: _currentMode != AdminMode.menu
-          ? () {
-              setState(() {
-                _currentMode = AdminMode.menu;
-              });
-            }
-          : () {
-              Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-            },
+      onBack: () {
+        if (_currentMode == AdminMode.results && _detailedCategoryIndex != null) {
+          setState(() {
+            _detailedCategoryIndex = null;
+          });
+        } else if (_currentMode != AdminMode.menu) {
+          setState(() {
+            _currentMode = AdminMode.menu;
+          });
+        } else {
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        }
+      },
       onNext: _currentMode == AdminMode.batchVote
           ? () => _batchVoteKey.currentState?.submitVotes()
           : null,
@@ -472,7 +541,10 @@ class _AdminScreenState extends State<AdminScreen>
                   isSelected: _currentMode == AdminMode.results,
                   onTap: () {
                     Navigator.of(sheetContext).pop();
-                    setState(() => _currentMode = AdminMode.results);
+                    setState(() {
+                      _currentMode = AdminMode.results;
+                      _detailedCategoryIndex = null;
+                    });
                   },
                 ),
                 _buildMenuModeTile(
@@ -719,9 +791,32 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   Widget _buildResultsTab() {
+    if (_detailedCategoryIndex == null) {
+      return AdminResultsOverview(
+        votes: _votes,
+        excludeShikonTop2: _excludeShikonTop2,
+        onExcludeShikonTop2Changed: (val) {
+          setState(() {
+            _excludeShikonTop2 = val;
+          });
+        },
+        onSelectCategory: (index) {
+          setState(() {
+            _detailedCategoryIndex = index;
+            _selectedCategoryIndex = index;
+            _categoryTabController.index = index;
+          });
+        },
+        getSortedResults: _getSortedResults,
+        getTotalCategoryVotes: _getTotalCategoryVotes,
+        getShikonTop2GroupIds: _getShikonTop2GroupIds,
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _buildReturnToOverviewBar(),
         _buildCategoryTabs(),
         Expanded(
           child: _votes == null || _votes!.isEmpty
@@ -729,6 +824,57 @@ class _AdminScreenState extends State<AdminScreen>
               : _buildCategoryResults(),
         ),
       ],
+    );
+  }
+
+  Widget _buildReturnToOverviewBar() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final currentCat = voteCategories[_selectedCategoryIndex];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.4))),
+      ),
+      child: Row(
+        children: [
+          M3EButton(
+            onPressed: () {
+              setState(() {
+                _detailedCategoryIndex = null;
+              });
+            },
+            style: M3EButtonStyle.tonal,
+            size: M3EButtonSize.sm,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.arrow_back_rounded, size: 16),
+                SizedBox(width: 6),
+                Text('サマリー一覧に戻る'),
+              ],
+            ),
+          ),
+          const Spacer(),
+          if (currentCat.id != 'Shikon_award') ...[
+            Text(
+              '紫紺賞除外: ',
+              style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 4),
+            Switch.adaptive(
+              value: _excludeShikonTop2,
+              onChanged: (val) {
+                setState(() {
+                  _excludeShikonTop2 = val;
+                });
+              },
+            ),
+          ],
+        ],
+      ),
     );
   }
 
