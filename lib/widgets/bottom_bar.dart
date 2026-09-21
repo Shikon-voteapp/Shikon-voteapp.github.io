@@ -388,9 +388,9 @@ class BottomBar extends StatelessWidget {
     required VoidCallback? onPressed,
   }) {
     return M3EIconButton(
-      icon: Icon(icon, size: 24.0),
+      icon: Icon(icon, size: 22.0),
       onPressed: onPressed,
-      size: M3EIconButtonSize.lg,
+      size: M3EIconButtonSize.sm,
       variant: M3EIconButtonVariant.tonal,
       shape: M3EIconButtonShapeVariant.round,
     );
@@ -400,70 +400,73 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasNext = onNext != null;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // ─ 左：戻るボタン ─────────────────────────
-          _buildCircleButton(
-            context: context,
-            icon: Icons.arrow_back,
-            onPressed: onBack ?? () => _showCantGoBackDialog(context),
-          ),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ─ 左：戻るボタン ─────────────────────────
+            _buildCircleButton(
+              context: context,
+              icon: Icons.arrow_back,
+              onPressed: onBack ?? () => _showCantGoBackDialog(context),
+            ),
 
-          // ─ 中央：アクションピルボタン ──────────────
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: SizedBox(
-                height: 56.0,
-                child: M3EButton(
-                  onPressed: hasNext ? onNext : null,
-                  style: hasNext ? M3EButtonStyle.filled : M3EButtonStyle.tonal,
-                  size: M3EButtonSize.lg,
-                  shape: M3EButtonShape.round,
-                  child: Center(
-                    child: nextLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: M3ELoadingIndicator(
-                              variant: M3ELoadingIndicatorVariant.defaultStyle,
-                              elevation: 0,
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                nextLabel,
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                ),
+            // ─ 中央：アクションピルボタン ──────────────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: SizedBox(
+                  height: 48.0,
+                  child: M3EButton(
+                    onPressed: hasNext ? onNext : null,
+                    style: hasNext ? M3EButtonStyle.filled : M3EButtonStyle.tonal,
+                    size: M3EButtonSize.md,
+                    shape: M3EButtonShape.round,
+                    child: Center(
+                      child: nextLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: M3ELoadingIndicator(
+                                variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                elevation: 0,
                               ),
-                              if (hasNext) ...[
-                                const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward, size: 18),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  nextLabel,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (hasNext) ...[
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.arrow_forward, size: 16),
+                                ],
                               ],
-                            ],
-                          ),
+                            ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          // ─ 右：≡ メニューボタン ──────────────────
-          _buildCircleButton(
-            context: context,
-            icon: Icons.menu,
-            onPressed: () => _showMenuDialog(context),
-          ),
-        ],
+            // ─ 右：≡ メニューボタン ──────────────────
+            _buildCircleButton(
+              context: context,
+              icon: Icons.menu,
+              onPressed: () => _showMenuDialog(context),
+            ),
+          ],
+        ),
       ),
     );
   }

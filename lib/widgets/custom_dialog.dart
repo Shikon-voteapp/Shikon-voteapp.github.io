@@ -5,9 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // ignore: deprecated_member_use
 import 'dart:html' as html;
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
-import 'liquid_glass.dart';
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -25,35 +23,28 @@ Future<void> showCustomDialog({
   int minLoadingMs = 0,
   int maxLoadingMs = 0,
 }) {
-  return showGeneralDialog(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withValues(alpha: 0.5),
-    transitionDuration: const Duration(milliseconds: 300),
-    pageBuilder: (context, animation, secondaryAnimation) {
-      return CustomDialogWidget(
-        title: title,
-        content: content,
-        contentWidget: contentWidget,
-        onPrimaryAction: onPrimaryAction,
-        primaryActionText: primaryActionText,
-        closeButtonText: closeButtonText,
-        imagePath: imagePath,
-        actions: actions,
-        showWikiLink: showWikiLink,
-        wikiUrl: wikiUrl,
-        enablePrimaryLoading: enablePrimaryLoading,
-        minLoadingMs: minLoadingMs,
-        maxLoadingMs: maxLoadingMs,
+  return M3EBottomSheet.show(
+    context,
+    showDragHandle: true,
+    builder: (BuildContext sheetContext) {
+      return Material(
+        color: Colors.transparent,
+        child: CustomDialogWidget(
+          title: title,
+          content: content,
+          contentWidget: contentWidget,
+          onPrimaryAction: onPrimaryAction,
+          primaryActionText: primaryActionText,
+          closeButtonText: closeButtonText,
+          imagePath: imagePath,
+          actions: actions,
+          showWikiLink: showWikiLink,
+          wikiUrl: wikiUrl,
+          enablePrimaryLoading: enablePrimaryLoading,
+          minLoadingMs: minLoadingMs,
+          maxLoadingMs: maxLoadingMs,
+        ),
       );
-    },
-    transitionBuilder: (context, animation, secondaryAnimation, child) {
-      final slide = Tween<Offset>(
-        begin: const Offset(0, 0.15),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-      return SlideTransition(position: slide, child: child);
     },
   );
 }
@@ -64,184 +55,197 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
   final FirebaseAuth auth = FirebaseAuth.instance;
   bool isLoading = false;
 
-  return showGeneralDialog(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: Colors.black.withValues(alpha: 0.5),
-    transitionDuration: const Duration(milliseconds: 300),
-    pageBuilder: (context, animation, secondaryAnimation) {
+  return M3EBottomSheet.show(
+    context,
+    showDragHandle: true,
+    builder: (BuildContext sheetContext) {
       return StatefulBuilder(
         builder: (context, setState) {
-          return CustomDialogWidget(
-            title: '管理者ログイン',
-            contentWidget: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          final theme = Theme.of(context);
+          return Material(
+            color: Colors.transparent,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 24.0,
+                right: 24.0,
+                top: 8.0,
+                bottom: 24.0 + MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'メールアドレス',
+                      '管理者ログイン',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.black.withValues(alpha: 0.2) 
-                          : Colors.black.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        labelText: 'メールアドレス',
+                        prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        labelText: 'パスワード',
+                        prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    if (isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16.0),
+                        child: Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: M3ELoadingIndicator(
+                              variant: M3ELoadingIndicatorVariant.defaultStyle,
+                              elevation: 0,
+                            ),
+                          ),
                         ),
                       ),
-                      child: TextField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                    const SizedBox(height: 24),
+                    M3EButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              if (emailController.text.isEmpty ||
+                                  passwordController.text.isEmpty) {
+                                showCustomDialog(
+                                  context: context,
+                                  title: '入力エラー',
+                                  content: 'メールアドレスとパスワードを入力してください。',
+                                  closeButtonText: 'OK',
+                                );
+                                return;
+                              }
+
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              try {
+                                await auth.signInWithEmailAndPassword(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                );
+                                if (context.mounted) {
+                                  Navigator.of(context).pop(); // Close dialog
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminScreen(),
+                                    ),
+                                  );
+                                }
+                              } on FirebaseAuthException catch (e) {
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                  String message;
+                                  if (e.code == 'user-not-found' ||
+                                      e.code == 'wrong-password' ||
+                                      e.code == 'invalid-credential') {
+                                    message = 'メールアドレスまたはパスワードが正しくありません。';
+                                  } else {
+                                    message = 'ログインに失敗しました。(${e.code})';
+                                  }
+                                  showCustomDialog(
+                                    context: context,
+                                    title: 'ログインエラー',
+                                    content: message,
+                                    closeButtonText: 'OK',
+                                  );
+                                }
+                              } finally {
+                                if (context.mounted) {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              }
+                            },
+                      style: M3EButtonStyle.filled,
+                      size: M3EButtonSize.md,
+                      shape: M3EButtonShape.round,
+                      child: const SizedBox(
+                        height: 48.0,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'ログイン',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Icon(Icons.arrow_forward, size: 16),
+                            ],
+                          ),
                         ),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: false,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    M3EButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: M3EButtonStyle.tonal,
+                      size: M3EButtonSize.md,
+                      shape: M3EButtonShape.round,
+                      child: const SizedBox(
+                        height: 48.0,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.close, size: 18),
+                              SizedBox(width: 8),
+                              Text(
+                                '閉じる',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'パスワード',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.black.withValues(alpha: 0.2) 
-                          : Colors.black.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          filled: false,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (isLoading)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: M3ELoadingIndicator(
-                      variant: M3ELoadingIndicatorVariant.defaultStyle,
-                      elevation: 0,
-                    ),
-                  ),
-              ],
+              ),
             ),
-            primaryActionText: 'ログイン',
-            onPrimaryAction:
-                isLoading
-                    ? null
-                    : () async {
-                      if (emailController.text.isEmpty ||
-                          passwordController.text.isEmpty) {
-                        showCustomDialog(
-                          context: context,
-                          title: '入力エラー',
-                          content: 'メールアドレスとパスワードを入力してください。',
-                          closeButtonText: 'OK',
-                        );
-                        return;
-                      }
-
-                      setState(() {
-                        isLoading = true;
-                      });
-
-                      try {
-                        await auth.signInWithEmailAndPassword(
-                          email: emailController.text.trim(),
-                          password: passwordController.text,
-                        );
-                        Navigator.of(context).pop(); // Close dialog
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => AdminScreen(),
-                          ),
-                        );
-                      } on FirebaseAuthException catch (e) {
-                        Navigator.of(
-                          context,
-                        ).pop(); // Close dialog before showing new one
-                        String message;
-                        if (e.code == 'user-not-found' ||
-                            e.code == 'wrong-password' ||
-                            e.code == 'invalid-credential') {
-                          message = 'メールアドレスまたはパスワードが正しくありません。';
-                        } else {
-                          message = 'ログインに失敗しました。(${e.code})';
-                        }
-                        showCustomDialog(
-                          context: context,
-                          title: 'ログインエラー',
-                          content: message,
-                          closeButtonText: 'OK',
-                        );
-                      } finally {
-                        if (context.mounted) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                      }
-                    },
           );
         },
       );
-    },
-    transitionBuilder: (context, animation, secondaryAnimation, child) {
-      final slide = Tween<Offset>(
-        begin: const Offset(0, 0.15),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-      return SlideTransition(position: slide, child: child);
     },
   );
 }
@@ -323,7 +327,7 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                 M3EButton(
                   onPressed: _primaryLoading ? null : _handlePrimaryPressed,
                   style: M3EButtonStyle.filled,
-                  size: M3EButtonSize.lg,
+                  size: M3EButtonSize.md,
                   shape: M3EButtonShape.round,
                   child: SizedBox(
                     height: 48.0,
@@ -355,13 +359,13 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
               ],
               if (widget.closeButtonText != null)
                 M3EButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: M3EButtonStyle.tonal,
-                  size: M3EButtonSize.lg,
+                  size: M3EButtonSize.md,
                   shape: M3EButtonShape.round,
                   child: SizedBox(
                     height: 48.0,
@@ -387,128 +391,94 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
             ],
           );
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Flexible(
-              child: AnimationLimiter(
-                child: M3ECard(
-                  variant: M3ECardVariant.elevated,
-                  elevation: 6.0,
-                  borderRadius: BorderRadius.circular(28.0),
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.imagePath != null && !isSmallHeight) ...[
-                        AnimationConfiguration.synchronized(
-                          duration: const Duration(milliseconds: 300),
-                          child: FadeInAnimation(
-                            child: Center(
-                              child: SizedBox(
-                                height: 120,
-                                width: double.infinity,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.asset(
-                                    widget.imagePath!,
-                                    fit: BoxFit.contain,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              color:
-                                                  theme
-                                                      .colorScheme
-                                                      .secondaryContainer,
-                                            ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                      Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.textTheme.titleLarge?.color,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          final maxScrollHeight =
-                              MediaQuery.of(context).size.height * 0.45;
-                          return ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxHeight: maxScrollHeight,
-                            ),
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  widget.contentWidget ??
-                                      Text(
-                                        widget.content ?? '',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color:
-                                              theme
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.color,
-                                        ),
-                                      ),
-                                  if (widget.showWikiLink) ...[
-                                    const SizedBox(height: 16),
-                                    M3EButton.icon(
-                                      onPressed: () {
-                                        final url =
-                                            widget.wikiUrl ??
-                                            'https://shikon-voteapp.github.io/information/';
-                                        if (kIsWeb) {
-                                          html.window.open(url, '_blank');
-                                        }
-                                      },
-                                      icon: const Icon(Icons.open_in_new, size: 16),
-                                      label: const Text(
-                                        '詳細情報',
-                                        style: TextStyle(fontWeight: FontWeight.w600),
-                                      ),
-                                      style: M3EButtonStyle.tonal,
-                                      size: M3EButtonSize.sm,
-                                      shape: M3EButtonShape.round,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      actionsWidget,
-                    ],
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20.0,
+        right: 20.0,
+        top: 8.0,
+        bottom: 24.0 + media.viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (widget.imagePath != null && !isSmallHeight) ...[
+            Center(
+              child: SizedBox(
+                height: 120,
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.asset(
+                    widget.imagePath!,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: theme.colorScheme.secondaryContainer,
+                    ),
                   ),
                 ),
               ),
             ),
+            const SizedBox(height: 16),
           ],
-        ),
+          Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 14),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxScrollHeight = media.size.height * 0.45;
+              return ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxScrollHeight),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      widget.contentWidget ??
+                          Text(
+                            widget.content ?? '',
+                            style: TextStyle(
+                              fontSize: 15,
+                              height: 1.5,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                      if (widget.showWikiLink) ...[
+                        const SizedBox(height: 16),
+                        M3EButton.icon(
+                          onPressed: () {
+                            final url = widget.wikiUrl ?? 'https://shikon-voteapp.github.io/information/';
+                            if (kIsWeb) {
+                              html.window.open(url, '_blank');
+                            }
+                          },
+                          icon: const Icon(Icons.open_in_new, size: 16),
+                          label: const Text(
+                            '詳細情報',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          style: M3EButtonStyle.tonal,
+                          size: M3EButtonSize.sm,
+                          shape: M3EButtonShape.round,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          actionsWidget,
+        ],
       ),
     );
   }
-
-  // 以前は画面タイプでフィルタしていたが、画像指定があれば表示する方針に変更
 }
