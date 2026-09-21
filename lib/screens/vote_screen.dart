@@ -460,15 +460,19 @@ class _VoteScreenState extends State<VoteScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // 画像
-                      SizedBox(
-                        height: 180,
+                      // 画像（トリミングせず拡大縮小のみで表示）
+                      Container(
+                        height: 200,
                         width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(14.0),
+                        ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14.0),
                           child: Image.asset(
                             _selectedGroup!.imagePath,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) => Container(
                               color: colorScheme.secondaryContainer,
                               child: const Center(child: Icon(Icons.broken_image, size: 40)),
@@ -1004,12 +1008,12 @@ class _VoteScreenState extends State<VoteScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // 横幅に応じて動的に列数を決定（1列あたり約165px）
-        const double horizontalPadding = 32.0; // 左右16px
+        // 横幅に応じて動的に列数を決定（画面横幅が小さくても最低3列以上表示）
+        const double horizontalPadding = 24.0; // 左右12px
         final double availableWidth = (constraints.maxWidth - horizontalPadding).clamp(100.0, 5000.0);
-        final int crossAxisCount = (availableWidth / 165.0).floor().clamp(2, 10);
+        final int crossAxisCount = (availableWidth / 115.0).floor().clamp(3, 10);
         final double itemWidth = availableWidth / crossAxisCount;
-        final double childAspectRatio = (itemWidth / (itemWidth + 42.0)).clamp(0.74, 0.84);
+        final double childAspectRatio = (itemWidth / (itemWidth + (itemWidth < 125 ? 38.0 : 44.0))).clamp(0.68, 0.85);
 
         return AnimationLimiter(
           child: Scrollbar(
@@ -1017,11 +1021,11 @@ class _VoteScreenState extends State<VoteScreen> {
             thickness: 4.0,
             radius: const Radius.circular(8),
             child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6,
                 childAspectRatio: childAspectRatio,
               ),
               itemCount: _filteredGroups.length,
@@ -1112,7 +1116,10 @@ class _VoteScreenState extends State<VoteScreen> {
                               alignment: Alignment.center,
                               child: Text(
                                 group.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: itemWidth < 120 ? 11 : 12.5,
+                                ),
                                 textAlign: TextAlign.center,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,

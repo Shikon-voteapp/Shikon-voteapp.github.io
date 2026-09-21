@@ -50,9 +50,8 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
         widget.category.groups.map((group) => group.floor).toSet();
     final screenWidth = MediaQuery.of(context).size.width;
     final availableWidth = screenWidth;
-    const minItemWidth = 500.0;
-    int crossAxisCount = (availableWidth ~/ minItemWidth);
-    crossAxisCount = crossAxisCount > 0 ? crossAxisCount : 1;
+    const minItemWidth = 115.0;
+    int crossAxisCount = (availableWidth / minItemWidth).floor().clamp(3, 10);
 
     return Column(
       children: [
