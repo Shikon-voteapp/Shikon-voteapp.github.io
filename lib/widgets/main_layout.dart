@@ -17,6 +17,7 @@ class MainLayout extends StatelessWidget {
   final String? helpContent;
   final IconData? icon;
   final bool extendBehindBottomBar;
+  final bool responsiveRail;
 
   const MainLayout({
     Key? key,
@@ -33,11 +34,25 @@ class MainLayout extends StatelessWidget {
     this.helpContent,
     this.icon,
     this.extendBehindBottomBar = false,
+    this.responsiveRail = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = responsiveRail && MediaQuery.of(context).size.width >= 720;
+
     final Widget bottomBarWidget = BottomBar(
+      onBack: onBack,
+      onNext: onNext,
+      nextLabel: nextLabel,
+      nextLoading: nextLoading,
+      onHome: onHome,
+      helpUrl: helpUrl,
+      helpTitle: helpTitle,
+      helpContent: helpContent,
+    );
+
+    final Widget verticalRailWidget = VerticalNavBar(
       onBack: onBack,
       onNext: onNext,
       nextLabel: nextLabel,
@@ -50,39 +65,54 @@ class MainLayout extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: extendBehindBottomBar
-          ? Stack(
+      body: isWide
+          ? Row(
               children: [
-                Positioned.fill(
-                  child: child,
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: TopBar(title: title, icon: icon ?? Icons.person_outline),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: bottomBarWidget,
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TopBar(title: title, icon: icon ?? Icons.person_outline),
                 Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      TopBar(title: title, icon: icon ?? Icons.person_outline),
                       Expanded(child: child),
-                      bottomBarWidget,
                     ],
                   ),
                 ),
+                verticalRailWidget,
               ],
-            ),
+            )
+          : extendBehindBottomBar
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: child,
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: TopBar(title: title, icon: icon ?? Icons.person_outline),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: bottomBarWidget,
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TopBar(title: title, icon: icon ?? Icons.person_outline),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(child: child),
+                          bottomBarWidget,
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 }

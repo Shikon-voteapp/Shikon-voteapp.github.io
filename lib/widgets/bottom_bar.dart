@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
-import 'liquid_glass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shikon_voteapp/platform/platform_utils.dart';
@@ -8,45 +7,25 @@ import 'custom_dialog.dart';
 import '../utils/version_info.dart';
 import '../services/accessibility_service.dart';
 
-class BottomBar extends StatelessWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onNext;
-  final String nextLabel;
-  final bool nextLoading;
-  final String? helpUrl;
-  final String? helpTitle;
-  final String? helpContent;
-  final VoidCallback? onHome;
-  final String? infoExtraText;
-  final String? infoExtra2Text;
-
-  const BottomBar({
-    Key? key,
-    this.onBack,
-    this.onNext,
-    this.nextLabel = '次へ',
-    this.nextLoading = false,
-    this.helpUrl,
-    this.helpTitle,
-    this.helpContent,
-    this.onHome,
-    this.infoExtraText,
-    this.infoExtra2Text,
-  }) : super(key: key);
-
+class NavBarActions {
   // ─── ヘルプダイアログ ───────────────────────────────────────────
-  void _showHelp(BuildContext context) async {
+  static void showHelp({
+    required BuildContext context,
+    String? helpContent,
+    String? helpTitle,
+    String? helpUrl,
+  }) async {
     if (helpContent != null && helpTitle != null) {
       showCustomDialog(
         context: context,
-        title: helpTitle!,
-        content: helpContent!,
+        title: helpTitle,
+        content: helpContent,
         closeButtonText: 'OK',
         showWikiLink: true,
       );
-    } else if (helpUrl != null && helpUrl!.isNotEmpty) {
+    } else if (helpUrl != null && helpUrl.isNotEmpty) {
       try {
-        final content = await rootBundle.loadString(helpUrl!);
+        final content = await rootBundle.loadString(helpUrl);
         final plainText =
             content
                 .replaceAll(RegExp(r'<[^>]*>'), '\n')
@@ -64,14 +43,14 @@ class BottomBar extends StatelessWidget {
           showWikiLink: true,
         );
       } catch (e) {
-        _showErrorDialog(context);
+        showErrorDialog(context);
       }
     } else {
-      _showErrorDialog(context);
+      showErrorDialog(context);
     }
   }
 
-  void _showCantGoBackDialog(BuildContext context) {
+  static void showCantGoBackDialog(BuildContext context) {
     showCustomDialog(
       context: context,
       title: 'その操作は行えません',
@@ -80,7 +59,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  void _showErrorDialog(BuildContext context) {
+  static void showErrorDialog(BuildContext context) {
     showCustomDialog(
       context: context,
       title: '',
@@ -89,7 +68,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  void _showReloadConfirmDialog(BuildContext context) {
+  static void showReloadConfirmDialog(BuildContext context, VoidCallback? onHome) {
     showCustomDialog(
       context: context,
       title: '再読み込みしますか？',
@@ -97,13 +76,21 @@ class BottomBar extends StatelessWidget {
       primaryActionText: '再読み込み',
       onPrimaryAction: () {
         Navigator.of(context).pop();
-        PlatformUtils.reloadApp();
+        if (onHome != null) {
+          onHome();
+        } else {
+          PlatformUtils.reloadApp();
+        }
       },
     );
   }
 
   // ─── アプリ情報ダイアログ ─────────────────────────────────────────
-  void _showInfoDialog(BuildContext context) {
+  static void showInfoDialog(
+    BuildContext context, {
+    String? infoExtraText,
+    String? infoExtra2Text,
+  }) {
     final theme = Theme.of(context);
     showCustomDialog(
       context: context,
@@ -115,7 +102,7 @@ class BottomBar extends StatelessWidget {
           ValueListenableBuilder<bool>(
             valueListenable: AccessibilityService.isZoomed,
             builder: (context, isZoomed, _) {
-              return _buildMenuButton(
+              return buildMenuButton(
                 context: context,
                 icon: isZoomed ? Icons.zoom_out : Icons.zoom_in,
                 label: isZoomed ? '文字サイズを元に戻す (100%)' : '文字サイズを大きくする (150%)',
@@ -123,25 +110,25 @@ class BottomBar extends StatelessWidget {
                   AccessibilityService.toggleZoom();
                   Navigator.of(context).pop();
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _showInfoDialog(context);
+                    showInfoDialog(context, infoExtraText: infoExtraText, infoExtra2Text: infoExtra2Text);
                   });
                 },
               );
             },
           ),
           const SizedBox(height: 12),
-          _buildInfoRow(context, 'Version', VersionInfo.fullVersion),
+          buildInfoRow(context, 'Version', VersionInfo.fullVersion),
           const SizedBox(height: 12),
-          _buildInfoRow(context, 'Data Update', VersionInfo.formattedBuildDate),
+          buildInfoRow(context, 'Data Update', VersionInfo.formattedBuildDate),
           const SizedBox(height: 12),
-          _buildInfoRow(
+          buildInfoRow(
             context,
             '',
             '© 2025 明治大学付属明治高等学校　文化祭準備委員会\n© 2025 Mamouna_inori ',
           ),
-          if (infoExtraText != null && infoExtraText!.isNotEmpty) ...[
+          if (infoExtraText != null && infoExtraText.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _buildInfoRow(context, '', infoExtraText!),
+            buildInfoRow(context, '', infoExtraText),
           ],
           const SizedBox(height: 16),
           Row(
@@ -161,17 +148,17 @@ class BottomBar extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildSmallSNSButton(
+                        buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.xTwitter,
                           onPressed: () => PlatformUtils.openUrl('https://x.com/meidai_meiji'),
                         ),
-                        _buildSmallSNSButton(
+                        buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.instagram,
                           onPressed: () => PlatformUtils.openUrl('https://www.instagram.com/meidai_meiji/'),
                         ),
-                        _buildSmallSNSButton(
+                        buildSmallSNSButton(
                           context: context,
                           icon: Icons.public,
                           onPressed: () => PlatformUtils.openUrl('https://www.meiji.ac.jp/ko_chu/'),
@@ -197,12 +184,12 @@ class BottomBar extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildSmallSNSButton(
+                        buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.xTwitter,
                           onPressed: () => PlatformUtils.openUrl('https://x.com/Mamouna_inori'),
                         ),
-                        _buildSmallSNSButton(
+                        buildSmallSNSButton(
                           context: context,
                           icon: FontAwesomeIcons.instagram,
                           onPressed: () => PlatformUtils.openUrl('https://www.instagram.com/mamouna.inori/'),
@@ -220,8 +207,16 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  // ─── ≡ メニューダイアログ（ホーム・ヘルプ・ログイン・詳細情報） ─────────
-  void _showMenuDialog(BuildContext context) {
+  // ─── ≡ メニューダイアログ ───────────────────────────────────────────
+  static void showMenuDialog({
+    required BuildContext context,
+    VoidCallback? onHome,
+    String? helpContent,
+    String? helpTitle,
+    String? helpUrl,
+    String? infoExtraText,
+    String? infoExtra2Text,
+  }) {
     showCustomDialog(
       context: context,
       title: 'メニュー',
@@ -229,31 +224,32 @@ class BottomBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildMenuButton(
+          buildMenuButton(
             context: context,
             icon: Icons.home_outlined,
             label: 'ホーム（再読み込み）',
             onTap: () {
               Navigator.of(context).pop();
-              if (onHome != null) {
-                onHome!();
-              } else {
-                _showReloadConfirmDialog(context);
-              }
+              showReloadConfirmDialog(context, onHome);
             },
           ),
           const SizedBox(height: 10),
-          _buildMenuButton(
+          buildMenuButton(
             context: context,
             icon: Icons.help_outline,
             label: 'ヘルプ',
             onTap: () {
               Navigator.of(context).pop();
-              _showHelp(context);
+              showHelp(
+                context: context,
+                helpContent: helpContent,
+                helpTitle: helpTitle,
+                helpUrl: helpUrl,
+              );
             },
           ),
           const SizedBox(height: 10),
-          _buildMenuButton(
+          buildMenuButton(
             context: context,
             icon: Icons.admin_panel_settings,
             label: '管理者ログイン',
@@ -263,13 +259,17 @@ class BottomBar extends StatelessWidget {
             },
           ),
           const SizedBox(height: 10),
-          _buildMenuButton(
+          buildMenuButton(
             context: context,
             icon: Icons.info_outline,
             label: 'アプリ情報',
             onTap: () {
               Navigator.of(context).pop();
-              _showInfoDialog(context);
+              showInfoDialog(
+                context,
+                infoExtraText: infoExtraText,
+                infoExtra2Text: infoExtra2Text,
+              );
             },
           ),
         ],
@@ -278,8 +278,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  // ─── ユーティリティ Widget ────────────────────────────────────────
-  Widget _buildMenuButton({
+  static Widget buildMenuButton({
     required BuildContext context,
     required IconData icon,
     required String label,
@@ -320,7 +319,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(
+  static Widget buildInfoRow(
     BuildContext context,
     String label,
     String value, {
@@ -355,7 +354,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildSmallSNSButton({
+  static Widget buildSmallSNSButton({
     required BuildContext context,
     required dynamic icon,
     required VoidCallback onPressed,
@@ -381,8 +380,7 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  // ─── ボトムバーの丸アイコンボタン ──────────────────────────────────
-  Widget _buildCircleButton({
+  static Widget buildCircleButton({
     required BuildContext context,
     required IconData icon,
     required VoidCallback? onPressed,
@@ -395,6 +393,34 @@ class BottomBar extends StatelessWidget {
       shape: M3EIconButtonShapeVariant.round,
     );
   }
+}
+
+// ─── 横型ボトムバー（スマートフォン用） ────────────────────────────────────
+class BottomBar extends StatelessWidget {
+  final VoidCallback? onBack;
+  final VoidCallback? onNext;
+  final String nextLabel;
+  final bool nextLoading;
+  final String? helpUrl;
+  final String? helpTitle;
+  final String? helpContent;
+  final VoidCallback? onHome;
+  final String? infoExtraText;
+  final String? infoExtra2Text;
+
+  const BottomBar({
+    Key? key,
+    this.onBack,
+    this.onNext,
+    this.nextLabel = '次へ',
+    this.nextLoading = false,
+    this.helpUrl,
+    this.helpTitle,
+    this.helpContent,
+    this.onHome,
+    this.infoExtraText,
+    this.infoExtra2Text,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -409,10 +435,10 @@ class BottomBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // ─ 左：戻るボタン ─────────────────────────
-            _buildCircleButton(
+            NavBarActions.buildCircleButton(
               context: context,
               icon: Icons.arrow_back,
-              onPressed: onBack ?? () => _showCantGoBackDialog(context),
+              onPressed: onBack ?? () => NavBarActions.showCantGoBackDialog(context),
             ),
 
             // ─ 中央：アクションピルボタン ──────────────
@@ -460,12 +486,173 @@ class BottomBar extends StatelessWidget {
             ),
 
             // ─ 右：≡ メニューボタン ──────────────────
-            _buildCircleButton(
+            NavBarActions.buildCircleButton(
               context: context,
               icon: Icons.menu,
-              onPressed: () => _showMenuDialog(context),
+              onPressed: () => NavBarActions.showMenuDialog(
+                context: context,
+                onHome: onHome,
+                helpContent: helpContent,
+                helpTitle: helpTitle,
+                helpUrl: helpUrl,
+                infoExtraText: infoExtraText,
+                infoExtra2Text: infoExtra2Text,
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── 縦型ナビゲーションバー（Fold・タブレット・PC用：右端設置） ──────────────────
+class VerticalNavBar extends StatelessWidget {
+  final VoidCallback? onBack;
+  final VoidCallback? onNext;
+  final String nextLabel;
+  final bool nextLoading;
+  final String? helpUrl;
+  final String? helpTitle;
+  final String? helpContent;
+  final VoidCallback? onHome;
+  final String? infoExtraText;
+  final String? infoExtra2Text;
+
+  const VerticalNavBar({
+    Key? key,
+    this.onBack,
+    this.onNext,
+    this.nextLabel = '次へ',
+    this.nextLoading = false,
+    this.helpUrl,
+    this.helpTitle,
+    this.helpContent,
+    this.onHome,
+    this.infoExtraText,
+    this.infoExtra2Text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bool hasNext = onNext != null;
+
+    return Container(
+      width: 76.0,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        border: Border(
+          left: BorderSide(
+            color: theme.dividerColor.withValues(alpha: 0.15),
+            width: 1.0,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        left: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ─ 上：≡ メニューボタン ──────────────────
+              NavBarActions.buildCircleButton(
+                context: context,
+                icon: Icons.menu,
+                onPressed: () => NavBarActions.showMenuDialog(
+                  context: context,
+                  onHome: onHome,
+                  helpUrl: helpUrl,
+                  helpTitle: helpTitle,
+                  helpContent: helpContent,
+                  infoExtraText: infoExtraText,
+                  infoExtra2Text: infoExtra2Text,
+                ),
+              ),
+
+              // ─ 中央：縦型アクションピルボタン ──────────
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: hasNext ? onNext : null,
+                  borderRadius: BorderRadius.circular(28.0),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 52.0,
+                    constraints: const BoxConstraints(
+                      minHeight: 120.0,
+                      maxHeight: 220.0,
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 6.0),
+                    decoration: BoxDecoration(
+                      color: hasNext
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(28.0),
+                      boxShadow: hasNext
+                          ? [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withValues(alpha: 0.35),
+                                blurRadius: 10.0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Center(
+                      child: nextLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: M3ELoadingIndicator(
+                                variant: M3ELoadingIndicatorVariant.defaultStyle,
+                                elevation: 0,
+                              ),
+                            )
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  hasNext ? Icons.arrow_downward : Icons.how_to_vote,
+                                  size: 18.0,
+                                  color: hasNext
+                                      ? theme.colorScheme.onPrimary
+                                      : theme.colorScheme.onSecondaryContainer,
+                                ),
+                                const SizedBox(height: 8.0),
+                                ...nextLabel.characters.map(
+                                  (char) => Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 1.0),
+                                    child: Text(
+                                      char,
+                                      style: TextStyle(
+                                        fontSize: 13.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: hasNext
+                                            ? theme.colorScheme.onPrimary
+                                            : theme.colorScheme.onSecondaryContainer,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // ─ 下：戻るボタン ─────────────────────────
+              NavBarActions.buildCircleButton(
+                context: context,
+                icon: Icons.arrow_back,
+                onPressed: onBack ?? () => NavBarActions.showCantGoBackDialog(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

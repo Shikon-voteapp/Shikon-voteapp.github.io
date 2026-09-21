@@ -229,6 +229,8 @@ class _VoteScreenState extends State<VoteScreen> {
       }
     }
 
+    final bool isWide = MediaQuery.of(context).size.width >= 720;
+
     return MainLayout(
       title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
       icon: Icons.how_to_vote,
@@ -242,18 +244,342 @@ class _VoteScreenState extends State<VoteScreen> {
       onNext: voteOnPressed,
       nextLabel: voteButtonText,
       extendBehindBottomBar: false,
-      child: Column(
+      responsiveRail: true,
+      child: isWide
+          ? _buildWideTwoPaneLayout(isCompact: isCompact, isZoomed: isZoomed)
+          : _buildMobileLayout(isCompact: isCompact, isZoomed: isZoomed),
+    );
+  }
+
+  // ─── モバイル用 1ペインレイアウト ─────────────────────────────────
+  Widget _buildMobileLayout({required bool isCompact, required bool isZoomed}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildGroupDetailHeader(isCompact: isCompact),
+        _buildControlsToolbar(isCompact: isCompact, isZoomed: isZoomed),
+        Expanded(
+          child: _buildAnimatedGroupView(
+            forceList: isCompact || isZoomed,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ─── Fold・タブレット・PC用 2ペインレイアウト ─────────────────────────
+  Widget _buildWideTwoPaneLayout({required bool isCompact, required bool isZoomed}) {
+    final width = MediaQuery.of(context).size.width;
+    final double leftPaneWidth = (width * 0.33).clamp(320.0, 420.0);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildGroupDetailHeader(isCompact: isCompact),
-          _buildControlsToolbar(isCompact: isCompact, isZoomed: isZoomed),
+          // ─ 左ペイン：投票先詳細ウィンドウ ─────────────────
+          SizedBox(
+            width: leftPaneWidth,
+            child: _buildLeftDetailPane(),
+          ),
+
+          const SizedBox(width: 16.0),
+
+          // ─ 右ペイン：投票先一覧 ─────────────────────────
           Expanded(
-            child: _buildAnimatedGroupView(
-              forceList: isCompact || isZoomed,
+            child: _buildRightCandidatePane(isCompact: isCompact, isZoomed: isZoomed),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── 左ペイン：投票先詳細ウィンドウ（2ペイン用） ─────────────────────
+  Widget _buildLeftDetailPane() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final category = voteCategories[currentCategoryIndex];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // カテゴリヘッダーバナー
+        M3ECard(
+          variant: M3ECardVariant.filled,
+          borderRadius: BorderRadius.circular(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  style: theme.textTheme.bodyMedium,
+                  children: [
+                    TextSpan(
+                      text: category.name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' の投票先詳細',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4.0),
+              Text(
+                category.description,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 12.0),
+
+        // 投票先詳細ウィンドウ
+        Expanded(
+          child: _selectedGroup == null
+              ? M3ECard(
+                  variant: M3ECardVariant.elevated,
+                  elevation: 1.0,
+                  borderRadius: BorderRadius.circular(20.0),
+                  padding: const EdgeInsets.all(24.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: colorScheme.secondaryContainer.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.touch_app_outlined,
+                            size: 32,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '投票先が未選択です',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '右側の一覧から投票したい団体をクリックすると、ここに詳細が表示されます。',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: colorScheme.onSurfaceVariant,
+                            height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        M3EButton(
+                          onPressed: () => _showInitialHelp(context),
+                          style: M3EButtonStyle.tonal,
+                          size: M3EButtonSize.sm,
+                          shape: M3EButtonShape.round,
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.info_outline, size: 16),
+                              SizedBox(width: 6),
+                              Text('この賞の説明を見る', style: TextStyle(fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : M3ECard(
+                  variant: M3ECardVariant.elevated,
+                  elevation: 2.0,
+                  borderRadius: BorderRadius.circular(20.0),
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ステータスバー（選択中 + 選択解除ボタン）
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, size: 14, color: colorScheme.onPrimaryContainer),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '選択中',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton.icon(
+                            onPressed: () => setState(() => _selectedGroup = null),
+                            icon: const Icon(Icons.close, size: 16),
+                            label: const Text('選択解除', style: TextStyle(fontSize: 12)),
+                            style: TextButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 画像
+                      SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Image.asset(
+                            _selectedGroup!.imagePath,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: colorScheme.secondaryContainer,
+                              child: const Center(child: Icon(Icons.broken_image, size: 40)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // 団体名 & 企画名
+                      Text(
+                        _selectedGroup!.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _selectedGroup!.groupName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // チップ（階数、部門、パンフレット）
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          _buildDetailTag(
+                            icon: Icons.location_on_outlined,
+                            label: _selectedGroup!.floor == 4 ? 'ステージ' : '${_selectedGroup!.floor}階',
+                          ),
+                          _buildDetailTag(
+                            icon: Icons.category_outlined,
+                            label: groupCategoryNames[_selectedGroup!.categories.first]!,
+                          ),
+                          if (_selectedGroup!.pamphletPage != null)
+                            _buildDetailTag(
+                              icon: Icons.menu_book_outlined,
+                              label: 'P${_selectedGroup!.pamphletPage}',
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      const Divider(height: 1),
+                      const SizedBox(height: 12),
+
+                      // 説明文（スクロール可能）
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Text(
+                            _selectedGroup!.description,
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.6,
+                              color: colorScheme.onSurface.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailTag({required IconData icon, required String label}) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: theme.colorScheme.primary),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // ─── 右ペイン：投票先一覧（2ペイン用） ─────────────────────────────
+  Widget _buildRightCandidatePane({required bool isCompact, required bool isZoomed}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildControlsToolbar(isCompact: isCompact, isZoomed: isZoomed),
+        const SizedBox(height: 4.0),
+        Expanded(
+          child: _buildAnimatedGroupView(forceList: isCompact || isZoomed),
+        ),
+      ],
     );
   }
 
@@ -639,14 +965,11 @@ class _VoteScreenState extends State<VoteScreen> {
         ),
       );
     }
-    // 画面幅に応じて列数を調整（iPhone SE相当で2列）
-    final int crossAxisCount =
-        width < 380
-            ? 2
-            : width < 650
-            ? 3
-            : 4;
-    final double childAspectRatio = width < 380 ? 0.7 : 0.8;
+    final bool isWide = width >= 720;
+    final int crossAxisCount = isWide
+        ? (width > 1250 ? 4 : (width > 920 ? 3 : 2))
+        : (width < 380 ? 2 : (width < 650 ? 3 : 4));
+    final double childAspectRatio = isWide ? 0.82 : (width < 380 ? 0.7 : 0.8);
 
     return AnimationLimiter(
       child: Scrollbar(
