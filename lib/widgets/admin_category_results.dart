@@ -1,57 +1,79 @@
 import 'package:flutter/material.dart';
-import 'neumorphic_wrappers.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import '../models/group.dart';
 
 class AdminCategoryResults extends StatelessWidget {
   final List<MapEntry<Group, int>> results;
 
-  AdminCategoryResults({required this.results});
+  const AdminCategoryResults({super.key, required this.results});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final topCount = results.length > 3 ? 3 : results.length;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'トップ 3',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
         ),
-        SizedBox(height: 16),
-
+        const SizedBox(height: 12),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: results.length > 3 ? 3 : results.length,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: topCount,
           itemBuilder: (context, index) {
             final entry = results[index];
             final group = entry.key;
             final voteCount = entry.value;
 
-            return neumorphicCard(
-              context: context,
-              depth: 4,
-              borderRadius: BorderRadius.circular(12),
-              margin: EdgeInsets.only(bottom: 12),
-              padding: EdgeInsets.zero,
-              child: ListTile(
-                leading: _buildRankBadge(index),
-                title: Text(
-                  group.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(group.description),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: M3ECard(
+                variant: M3ECardVariant.elevated,
+                elevation: 1.0,
+                borderRadius: BorderRadius.circular(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
                   children: [
-                    Text(
-                      '$voteCount票',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                    _buildRankBadge(context, index),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            group.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                          if (group.groupName != group.name && group.groupName.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              group.groupName,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.arrow_forward, size: 16),
+                    Text(
+                      '$voteCount 票',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -62,24 +84,45 @@ class AdminCategoryResults extends StatelessWidget {
     );
   }
 
-  Widget _buildRankBadge(int rank) {
-    final colors = [
-      Colors.amber,
-      Colors.blueGrey.shade300,
-      Colors.brown.shade300,
-    ];
+  Widget _buildRankBadge(BuildContext context, int rank) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    Color bg;
+    Color fg;
+
+    switch (rank) {
+      case 0:
+        bg = colorScheme.primary;
+        fg = colorScheme.onPrimary;
+        break;
+      case 1:
+        bg = colorScheme.secondaryContainer;
+        fg = colorScheme.onSecondaryContainer;
+        break;
+      case 2:
+        bg = colorScheme.tertiaryContainer;
+        fg = colorScheme.onTertiaryContainer;
+        break;
+      default:
+        bg = colorScheme.surfaceContainerHighest;
+        fg = colorScheme.onSurfaceVariant;
+    }
 
     return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: colors[rank]),
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: bg,
+      ),
       child: Center(
         child: Text(
           '${rank + 1}',
           style: TextStyle(
-            color: Colors.white,
+            color: fg,
             fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontSize: 16,
           ),
         ),
       ),
