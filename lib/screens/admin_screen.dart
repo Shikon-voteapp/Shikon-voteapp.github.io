@@ -16,6 +16,7 @@ import '../widgets/admin_batch_vote_entry.dart';
 import '../widgets/admin_sidebar.dart';
 import '../widgets/admin_invalidate_vote.dart';
 import '../widgets/admin_results_overview.dart';
+import '../widgets/admin_documents_view.dart';
 import '../main.dart' show themeModeNotifier;
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
@@ -296,6 +297,8 @@ class _AdminScreenState extends State<AdminScreen>
         return '投票の一括追加';
       case AdminMode.invalidateVote:
         return '投票番号の無効化';
+      case AdminMode.documents:
+        return 'ドキュメント';
     }
   }
 
@@ -310,11 +313,6 @@ class _AdminScreenState extends State<AdminScreen>
                 _detailedCategoryIndex = null;
               }
             });
-          },
-          onDownloadManual: () {
-            PlatformUtils.openUrl(
-              'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
-            );
           },
           voteCount: _votes?.length ?? 0,
           adminUserCount: _adminUsers.length,
@@ -337,6 +335,8 @@ class _AdminScreenState extends State<AdminScreen>
         return AdminInvalidateVote(
           onDataChanged: _loadAllData,
         );
+      case AdminMode.documents:
+        return const AdminDocumentsView();
     }
   }
 
@@ -373,11 +373,6 @@ class _AdminScreenState extends State<AdminScreen>
                     _detailedCategoryIndex = null;
                   }
                 });
-              },
-              onDownloadManual: () {
-                PlatformUtils.openUrl(
-                  'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
-                );
               },
               onRefresh: _loadAllData,
               onToggleTheme: () {
@@ -585,15 +580,13 @@ class _AdminScreenState extends State<AdminScreen>
                 ),
                 _buildMenuModeTile(
                   sheetContext: sheetContext,
-                  icon: Icons.menu_book_rounded,
-                  title: 'マニュアルダウンロード',
-                  subtitle: '文化祭セットアップマニュアル(PDF)',
-                  isSelected: false,
+                  icon: Icons.description_rounded,
+                  title: 'ドキュメント',
+                  subtitle: '各種マニュアル、セットアップ、各種情報',
+                  isSelected: _currentMode == AdminMode.documents,
                   onTap: () {
                     Navigator.of(sheetContext).pop();
-                    PlatformUtils.openUrl(
-                      'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
-                    );
+                    setState(() => _currentMode = AdminMode.documents);
                   },
                 ),
                 const Divider(height: 20),

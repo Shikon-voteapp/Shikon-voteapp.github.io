@@ -5,7 +5,6 @@ import 'admin_mode_selection.dart';
 class AdminSidebar extends StatelessWidget {
   final AdminMode currentMode;
   final Function(AdminMode) onSelectMode;
-  final VoidCallback onDownloadManual;
   final VoidCallback onRefresh;
   final VoidCallback onToggleTheme;
   final VoidCallback onLogout;
@@ -15,7 +14,6 @@ class AdminSidebar extends StatelessWidget {
     super.key,
     required this.currentMode,
     required this.onSelectMode,
-    required this.onDownloadManual,
     required this.onRefresh,
     required this.onToggleTheme,
     required this.onLogout,
@@ -91,10 +89,10 @@ class AdminSidebar extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
                     _buildNavItem(
-                      icon: Icons.menu_book_rounded,
-                      label: 'マニュアル',
-                      isSelected: false,
-                      onTap: onDownloadManual,
+                      icon: Icons.description_rounded,
+                      label: 'ドキュメント',
+                      isSelected: currentMode == AdminMode.documents,
+                      onTap: () => onSelectMode(AdminMode.documents),
                       theme: theme,
                     ),
                   ],

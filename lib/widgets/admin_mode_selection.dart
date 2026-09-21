@@ -8,18 +8,17 @@ enum AdminMode {
   userManagement,
   batchVote,
   invalidateVote,
+  documents,
 }
 
 class AdminModeSelection extends StatelessWidget {
   final Function(AdminMode) onSelectMode;
-  final VoidCallback onDownloadManual;
   final int voteCount;
   final int adminUserCount;
 
   const AdminModeSelection({
     super.key,
     required this.onSelectMode,
-    required this.onDownloadManual,
     this.voteCount = 0,
     this.adminUserCount = 0,
   });
@@ -132,14 +131,12 @@ class AdminModeSelection extends StatelessWidget {
                       _buildModeCard(
                         context: context,
                         width: cardWidth,
-                        icon: Icons.picture_as_pdf_rounded,
-                        title: 'マニュアルダウンロード',
-                        subtitle: '文化祭セットアップマニュアル(PDF)を新しいタブで表示・ダウンロード',
-                        badgeText: 'PDF',
-                        accentColor: const Color(0xFFE11D48),
-                        actionLabel: '別タブで開く',
-                        actionIcon: Icons.open_in_new_rounded,
-                        onTap: onDownloadManual,
+                        icon: Icons.description_rounded,
+                        title: 'ドキュメント',
+                        subtitle: '各種マニュアル、セットアップウィザード、お問い合わせ、アプリ情報',
+                        accentColor: const Color(0xFF0284C7),
+                        actionLabel: '開く',
+                        onTap: () => onSelectMode(AdminMode.documents),
                       ),
                     ],
                   );
