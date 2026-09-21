@@ -282,14 +282,16 @@ class _AdminScreenState extends State<AdminScreen>
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth >= 800;
+    final bool isWide = screenWidth >= 720;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    if (isDesktop) {
+    if (isWide) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // ─ 左：管理者サイドバー ─────────────────
             AdminSidebar(
               currentMode: _currentMode,
               onSelectMode: (mode) {
@@ -315,10 +317,11 @@ class _AdminScreenState extends State<AdminScreen>
               },
               isDark: isDark,
             ),
+            // ─ 中央：コンテンツ領域 ─────────────────
             Expanded(
               child: Column(
                 children: [
-                  // PC用の上部ヘッダー（二重表示を防止したすっきりしたバー）
+                  // PC・大画面用の上部ヘッダー
                   Container(
                     height: 56,
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -362,36 +365,38 @@ class _AdminScreenState extends State<AdminScreen>
                   ),
                   const Divider(height: 1),
                   Expanded(child: _buildBody()),
-                  // 下部アクションバー（一括登録ボタン等）
-                  BottomBar(
-                    onBack: _currentMode != AdminMode.menu
-                        ? () {
-                            setState(() {
-                              _currentMode = AdminMode.menu;
-                            });
-                          }
-                        : () {
-                            Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
-                          },
-                    onNext: _currentMode == AdminMode.batchVote
-                        ? () => _batchVoteKey.currentState?.submitVotes()
-                        : null,
-                    nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
-                    nextLoading: _isBatchVoteSubmitting,
-                    onHome: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
-                  ),
                 ],
               ),
+            ),
+            // ─ 右：縦型ナビゲーションレール（FoldやPC用） ─────────────
+            VerticalNavBar(
+              onBack: _currentMode != AdminMode.menu
+                  ? () {
+                      setState(() {
+                        _currentMode = AdminMode.menu;
+                      });
+                    }
+                  : () {
+                      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                    },
+              onNext: _currentMode == AdminMode.batchVote
+                  ? () => _batchVoteKey.currentState?.submitVotes()
+                  : null,
+              nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
+              nextLoading: _isBatchVoteSubmitting,
+              onHome: () => Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false),
+              onMenu: _showAdminMenu,
             ),
           ],
         ),
       );
     }
 
-    // モバイル用表示
+    // モバイル用表示（スマートフォン）
     return MainLayout(
       title: _appBarTitle,
       icon: Icons.admin_panel_settings,
+      responsiveRail: false,
       onHome:
           () => Navigator.of(
             context,
@@ -410,7 +415,249 @@ class _AdminScreenState extends State<AdminScreen>
           : null,
       nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
       nextLoading: _isBatchVoteSubmitting,
+      onMenu: _showAdminMenu,
       child: _buildBody(),
+    );
+  }
+
+  void _showAdminMenu() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    M3EBottomSheet.show(
+      context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.admin_panel_settings, color: colorScheme.primary, size: 24),
+                    const SizedBox(width: 10),
+                    Text(
+                      '管理画面メニュー',
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.home_rounded,
+                  title: '管理者メニュートップ',
+                  subtitle: 'モード選択画面に戻る',
+                  isSelected: _currentMode == AdminMode.menu,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.menu);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.bar_chart_rounded,
+                  title: '投票結果の確認',
+                  subtitle: '各賞の集計、グラフ、Excel出力',
+                  isSelected: _currentMode == AdminMode.results,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.results);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.playlist_add_check_rounded,
+                  title: '投票の一括追加',
+                  subtitle: '10件までの投票データを一括入力・登録',
+                  isSelected: _currentMode == AdminMode.batchVote,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.batchVote);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.manage_accounts_rounded,
+                  title: '管理者ユーザー管理',
+                  subtitle: '管理者アカウントの管理・追加',
+                  isSelected: _currentMode == AdminMode.userManagement,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.userManagement);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.menu_book_rounded,
+                  title: 'マニュアルダウンロード',
+                  subtitle: '文化祭セットアップマニュアル(PDF)',
+                  isSelected: false,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    PlatformUtils.openUrl(
+                      'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
+                    );
+                  },
+                ),
+                const Divider(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: M3EButton(
+                        onPressed: () {
+                          Navigator.of(sheetContext).pop();
+                          _loadAllData();
+                        },
+                        style: M3EButtonStyle.tonal,
+                        size: M3EButtonSize.sm,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.refresh, size: 16),
+                            SizedBox(width: 6),
+                            Text('更新'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: M3EButton(
+                        onPressed: () {
+                          Navigator.of(sheetContext).pop();
+                          final isCurrentDark = Theme.of(context).brightness == Brightness.dark;
+                          themeModeNotifier.value = isCurrentDark ? ThemeMode.light : ThemeMode.dark;
+                        },
+                        style: M3EButtonStyle.tonal,
+                        size: M3EButtonSize.sm,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Icons.light_mode
+                                  : Icons.dark_mode,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 6),
+                            const Text('テーマ'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: M3EButton(
+                        onPressed: () async {
+                          Navigator.of(sheetContext).pop();
+                          await _auth.signOut();
+                          if (mounted) {
+                            Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                          }
+                        },
+                        style: M3EButtonStyle.tonal,
+                        size: M3EButtonSize.sm,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.logout, size: 16),
+                            SizedBox(width: 6),
+                            Text('ログアウト'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMenuModeTile({
+    required BuildContext sheetContext,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6.0),
+      child: Material(
+        color: isSelected
+            ? colorScheme.primaryContainer.withValues(alpha: 0.6)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(14.0),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: isSelected
+                        ? colorScheme.onPrimary
+                        : colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                          color: isSelected
+                              ? colorScheme.onPrimaryContainer
+                              : colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Icon(
+                    Icons.check_circle_rounded,
+                    color: colorScheme.primary,
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -454,48 +701,41 @@ class _AdminScreenState extends State<AdminScreen>
   }
 
   Widget _buildResultsTab() {
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 60.0),
-          child:
-              _votes == null || _votes!.isEmpty
-                  ? Center(child: Text('投票データがありません'))
-                  : _buildCategoryResults(),
+        _buildCategoryTabs(),
+        Expanded(
+          child: _votes == null || _votes!.isEmpty
+              ? const Center(child: Text('投票データがありません'))
+              : _buildCategoryResults(),
         ),
-        Positioned(bottom: 0, left: 0, right: 0, child: _buildCategoryTabs()),
       ],
     );
   }
 
   Widget _buildCategoryTabs() {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
     return Container(
-      margin: const EdgeInsets.all(8.0),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 10.0,
-          blur: 15.0,
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      padding: const EdgeInsets.all(4.0),
+      child: TabBar(
+        controller: _categoryTabController,
+        isScrollable: true,
+        tabAlignment: TabAlignment.center,
+        labelColor: theme.colorScheme.onPrimary,
+        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+        indicator: BoxDecoration(
+          color: theme.colorScheme.primary,
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 24.0),
-          child: TabBar(
-            controller: _categoryTabController,
-            isScrollable: true,
-            tabAlignment: TabAlignment.center,
-            labelColor: theme.primaryColor,
-            unselectedLabelColor: Colors.grey,
-            dividerColor: Colors.transparent,
-            indicatorSize: TabBarIndicatorSize.label,
-            tabs:
-                voteCategories.map((category) => Tab(text: category.name)).toList(),
-          ),
-        ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
+        tabs: voteCategories.map((category) => Tab(text: category.name)).toList(),
       ),
     );
   }

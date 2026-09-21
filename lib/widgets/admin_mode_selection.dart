@@ -79,7 +79,7 @@ class AdminModeSelection extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isWide = constraints.maxWidth > 650;
-                  final cardWidth = isWide ? (constraints.maxWidth - 20) / 2 : double.infinity;
+                  final cardWidth = isWide ? (constraints.maxWidth - 20) / 2 : constraints.maxWidth;
 
                   return Wrap(
                     spacing: 20,
@@ -158,13 +158,16 @@ class AdminModeSelection extends StatelessWidget {
 
     return SizedBox(
       width: width,
-      child: M3ECard(
-        variant: M3ECardVariant.elevated,
-        elevation: 2.0,
-        borderRadius: BorderRadius.circular(20.0),
-        onPressed: onTap,
-        padding: const EdgeInsets.all(22.0),
-        child: Column(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: M3ECard(
+          variant: M3ECardVariant.elevated,
+          elevation: 2.0,
+          borderRadius: BorderRadius.circular(20.0),
+          onPressed: onTap,
+          padding: const EdgeInsets.all(22.0),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -241,6 +244,7 @@ class AdminModeSelection extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

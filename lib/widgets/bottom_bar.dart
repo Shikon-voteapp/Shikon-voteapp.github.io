@@ -407,6 +407,7 @@ class BottomBar extends StatelessWidget {
   final VoidCallback? onHome;
   final String? infoExtraText;
   final String? infoExtra2Text;
+  final VoidCallback? onMenu;
 
   const BottomBar({
     Key? key,
@@ -420,6 +421,7 @@ class BottomBar extends StatelessWidget {
     this.onHome,
     this.infoExtraText,
     this.infoExtra2Text,
+    this.onMenu,
   }) : super(key: key);
 
   @override
@@ -489,7 +491,7 @@ class BottomBar extends StatelessWidget {
             NavBarActions.buildCircleButton(
               context: context,
               icon: Icons.menu,
-              onPressed: () => NavBarActions.showMenuDialog(
+              onPressed: onMenu ?? () => NavBarActions.showMenuDialog(
                 context: context,
                 onHome: onHome,
                 helpContent: helpContent,
@@ -518,6 +520,7 @@ class VerticalNavBar extends StatelessWidget {
   final VoidCallback? onHome;
   final String? infoExtraText;
   final String? infoExtra2Text;
+  final VoidCallback? onMenu;
 
   const VerticalNavBar({
     Key? key,
@@ -531,6 +534,7 @@ class VerticalNavBar extends StatelessWidget {
     this.onHome,
     this.infoExtraText,
     this.infoExtra2Text,
+    this.onMenu,
   }) : super(key: key);
 
   @override
@@ -561,7 +565,7 @@ class VerticalNavBar extends StatelessWidget {
               NavBarActions.buildCircleButton(
                 context: context,
                 icon: Icons.menu,
-                onPressed: () => NavBarActions.showMenuDialog(
+                onPressed: onMenu ?? () => NavBarActions.showMenuDialog(
                   context: context,
                   onHome: onHome,
                   helpUrl: helpUrl,

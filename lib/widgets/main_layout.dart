@@ -18,6 +18,7 @@ class MainLayout extends StatelessWidget {
   final IconData? icon;
   final bool extendBehindBottomBar;
   final bool responsiveRail;
+  final VoidCallback? onMenu;
 
   const MainLayout({
     Key? key,
@@ -35,6 +36,7 @@ class MainLayout extends StatelessWidget {
     this.icon,
     this.extendBehindBottomBar = false,
     this.responsiveRail = true,
+    this.onMenu,
   }) : super(key: key);
 
   @override
@@ -50,6 +52,7 @@ class MainLayout extends StatelessWidget {
       helpUrl: helpUrl,
       helpTitle: helpTitle,
       helpContent: helpContent,
+      onMenu: onMenu,
     );
 
     final Widget verticalRailWidget = VerticalNavBar(
@@ -61,6 +64,7 @@ class MainLayout extends StatelessWidget {
       helpUrl: helpUrl,
       helpTitle: helpTitle,
       helpContent: helpContent,
+      onMenu: onMenu,
     );
 
     return Scaffold(
