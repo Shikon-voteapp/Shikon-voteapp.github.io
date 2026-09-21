@@ -10,12 +10,14 @@ enum AdminMode {
 
 class AdminModeSelection extends StatelessWidget {
   final Function(AdminMode) onSelectMode;
+  final VoidCallback onDownloadManual;
   final int voteCount;
   final int adminUserCount;
 
   const AdminModeSelection({
     super.key,
     required this.onSelectMode,
+    required this.onDownloadManual,
     this.voteCount = 0,
     this.adminUserCount = 0,
   });
@@ -76,6 +78,8 @@ class AdminModeSelection extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isWide = constraints.maxWidth > 650;
+                  final cardWidth = isWide ? (constraints.maxWidth - 20) / 2 : double.infinity;
+
                   return Wrap(
                     spacing: 20,
                     runSpacing: 20,
@@ -83,33 +87,48 @@ class AdminModeSelection extends StatelessWidget {
                     children: [
                       _buildModeCard(
                         context: context,
-                        width: isWide ? (constraints.maxWidth - 20) / 2 : double.infinity,
+                        width: cardWidth,
                         icon: Icons.bar_chart_rounded,
                         title: '投票結果の確認',
                         subtitle: '各賞の得票数集計、グラフ表示、Excel形式でのデータ出力',
                         badgeText: '$voteCount 票集計済',
                         accentColor: const Color(0xFF2563EB),
+                        actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.results),
                       ),
                       _buildModeCard(
                         context: context,
-                        width: isWide ? (constraints.maxWidth - 20) / 2 : double.infinity,
+                        width: cardWidth,
                         icon: Icons.playlist_add_check_rounded,
                         title: '投票の一括追加',
-                        subtitle: '最大10件までの投票データをマトリックス形式で一括入力・登録',
+                        subtitle: '10件までの投票データをマトリックス形式で一括入力・登録',
                         badgeText: '新機能',
                         accentColor: const Color(0xFF059669),
+                        actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.batchVote),
                       ),
                       _buildModeCard(
                         context: context,
-                        width: isWide ? (constraints.maxWidth - 20) / 2 : double.infinity,
+                        width: cardWidth,
                         icon: Icons.manage_accounts_rounded,
                         title: '管理者ユーザー管理',
                         subtitle: '管理者アカウントの一覧、新規管理者の追加、QRコードスキャン',
                         badgeText: '$adminUserCount 名登録済',
                         accentColor: const Color(0xFFD97706),
+                        actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.userManagement),
+                      ),
+                      _buildModeCard(
+                        context: context,
+                        width: cardWidth,
+                        icon: Icons.picture_as_pdf_rounded,
+                        title: 'マニュアルダウンロード',
+                        subtitle: '文化祭セットアップマニュアル(PDF)を新しいタブで表示・ダウンロード',
+                        badgeText: 'PDF',
+                        accentColor: const Color(0xFFE11D48),
+                        actionLabel: '別タブで開く',
+                        actionIcon: Icons.open_in_new_rounded,
+                        onTap: onDownloadManual,
                       ),
                     ],
                   );
@@ -130,6 +149,8 @@ class AdminModeSelection extends StatelessWidget {
     required String subtitle,
     required String badgeText,
     required Color accentColor,
+    required String actionLabel,
+    IconData actionIcon = Icons.arrow_forward_rounded,
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
@@ -224,7 +245,7 @@ class AdminModeSelection extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          '開く',
+                          actionLabel,
                           style: TextStyle(
                             color: accentColor,
                             fontWeight: FontWeight.bold,
@@ -233,7 +254,7 @@ class AdminModeSelection extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Icon(
-                          Icons.arrow_forward_rounded,
+                          actionIcon,
                           color: accentColor,
                           size: 16,
                         ),

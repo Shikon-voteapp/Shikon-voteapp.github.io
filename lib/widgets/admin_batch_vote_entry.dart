@@ -4,18 +4,19 @@ import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import 'custom_dialog.dart';
-import 'liquid_glass.dart';
 
 class AdminBatchVoteEntry extends StatefulWidget {
   final VoidCallback onVotesSubmitted;
+  final ValueChanged<bool>? onSubmittingChanged;
 
   const AdminBatchVoteEntry({
     super.key,
     required this.onVotesSubmitted,
+    this.onSubmittingChanged,
   });
 
   @override
-  State<AdminBatchVoteEntry> createState() => _AdminBatchVoteEntryState();
+  AdminBatchVoteEntryState createState() => AdminBatchVoteEntryState();
 }
 
 class _ColumnVoteData {
@@ -35,8 +36,8 @@ class _ColumnVoteData {
   bool get hasData => numberController.text.trim().isNotEmpty;
 }
 
-class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
-  static const int _maxColumns = 10;
+class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
+  static const int columnCount = 10;
   final List<_ColumnVoteData> _columns = [];
   final ScrollController _horizontalScrollController = ScrollController();
   final DatabaseReference _database = FirebaseDatabase.instance.ref().child('votes');
@@ -45,8 +46,8 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
   @override
   void initState() {
     super.initState();
-    // 初期状態で3列用意
-    for (int i = 0; i < 3; i++) {
+    // 要望により最初から10件固定で表示
+    for (int i = 0; i < columnCount; i++) {
       _columns.add(_ColumnVoteData());
     }
   }
@@ -60,37 +61,13 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
     super.dispose();
   }
 
-  void _addColumn() {
-    if (_columns.length < _maxColumns) {
-      setState(() {
-        _columns.add(_ColumnVoteData());
-      });
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_horizontalScrollController.hasClients) {
-          _horizontalScrollController.animateTo(
-            _horizontalScrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
+  void clearColumn(int index) {
+    setState(() {
+      _columns[index].clear();
+    });
   }
 
-  void _removeColumn(int index) {
-    if (_columns.length > 1) {
-      setState(() {
-        _columns[index].dispose();
-        _columns.removeAt(index);
-      });
-    } else {
-      setState(() {
-        _columns[0].clear();
-      });
-    }
-  }
-
-  void _clearAll() {
+  void clearAll() {
     setState(() {
       for (var col in _columns) {
         col.clear();
@@ -98,7 +75,19 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
     });
   }
 
-  Future<void> _submitVotes() async {
+  void _setSubmitting(bool value) {
+    setState(() {
+      _isSubmitting = value;
+    });
+    if (widget.onSubmittingChanged != null) {
+      widget.onSubmittingChanged!(value);
+    }
+  }
+
+  // 外部（BottomBarの「登録」ボタン）から呼び出される登録処理
+  Future<void> submitVotes() async {
+    if (_isSubmitting) return;
+
     // 投票番号が入力されている列を抽出
     final validColumns = _columns.where((col) => col.numberController.text.trim().isNotEmpty).toList();
 
@@ -128,9 +117,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       enteredNumbers.add(num);
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    _setSubmitting(true);
 
     try {
       // 既存投票との重複チェック
@@ -144,9 +131,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       }
 
       if (alreadyVotedList.isNotEmpty) {
-        setState(() {
-          _isSubmitting = false;
-        });
+        _setSubmitting(false);
         if (!mounted) return;
         await showCustomDialog(
           context: context,
@@ -182,9 +167,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       await _database.update(batchData);
 
       if (!mounted) return;
-      setState(() {
-        _isSubmitting = false;
-      });
+      _setSubmitting(false);
 
       // 成功ダイアログ
       await showCustomDialog(
@@ -195,15 +178,13 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       );
 
       // 入力データをクリア
-      _clearAll();
+      clearAll();
 
       // 親ウィジェットに通知して集計データなどをリフレッシュ
       widget.onVotesSubmitted();
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _isSubmitting = false;
-      });
+      _setSubmitting(false);
       await showCustomDialog(
         context: context,
         title: '登録失敗',
@@ -226,7 +207,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ツールバー（件数情報・列追加・クリア）
+          // ツールバー（件数情報・全クリア）
           Container(
             constraints: const BoxConstraints(maxWidth: 1000),
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -250,12 +231,12 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '投票先一括追加 (最大10件)',
+                  '投票先一括追加 (10件入力)',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
@@ -263,7 +244,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${_columns.length} / $_maxColumns 列',
+                    '10 件一括',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -272,18 +253,8 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
                   ),
                 ),
                 const Spacer(),
-                if (_columns.length < _maxColumns)
-                  TextButton.icon(
-                    onPressed: _addColumn,
-                    icon: const Icon(Icons.add_circle_outline, size: 18),
-                    label: const Text('列を追加'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme.colorScheme.primary,
-                    ),
-                  ),
-                const SizedBox(width: 8),
                 TextButton.icon(
-                  onPressed: _clearAll,
+                  onPressed: clearAll,
                   icon: const Icon(Icons.refresh_rounded, size: 18),
                   label: const Text('全クリア'),
                   style: TextButton.styleFrom(
@@ -295,7 +266,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
           ),
           const SizedBox(height: 24),
 
-          // テーブルマトリックス（横スクロール可能）
+          // テーブルマトリックス（横スクロール対応）
           Container(
             constraints: const BoxConstraints(maxWidth: 1100),
             child: Scrollbar(
@@ -304,14 +275,14 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
               child: SingleChildScrollView(
                 controller: _horizontalScrollController,
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 24.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 左側の固定ラベル列（投票番号、賞1...賞n）
+                    // 左側の固定見出し列（投票番号、賞1...賞n）
                     _buildRowLabelsColumn(),
 
-                    // 右側の各データ入力列
+                    // 右側の各データ入力列（10列）
                     for (int i = 0; i < _columns.length; i++)
                       _buildDataColumn(
                         index: i,
@@ -324,12 +295,6 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
               ),
             ),
           ),
-
-          const SizedBox(height: 36),
-
-          // 添付画像の下部「登録」ボタン
-          _buildSubmitButton(isDark),
-          const SizedBox(height: 24),
         ],
       ),
     );
@@ -399,7 +364,7 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
       margin: const EdgeInsets.only(right: 14.0),
       child: Column(
         children: [
-          // 列ヘッダー（列番号 + 削除ボタン）
+          // 列ヘッダー（列番号 + クリアボタン）
           SizedBox(
             height: 36,
             child: Row(
@@ -413,14 +378,13 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
                     color: Colors.grey.shade600,
                   ),
                 ),
-                if (_columns.length > 1)
-                  IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 16, color: Colors.grey),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                    tooltip: 'この列を削除',
-                    onPressed: () => _removeColumn(index),
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.clear, size: 16, color: Colors.grey),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  tooltip: 'この列をクリア',
+                  onPressed: () => clearColumn(index),
+                ),
               ],
             ),
           ),
@@ -529,45 +493,6 @@ class _AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
               });
             },
           ),
-        ),
-      ),
-    );
-  }
-
-  // 下部の添付画像のような「登録」ボタン
-  Widget _buildSubmitButton(bool isDark) {
-    return Center(
-      child: SizedBox(
-        width: 260,
-        height: 52,
-        child: ElevatedButton(
-          onPressed: _isSubmitting ? null : _submitVotes,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isDark ? Colors.white : Colors.black,
-            foregroundColor: isDark ? Colors.black : Colors.white,
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-          child: _isSubmitting
-              ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: isDark ? Colors.black : Colors.white,
-                  ),
-                )
-              : const Text(
-                  '登録',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                  ),
-                ),
         ),
       ),
     );

@@ -39,6 +39,8 @@ class _AdminScreenState extends State<AdminScreen>
   bool _isLoggedIn = false;
   int _selectedCategoryIndex = 0;
   AdminMode _currentMode = AdminMode.menu;
+  final GlobalKey<AdminBatchVoteEntryState> _batchVoteKey = GlobalKey<AdminBatchVoteEntryState>();
+  bool _isBatchVoteSubmitting = false;
 
   late TabController _categoryTabController;
 
@@ -239,6 +241,11 @@ class _AdminScreenState extends State<AdminScreen>
               _currentMode = mode;
             });
           },
+          onDownloadManual: () {
+            PlatformUtils.openUrl(
+              'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf',
+            );
+          },
           voteCount: _votes?.length ?? 0,
           adminUserCount: _adminUsers.length,
         );
@@ -248,7 +255,13 @@ class _AdminScreenState extends State<AdminScreen>
         return _buildUserManagementTab();
       case AdminMode.batchVote:
         return AdminBatchVoteEntry(
+          key: _batchVoteKey,
           onVotesSubmitted: _loadAllData,
+          onSubmittingChanged: (submitting) {
+            setState(() {
+              _isBatchVoteSubmitting = submitting;
+            });
+          },
         );
     }
   }
@@ -266,22 +279,26 @@ class _AdminScreenState extends State<AdminScreen>
           () => Navigator.of(
             context,
           ).pushNamedAndRemoveUntil('/', (route) => false),
+      onBack: _currentMode != AdminMode.menu
+          ? () {
+              setState(() {
+                _currentMode = AdminMode.menu;
+              });
+            }
+          : () {
+              Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+            },
+      onNext: _currentMode == AdminMode.batchVote
+          ? () => _batchVoteKey.currentState?.submitVotes()
+          : null,
+      nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
+      nextLoading: _isBatchVoteSubmitting,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
-          leading: _currentMode != AdminMode.menu
-              ? _buildAppBarCircleButton(
-                  icon: Icons.arrow_back,
-                  onPressed: () {
-                    setState(() {
-                      _currentMode = AdminMode.menu;
-                    });
-                  },
-                )
-              : null,
           title: Text(
             _appBarTitle,
             style: const TextStyle(fontWeight: FontWeight.bold),
