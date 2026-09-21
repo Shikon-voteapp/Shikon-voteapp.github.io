@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'admin_mode_selection.dart';
 
 class AdminSidebar extends StatelessWidget {
@@ -24,12 +25,8 @@ class AdminSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final sidebarBg = isDark
-        ? const Color(0xFF1E1E24).withValues(alpha: 0.95)
-        : const Color(0xFFF8F9FA).withValues(alpha: 0.98);
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.08);
+    final sidebarBg = theme.colorScheme.surfaceContainer;
+    final borderColor = theme.colorScheme.outlineVariant;
 
     return Container(
       width: 80,
@@ -169,15 +166,9 @@ class AdminSidebar extends StatelessWidget {
     required ThemeData theme,
     bool badgeDot = false,
   }) {
-    final activeBg = isDark
-        ? const Color(0xFF6D28D9).withValues(alpha: 0.4)
-        : const Color(0xFFEDE9FE);
-    final activeColor = isDark
-        ? const Color(0xFFE9D5FF)
-        : const Color(0xFF5B21B6);
-    final inactiveColor = isDark
-        ? Colors.white.withValues(alpha: 0.6)
-        : const Color(0xFF4B5563);
+    final activeBg = theme.colorScheme.primaryContainer;
+    final activeColor = theme.colorScheme.onPrimaryContainer;
+    final inactiveColor = theme.colorScheme.onSurfaceVariant;
 
     return Tooltip(
       message: label,
@@ -244,7 +235,7 @@ class AdminSidebar extends StatelessWidget {
     );
   }
 
-  // 添付画像下部の丸型アウトラインアクションボタン
+  // 添付画像下部の丸型アクションボタン
   Widget _buildCircleActionButton({
     required IconData icon,
     required String tooltip,
@@ -252,36 +243,18 @@ class AdminSidebar extends StatelessWidget {
     required ThemeData theme,
     bool isDanger = false,
   }) {
-    final borderColor = isDanger
-        ? Colors.red.withValues(alpha: 0.4)
-        : (isDark ? Colors.white.withValues(alpha: 0.25) : Colors.black.withValues(alpha: 0.25));
-    final iconColor = isDanger
-        ? Colors.redAccent
-        : (isDark ? Colors.white70 : Colors.black87);
-
     return Tooltip(
       message: tooltip,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(22.0),
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: borderColor, width: 1.2),
-            ),
-            child: Center(
-              child: Icon(
-                icon,
-                size: 20,
-                color: iconColor,
-              ),
-            ),
-          ),
+      child: M3EIconButton(
+        icon: Icon(
+          icon,
+          size: 20,
+          color: isDanger ? theme.colorScheme.error : null,
         ),
+        onPressed: onTap,
+        size: M3EIconButtonSize.sm,
+        variant: isDanger ? M3EIconButtonVariant.outlined : M3EIconButtonVariant.tonal,
+        shape: M3EIconButtonShapeVariant.round,
       ),
     );
   }

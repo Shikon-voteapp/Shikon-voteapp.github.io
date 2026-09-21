@@ -15,8 +15,6 @@ import '../widgets/admin_mode_selection.dart';
 import '../widgets/admin_batch_vote_entry.dart';
 import '../widgets/admin_sidebar.dart';
 import '../main.dart' show themeModeNotifier;
-import 'scanner_screen.dart';
-// import 'selection_screen.dart';
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
 import '../services/export_service.dart';
@@ -549,18 +547,6 @@ class _AdminScreenState extends State<AdminScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('管理者一覧', style: Theme.of(context).textTheme.headlineSmall),
-          SizedBox(height: 16),
-          _buildGlassButton(
-            label: 'QRコードスキャナーを起動',
-            icon: Icons.qr_code_scanner,
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ScannerScreen(startWithScanner: true),
-                ),
-              );
-            },
-          ),
           const SizedBox(height: 16),
           _adminUsers.isEmpty
               ? const Center(child: Text('管理者がいません'))
@@ -762,55 +748,16 @@ class _AdminScreenState extends State<AdminScreen>
     required VoidCallback onPressed,
     Color? color,
   }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final primary = color ?? theme.colorScheme.primary;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
-
-    return LiquidGlassLayer(
-      settings: LiquidGlassSettings(
-        glassColor: glassColor,
-        thickness: 10.0,
-        blur: 15.0,
+    return M3EButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 18),
+      label: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
       ),
-      child: LiquidGlass(
-        shape: LiquidRoundedRectangle(borderRadius: 24.0),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(24.0),
-          child: Container(
-            height: 48.0,
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: primary.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(24.0),
-              border: Border.all(
-                color: primary.withValues(alpha: 0.4),
-                width: 1.2,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: isDark ? Colors.white : primary, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : primary,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      style: color != null ? M3EButtonStyle.filled : M3EButtonStyle.tonal,
+      size: M3EButtonSize.md,
+      shape: M3EButtonShape.round,
     );
   }
 
@@ -818,63 +765,27 @@ class _AdminScreenState extends State<AdminScreen>
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 10.0,
-          blur: 12.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 20.0),
-          child: InkWell(
-            onTap: onPressed,
-            borderRadius: BorderRadius.circular(20.0),
-            child: SizedBox(
-              width: 40.0,
-              height: 40.0,
-              child: Center(
-                child: Icon(
-                  icon,
-                  color: theme.colorScheme.onSurface,
-                  size: 20.0,
-                ),
-              ),
-            ),
-          ),
-        ),
+      child: M3EIconButton(
+        icon: Icon(icon, size: 20.0),
+        onPressed: onPressed,
+        size: M3EIconButtonSize.sm,
+        variant: M3EIconButtonVariant.tonal,
+        shape: M3EIconButtonShapeVariant.round,
       ),
     );
   }
 
   Widget _buildGlassCard({required Widget child}) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 12.0,
-          blur: 15.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 16.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: child,
-          ),
-        ),
+      child: M3ECard(
+        variant: M3ECardVariant.elevated,
+        elevation: 1.5,
+        borderRadius: BorderRadius.circular(16.0),
+        padding: const EdgeInsets.all(8.0),
+        child: child,
       ),
     );
   }

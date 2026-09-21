@@ -42,16 +42,10 @@ class AppTheme {
       labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
     );
 
-    final colorScheme = const ColorScheme(
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: shikonPurple,
       brightness: Brightness.light,
-      primary: shikonPurple,
-      onPrimary: Colors.white,
-      secondary: Color(0xFF616161),
-      onSecondary: Colors.white,
-      error: Color(0xFFB00020),
-      onError: Colors.white,
-      surface: lightBackgroundColor,
-      onSurface: Color(0xFF121212),
+      surface: const Color(0xFFF6F5F8),
     );
 
     return ThemeData(
@@ -113,16 +107,10 @@ class AppTheme {
       labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
     );
 
-    final colorScheme = const ColorScheme(
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: shikonPurple,
       brightness: Brightness.dark,
-      primary: lightPurple,
-      onPrimary: Colors.black,
-      secondary: Color(0xFF9E9E9E),
-      onSecondary: Colors.black,
-      error: Color(0xFFCF6679),
-      onError: Colors.black,
-      surface: darkBackgroundColor,
-      onSurface: Colors.white,
+      surface: const Color(0xFF141218),
     );
 
     return ThemeData(

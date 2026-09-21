@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 
 class LiquidGlassSettings {
-  final Color glassColor;
+  final Color? glassColor;
   final double thickness;
   final double blur;
 
   const LiquidGlassSettings({
-    this.glassColor = const Color(0x1AFFFFFF),
-    this.thickness = 15.0,
-    this.blur = 20.0,
+    this.glassColor,
+    this.thickness = 0.0,
+    this.blur = 0.0,
   });
 }
 
@@ -43,8 +43,8 @@ class LiquidRoundedRectangle extends LiquidShape {
   BorderRadius get borderRadius => BorderRadius.circular(borderRadiusValue);
 }
 
-/// Material 3 Expressive に刷新された Expressive Surface コンテナ
-/// Liquid Glass (BackdropFilter) を廃止し、M3Eの表現力豊かなトナルサーフェスと角丸シェイプを提供
+/// Material 3 Expressive M3ECard コンテナ
+/// 透明効果を完全に無効化し、ソリッドなM3Eトナルサーフェスとエレベーションを提供
 class LiquidGlass extends StatelessWidget {
   final LiquidShape shape;
   final Widget child;
@@ -57,48 +57,11 @@ class LiquidGlass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    final layer = context.findAncestorWidgetOfExactType<LiquidGlassLayer>();
-    final settings = layer?.settings;
-
-    // Material 3 Expressive トナルサーフェス装飾
-    var surfaceColor = isDark
-        ? Color.alphaBlend(
-            colorScheme.primary.withValues(alpha: 0.08),
-            colorScheme.surfaceContainerHigh,
-          )
-        : Color.alphaBlend(
-            colorScheme.primary.withValues(alpha: 0.05),
-            colorScheme.surfaceContainerHighest.withValues(alpha: 0.75),
-          );
-
-    if (settings != null && settings.glassColor != const Color(0x1AFFFFFF)) {
-      surfaceColor = Color.alphaBlend(settings.glassColor, surfaceColor);
-    }
-
-    final borderColor = isDark
-        ? colorScheme.outlineVariant.withValues(alpha: 0.25)
-        : colorScheme.outlineVariant.withValues(alpha: 0.4);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: shape.borderRadius,
-        border: Border.all(
-          color: borderColor,
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return M3ECard(
+      variant: M3ECardVariant.elevated,
+      elevation: 2.0,
+      borderRadius: shape.borderRadius,
+      padding: EdgeInsets.zero,
       child: child,
     );
   }

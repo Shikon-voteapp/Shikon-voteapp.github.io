@@ -8,6 +8,7 @@ import '../services/accessibility_service.dart';
 import 'package:flutter/material.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import '../widgets/liquid_glass.dart';
 
 class VoteScreen extends StatefulWidget {
@@ -344,12 +345,7 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildGroupDetailHeader({required bool isCompact}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
     final category = voteCategories[currentCategoryIndex];
-
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
 
     Widget headerContent;
     if (_selectedGroup == null) {
@@ -515,67 +511,44 @@ class _VoteScreenState extends State<VoteScreen> {
             ? null
             : () => _showGroupDetailDialog(_selectedGroup!),
         behavior: HitTestBehavior.opaque,
-        child: LiquidGlassLayer(
-          settings: LiquidGlassSettings(
-            glassColor: glassColor,
-            thickness: 15.0,
-            blur: 20.0,
-          ),
-          child: LiquidGlass(
-            shape: LiquidRoundedRectangle(
-              borderRadius: 22.0,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: headerContent,
-            ),
-          ),
+        child: M3ECard(
+          variant: M3ECardVariant.elevated,
+          elevation: 2.0,
+          borderRadius: BorderRadius.circular(22.0),
+          padding: const EdgeInsets.all(16),
+          child: headerContent,
         ),
       ),
     );
   }
 
   Widget _buildViewToggle() {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Align(
         alignment: Alignment.centerRight,
-        child: LiquidGlassLayer(
-          settings: LiquidGlassSettings(
-            glassColor: glassColor,
-            thickness: 15.0,
-            blur: 20.0,
-          ),
-          child: LiquidGlass(
-            shape: LiquidRoundedRectangle(
-              borderRadius: 16.0,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildToggleButton(
-                    icon: Icons.grid_view,
-                    label: 'グリッド',
-                    isSelected: _isGridView,
-                    onPressed: () => setState(() => _isGridView = true),
-                  ),
-                  const SizedBox(width: 4),
-                  _buildToggleButton(
-                    icon: Icons.list,
-                    label: 'リスト',
-                    isSelected: !_isGridView,
-                    onPressed: () => setState(() => _isGridView = false),
-                  ),
-                ],
+        child: M3ECard(
+          variant: M3ECardVariant.filled,
+          elevation: 0,
+          borderRadius: BorderRadius.circular(16.0),
+          padding: const EdgeInsets.all(4.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildToggleButton(
+                icon: Icons.grid_view,
+                label: 'グリッド',
+                isSelected: _isGridView,
+                onPressed: () => setState(() => _isGridView = true),
               ),
-            ),
+              const SizedBox(width: 4),
+              _buildToggleButton(
+                icon: Icons.list,
+                label: 'リスト',
+                isSelected: !_isGridView,
+                onPressed: () => setState(() => _isGridView = false),
+              ),
+            ],
           ),
         ),
       ),
@@ -589,20 +562,18 @@ class _VoteScreenState extends State<VoteScreen> {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final Color activeColor = theme.colorScheme.primary;
     final Color bg = isSelected
-        ? activeColor.withValues(alpha: 0.35)
+        ? theme.colorScheme.primaryContainer
         : Colors.transparent;
     final Color textColor = isSelected
-        ? (isDark ? Colors.white : activeColor)
-        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+        ? theme.colorScheme.onPrimaryContainer
+        : theme.colorScheme.onSurfaceVariant;
     final Color iconColor = isSelected
-        ? (isDark ? Colors.white : activeColor)
-        : theme.colorScheme.onSurface.withValues(alpha: 0.7);
+        ? theme.colorScheme.onPrimaryContainer
+        : theme.colorScheme.onSurfaceVariant;
     final Border border = Border.all(
       color: isSelected
-          ? activeColor.withValues(alpha: 0.5)
+          ? theme.colorScheme.primary
           : Colors.transparent,
       width: 1.0,
     );
@@ -958,46 +929,33 @@ class _VoteScreenState extends State<VoteScreen> {
   Widget _buildFloorFilter() {
     final floors = [1, 2, 3, 4]; // 1,2,3階とステージ(4)
     final floorLabels = {1: '1階', 2: '2階', 3: '3階', 4: 'ステージ'};
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 15.0,
-          blur: 20.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(
-            borderRadius: 20.0,
-          ),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 6,
-              runSpacing: 6,
-              children: [
-                _buildToggleButton(
-                  label: 'すべて',
-                  isSelected: _selectedFloor == null,
-                  onPressed: () => _filterByFloor(null),
+      child: M3ECard(
+        variant: M3ECardVariant.filled,
+        elevation: 0,
+        borderRadius: BorderRadius.circular(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Container(
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              _buildToggleButton(
+                label: 'すべて',
+                isSelected: _selectedFloor == null,
+                onPressed: () => _filterByFloor(null),
+              ),
+              ...floors.map(
+                (f) => _buildToggleButton(
+                  label: floorLabels[f]!,
+                  isSelected: _selectedFloor == f,
+                  onPressed: () => _filterByFloor(f),
                 ),
-                ...floors.map(
-                  (f) => _buildToggleButton(
-                    label: floorLabels[f]!,
-                    isSelected: _selectedFloor == f,
-                    onPressed: () => _filterByFloor(f),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -286,42 +286,34 @@ class BottomBar extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return LiquidGlassLayer(
-      settings: LiquidGlassSettings(
-        glassColor: isDark
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.black.withValues(alpha: 0.04),
-        thickness: 8.0,
-        blur: 10.0,
-      ),
-      child: LiquidGlass(
-        shape: LiquidRoundedRectangle(borderRadius: 24.0),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(24.0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            child: Row(
-              children: [
-                Icon(icon, size: 18, color: theme.colorScheme.onSurface),
-                const SizedBox(width: 12),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: M3ECard(
+        variant: M3ECardVariant.filled,
+        borderRadius: BorderRadius.circular(20.0),
+        padding: EdgeInsets.zero,
+        onPressed: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: theme.colorScheme.primary),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
                 ),
-                const Spacer(),
-                Icon(
-                  Icons.chevron_right,
-                  size: 18,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                ),
-              ],
-            ),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
           ),
         ),
       ),
@@ -395,61 +387,18 @@ class BottomBar extends StatelessWidget {
     required IconData icon,
     required VoidCallback? onPressed,
   }) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.black.withValues(alpha: 0.04);
-    final iconColor = onPressed == null
-        ? theme.colorScheme.onSurface.withValues(alpha: 0.3)
-        : (isDark ? Colors.white : Colors.black);
-
-    return LiquidGlassLayer(
-      settings: LiquidGlassSettings(
-        glassColor: glassColor,
-        thickness: 12.0,
-        blur: 18.0,
-      ),
-      child: LiquidGlass(
-        shape: LiquidRoundedRectangle(borderRadius: 28.0),
-        child: GestureDetector(
-          onTap: onPressed,
-          behavior: HitTestBehavior.opaque,
-          child: SizedBox(
-            width: 56.0,
-            height: 56.0,
-            child: Center(
-              child: Icon(icon, color: iconColor, size: 24.0),
-            ),
-          ),
-        ),
-      ),
+    return M3EIconButton(
+      icon: Icon(icon, size: 24.0),
+      onPressed: onPressed,
+      size: M3EIconButtonSize.lg,
+      variant: M3EIconButtonVariant.tonal,
+      shape: M3EIconButtonShapeVariant.round,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final primary = theme.colorScheme.primary;
-
-    // 中央ピルのスタイル（フロアフィルターと同じガラス系）
     final bool hasNext = onNext != null;
-
-    // コンテナのガラスベース色（フロアフィルターと同じ）
-    final Color pillGlassBase = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
-
-    // アクティブ時の薄い紫オーバーレイ
-    final Color pillActiveOverlay = hasNext
-        ? primary.withValues(alpha: 0.30)
-        : Colors.transparent;
-
-    // テキスト・アイコン色
-    final Color pillFg = hasNext
-        ? (isDark ? Colors.white : primary)
-        : theme.colorScheme.onSurface.withValues(alpha: 0.35);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -468,59 +417,40 @@ class BottomBar extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: LiquidGlassLayer(
-                settings: LiquidGlassSettings(
-                  glassColor: pillGlassBase,
-                  thickness: 15.0,
-                  blur: 20.0,
-                ),
-                child: LiquidGlass(
-                  shape: LiquidRoundedRectangle(borderRadius: 28.0),
-                  child: InkWell(
-                    onTap: hasNext ? onNext : null,
-                    borderRadius: BorderRadius.circular(28.0),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      height: 56.0,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: pillActiveOverlay,
-                        borderRadius: BorderRadius.circular(28.0),
-                        border: Border.all(
-                          color: hasNext
-                              ? primary.withValues(alpha: 0.5)
-                              : Colors.transparent,
-                          width: 1.2,
-                        ),
-                      ),
-                      child: nextLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: M3ELoadingIndicator(
-                                variant: M3ELoadingIndicatorVariant.defaultStyle,
-                                elevation: 0,
-                              ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  nextLabel,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: pillFg,
-                                  ),
-                                ),
-                                if (hasNext) ...[
-                                  const SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward, size: 16, color: pillFg),
-                                ],
-                              ],
+              child: SizedBox(
+                height: 56.0,
+                child: M3EButton(
+                  onPressed: hasNext ? onNext : null,
+                  style: hasNext ? M3EButtonStyle.filled : M3EButtonStyle.tonal,
+                  size: M3EButtonSize.lg,
+                  shape: M3EButtonShape.round,
+                  child: Center(
+                    child: nextLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: M3ELoadingIndicator(
+                              variant: M3ELoadingIndicatorVariant.defaultStyle,
+                              elevation: 0,
                             ),
-                    ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                nextLabel,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (hasNext) ...[
+                                const SizedBox(width: 8),
+                                const Icon(Icons.arrow_forward, size: 18),
+                              ],
+                            ],
+                          ),
                   ),
                 ),
               ),

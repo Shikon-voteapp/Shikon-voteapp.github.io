@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_3_expressive/material_3_expressive.dart';
 import 'liquid_glass.dart';
 
 enum AdminMode {
@@ -112,7 +113,7 @@ class AdminModeSelection extends StatelessWidget {
                         width: cardWidth,
                         icon: Icons.manage_accounts_rounded,
                         title: '管理者ユーザー管理',
-                        subtitle: '管理者アカウントの一覧、新規管理者の追加、QRコードスキャン',
+                        subtitle: '管理者アカウントの一覧、新規管理者の追加',
                         badgeText: '$adminUserCount 名登録済',
                         accentColor: const Color(0xFFD97706),
                         actionLabel: '開く',
@@ -154,117 +155,91 @@ class AdminModeSelection extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.25)
-        : Colors.white.withValues(alpha: 0.45);
 
     return SizedBox(
       width: width,
-      child: LiquidGlassLayer(
-        settings: LiquidGlassSettings(
-          glassColor: glassColor,
-          thickness: 12.0,
-          blur: 16.0,
-        ),
-        child: LiquidGlass(
-          shape: LiquidRoundedRectangle(borderRadius: 20.0),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(20.0),
-              hoverColor: accentColor.withValues(alpha: 0.08),
-              splashColor: accentColor.withValues(alpha: 0.15),
-              child: Container(
-                padding: const EdgeInsets.all(22.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
-                  border: Border.all(
-                    color: accentColor.withValues(alpha: 0.3),
-                    width: 1.5,
+      child: M3ECard(
+        variant: M3ECardVariant.elevated,
+        elevation: 2.0,
+        borderRadius: BorderRadius.circular(20.0),
+        onPressed: onTap,
+        padding: const EdgeInsets.all(22.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(14.0),
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.35),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Icon(icon, color: accentColor, size: 28),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                    vertical: 4.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Text(
+                    badgeText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                    ),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(14.0),
-                            border: Border.all(
-                              color: accentColor.withValues(alpha: 0.35),
-                              width: 1.2,
-                            ),
-                          ),
-                          child: Icon(icon, color: accentColor, size: 28),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Text(
-                            badgeText,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: accentColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-                    Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      subtitle,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          actionLabel,
-                          style: TextStyle(
-                            color: accentColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          actionIcon,
-                          color: accentColor,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
-          ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  actionLabel,
+                  style: TextStyle(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  actionIcon,
+                  color: accentColor,
+                  size: 16,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
