@@ -19,7 +19,13 @@ class AppTheme {
   static ThemeData get lightThemeData {
     final baseText = ThemeData(brightness: Brightness.light).textTheme.apply(
       fontFamily: 'SFProDisplay',
-      fontFamilyFallback: const ['HiraginoSans'],
+      fontFamilyFallback: const [
+        'HiraginoSans',
+        'Noto Sans JP',
+        'Hiragino Kaku Gothic ProN',
+        'Meiryo',
+        'sans-serif',
+      ],
     );
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
@@ -117,7 +123,13 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       fontFamily: 'SFProDisplay',
-      fontFamilyFallback: const ['HiraginoSans'],
+      fontFamilyFallback: const [
+        'HiraginoSans',
+        'Noto Sans JP',
+        'Hiragino Kaku Gothic ProN',
+        'Meiryo',
+        'sans-serif',
+      ],
       colorScheme: colorScheme,
       primaryColor: darkPrimaryColor,
       scaffoldBackgroundColor: darkBackgroundColor,

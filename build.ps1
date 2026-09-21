@@ -118,12 +118,13 @@ if (!(Test-Path $targetDir)) {
     New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
 }
 
-# ファイルをコピー（再帰的、上書きあり）
-Write-Host "Copying files to $targetDir..."
-if (Test-Path "$targetDir/assets") {
-    Remove-Item -Path "$targetDir/assets" -Recurse -Force
+# ファイルをコピー（再帰的、上書きあり、robocopyで全アセットを確実に同期）
+Write-Host "Copying files to $targetDir with robocopy..."
+$hasCname = Test-Path "$targetDir/CNAME"
+robocopy "build\web" $targetDir /E /NFL /NDL /NJH /NJS /nc /ns /np
+if ($hasCname) {
+    "mkc.mamouna.net" | Set-Content "$targetDir/CNAME" -NoNewline
 }
-Copy-Item -Path "build\web\*" -Destination $targetDir -Recurse -Force
 
 # Git操作
 Write-Host "=== Git Operations Start ==="
