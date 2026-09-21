@@ -26,8 +26,8 @@ class PlatformUtilsImpl {
   }
 
   static void reloadApp() {
-    // location.reload() は DDC開発モードでモジュール初期化エラーを発生するため、
-    // ルートURLへのハードナビゲーションを使用する
+    // DDC 開発モードでのモジュール初期化エラーを避けるため、
+    // `reload()` ではなくアプリのルートURLへ遷移する。
     final href = html.window.location.origin + (html.window.location.pathname ?? '/');
     html.window.location.assign(href);
   }
@@ -114,12 +114,13 @@ class PlatformUtilsImpl {
         html.window.sessionStorage.clear();
       } catch (_) {}
 
-      // Finally hard-navigate to avoid DDC module initialization issues
+      // キャッシュ削除後も同じ理由でルートURLへ遷移する。
       final href = html.window.location.origin + (html.window.location.pathname ?? '/');
       html.window.location.assign(href);
     } catch (e) {
       print('キャッシュ破棄に失敗しました: $e');
-      html.window.location.assign(html.window.location.pathname ?? '/');
+      final href = html.window.location.origin + (html.window.location.pathname ?? '/');
+      html.window.location.assign(href);
     }
   }
 }
