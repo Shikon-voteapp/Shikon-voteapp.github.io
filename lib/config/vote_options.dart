@@ -1,4 +1,4 @@
-import '../models/group.dart' hide VoteCategory;
+﻿import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 
 // config/vote_options.dart
@@ -85,7 +85,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 8, 6, 16, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 22, 15, 10, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
