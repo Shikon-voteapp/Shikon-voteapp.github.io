@@ -1,5 +1,5 @@
-import 'package:shikon_voteapp/models/group.dart' hide VoteCategory;
-import 'package:shikon_voteapp/models/vote_category.dart';
+import '../models/group.dart' hide VoteCategory;
+import '../models/vote_category.dart';
 
 // config/vote_options.dart
 /*

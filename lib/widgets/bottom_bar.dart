@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:shikon_voteapp/platform/platform_utils.dart';
+import '../platform/platform_utils.dart';
 import 'custom_dialog.dart';
 import '../utils/version_info.dart';
 import '../services/accessibility_service.dart';

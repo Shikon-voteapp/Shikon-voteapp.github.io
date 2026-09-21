@@ -625,7 +625,13 @@ class _AdminInvalidateVoteState extends State<AdminInvalidateVote> {
         padding: EdgeInsets.symmetric(vertical: 4.0),
         child: Row(
           children: [
-            SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: M3ELoadingIndicator(
+                variant: M3ELoadingIndicatorVariant.defaultStyle,
+              ),
+            ),
             SizedBox(width: 8),
             Text('ステータス確認中...', style: TextStyle(fontSize: 12)),
           ],

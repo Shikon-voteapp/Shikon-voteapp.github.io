@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:shikon_voteapp/widgets/bottom_bar.dart';
-import 'package:shikon_voteapp/widgets/top_bar.dart';
+import 'bottom_bar.dart';
+import 'top_bar.dart';
 
 class MainLayout extends StatelessWidget {
   final String title;

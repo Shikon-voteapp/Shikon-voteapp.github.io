@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shikon_voteapp/screens/admin_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // TODO: Migrate to package:web when stable
 // ignore: deprecated_member_use
@@ -156,11 +155,7 @@ Future<void> showAdminLoginDialog({required BuildContext context}) {
                                 );
                                 if (context.mounted) {
                                   Navigator.of(context).pop(); // Close dialog
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => AdminScreen(),
-                                    ),
-                                  );
+                                  Navigator.of(context).pushReplacementNamed('/admin');
                                 }
                               } on FirebaseAuthException catch (e) {
                                 if (context.mounted) {

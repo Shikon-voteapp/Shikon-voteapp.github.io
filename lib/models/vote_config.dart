@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:shikon_voteapp/models/group.dart' hide VoteCategory;
-import 'package:shikon_voteapp/models/vote_category.dart';
-import 'package:shikon_voteapp/config/vote_options.dart';
+import 'group.dart' hide VoteCategory;
+import 'vote_category.dart';
+import '../config/vote_options.dart';
 
 // 投票設定全体を管理するクラス
 class VoteConfig {

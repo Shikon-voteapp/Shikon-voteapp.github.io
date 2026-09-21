@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color shikonPurple = Color(0xFF4A2A8A);
+const Color shikonPurple = Color(0xFF443088);
 const Color lightPurple = Color(0xFFF3E5F5);
 
 class AppTheme {
