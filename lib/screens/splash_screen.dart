@@ -16,36 +16,44 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   String _loadingMessage = '起動準備中...';
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    );
+    _fadeController.forward();
     _initialize();
   }
 
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
   Future<void> _initialize() async {
-    // Webフォントの読み込み完了まで待機（非Webは即時）
     await waitForWebFonts();
-    // 実際の初期化処理に合わせてメッセージを更新
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
-    setState(() {
-      _loadingMessage = '起動準備をしています...';
-    });
+    setState(() => _loadingMessage = '起動準備をしています...');
     await Future.delayed(const Duration(milliseconds: 800));
     if (!mounted) return;
-
-    setState(() {
-      _loadingMessage = '画面の準備をしています...';
-    });
+    setState(() => _loadingMessage = '画面の準備をしています...');
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
-
-    setState(() {
-      _loadingMessage = 'まもなく起動します...';
-    });
+    setState(() => _loadingMessage = 'まもなく起動します...');
     await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
 
@@ -55,59 +63,59 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.how_to_vote,
-              size: 150,
-              color:
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
-            ),
-            SizedBox(height: 30),
-            Text(
-              '紫紺祭投票アプリ',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
+      backgroundColor: colorScheme.surface,
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // アイコン
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                child: Icon(
+                  Icons.how_to_vote_rounded,
+                  size: 52,
+                  color: colorScheme.onPrimaryContainer,
+                ),
               ),
-            ),
-            const SizedBox(height: 50),
-            const M3ELoadingIndicator(
-              variant: M3ELoadingIndicatorVariant.defaultStyle,
-              elevation: 0,
-            ),
-            SizedBox(height: 20),
-            Text(
-              _loadingMessage,
-              style: TextStyle(
-                fontSize: 16,
-                color:
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white70
-                        : Colors.black87,
+              const SizedBox(height: 24),
+              Text(
+                '紫紺祭投票アプリ',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 48),
+              // M3E Expressive ローディングインジケーター
+              const M3ELoadingIndicator(
+                variant: M3ELoadingIndicatorVariant.defaultStyle,
+                elevation: 0,
+              ),
+              const SizedBox(height: 20),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Text(
+                  _loadingMessage,
+                  key: ValueKey(_loadingMessage),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

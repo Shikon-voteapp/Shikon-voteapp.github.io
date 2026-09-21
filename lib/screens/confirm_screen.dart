@@ -9,7 +9,6 @@ import '../widgets/main_layout.dart';
 import '../widgets/liquid_glass.dart';
 import '../platform/platform_utils.dart';
 import 'vote_screen.dart';
-import 'scanner_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
 
@@ -488,11 +487,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void _resetToScanner() {
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const ScannerScreen()),
-      (route) => false,
-    );
+    // scanner_screen インポートによる循環依存を避けるため、リロードでトップから再開始
+    PlatformUtils.reloadApp();
   }
 }

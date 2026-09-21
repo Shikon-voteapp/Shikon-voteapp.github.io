@@ -26,7 +26,10 @@ class PlatformUtilsImpl {
   }
 
   static void reloadApp() {
-    html.window.location.reload();
+    // location.reload() は DDC開発モードでモジュール初期化エラーを発生するため、
+    // ルートURLへのハードナビゲーションを使用する
+    final href = html.window.location.origin + (html.window.location.pathname ?? '/');
+    html.window.location.assign(href);
   }
 
   static void downloadFile(String content, String filename) {
@@ -77,52 +80,12 @@ class PlatformUtilsImpl {
 
   static void closeTab() {
     try {
+      // ブラウザのセキュリティ制限を回避: _selfで開いてからclose()する
+      html.window.open('', '_self', '');
       html.window.close();
-      // window.close() は直接開いたタブでは無視されるため、
-      // 100ms後にまだページが生きていたらフォールバック画面を表示する
-      Future.delayed(const Duration(milliseconds: 100), () {
-        try {
-          final body = html.document.body;
-          if (body != null) {
-            body.style.margin = '0';
-            body.style.padding = '0';
-            body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
-            body.style.minHeight = '100vh';
-            body.style.display = 'flex';
-            body.style.alignItems = 'center';
-            body.style.justifyContent = 'center';
-            body.style.fontFamily = "'Noto Sans JP', 'M PLUS Rounded 1c', sans-serif";
-            body.innerHtml = '''
-              <div style="text-align:center;color:#fff;padding:40px;max-width:480px;">
-                <div style="font-size:72px;margin-bottom:24px;">✅</div>
-                <h1 style="font-size:26px;font-weight:700;margin:0 0 12px;letter-spacing:0.02em;">
-                  投票が完了しました
-                </h1>
-                <p style="font-size:16px;opacity:0.75;line-height:1.7;margin:0 0 32px;">
-                  ご協力ありがとうございました。<br>
-                  このタブを閉じてください。
-                </p>
-                <div style="
-                  background:rgba(255,255,255,0.12);
-                  border:1.5px solid rgba(255,255,255,0.25);
-                  border-radius:16px;
-                  padding:20px 28px;
-                  font-size:14px;
-                  opacity:0.85;
-                  line-height:1.6;
-                ">
-                  <strong>タブの閉じ方</strong><br>
-                  タブ右上の <strong>✕</strong> ボタン<br>
-                  またはショートカット <strong>Ctrl + W</strong>（Windows）<br>
-                  <strong>⌘ + W</strong>（Mac）を押してください。
-                </div>
-              </div>
-            ''';
-          }
-        } catch (_) {}
-      });
     } catch (e) {
-      print('タブを閉じるエラー: $e');
+      // フォールバック: ユーザーに手動で閉じるよう案内
+      html.window.alert('投票が完了しました。このタブを手動で閉じてください。\n（ブラウザの制限により自動では閉じられない場合があります）');
     }
   }
 
@@ -151,11 +114,12 @@ class PlatformUtilsImpl {
         html.window.sessionStorage.clear();
       } catch (_) {}
 
-      // Finally reload
-      html.window.location.reload();
+      // Finally hard-navigate to avoid DDC module initialization issues
+      final href = html.window.location.origin + (html.window.location.pathname ?? '/');
+      html.window.location.assign(href);
     } catch (e) {
       print('キャッシュ破棄に失敗しました: $e');
-      html.window.location.reload();
+      html.window.location.assign(html.window.location.pathname ?? '/');
     }
   }
 }
