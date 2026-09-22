@@ -1,5 +1,5 @@
-﻿import '../models/group.dart' hide VoteCategory;
-import '../models/vote_category.dart';
+﻿import 'package:shikon_voteapp/models/group.dart' hide VoteCategory;
+import 'package:shikon_voteapp/models/vote_category.dart';
 
 // config/vote_options.dart
 /*
@@ -85,12 +85,12 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 23, 3, 49, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 8, 6, 16, 0); // 2025年1月15日 12:00
 
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
-  startDate: DateTime(2026, 9, 20, 0, 0), // 2026年9月20日 0:00
-  endDate: DateTime(2026, 9, 23, 23, 59), // 2026年9月23日 23:59
+  startDate: DateTime(2026, 8, 28, 0, 0), // 2026年8月28日 0:00
+  endDate: DateTime(2026, 8, 29, 0, 0), // 2026年8月29日 0:00
   maintenanceEnabled: true,
   maintenanceStartHour: 2,
   maintenanceEndHour: 3,
