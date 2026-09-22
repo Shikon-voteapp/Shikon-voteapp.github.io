@@ -5,6 +5,9 @@ import 'top_bar.dart';
 
 class MainLayout extends StatelessWidget {
   final String title;
+  final Widget? titleWidget;
+  final Widget? topBarTrailing;
+  final double? progressValue;
   final Widget child;
   final VoidCallback? onHome;
   final VoidCallback? onInfo;
@@ -22,7 +25,10 @@ class MainLayout extends StatelessWidget {
 
   const MainLayout({
     Key? key,
-    required this.title,
+    this.title = '',
+    this.titleWidget,
+    this.topBarTrailing,
+    this.progressValue,
     required this.child,
     this.onHome,
     this.onInfo,
@@ -67,6 +73,17 @@ class MainLayout extends StatelessWidget {
       onMenu: onMenu,
     );
 
+    final Widget topBarWidget = SizedBox(
+      width: double.infinity,
+      child: TopBar(
+        title: title,
+        titleWidget: titleWidget,
+        trailing: topBarTrailing,
+        progressValue: progressValue,
+        icon: icon ?? Icons.person_outline,
+      ),
+    );
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: isWide
@@ -77,7 +94,7 @@ class MainLayout extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TopBar(title: title, icon: icon ?? Icons.person_outline),
+                      topBarWidget,
                       Expanded(child: child),
                     ],
                   ),
@@ -94,7 +111,8 @@ class MainLayout extends StatelessWidget {
                     Positioned(
                       top: 0,
                       left: 0,
-                      child: TopBar(title: title, icon: icon ?? Icons.person_outline),
+                      right: 0,
+                      child: topBarWidget,
                     ),
                     Positioned(
                       bottom: 0,
@@ -107,7 +125,7 @@ class MainLayout extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TopBar(title: title, icon: icon ?? Icons.person_outline),
+                    topBarWidget,
                     Expanded(
                       child: Column(
                         children: [

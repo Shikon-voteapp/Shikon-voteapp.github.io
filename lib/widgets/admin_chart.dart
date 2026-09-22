@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/group.dart';
+import 'gaknum_text.dart';
 
 class AdminChart extends StatelessWidget {
   final List<MapEntry<Group, int>> results;
@@ -71,9 +72,17 @@ class AdminChart extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8),
-                    Text(
-                      '$voteCount票',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text.rich(
+                      TextSpan(
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        children: [
+                          gakNumSpan(
+                            '$voteCount',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const TextSpan(text: '票'),
+                        ],
+                      ),
                     ),
                   ],
                 ),

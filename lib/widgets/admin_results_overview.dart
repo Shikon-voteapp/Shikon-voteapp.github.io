@@ -3,6 +3,7 @@ import 'package:material_3_expressive/material_3_expressive.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
+import 'gaknum_text.dart';
 
 /// 投票結果サマリー一覧画面（Material 3 Expressive 準拠）
 class AdminResultsOverview extends StatelessWidget {
@@ -212,8 +213,20 @@ class AdminResultsOverview extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      '総投票数 : $totalVotes票',
+                    Text.rich(
+                      TextSpan(
+                        text: '総投票数 : ',
+                        children: [
+                          gakNumSpan(
+                            '$totalVotes',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const TextSpan(text: '票'),
+                        ],
+                      ),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -266,8 +279,22 @@ class AdminResultsOverview extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Text(
-            group.name + (votes > 0 ? ' ($votes票)' : ''),
+          child: Text.rich(
+            TextSpan(
+              text: group.name,
+              children: [
+                if (votes > 0) ...[
+                  const TextSpan(text: ' ('),
+                  gakNumSpan(
+                    '$votes',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const TextSpan(text: '票)'),
+                ],
+              ],
+            ),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface,
             ),

@@ -8,7 +8,7 @@ class AdminDocumentsView extends StatelessWidget {
   const AdminDocumentsView({super.key});
 
   static const String manualUrl =
-      'https://mkc.mamouna.net/PDF/%E6%96%87%E5%8C%96%E7%A5%AD%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97.pdf';
+      'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/releases/download/Auto_v1.1/SetUpGuide.pdf';
   static const String setupWizardUrl =
       'https://github.com/Shikon-voteapp/Shikon-voteapp.github.io/releases/download/Auto_v1.1/setup.exe';
   static const String contactEmail = 'mamouna.inori@outlook.jp';

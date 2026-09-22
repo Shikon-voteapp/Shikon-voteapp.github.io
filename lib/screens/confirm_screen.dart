@@ -38,6 +38,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     return MainLayout(
       title: '投票内容の確認',
       icon: Icons.verified,
+      progressValue: 1.0,
       onHome: () => PlatformUtils.reloadApp(),
       helpTitle: '投票内容の確認について',
       helpContent:

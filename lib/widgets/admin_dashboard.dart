@@ -4,6 +4,7 @@ import 'neumorphic_wrappers.dart';
 import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
+import 'gaknum_text.dart';
 
 class AdminDashboard extends StatelessWidget {
   final List<Vote> votes;
@@ -68,9 +69,17 @@ class AdminDashboard extends StatelessWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      Text(
-                                        '${results[topGroup.id] ?? 0}票',
-                                        style: TextStyle(color: Colors.blue),
+                                      Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            gakNumSpan(
+                                              '${results[topGroup.id] ?? 0}',
+                                              style: const TextStyle(color: Colors.blue),
+                                            ),
+                                            const TextSpan(text: '票'),
+                                          ],
+                                        ),
+                                        style: const TextStyle(color: Colors.blue),
                                       ),
                                     ],
                                   ),
@@ -80,8 +89,16 @@ class AdminDashboard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Container(height: 1, color: Colors.black12),
-                  Text(
-                    '総投票数: ${_getTotalVotesForCategory(category.id)}',
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(text: '総投票数: '),
+                        gakNumSpan(
+                          '${_getTotalVotesForCategory(category.id)}',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],

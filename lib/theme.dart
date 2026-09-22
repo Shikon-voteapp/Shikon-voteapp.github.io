@@ -18,10 +18,10 @@ class AppTheme {
 
   static ThemeData get lightThemeData {
     final baseText = ThemeData(brightness: Brightness.light).textTheme.apply(
-      fontFamily: 'SFProDisplay',
+      fontFamily: 'IBMPlexSansJP',
       fontFamilyFallback: const [
-        'HiraginoSans',
         'Noto Sans JP',
+        'Hiragino Sans',
         'Hiragino Kaku Gothic ProN',
         'Meiryo',
         'sans-serif',
@@ -29,23 +29,34 @@ class AppTheme {
     );
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
         letterSpacing: -0.2,
       ),
       displayMedium: baseText.displayMedium?.copyWith(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
         letterSpacing: -0.1,
       ),
+      displaySmall: baseText.displaySmall?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
       headlineLarge: baseText.headlineLarge?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.bold,
       ),
       headlineMedium: baseText.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.bold,
       ),
-      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-      bodyLarge: baseText.bodyLarge?.copyWith(height: 1.3),
-      bodyMedium: baseText.bodyMedium?.copyWith(height: 1.35),
-      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+      headlineSmall: baseText.headlineSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      titleMedium: baseText.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+      titleSmall: baseText.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+      bodyLarge: baseText.bodyLarge?.copyWith(fontWeight: FontWeight.w500, height: 1.3),
+      bodyMedium: baseText.bodyMedium?.copyWith(fontWeight: FontWeight.w500, height: 1.35),
+      bodySmall: baseText.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+      labelMedium: baseText.labelMedium?.copyWith(fontWeight: FontWeight.w500),
+      labelSmall: baseText.labelSmall?.copyWith(fontWeight: FontWeight.w500),
     );
 
     final colorScheme = ColorScheme.fromSeed(
@@ -57,8 +68,14 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: 'SFProDisplay',
-      fontFamilyFallback: const ['HiraginoSans'],
+      fontFamily: 'IBMPlexSansJP',
+      fontFamilyFallback: const [
+        'Noto Sans JP',
+        'Hiragino Sans',
+        'Hiragino Kaku Gothic ProN',
+        'Meiryo',
+        'sans-serif',
+      ],
       colorScheme: colorScheme,
       primaryColor: lightPrimaryColor,
       scaffoldBackgroundColor: lightBackgroundColor,
@@ -89,28 +106,45 @@ class AppTheme {
 
   static ThemeData get darkThemeData {
     final baseText = ThemeData(brightness: Brightness.dark).textTheme.apply(
-      fontFamily: 'SFProDisplay',
-      fontFamilyFallback: const ['HiraginoSans'],
+      fontFamily: 'IBMPlexSansJP',
+      fontFamilyFallback: const [
+        'Noto Sans JP',
+        'Hiragino Sans',
+        'Hiragino Kaku Gothic ProN',
+        'Meiryo',
+        'sans-serif',
+      ],
     );
     final textTheme = baseText.copyWith(
       displayLarge: baseText.displayLarge?.copyWith(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
         letterSpacing: -0.2,
       ),
       displayMedium: baseText.displayMedium?.copyWith(
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.bold,
         letterSpacing: -0.1,
       ),
+      displaySmall: baseText.displaySmall?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
       headlineLarge: baseText.headlineLarge?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.bold,
       ),
       headlineMedium: baseText.headlineMedium?.copyWith(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.bold,
       ),
-      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-      bodyLarge: baseText.bodyLarge?.copyWith(height: 1.35),
-      bodyMedium: baseText.bodyMedium?.copyWith(height: 1.4),
-      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+      headlineSmall: baseText.headlineSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+      titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+      titleMedium: baseText.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+      titleSmall: baseText.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+      bodyLarge: baseText.bodyLarge?.copyWith(fontWeight: FontWeight.w500, height: 1.35),
+      bodyMedium: baseText.bodyMedium?.copyWith(fontWeight: FontWeight.w500, height: 1.4),
+      bodySmall: baseText.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+      labelLarge: baseText.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+      labelMedium: baseText.labelMedium?.copyWith(fontWeight: FontWeight.w500),
+      labelSmall: baseText.labelSmall?.copyWith(fontWeight: FontWeight.w500),
     );
 
     final colorScheme = ColorScheme.fromSeed(
@@ -122,10 +156,10 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      fontFamily: 'SFProDisplay',
+      fontFamily: 'IBMPlexSansJP',
       fontFamilyFallback: const [
-        'HiraginoSans',
         'Noto Sans JP',
+        'Hiragino Sans',
         'Hiragino Kaku Gothic ProN',
         'Meiryo',
         'sans-serif',

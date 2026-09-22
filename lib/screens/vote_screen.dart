@@ -10,6 +10,7 @@ import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import '../widgets/liquid_glass.dart';
+import '../widgets/gaknum_text.dart';
 
 class VoteScreen extends StatefulWidget {
   final String uuid;
@@ -230,9 +231,44 @@ class _VoteScreenState extends State<VoteScreen> {
     }
 
     final bool isWide = MediaQuery.of(context).size.width >= 720;
+    final totalSteps = voteCategories.length + 2;
+    final stepNumber = currentCategoryIndex + 2;
+    final progress = totalSteps > 0 ? stepNumber / totalSteps : 0.0;
+    final displayIndex = currentCategoryIndex + 1;
+    final totalCategories = voteCategories.length;
+
+    final titleWidget = Text.rich(
+      TextSpan(
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        children: [
+          const TextSpan(text: '投票画面 '),
+          gakNumSpan(
+            '$displayIndex',
+            style: const TextStyle(fontSize: 14.5),
+          ),
+          const TextSpan(
+            text: '/',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          gakNumSpan(
+            '$totalCategories',
+            style: const TextStyle(fontSize: 14.5),
+          ),
+        ],
+      ),
+    );
 
     return MainLayout(
-      title: '投票画面 ${currentCategoryIndex + 1}/${voteCategories.length}',
+      title: '投票画面 $displayIndex/$totalCategories',
+      titleWidget: titleWidget,
+      progressValue: progress,
       icon: Icons.how_to_vote,
       helpTitle: '${category.name} について',
       helpContent: helpContent,
@@ -1075,60 +1111,65 @@ class _VoteScreenState extends State<VoteScreen> {
                       child: neumorphicCard(
                         context: context,
                         depth: isSelected ? 2.0 : 6.0,
+                        borderRadius: BorderRadius.circular(14),
                         padding: EdgeInsets.zero,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
-                              width: isSelected ? 2 : 1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            foregroundDecoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withValues(alpha: 0.6),
+                                width: isSelected ? 2.5 : 1.0,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Expanded(
+                                  child: Image.asset(
+                                    group.imagePath,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Container(
+                                          color: theme.colorScheme.secondaryContainer,
+                                          alignment: Alignment.center,
+                                          child: Icon(
+                                            Icons.error_outline,
+                                            color:
+                                                theme
+                                                    .colorScheme
+                                                    .onSecondaryContainer,
+                                          ),
+                                        ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
+                                  color: isSelected
+                                      ? theme.colorScheme.primaryContainer.withValues(alpha: 0.25)
+                                      : theme.colorScheme.surface,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    group.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: itemWidth < 120 ? 11 : 12.5,
+                                      color: isSelected
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.onSurface,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(7),
-                                  topRight: Radius.circular(7),
-                                ),
-                                child: Image.asset(
-                                  group.imagePath,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        color: theme.colorScheme.secondaryContainer,
-                                        alignment: Alignment.center,
-                                        child: Icon(
-                                          Icons.error_outline,
-                                          color:
-                                              theme
-                                                  .colorScheme
-                                                  .onSecondaryContainer,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              alignment: Alignment.center,
-                              child: Text(
-                                group.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: itemWidth < 120 ? 11 : 12.5,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
                   ),
                 ),
               );
@@ -1210,17 +1251,20 @@ class _VoteScreenState extends State<VoteScreen> {
                     child: neumorphicCard(
                       context: context,
                       depth: isSelected ? 2.0 : 8.0,
+                      borderRadius: BorderRadius.circular(14),
                       padding: EdgeInsets.zero,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? colorScheme.primary : theme.dividerColor,
-                            width: isSelected ? 2 : 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          foregroundDecoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: isSelected ? colorScheme.primary : theme.dividerColor.withValues(alpha: 0.6),
+                              width: isSelected ? 2.5 : 1.0,
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                        padding: const EdgeInsets.all(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
                         child: Row(
                           children: [
                             SizedBox(
@@ -1292,8 +1336,9 @@ class _VoteScreenState extends State<VoteScreen> {
                 ),
               ),
             ),
-          );
-        },
+          ),
+        );
+      },
         ),
       ),
     );

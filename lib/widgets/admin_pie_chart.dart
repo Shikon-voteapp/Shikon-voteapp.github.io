@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/group.dart';
+import 'gaknum_text.dart';
 
 class AdminPieChart extends StatelessWidget {
   final List<MapEntry<Group, int>> results;
@@ -64,7 +65,14 @@ class AdminPieChart extends StatelessWidget {
               Expanded(
                 child: Text(group.name, overflow: TextOverflow.ellipsis),
               ),
-              Text('$voteCount票 ($percentage%)'),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    gakNumSpan('$voteCount'),
+                    TextSpan(text: '票 ($percentage%)'),
+                  ],
+                ),
+              ),
             ],
           ),
         );

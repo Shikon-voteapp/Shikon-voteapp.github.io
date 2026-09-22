@@ -23,6 +23,7 @@ import '../widgets/custom_dialog.dart';
 import '../services/export_service.dart';
 import '../platform/platform_utils.dart';
 import '../widgets/liquid_glass.dart';
+import '../widgets/gaknum_text.dart';
 
 
 class AdminScreen extends StatefulWidget {
@@ -973,8 +974,19 @@ class _AdminScreenState extends State<AdminScreen>
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           SizedBox(height: 8),
-          Text(
-            '部門有効投票数: ${_getTotalCategoryVotes(category.id)}票（総投票者数: ${_votes?.length ?? 0}人）',
+          Text.rich(
+            TextSpan(
+              children: [
+                const TextSpan(text: '部門有効投票数: '),
+                gakNumSpan(
+                  '${_getTotalCategoryVotes(category.id)}',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                TextSpan(text: '票（総投票者数: ${_votes?.length ?? 0}人）'),
+              ],
+            ),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),

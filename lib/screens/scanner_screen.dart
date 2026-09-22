@@ -13,7 +13,9 @@ import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
+import '../widgets/gaknum_text.dart';
 
 class ScannerScreen extends StatefulWidget {
   final bool startWithScanner;
@@ -87,9 +89,13 @@ class _ScannerScreenState extends State<ScannerScreen>
   Widget _buildManualInputScaffold() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final totalSteps = voteCategories.length + 2;
+    final progress = totalSteps > 0 ? 1.0 / totalSteps : 0.0;
+
     return MainLayout(
       title: '投票券情報入力',
       icon: Icons.confirmation_number,
+      progressValue: progress,
       helpTitle: '投票について',
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
@@ -178,6 +184,9 @@ class _ScannerScreenState extends State<ScannerScreen>
                               ),
                             ),
                             keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
                             autofocus: true,
                             maxLength: 10,
                             buildCounter: (
@@ -190,6 +199,8 @@ class _ScannerScreenState extends State<ScannerScreen>
                             style: const TextStyle(
                               fontSize: 27,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'GakNumBold',
+                              letterSpacing: 2.0,
                             ),
                             onChanged: (value) {
                               setState(() {});
@@ -200,11 +211,29 @@ class _ScannerScreenState extends State<ScannerScreen>
                       const SizedBox(height: 4),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text(
-                          '${_manualCodeController.text.length}/10',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurface.withValues(alpha: 0.5),
+                        child: Text.rich(
+                          TextSpan(
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                            ),
+                            children: [
+                              gakNumSpan(
+                                '${_manualCodeController.text.length}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                ),
+                              ),
+                              const TextSpan(text: '/'),
+                              gakNumSpan(
+                                '10',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

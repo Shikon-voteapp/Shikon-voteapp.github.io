@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import '../models/group.dart';
+import 'gaknum_text.dart';
 
 class AdminCategoryResults extends StatelessWidget {
   final List<MapEntry<Group, int>> results;
@@ -67,8 +68,19 @@ class AdminCategoryResults extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      '$voteCount 票',
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          gakNumSpan(
+                            '$voteCount',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                          const TextSpan(text: ' 票'),
+                        ],
+                      ),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: colorScheme.primary,

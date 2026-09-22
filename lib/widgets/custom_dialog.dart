@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import '../platform/platform_utils.dart';
 
@@ -46,201 +47,271 @@ Future<void> showCustomDialog({
   );
 }
 
-Future<void> showAdminLoginDialog({required BuildContext context}) {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  bool isLoading = false;
-
-  return M3EBottomSheet.show(
+Future<bool?> showAdminLoginDialog({required BuildContext context}) async {
+  final bool? loggedIn = await M3EBottomSheet.show<bool>(
     context,
     showDragHandle: true,
     builder: (BuildContext sheetContext) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          final theme = Theme.of(context);
-          return Material(
-            color: Colors.transparent,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 24.0,
-                right: 24.0,
-                top: 8.0,
-                bottom: 24.0 + MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      '管理者ログイン',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(color: theme.colorScheme.onSurface),
-                      decoration: InputDecoration(
-                        labelText: 'メールアドレス',
-                        prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        filled: true,
-                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      style: TextStyle(color: theme.colorScheme.onSurface),
-                      decoration: InputDecoration(
-                        labelText: 'パスワード',
-                        prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        filled: true,
-                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    if (isLoading)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 16.0),
-                        child: Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: M3ELoadingIndicator(
-                              variant: M3ELoadingIndicatorVariant.defaultStyle,
-                              elevation: 0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 24),
-                    M3EButton(
-                      onPressed: isLoading
-                          ? null
-                          : () async {
-                              if (emailController.text.isEmpty ||
-                                  passwordController.text.isEmpty) {
-                                showCustomDialog(
-                                  context: context,
-                                  title: '入力エラー',
-                                  content: 'メールアドレスとパスワードを入力してください。',
-                                  closeButtonText: 'OK',
-                                );
-                                return;
-                              }
-
-                              setState(() {
-                                isLoading = true;
-                              });
-
-                              try {
-                                await auth.signInWithEmailAndPassword(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text,
-                                );
-                                if (context.mounted) {
-                                  Navigator.of(context).pop(); // Close dialog
-                                  Navigator.of(context).pushReplacementNamed('/admin');
-                                }
-                              } on FirebaseAuthException catch (e) {
-                                if (context.mounted) {
-                                  Navigator.of(context).pop();
-                                  String message;
-                                  if (e.code == 'user-not-found' ||
-                                      e.code == 'wrong-password' ||
-                                      e.code == 'invalid-credential') {
-                                    message = 'メールアドレスまたはパスワードが正しくありません。';
-                                  } else {
-                                    message = 'ログインに失敗しました。(${e.code})';
-                                  }
-                                  showCustomDialog(
-                                    context: context,
-                                    title: 'ログインエラー',
-                                    content: message,
-                                    closeButtonText: 'OK',
-                                  );
-                                }
-                              } finally {
-                                if (context.mounted) {
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }
-                              }
-                            },
-                      style: M3EButtonStyle.filled,
-                      size: M3EButtonSize.md,
-                      shape: M3EButtonShape.round,
-                      child: const SizedBox(
-                        height: 48.0,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'ログイン',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              SizedBox(width: 6),
-                              Icon(Icons.arrow_forward, size: 16),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    M3EButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: M3EButtonStyle.tonal,
-                      size: M3EButtonSize.md,
-                      shape: M3EButtonShape.round,
-                      child: const SizedBox(
-                        height: 48.0,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.close, size: 18),
-                              SizedBox(width: 8),
-                              Text(
-                                '閉じる',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
+      return const _AdminLoginBottomSheet();
     },
   );
+
+  if (loggedIn == true && context.mounted) {
+    Navigator.of(context).pushNamed('/admin');
+  }
+  return loggedIn;
+}
+
+class _AdminLoginBottomSheet extends StatefulWidget {
+  const _AdminLoginBottomSheet();
+
+  @override
+  State<_AdminLoginBottomSheet> createState() => _AdminLoginBottomSheetState();
+}
+
+class _AdminLoginBottomSheetState extends State<_AdminLoginBottomSheet> {
+  late final TextEditingController _emailController;
+  late final TextEditingController _passwordController;
+  late final FocusNode _emailFocusNode;
+  late final FocusNode _passwordFocusNode;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _emailFocusNode = FocusNode();
+    _passwordFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
+  Future<void> _doLogin() async {
+    if (_emailController.text.trim().isEmpty ||
+        _passwordController.text.isEmpty) {
+      showCustomDialog(
+        context: context,
+        title: '入力エラー',
+        content: 'メールアドレスとパスワードを入力してください。',
+        closeButtonText: 'OK',
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+      TextInput.finishAutofillContext();
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        String message;
+        if (e.code == 'user-not-found' ||
+            e.code == 'wrong-password' ||
+            e.code == 'invalid-credential') {
+          message = 'メールアドレスまたはパスワードが正しくありません。';
+        } else {
+          message = 'ログインに失敗しました。(${e.code})';
+        }
+        showCustomDialog(
+          context: context,
+          title: 'ログインエラー',
+          content: message,
+          closeButtonText: 'OK',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showCustomDialog(
+          context: context,
+          title: 'ログインエラー',
+          content: 'エラーが発生しました: $e',
+          closeButtonText: 'OK',
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 24.0,
+          right: 24.0,
+          top: 8.0,
+          bottom: 24.0 + MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: AutofillGroup(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  '管理者ログイン',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _emailController,
+                  focusNode: _emailFocusNode,
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  autofillHints: const [
+                    AutofillHints.username,
+                    AutofillHints.email,
+                  ],
+                  textInputAction: TextInputAction.next,
+                  onSubmitted: (_) {
+                    if (_passwordController.text.isNotEmpty) {
+                      if (!_isLoading) {
+                        _doLogin();
+                      }
+                    } else {
+                      _passwordFocusNode.requestFocus();
+                    }
+                  },
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                  decoration: InputDecoration(
+                    labelText: 'メールアドレス',
+                    prefixIcon: Icon(Icons.email_outlined, color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                  obscureText: true,
+                  autofillHints: const [AutofillHints.password],
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) {
+                    if (!_isLoading) {
+                      _doLogin();
+                    }
+                  },
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                  decoration: InputDecoration(
+                    labelText: 'パスワード',
+                    prefixIcon: Icon(Icons.lock_outline, color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                  ),
+                ),
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16.0),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: M3ELoadingIndicator(
+                          variant: M3ELoadingIndicatorVariant.defaultStyle,
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                M3EButton(
+                  onPressed: _isLoading ? null : _doLogin,
+                  style: M3EButtonStyle.filled,
+                  size: M3EButtonSize.md,
+                  shape: M3EButtonShape.round,
+                  child: const SizedBox(
+                    height: 48.0,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'ログイン',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                          SizedBox(width: 6),
+                          Icon(Icons.arrow_forward, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                M3EButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: M3EButtonStyle.tonal,
+                  size: M3EButtonSize.md,
+                  shape: M3EButtonShape.round,
+                  child: const SizedBox(
+                    height: 48.0,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.close, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            '閉じる',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CustomDialogWidget extends StatefulWidget {

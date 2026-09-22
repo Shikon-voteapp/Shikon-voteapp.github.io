@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:material_3_expressive/material_3_expressive.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../widgets/custom_dialog.dart';
+import 'custom_dialog.dart';
 
 class AdminAccessButton extends StatelessWidget {
+  const AdminAccessButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showAdminLoginDialog(context),
+      onTap: () => showAdminLoginDialog(context: context),
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.black12,
           borderRadius: BorderRadius.circular(4),
@@ -22,130 +22,5 @@ class AdminAccessButton extends StatelessWidget {
       ),
     );
   }
-
-  void _showAdminLoginDialog(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    bool isLoading = false;
-
-    showDialog(
-      context: context,
-      builder:
-          (context) => StatefulBuilder(
-            builder:
-                (context, setState) => AlertDialog(
-                  title: Text('管理者ログイン'),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            labelText: 'メールアドレス',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        SizedBox(height: 16),
-                        TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            labelText: 'パスワード',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        if (isLoading)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 16.0),
-                            child: SizedBox(
-                              width: 32,
-                              height: 32,
-                              child: M3ELoadingIndicator(
-                                variant: M3ELoadingIndicatorVariant.defaultStyle,
-                                elevation: 0,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed:
-                          isLoading
-                              ? null
-                              : () {
-                                Navigator.of(context).pop();
-                              },
-                      child: Text('キャンセル'),
-                    ),
-                    TextButton(
-                      onPressed:
-                          isLoading
-                              ? null
-                              : () async {
-                                if (emailController.text.isEmpty ||
-                                    passwordController.text.isEmpty) {
-                                  await showCustomDialog(
-                                    context: context,
-                                    title: '入力エラー',
-                                    content: 'メールアドレスとパスワードを入力してください',
-                                    closeButtonText: 'OK',
-                                  );
-                                  return;
-                                }
-
-                                setState(() {
-                                  isLoading = true;
-                                });
-
-                                try {
-                                  await FirebaseAuth.instance
-                                      .signInWithEmailAndPassword(
-                                        email: emailController.text.trim(),
-                                        password: passwordController.text,
-                                      );
-
-                                  Navigator.of(context).pop();
-
-                                  Navigator.pushNamed(context, '/admin');
-                                } on FirebaseAuthException catch (e) {
-                                  String message;
-                                  if (e.code == 'user-not-found') {
-                                    message = 'このメールアドレスに該当するユーザーが見つかりません';
-                                  } else if (e.code == 'wrong-password') {
-                                    message = 'パスワードが正しくありません';
-                                  } else {
-                                    message = 'ログインエラー: ${e.message}';
-                                  }
-                                  await showCustomDialog(
-                                    context: context,
-                                    title: 'エラー',
-                                    content: message,
-                                    closeButtonText: '閉じる',
-                                  );
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                } catch (e) {
-                                  await showCustomDialog(
-                                    context: context,
-                                    title: 'エラー',
-                                    content: 'エラーが発生しました: $e',
-                                    closeButtonText: '閉じる',
-                                  );
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                }
-                              },
-                      child: Text('ログイン'),
-                    ),
-                  ],
-                ),
-          ),
-    );
-  }
 }
+

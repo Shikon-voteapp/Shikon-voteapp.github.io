@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import 'liquid_glass.dart';
+import 'gaknum_text.dart';
 
 enum AdminMode {
   menu,
@@ -92,7 +93,26 @@ class AdminModeSelection extends StatelessWidget {
                         icon: Icons.bar_chart_rounded,
                         title: '投票結果の確認',
                         subtitle: '各賞の得票数集計、グラフ表示、Excel形式でのデータ出力',
-                        badgeText: '$voteCount 票集計済',
+                        badgeWidget: Text.rich(
+                          TextSpan(
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF2563EB),
+                            ),
+                            children: [
+                              gakNumSpan(
+                                '$voteCount',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF2563EB),
+                                ),
+                              ),
+                              const TextSpan(text: ' 票集計済'),
+                            ],
+                          ),
+                        ),
                         accentColor: const Color(0xFF2563EB),
                         actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.results),
@@ -156,6 +176,7 @@ class AdminModeSelection extends StatelessWidget {
     required String title,
     required String subtitle,
     String? badgeText,
+    Widget? badgeWidget,
     required Color accentColor,
     required String actionLabel,
     IconData actionIcon = Icons.arrow_forward_rounded,
@@ -193,7 +214,19 @@ class AdminModeSelection extends StatelessWidget {
                   child: Icon(icon, color: accentColor, size: 28),
                 ),
                 const Spacer(),
-                if (badgeText != null && badgeText.isNotEmpty)
+                if (badgeWidget != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 4.0,
+                    ),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: badgeWidget,
+                  )
+                else if (badgeText != null && badgeText.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10.0,

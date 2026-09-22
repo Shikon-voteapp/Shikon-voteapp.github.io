@@ -1,7 +1,7 @@
 ﻿name: shikon_voteapp
 description: "A flutter project that provides voting service on the Shikon Fes."
 publish_to: 'none'
-version: 4.0.0+67
+version: 4.0.0+69
 environment:
   sdk: ^3.7.2
 dependencies:
@@ -47,23 +47,20 @@ flutter:
     - assets/
     - resources/
   fonts:
-    - family: SFProDisplay
+    - family: IBMPlexSansJP
       fonts:
-        - asset: resources/fonts/SF-Pro-Display-Regular.otf
+        - asset: resources/fonts/IBMPlexSansJP-Medium.ttf
           weight: 400
-        - asset: resources/fonts/SF-Pro-Display-Medium.otf
+        - asset: resources/fonts/IBMPlexSansJP-Medium.ttf
           weight: 500
-        - asset: resources/fonts/SF-Pro-Display-Bold.otf
-          weight: 700
-    - family: HiraginoSans
-      fonts:
-        - asset: resources/fonts/ヒラギノ角ゴ Std W3.otf
-          weight: 300
-        - asset: resources/fonts/ヒラギノ角ゴ Std W4.otf
-          weight: 400
-        - asset: resources/fonts/ヒラギノ角ゴ Std W5.otf
-          weight: 500
-        - asset: resources/fonts/ヒラギノ角ゴ Std W6.otf
+        - asset: resources/fonts/IBMPlexSansJP-Bold.ttf
           weight: 600
-        - asset: resources/fonts/ヒラギノ角ゴ Std W8.otf
+        - asset: resources/fonts/IBMPlexSansJP-Bold.ttf
+          weight: 700
+        - asset: resources/fonts/IBMPlexSansJP-Bold.ttf
           weight: 800
+        - asset: resources/fonts/IBMPlexSansJP-Bold.ttf
+          weight: 900
+    - family: GakNumBold
+      fonts:
+        - asset: resources/fonts/GakNumBold.otf
