@@ -84,7 +84,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 26, 4, 35, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 26, 4, 50, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
@@ -287,60 +287,6 @@ final List<Group> allGroups = [
     imagePath: 'assets/JRC部＆有志シャプラニール.jpg',
     floor: 2,
     categories: [GroupCategory.Tenji],
-  ),
-  Group(
-    id: 'n2011',
-    name: 'シュートで31！',
-    groupName: '女子フットサル',
-    description: '''大人気のサーティーワン売ってます‼''',
-    imagePath: 'assets/女子フットサル.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
-  ),
-  Group(
-    id: 'n2012',
-    name: '面 de アノー',
-    groupName: '剣道部',
-    description: '''面くらううまさ！''',
-    imagePath: 'assets/剣道部.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
-  ),
-  Group(
-    id: 'n2021',
-    name: 'チュロスマッシュ',
-    groupName: 'ソフトテニス部',
-    description: '''ソフテニ部員が皆さんに愛を込めてチュロスを販売します♡''',
-    imagePath: 'assets/ソフトテニス部.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
-  ),
-  Group(
-    id: 'n2022',
-    name: 'シューアイス天国',
-    groupName: 'スキー部',
-    description: '''スキーシューでひんやり涼しく！''',
-    imagePath: 'assets/スキー部.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
-  ),
-  Group(
-    id: 'n2031',
-    name: 'おむすび処卓球部',
-    groupName: '卓球部',
-    description: '''おむすびコロリン？あまりの美味しさにあなたもコロリン？...　楽しい文化祭！　昼ご飯はぜひ片手におむすび！''',
-    imagePath: 'assets/卓球部.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
-  ),
-  Group(
-    id: 'n2032',
-    name: '水上チョコバナナ',
-    groupName: '水泳部',
-    description: '''ここでしか食べられないチョコバナナを300円で売ってます‼　ぜひ食べに来てください‼''',
-    imagePath: 'assets/水泳部.jpg',
-    floor: 2,
-    categories: [GroupCategory.Roten],
   ),
   Group(
     id: 's301',
