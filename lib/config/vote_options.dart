@@ -84,7 +84,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 26, 6, 21, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 26, 7, 17, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
@@ -615,6 +615,15 @@ Wherever you are/ONE OK ROCK''',
     groupName: '鉄道研究部',
     description: '''鉄道模型の体験運転と発車メロディー体験ができます！　ぜひお越しください！''',
     imagePath: 'assets/鉄道研究部２.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
+  ),
+  Group(
+    id: 'biyju',
+    name: '美術部',
+    groupName: '美術部',
+    description: '''のぞいてごらん？小人の世界by美術部''',
+    imagePath: 'assets/美術部.jpg',
     floor: 1,
     categories: [GroupCategory.Tenji],
   )
