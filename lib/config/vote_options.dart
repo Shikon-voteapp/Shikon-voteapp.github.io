@@ -84,7 +84,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 26, 5, 14, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 26, 5, 33, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
@@ -197,15 +197,6 @@ final List<Group> allGroups = [
     imagePath: 'assets/中３.jpg',
     floor: 1,
     categories: [GroupCategory.Gakunen],
-  ),
-  Group(
-    id: '2tai1',
-    name: '鉄道研究部',
-    groupName: '鉄道研究部',
-    description: '''鉄道模型の体験運転と発車メロディー体験ができます！　ぜひお越しください！''',
-    imagePath: 'assets/鉄道研究部.jpg',
-    floor: 1,
-    categories: [GroupCategory.Tenji],
   ),
   Group(
     id: 's201',
@@ -617,6 +608,15 @@ Wherever you are/ONE OK ROCK''',
     imagePath: 'assets/ダンス部.jpg',
     floor: 4,
     categories: [GroupCategory.Stage],
+  ),
+  Group(
+    id: '2tai1',
+    name: '鉄道研究部',
+    groupName: '鉄道研究部',
+    description: '''鉄道模型の体験運転と発車メロディー体験ができます！　ぜひお越しください！''',
+    imagePath: 'assets/鉄道研究部.jpg',
+    floor: 1,
+    categories: [GroupCategory.Tenji],
   )
 ];
 
