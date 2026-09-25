@@ -84,12 +84,11 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 26, 3, 53, 0); // 2025年1月15日 12:00
-
+final DateTime dataUpdateDate = DateTime(2026, 9, 26, 4, 3, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
-  startDate: DateTime(2026, 9, 26, 9, 0), // 2026年8月28日 0:00
-  endDate: DateTime(2026, 9, 27, 15, 0), // 2026年8月29日 0:00
+  startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
+  endDate: DateTime(2026, 9, 27, 15, 0), // 2026年9月27日 15:00
   maintenanceEnabled: true,
   maintenanceStartHour: 2,
   maintenanceEndHour: 3,
@@ -141,7 +140,7 @@ final List<Group> allGroups = [
     name: '地学部',
     groupName: '地学部',
     description: '''地学部の活動、のぞいてみませんか？''',
-    imagePath: 'assets/地学部.jpg',
+    imagePath: 'assets/地学部.png',
     floor: 1,
     categories: [GroupCategory.Tenji],
   ),
