@@ -84,7 +84,7 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 26, 4, 3, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 26, 4, 35, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
@@ -108,15 +108,6 @@ const Map<GroupCategory, String> groupCategoryNames = {
 
 // すべての団体のリスト
 final List<Group> allGroups = [
-  Group(
-    id: 'bijyutu1',
-    name: '美術部',
-    groupName: '美術部',
-    description: '''のぞいてごらん？小人の世界 by美術部''',
-    imagePath: 'assets/美術部.jpg',
-    floor: 1,
-    categories: [GroupCategory.Tenji],
-  ),
   Group(
     id: 'kateika1',
     name: '料理研究部',
@@ -213,7 +204,7 @@ final List<Group> allGroups = [
     groupName: '鉄道研究部',
     description: '''鉄道模型の体験運転と発車メロディー体験ができます！　ぜひお越しください！''',
     imagePath: 'assets/鉄道研究部.jpg',
-    floor: 0,
+    floor: 1,
     categories: [GroupCategory.Tenji],
   ),
   Group(
@@ -245,7 +236,7 @@ final List<Group> allGroups = [
   ),
   Group(
     id: 's204',
-    name: '集めれ　明明保育園',
+    name: '集まれ　明明保育園',
     groupName: '高１D',
     description: '''大人も子どもも遊んじゃえ！''',
     imagePath: 'assets/1d.jpg',
@@ -283,7 +274,7 @@ final List<Group> allGroups = [
     id: 't201',
     name: '有志漫画研究会',
     groupName: '有志漫画研究会',
-    description: '''今年のテーマは『ミステリー』！　教室では部員のイラストを展示しています！部員のオリジナル漫画集やイラスト集がもらえるかも‼''',
+    description: '''今年のテーマは『ミステリー』！　教室では部員のイラストを展示しています！部員のオリジナル漫画集やイラスト集がもらえるかも⁉''',
     imagePath: 'assets/漫画研究部.jpg',
     floor: 2,
     categories: [GroupCategory.Tenji],
@@ -403,7 +394,7 @@ final List<Group> allGroups = [
     description: '''深夜０時になると、何処にもなかったはずの13号室が姿を現す。　あなたたちは、このホテルに残された呪いを終わらせるために派遣された調査隊。無事に脱出できるか、それとも、このホテルの新たな宿泊客となるか・・・。''',
     imagePath: 'assets/2f.jpg',
     floor: 3,
-    categories: [],
+    categories: [GroupCategory.Moyoshi],
   ),
   Group(
     id: 's307',
@@ -447,7 +438,7 @@ final List<Group> allGroups = [
     groupName: '化学部',
     description: '''来てくださった方々がアッと驚くような実験を行います！スライムの体験もできるのでぜひ来てください！''',
     imagePath: 'assets/化学部.jpg',
-    floor: 0,
+    floor: 3,
     categories: [GroupCategory.Tenji],
   ),
   Group(
@@ -499,7 +490,7 @@ final List<Group> allGroups = [
     id: 'n304',
     name: '人狂絞場',
     groupName: '高ⅢE',
-    description: '''あなたは異常なぬいぐるみ工場にやってきた。無事に帰って来られるかな？狂って来場？''',
+    description: '''あなたは異常なぬいぐるみ工場にやってきた。無事に帰って来られるかな？狂って来場♫''',
     imagePath: 'assets/3e.jpg',
     floor: 3,
     categories: [GroupCategory.Moyoshi],
@@ -532,33 +523,6 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Moyoshi],
   ),
   Group(
-    id: 'ititai1',
-    name: '応援指導班',
-    groupName: '応援指導班',
-    description: '''笑顔を届けるチアリーディングステージと、伝統ある応援団ステージ！　最高の盛り上がりをお見逃しなく！''',
-    imagePath: 'assets/応援指導班.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  Group(
-    id: 'uzawa2',
-    name: 'ダンス部',
-    groupName: 'ダンス部',
-    description: '''MDC17thがつくり上げる、総勢59人の一度きりのステージ。　ぜひ会場でご覧ください。''',
-    imagePath: 'assets/ダンス部.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  Group(
-    id: 'uzawa1',
-    name: '吹奏楽班',
-    groupName: '吹奏楽班',
-    description: '''３、２、１一鳥肌''',
-    imagePath: 'assets/吹奏楽班.jpg',
-    floor: 4,
-    categories: [GroupCategory.Stage],
-  ),
-  Group(
     id: 'uzawa3',
     name: 'マンドリン部',
     groupName: 'マンドリン部',
@@ -573,7 +537,7 @@ final List<Group> allGroups = [
     groupName: '書道部',
     description: '''書道は動だ！''',
     imagePath: 'assets/書道部.jpg',
-    floor: 3,
+    floor: 4,
     categories: [GroupCategory.Stage],
   ),
   Group(
@@ -698,6 +662,15 @@ Wherever you are/ONE OK ROCK''',
     imagePath: 'assets/band1.jpg',
     floor: 4,
     categories: [GroupCategory.Band],
+  ),
+  Group(
+    id: 'uzawa4',
+    name: 'ダンス部',
+    groupName: 'ダンス部',
+    description: '''MDC17thがつくり上げる、総勢59人の一度きりのステージ。ぜひ会場でご覧ください。''',
+    imagePath: 'assets/ダンス部.jpg',
+    floor: 4,
+    categories: [GroupCategory.Stage],
   )
 ];
 
