@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 // import 'package:hugeicons/hugeicons.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -408,21 +409,25 @@ class _AdminScreenState extends State<AdminScreen>
                         const Spacer(),
                         _buildAppBarCircleButton(
                           icon: Icons.refresh,
+                          tooltip: '更新',
                           onPressed: _loadAllData,
                         ),
                         if (_currentMode == AdminMode.results)
                           _buildAppBarCircleButton(
-                            icon: Icons.file_download,
+                            icon: Icons.ios_share_rounded,
+                            tooltip: '投票結果のエクスポート',
                             onPressed: _exportResults,
                           ),
                         _buildAppBarCircleButton(
                           icon: Icons.help,
+                          tooltip: 'ヘルプ',
                           onPressed: _showHelpDialog,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: _buildAppBarCircleButton(
                             icon: Icons.logout,
+                            tooltip: 'ログアウト',
                             onPressed: () async {
                               await _auth.signOut();
                               if (mounted) {
@@ -490,6 +495,13 @@ class _AdminScreenState extends State<AdminScreen>
           : null,
       nextLabel: _currentMode == AdminMode.batchVote ? '登録' : '次へ',
       nextLoading: _isBatchVoteSubmitting,
+      topBarTrailing: _currentMode == AdminMode.results
+          ? IconButton(
+              icon: const Icon(Icons.ios_share_rounded),
+              tooltip: '投票結果のエクスポート',
+              onPressed: _exportResults,
+            )
+          : null,
       onMenu: _showAdminMenu,
       child: _buildBody(),
     );
@@ -748,9 +760,162 @@ class _AdminScreenState extends State<AdminScreen>
     );
   }
 
-  Future<void> _exportResults() async {
+  void _exportResults() {
+    _showExportDialog();
+  }
+
+  void _showExportDialog() {
+    final text = ExportService.buildResultsText(
+      getSortedResults: _getSortedResults,
+      totalVotes: _votes?.length ?? 0,
+      excludeShikonTop2: _excludeShikonTop2 == true,
+    );
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        final colorScheme = theme.colorScheme;
+
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+          backgroundColor: colorScheme.surface,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 580, maxHeight: 680),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // タイトル行
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.ios_share_rounded,
+                          color: colorScheme.onPrimaryContainer,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          '投票結果のエクスポート',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // テキストプレビューヘッダー
+                  Row(
+                    children: [
+                      Text(
+                        'テキスト出力プレビュー',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const Spacer(),
+                      FilledButton.tonalIcon(
+                        icon: const Icon(Icons.copy_rounded, size: 16),
+                        label: const Text('コピー'),
+                        style: FilledButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(text: text));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('投票結果テキストをクリップボードにコピーしました'),
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // テキストプレビュー領域
+                  Flexible(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14.0),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(16.0),
+                        border: Border.all(color: colorScheme.outlineVariant),
+                      ),
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          text,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontFamily: 'IBMPlexSansJP',
+                            height: 1.6,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // アクションボタン群
+                  Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.description_outlined, size: 18),
+                        label: const Text('テキスト保存 (.txt)'),
+                        onPressed: () {
+                          final now = DateTime.now();
+                          final filename =
+                              '投票結果_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}.txt';
+                          PlatformUtils.downloadFile(text, filename);
+                        },
+                      ),
+                      FilledButton.icon(
+                        icon: const Icon(Icons.table_chart_rounded, size: 18),
+                        label: const Text('Excel保存 (.xlsx)'),
+                        onPressed: () {
+                          _exportExcel();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _exportExcel() async {
     try {
-      final bytes = ExportService.buildResultsWorkbook(_getSortedResults);
+      final bytes = ExportService.buildResultsWorkbook(
+        (categoryId) => _getSortedResults(categoryId, applyShikonExclusion: false),
+      );
       final now = DateTime.now();
       final filename =
           '投票結果_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}.xlsx';
@@ -760,19 +925,24 @@ class _AdminScreenState extends State<AdminScreen>
         mimeType:
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       );
-      await showCustomDialog(
-        context: context,
-        title: 'エクスポート完了',
-        content: 'Excelファイルを保存しました。',
-        closeButtonText: 'OK',
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Excelファイルを保存しました'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     } catch (e) {
-      await showCustomDialog(
-        context: context,
-        title: 'エクスポート失敗',
-        content: 'エクスポート中にエラー: ${e.toString()}',
-        closeButtonText: '閉じる',
-      );
+      if (mounted) {
+        await showCustomDialog(
+          context: context,
+          title: 'エクスポート失敗',
+          content: 'エクスポート中にエラー: ${e.toString()}',
+          closeButtonText: '閉じる',
+        );
+      }
     }
   }
 
@@ -1237,8 +1407,9 @@ class _AdminScreenState extends State<AdminScreen>
   Widget _buildAppBarCircleButton({
     required IconData icon,
     required VoidCallback onPressed,
+    String? tooltip,
   }) {
-    return Padding(
+    Widget button = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: M3EIconButton(
         icon: Icon(icon, size: 20.0),
@@ -1248,6 +1419,15 @@ class _AdminScreenState extends State<AdminScreen>
         shape: M3EIconButtonShapeVariant.round,
       ),
     );
+
+    if (tooltip != null) {
+      button = Tooltip(
+        message: tooltip,
+        child: button,
+      );
+    }
+
+    return button;
   }
 
   Widget _buildGlassCard({required Widget child}) {

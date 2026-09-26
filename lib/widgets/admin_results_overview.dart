@@ -129,7 +129,19 @@ class AdminResultsOverview extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final displayEntries = results.take(maxDisplayRank).toList();
+    // 同率順位（タイ順位）の計算
+    final rankedEntries = <({int rank, MapEntry<Group, int> entry})>[];
+    int currentRank = 1;
+    for (int i = 0; i < results.length; i++) {
+      if (i > 0 && results[i].value < results[i - 1].value) {
+        currentRank = i + 1;
+      }
+      rankedEntries.add((rank: currentRank, entry: results[i]));
+    }
+
+    // 0票を除外し、順位が maxDisplayRank 以内の団体を表示
+    final validEntries = rankedEntries.where((e) => e.entry.value > 0).toList();
+    final topDisplayEntries = validEntries.where((e) => e.rank <= maxDisplayRank).toList();
     final bool isSelected = selectedCategoryIndex == categoryIndex;
 
     return Container(
@@ -182,28 +194,52 @@ class AdminResultsOverview extends StatelessWidget {
               children: [
                 // 順位一覧
                 Expanded(
-                  child: displayEntries.isEmpty
-                      ? Text(
-                          '1位 : -',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.outline,
+                  child: topDisplayEntries.isEmpty
+                      ? Text.rich(
+                          TextSpan(
+                            children: [
+                              gakNumSpan(
+                                '1',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.outline,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '位 : -',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.outline,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(maxDisplayRank, (idx) {
-                            final rank = idx + 1;
-                            final entry = idx < displayEntries.length ? displayEntries[idx] : null;
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3.0),
-                              child: _buildRankRow(
-                                context,
-                                rank: rank,
-                                entry: entry,
-                              ),
-                            );
-                          }),
+                          children: [
+                            ...topDisplayEntries.map((item) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 3.0),
+                                child: _buildRankRow(
+                                  context,
+                                  rank: item.rank,
+                                  entry: item.entry,
+                                ),
+                              );
+                            }),
+                            if (topDisplayEntries.length < maxDisplayRank)
+                              ...List.generate(maxDisplayRank - topDisplayEntries.length, (i) {
+                                final missingRank = (topDisplayEntries.lastOrNull?.rank ?? 0) + i + 1;
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 3.0),
+                                  child: _buildRankRow(
+                                    context,
+                                    rank: missingRank,
+                                    entry: null,
+                                  ),
+                                );
+                              }),
+                          ],
                         ),
                 ),
 
@@ -258,10 +294,23 @@ class AdminResultsOverview extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     if (entry == null) {
-      return Text(
-        '$rank位 : -',
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: colorScheme.outline,
+      return Text.rich(
+        TextSpan(
+          children: [
+            gakNumSpan(
+              '$rank',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.outline,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            TextSpan(
+              text: '位 : -',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.outline,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -271,11 +320,24 @@ class AdminResultsOverview extends StatelessWidget {
 
     return Row(
       children: [
-        Text(
-          '$rank位 : ',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
+        Text.rich(
+          TextSpan(
+            children: [
+              gakNumSpan(
+                '$rank',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              TextSpan(
+                text: '位 : ',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(

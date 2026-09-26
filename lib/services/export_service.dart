@@ -27,14 +27,17 @@ class ExportService {
       ]);
 
       final results = getSortedResults(category.id);
-      int rank = 1;
-      for (final entry in results) {
+      int currentRank = 1;
+      for (int i = 0; i < results.length; i++) {
+        final entry = results[i];
+        if (i > 0 && entry.value < results[i - 1].value) {
+          currentRank = i + 1;
+        }
         sheet.appendRow([
-          IntCellValue(rank),
+          IntCellValue(currentRank),
           TextCellValue(entry.key.name),
           IntCellValue(entry.value),
         ]);
-        rank += 1;
       }
     }
 
@@ -45,5 +48,66 @@ class ExportService {
       return Uint8List(0);
     }
     return bytes;
+  }
+
+  /// 投票結果のテキスト出力を生成
+  static String buildResultsText({
+    required List<MapEntry<Group, int>> Function(String categoryId) getSortedResults,
+    required int totalVotes,
+    required bool excludeShikonTop2,
+    DateTime? timestamp,
+  }) {
+    final now = timestamp ?? DateTime.now();
+    final minuteStr = now.minute.toString().padLeft(2, '0');
+    final header = '【紫紺祭　投票結果】「${now.year}/${now.month}/${now.day} ${now.hour}:$minuteStr現在」　 ';
+    final totalLine = '総投票数：$totalVotes票 ';
+
+    final categoryConfigs = <String, ({String label, int maxAwards})>{
+      'Shikon_award': (label: '紫紺賞', maxAwards: 2),
+      'Tenji': (label: '教室展示賞', maxAwards: 3),
+      'Gakunen': (label: '学年展示賞', maxAwards: 1),
+      'Moyoshi': (label: '教室催し物賞', maxAwards: 3),
+      'Stage': (label: '部活ｽﾃｰｼﾞ賞', maxAwards: 1),
+      'Band': (label: 'ﾊﾞﾝﾄﾞ賞', maxAwards: 1),
+      'Performance': (label: 'ﾊﾟﾌｫｰﾏﾝｽ賞', maxAwards: 1),
+    };
+
+    final lines = <String>[
+      header,
+      totalLine,
+    ];
+
+    for (final category in voteCategories) {
+      final config = categoryConfigs[category.id] ?? (label: category.name, maxAwards: 3);
+      final sortedResults = getSortedResults(category.id);
+
+      final items = <String>[];
+      int currentRank = 1;
+      for (int i = 0; i < sortedResults.length; i++) {
+        final entry = sortedResults[i];
+        if (entry.value <= 0) {
+          break;
+        }
+        if (i > 0 && entry.value < sortedResults[i - 1].value) {
+          currentRank = i + 1;
+        }
+        if (currentRank > config.maxAwards) {
+          break;
+        }
+        items.add('${currentRank}位：${entry.key.name}(${entry.value}票)');
+      }
+
+      if (items.isNotEmpty) {
+        lines.add('[${config.label}]${items.join('　')} ');
+      } else {
+        lines.add('[${config.label}]- ');
+      }
+    }
+
+    if (excludeShikonTop2) {
+      lines.add('※紫紺賞1位・2位を除いて集計');
+    }
+
+    return lines.join('\n');
   }
 }
