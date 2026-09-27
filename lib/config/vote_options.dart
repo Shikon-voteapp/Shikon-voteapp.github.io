@@ -84,11 +84,11 @@ class VotingPeriodConfig {
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 27, 16, 23, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 9, 28, 3, 59, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
-  startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 0:00
-  endDate: DateTime(2026, 9, 27, 15, 0), // 2026年9月27日 0:00
+  startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00
+  endDate: DateTime(2026, 9, 27, 15, 0), // 2026年9月27日 15:00
   maintenanceEnabled: true,
   maintenanceStartHour: 2,
   maintenanceEndHour: 3,
@@ -316,7 +316,7 @@ final List<Group> allGroups = [
     categories: [GroupCategory.Moyoshi],
   ),
   Group(
-    id: 's205',
+    id: 's305',
     name: '冥慈総合病院',
     groupName: '高ⅡE',
     description: '''ここは廃病院になった冥慈総合病院。ここで亡くなった入院患者の亡霊が見まだ病院内にいるという。あなたは無事に帰って来られるか・・・''',
