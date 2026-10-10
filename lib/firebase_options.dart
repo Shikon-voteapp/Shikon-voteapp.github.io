@@ -38,7 +38,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'shikonfes-voteapp.firebasestorage.app',
     measurementId: 'G-LM3TTXQ8BV',
   );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBXXkLiu_as2IwZ5PfqKVIUaoSBGeZHpE8',
     appId: '1:897950724981:android:6c02557f023f1bf8ab993c',

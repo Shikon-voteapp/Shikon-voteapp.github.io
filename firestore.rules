@@ -1,8 +1,33 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+    // 管理者判定関数: admin_users コレクションに UID が存在するか
+    function isAdmin() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));
+    }
+
+    // アプリ基本設定 (投票期間など)
+    match /app_config/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 団体情報
+    match /groups/{groupId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 賞情報
+    match /vote_categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 管理者ユーザー一覧
+    match /admin_users/{userId} {
+      allow read, write: if isAdmin();
     }
   }
 }

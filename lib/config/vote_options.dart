@@ -81,10 +81,30 @@ class VotingPeriodConfig {
       maintenanceEndMinute: json['maintenanceEndMinute'] ?? 0,
     );
   }
+
+  VotingPeriodConfig copyWith({
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? maintenanceEnabled,
+    int? maintenanceStartHour,
+    int? maintenanceStartMinute,
+    int? maintenanceEndHour,
+    int? maintenanceEndMinute,
+  }) {
+    return VotingPeriodConfig(
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      maintenanceEnabled: maintenanceEnabled ?? this.maintenanceEnabled,
+      maintenanceStartHour: maintenanceStartHour ?? this.maintenanceStartHour,
+      maintenanceStartMinute: maintenanceStartMinute ?? this.maintenanceStartMinute,
+      maintenanceEndHour: maintenanceEndHour ?? this.maintenanceEndHour,
+      maintenanceEndMinute: maintenanceEndMinute ?? this.maintenanceEndMinute,
+    );
+  }
 }
 
 // データ更新日時
-final DateTime dataUpdateDate = DateTime(2026, 9, 28, 3, 59, 0); // 2025年1月15日 12:00
+final DateTime dataUpdateDate = DateTime(2026, 10, 11, 14, 4, 0); // 2025年1月15日 12:00
 // デフォルトの投票期間設定
 final VotingPeriodConfig defaultVotingPeriod = VotingPeriodConfig(
   startDate: DateTime(2026, 9, 26, 9, 0), // 2026年9月26日 9:00

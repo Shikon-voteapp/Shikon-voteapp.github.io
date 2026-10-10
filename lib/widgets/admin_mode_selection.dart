@@ -10,6 +10,7 @@ enum AdminMode {
   batchVote,
   invalidateVote,
   documents,
+  configManager,
 }
 
 class AdminModeSelection extends StatelessWidget {
@@ -157,6 +158,16 @@ class AdminModeSelection extends StatelessWidget {
                         accentColor: const Color(0xFF0284C7),
                         actionLabel: '開く',
                         onTap: () => onSelectMode(AdminMode.documents),
+                      ),
+                      _buildModeCard(
+                        context: context,
+                        width: cardWidth,
+                        icon: Icons.tune_rounded,
+                        title: '設定管理',
+                        subtitle: '団体・賞・投票期間の設定をFirebaseで管理、画像のアップロード・差し替え',
+                        accentColor: const Color(0xFF7C3AED),
+                        actionLabel: '開く',
+                        onTap: () => onSelectMode(AdminMode.configManager),
                       ),
                     ],
                   );

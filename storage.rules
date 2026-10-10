@@ -1,0 +1,18 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // 管理者判定関数: Firestore の admin_users コレクションに UID が存在するかチェック
+    function isAdmin() {
+      return request.auth != null &&
+             firestore.exists(/databases/(default)/documents/admin_users/$(request.auth.uid));
+    }
+
+    // 団体画像: 全員読み取り可能、書き込みは管理者のみ（5MB以下）
+    match /groups/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() &&
+                      request.resource.size < 5 * 1024 * 1024 &&
+                      request.resource.contentType.matches('image/.*');
+    }
+  }
+}

@@ -18,6 +18,7 @@ import '../widgets/admin_sidebar.dart';
 import '../widgets/admin_invalidate_vote.dart';
 import '../widgets/admin_results_overview.dart';
 import '../widgets/admin_documents_view.dart';
+import '../widgets/admin_config_manager.dart';
 import '../main.dart' show themeModeNotifier;
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
@@ -301,6 +302,8 @@ class _AdminScreenState extends State<AdminScreen>
         return '投票番号の無効化';
       case AdminMode.documents:
         return 'ドキュメント';
+      case AdminMode.configManager:
+        return '設定管理';
     }
   }
 
@@ -339,6 +342,8 @@ class _AdminScreenState extends State<AdminScreen>
         );
       case AdminMode.documents:
         return const AdminDocumentsView();
+      case AdminMode.configManager:
+        return const AdminConfigManager();
     }
   }
 
@@ -600,6 +605,17 @@ class _AdminScreenState extends State<AdminScreen>
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     setState(() => _currentMode = AdminMode.documents);
+                  },
+                ),
+                _buildMenuModeTile(
+                  sheetContext: sheetContext,
+                  icon: Icons.tune_rounded,
+                  title: '設定管理',
+                  subtitle: '団体・賞・投票期間の設定（Firestore / Storage）',
+                  isSelected: _currentMode == AdminMode.configManager,
+                  onTap: () {
+                    Navigator.of(sheetContext).pop();
+                    setState(() => _currentMode = AdminMode.configManager);
                   },
                 ),
                 const Divider(height: 20),
