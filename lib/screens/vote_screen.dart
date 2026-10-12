@@ -44,6 +44,8 @@ class _VoteScreenState extends State<VoteScreen> {
   int? _selectedFloor;
   late bool _isGridView;
   late bool _returnToConfirm;
+  final ScrollController _groupGridScrollController = ScrollController();
+  final ScrollController _groupListScrollController = ScrollController();
 
   @override
   void initState() {
@@ -286,6 +288,13 @@ class _VoteScreenState extends State<VoteScreen> {
               )
               : _buildMobileLayout(isCompact: isCompact, isZoomed: isZoomed),
     );
+  }
+
+  @override
+  void dispose() {
+    _groupGridScrollController.dispose();
+    _groupListScrollController.dispose();
+    super.dispose();
   }
 
   // ─── モバイル用 1ペインレイアウト ─────────────────────────────────
@@ -1115,10 +1124,12 @@ class _VoteScreenState extends State<VoteScreen> {
 
         return AnimationLimiter(
           child: Scrollbar(
+            controller: _groupGridScrollController,
             thumbVisibility: true,
             thickness: 4.0,
             radius: const Radius.circular(8),
             child: GridView.builder(
+              controller: _groupGridScrollController,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
@@ -1274,10 +1285,12 @@ class _VoteScreenState extends State<VoteScreen> {
     }
     return AnimationLimiter(
       child: Scrollbar(
+        controller: _groupListScrollController,
         thumbVisibility: true,
         thickness: 4.0,
         radius: const Radius.circular(8),
         child: ListView.builder(
+          controller: _groupListScrollController,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemCount: _filteredGroups.length,
           itemBuilder: (context, index) {
