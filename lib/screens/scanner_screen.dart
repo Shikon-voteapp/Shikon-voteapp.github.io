@@ -100,27 +100,28 @@ class _ScannerScreenState extends State<ScannerScreen>
       helpContent:
           'パンフレットに同封、または準備日・入場時に配布された投票券に記載されている番号10桁を入力してください。\n配布されていない場合は、お手数ですが文準本部室までお越しください。',
       onHome: () {},
-      onNext: _isProcessingCode
-          ? null
-          : () {
-              if (_manualCodeController.text.isNotEmpty) {
-                if (_manualCodeController.text.length == 10) {
-                  _processBarcode(_manualCodeController.text);
+      onNext:
+          _isProcessingCode
+              ? null
+              : () {
+                if (_manualCodeController.text.isNotEmpty) {
+                  if (_manualCodeController.text.length == 10) {
+                    _processBarcode(_manualCodeController.text);
+                  } else {
+                    showCustomDialog(
+                      context: context,
+                      title: '入力エラー',
+                      content: '10桁の数字を入力してください。',
+                    );
+                  }
                 } else {
                   showCustomDialog(
                     context: context,
                     title: '入力エラー',
-                    content: '10桁の数字を入力してください。',
+                    content: 'コードを入力してください。',
                   );
                 }
-              } else {
-                showCustomDialog(
-                  context: context,
-                  title: '入力エラー',
-                  content: 'コードを入力してください。',
-                );
-              }
-            },
+              },
       nextLabel: 'ログイン',
       nextLoading: _isProcessingCode,
       child: Padding(
@@ -158,14 +159,15 @@ class _ScannerScreenState extends State<ScannerScreen>
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black.withValues(alpha: 0.2)
-                              : Colors.black.withValues(alpha: 0.05),
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.black.withValues(alpha: 0.2)
+                                  : Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Theme.of(context)
-                                .dividerColor
-                                .withValues(alpha: 0.3),
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Padding(
@@ -189,13 +191,13 @@ class _ScannerScreenState extends State<ScannerScreen>
                             ],
                             autofocus: true,
                             maxLength: 10,
-                            buildCounter: (
-                              context, {
-                              required currentLength,
-                              required isFocused,
-                              maxLength,
-                            }) =>
-                                null,
+                            buildCounter:
+                                (
+                                  context, {
+                                  required currentLength,
+                                  required isFocused,
+                                  maxLength,
+                                }) => null,
                             style: const TextStyle(
                               fontSize: 27,
                               fontWeight: FontWeight.bold,
@@ -215,14 +217,18 @@ class _ScannerScreenState extends State<ScannerScreen>
                           TextSpan(
                             style: TextStyle(
                               fontSize: 12,
-                              color: colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             children: [
                               gakNumSpan(
                                 '${_manualCodeController.text.length}',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                               const TextSpan(text: '/'),
@@ -230,7 +236,9 @@ class _ScannerScreenState extends State<ScannerScreen>
                                 '10',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -509,15 +517,16 @@ class _ScannerScreenState extends State<ScannerScreen>
                 }
                 final group = allGroups.firstWhere(
                   (g) => g.id == groupId,
-                  orElse: () => Group(
-                    id: 'unknown',
-                    name: '不明な団体',
-                    groupName: '',
-                    description: '',
-                    imagePath: 'assets/Stage/No Select.jpg',
-                    floor: 0,
-                    categories: [],
-                  ),
+                  orElse:
+                      () => Group(
+                        id: 'unknown',
+                        name: '不明な団体',
+                        groupName: '',
+                        description: '',
+                        imagePath: '',
+                        floor: 0,
+                        categories: [],
+                      ),
                 );
                 return _buildVoteItemTile(
                   theme: theme,
@@ -532,8 +541,9 @@ class _ScannerScreenState extends State<ScannerScreen>
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest
-                      .withValues(alpha: 0.4),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.4,
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -551,7 +561,9 @@ class _ScannerScreenState extends State<ScannerScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.3,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -593,12 +605,13 @@ class _ScannerScreenState extends State<ScannerScreen>
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VoteScreen(
-                    uuid: uuid,
-                    categoryIndex: 0,
-                    selections: existingSelections,
-                    restoreSelection: existingSelections.isNotEmpty,
-                  ),
+                  builder:
+                      (context) => VoteScreen(
+                        uuid: uuid,
+                        categoryIndex: 0,
+                        selections: existingSelections,
+                        restoreSelection: existingSelections.isNotEmpty,
+                      ),
                 ),
               );
             },
@@ -626,14 +639,18 @@ class _ScannerScreenState extends State<ScannerScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: isSkipped
-            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+        color:
+            isSkipped
+                ? theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                )
+                : theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isSkipped
-              ? theme.colorScheme.outlineVariant.withValues(alpha: 0.4)
-              : theme.colorScheme.primary.withValues(alpha: 0.2),
+          color:
+              isSkipped
+                  ? theme.colorScheme.outlineVariant.withValues(alpha: 0.4)
+                  : theme.colorScheme.primary.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -643,9 +660,10 @@ class _ScannerScreenState extends State<ScannerScreen>
             isSkipped
                 ? Icons.do_not_disturb_on_outlined
                 : Icons.check_circle_outline_rounded,
-            color: isSkipped
-                ? theme.colorScheme.onSurface.withValues(alpha: 0.35)
-                : theme.colorScheme.primary,
+            color:
+                isSkipped
+                    ? theme.colorScheme.onSurface.withValues(alpha: 0.35)
+                    : theme.colorScheme.primary,
             size: 20,
           ),
           const SizedBox(width: 10),
@@ -664,12 +682,17 @@ class _ScannerScreenState extends State<ScannerScreen>
                   isSkipped ? '選択なし' : (groupName ?? ''),
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSkipped
-                        ? theme.colorScheme.onSurface.withValues(alpha: 0.45)
-                        : theme.colorScheme.onSurface,
+                    color:
+                        isSkipped
+                            ? theme.colorScheme.onSurface.withValues(
+                              alpha: 0.45,
+                            )
+                            : theme.colorScheme.onSurface,
                   ),
                 ),
-                if (!isSkipped && groupSubName != null && groupSubName.isNotEmpty)
+                if (!isSkipped &&
+                    groupSubName != null &&
+                    groupSubName.isNotEmpty)
                   Text(
                     groupSubName,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -811,7 +834,9 @@ class _ScannerScreenState extends State<ScannerScreen>
         return;
       }
 
-      final bool isStudent = await _uuidService.requiresStudentVerification(code);
+      final bool isStudent = await _uuidService.requiresStudentVerification(
+        code,
+      );
       if (mounted) {
         if (isStudent) {
           Navigator.pushReplacement(

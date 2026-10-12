@@ -111,11 +111,12 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
     });
 
     try {
-      final loadedGroups = await ConfigService.loadGroups();
-      final loadedCategories = await ConfigService.loadVoteCategories(
-        loadedGroups,
-      );
-      final loadedPeriod = await ConfigService.loadVotingPeriod();
+      final groupsFuture = ConfigService.loadGroups();
+      final periodFuture = ConfigService.loadVotingPeriod();
+      final loadedGroups = await groupsFuture;
+      final categoriesFuture = ConfigService.loadVoteCategories(loadedGroups);
+      final loadedPeriod = await periodFuture;
+      final loadedCategories = await categoriesFuture;
 
       final effectiveGroups = loadedGroups;
       final effectiveCategories = loadedCategories;
@@ -349,10 +350,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: const Text('Firestore 設定データの全削除'),
+            title: const Text('クラウド設定・画像の全削除'),
             content: const Text(
-              'Firestore に保存されている団体・賞の設定データをすべて削除します。\n'
-              'Cloud Firestore に保存されている団体・賞の設定データをすべて削除します。\n\n本当に実行しますか？',
+              'Cloud Firestore の団体・賞・アプリ設定と、Cloud Storage の登録ファイルをすべて削除します。\n'
+              '投票記録と管理者アカウントは削除されません。削除した画像は復元できません。\n\n本当に実行しますか？',
             ),
             actions: [
               TextButton(
@@ -364,7 +365,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.red.shade700,
                 ),
-                child: const Text('全削除を実行'),
+                child: const Text('クラウドからすべて削除'),
               ),
             ],
           ),
@@ -374,14 +375,20 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     setState(() {
       _isLoading = true;
-      _statusMessage = 'Firestore のデータをクリアしています...';
+      _statusMessage = 'Firestore と Cloud Storage をクリアしています...';
     });
 
     try {
       await ConfigService.clearAllGroups();
       await ConfigService.clearAllCategories();
-      _showSnackbar('Firestore の設定データをクリアしました');
-      await _loadData();
+      final fileCount = await ConfigService.clearAllStorageFiles();
+      final configCount = await ConfigService.clearAllRuntimeConfig();
+      setState(() {
+        _isLoading = false;
+        _statusMessage =
+            'クラウド設定 $configCount 件、Storage ファイル $fileCount 件を削除しました';
+      });
+      _showSnackbar('クラウド設定とStorageファイルを削除しました');
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -1249,7 +1256,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   }
 
   Future<void> _openImageSelectDialog(_EditableGroup group) async {
-    // 既存のアップロード済み画像リストと、ローカル assets/ 候補を収集
+    // 既存のアップロード済み画像リストと、設定で使用中の画像を収集
     final existingPathsInUse =
         _groups
             .map((g) => g.imagePath.trim())
@@ -1286,7 +1293,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                       decoration: const InputDecoration(
                         isDense: true,
                         border: OutlineInputBorder(),
-                        hintText: '例: groups/001/image.jpg または assets/wind.jpg',
+                        hintText: '例: groups/001/image.jpg',
                       ),
                     ),
                     const SizedBox(height: 16),

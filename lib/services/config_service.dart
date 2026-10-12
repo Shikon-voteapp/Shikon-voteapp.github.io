@@ -27,8 +27,12 @@ class ConfigService {
   // ─────────────────────────────────────────
   /// Loads the authoritative voting configuration from Firestore.
   static Future<void> loadRuntimeConfiguration() async {
-    final period = await loadVotingPeriod();
-    final groups = await loadGroups();
+    // Start independent Firestore reads together instead of serializing their
+    // network latency.
+    final periodFuture = loadVotingPeriod();
+    final groupsFuture = loadGroups();
+    final period = await periodFuture;
+    final groups = await groupsFuture;
     if (period == null) throw StateError('Firestore に投票期間設定がありません。');
     if (groups.isEmpty) throw StateError('Firestore に投票団体がありません。');
     final categories = await loadVoteCategories(groups);
@@ -57,32 +61,8 @@ class ConfigService {
     // Use cloud-provided labels when present; older projects may not have this
     // optional document yet. Fill missing labels from category metadata.
     for (final category in GroupCategory.values) {
-      groupCategoryNames.putIfAbsent(
-        category,
-        () => switch (category) {
-          GroupCategory.Tenji => '教室展示',
-          GroupCategory.Moyoshi => '教室催し物',
-          GroupCategory.Gakunen => '学年展示',
-          GroupCategory.Roten => '露店',
-          GroupCategory.Stage => '部活ステージ',
-          GroupCategory.Performance => 'パフォーマンス',
-          GroupCategory.Band => 'バンド',
-          GroupCategory.other => 'その他',
-        },
-      );
+      groupCategoryNames.putIfAbsent(category, () => category.name);
     }
-    final flowDoc =
-        await _firestore
-            .collection('app_config')
-            .doc('student_verification')
-            .get();
-    final flow = flowDoc.data() ?? const <String, dynamic>{};
-    studentVerification = VoteCategory(
-      id: 'student_verification',
-      name: flow['name'] ?? '投票券情報入力',
-      description: flow['description'] ?? '投票券に記載されている番号を入力してください。',
-      groups: const [],
-    );
   }
   // VotingPeriodConfig
   // ─────────────────────────────────────────
@@ -126,11 +106,6 @@ class ConfigService {
         for (final entry in groupCategoryNames.entries)
           entry.key.name: entry.value,
       },
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-    await _firestore.collection('app_config').doc('student_verification').set({
-      'name': studentVerification.name,
-      'description': studentVerification.description,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -298,24 +273,30 @@ class ConfigService {
   }) async {
     final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
     final paths =
-        manifest
-            .listAssets()
-            .where((path) => path.startsWith('assets/'))
-            .toList();
+        manifest.listAssets().where((path) {
+          final isImage = RegExp(
+            r'\.(jpe?g|png|gif|webp)$',
+            caseSensitive: false,
+          ).hasMatch(path);
+          return isImage &&
+              (path.startsWith('assets/') ||
+                  path == 'resources/sho_setsumei.png');
+        }).toList();
     var uploaded = 0;
     for (final assetPath in paths) {
       final data = await rootBundle.load(assetPath);
       // Keep uploads under the path granted by the deployed Storage rules.
-      final storagePath =
-          'groups/legacy_assets/${assetPath.substring('assets/'.length)}';
+      final logicalPath =
+          assetPath.startsWith('assets/')
+              ? assetPath.substring('assets/'.length)
+              : assetPath;
+      final storagePath = 'groups/legacy_assets/$logicalPath';
       final ext = assetPath.split('.').last.toLowerCase();
       final contentType = switch (ext) {
         'jpg' || 'jpeg' => 'image/jpeg',
         'png' => 'image/png',
         'gif' => 'image/gif',
-        'webp' => 'image/webp',
-        'txt' => 'text/plain',
-        _ => 'application/octet-stream',
+        _ => 'image/webp',
       };
       await _storage
           .ref(storagePath)
@@ -334,7 +315,13 @@ class ConfigService {
                 caseSensitive: false,
               ).hasMatch(path),
             )
-            .map((path) => 'groups/legacy_assets/${path.substring('assets/'.length)}')
+            .map((path) {
+              final logicalPath =
+                  path.startsWith('assets/')
+                      ? path.substring('assets/'.length)
+                      : path;
+              return 'groups/legacy_assets/$logicalPath';
+            })
             .toSet();
     final groups = await loadGroups();
     final replacements = <String, Group>{};
@@ -449,6 +436,41 @@ class ConfigService {
       batch.delete(doc.reference);
     }
     await batch.commit();
+  }
+
+  /// Removes every uploaded application file (group artwork and migrated
+  /// assets) from the Storage namespace managed by this app.
+  static Future<int> clearAllStorageFiles() async {
+    final root = _storage.ref('groups');
+    var deleted = 0;
+
+    Future<void> deleteTree(Reference directory) async {
+      final result = await directory.listAll();
+      for (final item in result.items) {
+        await item.delete();
+        deleted++;
+      }
+      for (final prefix in result.prefixes) {
+        await deleteTree(prefix);
+      }
+    }
+
+    await deleteTree(root);
+    return deleted;
+  }
+
+  /// Deletes all editable runtime configuration documents, leaving admin
+  /// account records and vote history untouched.
+  static Future<int> clearAllRuntimeConfig() async {
+    final snapshot = await _firestore.collection('app_config').get();
+    for (var offset = 0; offset < snapshot.docs.length; offset += 450) {
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs.skip(offset).take(450)) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    }
+    return snapshot.docs.length;
   }
 
   // ─────────────────────────────────────────

@@ -102,7 +102,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                       name: '団体が見つかりません',
                       groupName: '',
                       description: '',
-                      imagePath: 'assets/Stage/No Select.jpg',
+                      imagePath: '',
                       floor: 0,
                       categories: [],
                     );

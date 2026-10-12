@@ -1,7 +1,7 @@
 ﻿import 'package:shikon_voteapp/models/group.dart' hide VoteCategory;
 import 'package:shikon_voteapp/models/vote_category.dart';
 
-// Runtime data in this file is limited to model types and cloud-loaded state.
+// Runtime data in this file is limited to cloud-loaded state.
 
 // 投票期間設定クラス
 class VotingPeriodConfig {
@@ -111,6 +111,3 @@ final Map<GroupCategory, String> groupCategoryNames = <GroupCategory, String>{};
 // 投票対象データは Firestore の groups / vote_categories からロードする。
 final List<Group> allGroups = <Group>[];
 final List<VoteCategory> voteCategories = <VoteCategory>[];
-
-// 認証フロー用カテゴリ（投票対象ではなくアプリ内の固定フロー定義）。
-late VoteCategory studentVerification;
