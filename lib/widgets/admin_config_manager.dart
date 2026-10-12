@@ -26,6 +26,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   bool _isLoading = true;
   bool _isSaving = false;
   bool _isMigrating = false;
+  bool _isUploadingAssets = false;
   bool _isUploadingImage = false;
   String _statusMessage = 'データを読み込んでいます...';
   bool _hasUnsavedChanges = false;
@@ -43,7 +44,6 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   final TextEditingController _groupIdCtrl = TextEditingController();
   final TextEditingController _groupNameCtrl = TextEditingController();
   final TextEditingController _groupGroupNameCtrl = TextEditingController();
-  final TextEditingController _groupFloorCtrl = TextEditingController();
   final TextEditingController _groupDescCtrl = TextEditingController();
   final TextEditingController _groupPamphletCtrl = TextEditingController();
 
@@ -90,7 +90,6 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
     _groupIdCtrl.dispose();
     _groupNameCtrl.dispose();
     _groupGroupNameCtrl.dispose();
-    _groupFloorCtrl.dispose();
     _groupDescCtrl.dispose();
     _groupPamphletCtrl.dispose();
     _catIdCtrl.dispose();
@@ -113,42 +112,47 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     try {
       final loadedGroups = await ConfigService.loadGroups();
-      final loadedCategories =
-          await ConfigService.loadVoteCategories(loadedGroups);
+      final loadedCategories = await ConfigService.loadVoteCategories(
+        loadedGroups,
+      );
       final loadedPeriod = await ConfigService.loadVotingPeriod();
 
-      final effectiveGroups =
-          loadedGroups.isNotEmpty ? loadedGroups : allGroups;
-      final effectiveCategories = loadedCategories.isNotEmpty
-          ? loadedCategories
-          : voteCategories;
-      final effectivePeriod = loadedPeriod ?? defaultVotingPeriod;
+      final effectiveGroups = loadedGroups;
+      final effectiveCategories = loadedCategories;
+      final effectivePeriod =
+          loadedPeriod ?? (throw StateError('Firestore の投票期間設定がありません。'));
 
       setState(() {
-        _groups = effectiveGroups
-            .map((g) => _EditableGroup(
-                  id: g.id,
-                  name: g.name,
-                  groupName: g.groupName,
-                  description: g.description,
-                  imagePath: g.imagePath,
-                  floor: g.floor,
-                  pamphletPage: g.pamphletPage,
-                  categories: List.from(g.categories),
-                ))
-            .toList();
+        _groups =
+            effectiveGroups
+                .map(
+                  (g) => _EditableGroup(
+                    id: g.id,
+                    name: g.name,
+                    groupName: g.groupName,
+                    description: g.description,
+                    imagePath: g.imagePath,
+                    floor: g.floor,
+                    pamphletPage: g.pamphletPage,
+                    categories: List.from(g.categories),
+                  ),
+                )
+                .toList();
 
-        _categories = effectiveCategories
-            .map((c) => _EditableCategory(
-                  id: c.id,
-                  name: c.name,
-                  description: c.description,
-                  shortHelpText: c.shortHelpText ?? '',
-                  helpUrl: c.helpUrl ?? '',
-                  canSkip: c.canSkip,
-                  groupIds: c.groups.map((g) => g.id).toList(),
-                ))
-            .toList();
+        _categories =
+            effectiveCategories
+                .map(
+                  (c) => _EditableCategory(
+                    id: c.id,
+                    name: c.name,
+                    description: c.description,
+                    shortHelpText: c.shortHelpText ?? '',
+                    helpUrl: c.helpUrl ?? '',
+                    canSkip: c.canSkip,
+                    eligibleCategories: c.eligibleCategories ?? const [],
+                  ),
+                )
+                .toList();
 
         _periodConfig = effectivePeriod;
         _selectedGroupIndex = _groups.isNotEmpty ? 0 : null;
@@ -157,9 +161,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         _syncCategoryControllers();
         _hasUnsavedChanges = false;
         _isLoading = false;
-        _statusMessage = loadedGroups.isEmpty
-            ? 'ローカル既定データを読み込みました（Firestore 未保存）'
-            : 'Firestore データを読み込みました（${_groups.length} 団体 / ${_categories.length} 賞）';
+        _statusMessage =
+            loadedGroups.isEmpty
+                ? 'Firestore に設定データがありません'
+                : 'Firestore データを読み込みました（${_groups.length} 団体 / ${_categories.length} 賞）';
       });
     } catch (e) {
       setState(() {
@@ -181,14 +186,12 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       _groupIdCtrl.text = g.id;
       _groupNameCtrl.text = g.name;
       _groupGroupNameCtrl.text = g.groupName;
-      _groupFloorCtrl.text = g.floor.toString();
       _groupDescCtrl.text = g.description;
       _groupPamphletCtrl.text = g.pamphletPage?.toString() ?? '';
     } else {
       _groupIdCtrl.clear();
       _groupNameCtrl.clear();
       _groupGroupNameCtrl.clear();
-      _groupFloorCtrl.clear();
       _groupDescCtrl.clear();
       _groupPamphletCtrl.clear();
     }
@@ -261,42 +264,47 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
     });
 
     try {
-      final List<Group> groupsToSave = _groups.map((eg) {
-        return Group(
-          id: eg.id.trim(),
-          name: eg.name.trim(),
-          groupName: eg.groupName.trim(),
-          description: eg.description.trim(),
-          imagePath: eg.imagePath.trim(),
-          floor: eg.floor,
-          pamphletPage: eg.pamphletPage,
-          categories: eg.categories,
-        );
-      }).toList();
+      final List<Group> groupsToSave =
+          _groups.map((eg) {
+            return Group(
+              id: eg.id.trim(),
+              name: eg.name.trim(),
+              groupName: eg.groupName.trim(),
+              description: eg.description.trim(),
+              imagePath: eg.imagePath.trim(),
+              floor: eg.floor,
+              pamphletPage: eg.pamphletPage,
+              categories: eg.categories,
+            );
+          }).toList();
       await ConfigService.saveAllGroups(groupsToSave);
 
-      final List<VoteCategory> categoriesToSave = _categories.map((ec) {
-        final assignedGroups = groupsToSave
-            .where((g) => ec.groupIds.contains(g.id))
-            .toList();
-        return VoteCategory(
-          id: ec.id.trim(),
-          name: ec.name.trim(),
-          description: ec.description.trim(),
-          shortHelpText: ec.shortHelpText.trim().isEmpty ? null : ec.shortHelpText.trim(),
-          helpUrl: ec.helpUrl.trim().isEmpty ? null : ec.helpUrl.trim(),
-          canSkip: ec.canSkip,
-          groups: assignedGroups,
-        );
-      }).toList();
+      final List<VoteCategory> categoriesToSave =
+          _categories.map((ec) {
+            return VoteCategory(
+              id: ec.id.trim(),
+              name: ec.name.trim(),
+              description: ec.description.trim(),
+              shortHelpText:
+                  ec.shortHelpText.trim().isEmpty
+                      ? null
+                      : ec.shortHelpText.trim(),
+              helpUrl: ec.helpUrl.trim().isEmpty ? null : ec.helpUrl.trim(),
+              canSkip: ec.canSkip,
+              groups: groupsToSave,
+              eligibleCategories: ec.eligibleCategories,
+            );
+          }).toList();
       await ConfigService.saveAllVoteCategories(categoriesToSave);
 
       await ConfigService.saveVotingPeriod(_periodConfig);
+      await ConfigService.saveRuntimeLabels();
 
       setState(() {
         _isSaving = false;
         _hasUnsavedChanges = false;
-        _statusMessage = 'すべての設定を Firestore に保存しました（${DateFormat('HH:mm:ss').format(DateTime.now())}）';
+        _statusMessage =
+            'すべての設定を Firestore に保存しました（${DateFormat('HH:mm:ss').format(DateTime.now())}）';
       });
       _showSnackbar('設定を正常に保存しました');
     } catch (e) {
@@ -308,27 +316,58 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
     }
   }
 
+  Future<void> _uploadAssets() async {
+    setState(() {
+      _isUploadingAssets = true;
+      _statusMessage = 'assets を Cloud Storage にアップロードしています...';
+    });
+    try {
+      final count = await ConfigService.uploadBundledAssets(
+        onProgress: (done, total) {
+          if (!mounted) return;
+          setState(() => _statusMessage = 'Storage アップロード中: $done / $total');
+        },
+      );
+      if (!mounted) return;
+      setState(() {
+        _isUploadingAssets = false;
+        _statusMessage = 'Storage に $count 件アップロードしました';
+      });
+      _showSnackbar('assets を Storage に $count 件アップロードしました');
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isUploadingAssets = false;
+        _statusMessage = 'アップロード失敗: $error';
+      });
+      _showSnackbar('Storage へのアップロードに失敗しました: $error', isError: true);
+    }
+  }
+
   Future<void> _clearFirestoreData() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Firestore 設定データの全削除'),
-        content: const Text(
-          'Firestore に保存されている団体・賞の設定データをすべて削除します。\n'
-          'ローカルの vote_options.dart や画像ファイル自体は削除されません。\n\n本当に実行しますか？',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('キャンセル'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Firestore 設定データの全削除'),
+            content: const Text(
+              'Firestore に保存されている団体・賞の設定データをすべて削除します。\n'
+              'Cloud Firestore に保存されている団体・賞の設定データをすべて削除します。\n\n本当に実行しますか？',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('キャンセル'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red.shade700,
+                ),
+                child: const Text('全削除を実行'),
+              ),
+            ],
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700),
-            child: const Text('全削除を実行'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed != true) return;
@@ -352,65 +391,13 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
     }
   }
 
-  Future<void> _migrateFromCode() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('初期データの投入 (Migration)'),
-        content: const Text(
-          '既存の vote_options.dart に定義されている団体・賞・投票期間を Firestore に投入します。\n\n'
-          '既に Firestore に存在するデータはスキップされ、新規分のみ追加されます。実行しますか？',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('キャンセル'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('投入を実行'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    setState(() {
-      _isMigrating = true;
-      _statusMessage = 'vote_options.dart から Firestore へ初期データを投入中...';
-    });
-
-    try {
-      final result = await ConfigService.migrateFromVoteOptions(
-        sourceGroups: allGroups,
-        sourceCategories: voteCategories,
-        sourcePeriod: defaultVotingPeriod,
-        overwrite: false,
-      );
-
-      setState(() {
-        _isMigrating = false;
-        _statusMessage =
-            '移行完了: 団体 +${result.groupsAdded}件, 賞 +${result.categoriesAdded}件, 期間: ${result.periodSet ? "新規設定" : "既存維持"}';
-      });
-      _showSnackbar('初期データ投入完了: 団体 +${result.groupsAdded}件, 賞 +${result.categoriesAdded}件');
-      await _loadData();
-    } catch (e) {
-      setState(() {
-        _isMigrating = false;
-        _statusMessage = '移行失敗: $e';
-      });
-      _showSnackbar('移行に失敗しました: $e', isError: true);
-    }
-  }
-
   void _showSnackbar(String message, {bool isError = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red.shade700 : const Color(0xFF7C3AED),
+        backgroundColor:
+            isError ? Colors.red.shade700 : const Color(0xFF7C3AED),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 4),
       ),
@@ -451,8 +438,14 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
             unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
             tabs: const [
               Tab(icon: Icon(Icons.groups_rounded, size: 20), text: '団体設定'),
-              Tab(icon: Icon(Icons.emoji_events_rounded, size: 20), text: '賞の設定'),
-              Tab(icon: Icon(Icons.access_time_rounded, size: 20), text: '投票期間設定'),
+              Tab(
+                icon: Icon(Icons.emoji_events_rounded, size: 20),
+                text: '賞の設定',
+              ),
+              Tab(
+                icon: Icon(Icons.access_time_rounded, size: 20),
+                text: '投票期間設定',
+              ),
             ],
           ),
         ),
@@ -492,7 +485,11 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               color: const Color(0xFF7C3AED).withOpacity(0.12),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.tune_rounded, color: Color(0xFF7C3AED), size: 20),
+            child: const Icon(
+              Icons.tune_rounded,
+              color: Color(0xFF7C3AED),
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Column(
@@ -507,14 +504,21 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                   if (_hasUnsavedChanges) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amber.shade700,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
                         '未保存',
-                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -522,7 +526,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               ),
               Text(
                 'Firestore / Cloud Storage の設定データを管理します',
-                style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -544,24 +551,26 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const SizedBox(width: 8),
 
-          // 初期データ投入ボタン
           M3EButton(
-            onPressed: (_isSaving || _isMigrating) ? null : _migrateFromCode,
+            onPressed:
+                (_isSaving || _isMigrating || _isUploadingAssets)
+                    ? null
+                    : _uploadAssets,
             style: M3EButtonStyle.tonal,
             size: M3EButtonSize.sm,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_isMigrating)
+                if (_isUploadingAssets)
                   const SizedBox(
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 else
-                  const Icon(Icons.upload_file_rounded, size: 16),
+                  const Icon(Icons.cloud_upload_outlined, size: 16),
                 const SizedBox(width: 6),
-                const Text('初期データ投入'),
+                const Text('assets をStorageへ'),
               ],
             ),
           ),
@@ -622,29 +631,19 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     return isCompact
         ? Column(
-            children: [
-              SizedBox(
-                height: 220,
-                child: _buildGroupListPanel(theme, isDark),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: _buildGroupDetailPanel(theme, isDark),
-              ),
-            ],
-          )
+          children: [
+            SizedBox(height: 220, child: _buildGroupListPanel(theme, isDark)),
+            const Divider(height: 1),
+            Expanded(child: _buildGroupDetailPanel(theme, isDark)),
+          ],
+        )
         : Row(
-            children: [
-              SizedBox(
-                width: 340,
-                child: _buildGroupListPanel(theme, isDark),
-              ),
-              VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
-              Expanded(
-                child: _buildGroupDetailPanel(theme, isDark),
-              ),
-            ],
-          );
+          children: [
+            SizedBox(width: 340, child: _buildGroupListPanel(theme, isDark)),
+            VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
+            Expanded(child: _buildGroupDetailPanel(theme, isDark)),
+          ],
+        );
   }
 
   Widget _buildGroupListPanel(ThemeData theme, bool isDark) {
@@ -660,7 +659,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                   child: FilledButton.tonalIcon(
                     onPressed: _addGroup,
                     icon: const Icon(Icons.add_rounded, size: 16),
-                    label: const Text('＋ 団体を追加', style: TextStyle(fontSize: 12)),
+                    label: const Text(
+                      '＋ 団体を追加',
+                      style: TextStyle(fontSize: 12),
+                    ),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
@@ -668,7 +670,8 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 ),
                 const SizedBox(width: 8),
                 IconButton.outlined(
-                  onPressed: _selectedGroupIndex != null ? _removeSelectedGroup : null,
+                  onPressed:
+                      _selectedGroupIndex != null ? _removeSelectedGroup : null,
                   tooltip: '選択中の団体を削除',
                   icon: const Icon(Icons.delete_outline_rounded, size: 18),
                   style: IconButton.styleFrom(
@@ -680,110 +683,147 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const Divider(height: 1),
           Expanded(
-            child: _groups.isEmpty
-                ? const Center(child: Text('団体が登録されていません'))
-                : ListView.separated(
-                    itemCount: _groups.length,
-                    separatorBuilder: (_, __) => Divider(
-                      height: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                    ),
-                    itemBuilder: (ctx, index) {
-                      final g = _groups[index];
-                      final isSelected = _selectedGroupIndex == index;
-                      final isDuplicate = _isGroupIdDuplicate(g.id, index);
+            child:
+                _groups.isEmpty
+                    ? const Center(child: Text('団体が登録されていません'))
+                    : ListView.separated(
+                      itemCount: _groups.length,
+                      separatorBuilder:
+                          (_, __) => Divider(
+                            height: 1,
+                            indent: 16,
+                            endIndent: 16,
+                            color: theme.colorScheme.outlineVariant.withOpacity(
+                              0.5,
+                            ),
+                          ),
+                      itemBuilder: (ctx, index) {
+                        final g = _groups[index];
+                        final isSelected = _selectedGroupIndex == index;
+                        final isDuplicate = _isGroupIdDuplicate(g.id, index);
 
-                      // Material 3 準拠のカスタムコンテナ（InkWell による安定タップ）
-                      return Material(
-                        color: isSelected
-                            ? const Color(0xFF7C3AED).withOpacity(0.12)
-                            : Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            if (_selectedGroupIndex != index) {
-                              setState(() {
-                                _selectedGroupIndex = index;
-                                _syncGroupControllers();
-                              });
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 14,
-                                  backgroundColor: isSelected
-                                      ? const Color(0xFF7C3AED)
-                                      : theme.colorScheme.surfaceContainerHighest,
-                                  child: Text(
-                                    '${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                        // Material 3 準拠のカスタムコンテナ（InkWell による安定タップ）
+                        return Material(
+                          color:
+                              isSelected
+                                  ? const Color(0xFF7C3AED).withOpacity(0.12)
+                                  : Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              if (_selectedGroupIndex != index) {
+                                setState(() {
+                                  _selectedGroupIndex = index;
+                                  _syncGroupControllers();
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor:
+                                        isSelected
+                                            ? const Color(0xFF7C3AED)
+                                            : theme
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            isSelected
+                                                ? Colors.white
+                                                : theme.colorScheme.onSurface,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              g.name.isEmpty ? '(無名の団体)' : g.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                                color: isSelected ? const Color(0xFF7C3AED) : null,
-                                              ),
-                                            ),
-                                          ),
-                                          if (isDuplicate)
-                                            Container(
-                                              margin: const EdgeInsets.only(left: 4),
-                                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                              decoration: BoxDecoration(
-                                                color: Colors.red.shade100,
-                                                borderRadius: BorderRadius.circular(4),
-                                                border: Border.all(color: Colors.red.shade400),
-                                              ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
                                               child: Text(
-                                                '⚠️ 重複',
+                                                g.name.isEmpty
+                                                    ? '(無名の団体)'
+                                                    : g.name,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                  color: Colors.red.shade800,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                  fontWeight:
+                                                      isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.w500,
+                                                  color:
+                                                      isSelected
+                                                          ? const Color(
+                                                            0xFF7C3AED,
+                                                          )
+                                                          : null,
                                                 ),
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        'ID: ${g.id.isEmpty ? "-" : g.id}  •  ${g.floor}F',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: theme.colorScheme.onSurfaceVariant,
+                                            if (isDuplicate)
+                                              Container(
+                                                margin: const EdgeInsets.only(
+                                                  left: 4,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 5,
+                                                      vertical: 1,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  border: Border.all(
+                                                    color: Colors.red.shade400,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  '⚠️ 重複',
+                                                  style: TextStyle(
+                                                    color: Colors.red.shade800,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'ID: ${g.id.isEmpty ? "-" : g.id}  •  ${g.floor}F',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color:
+                                                theme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -798,7 +838,11 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_back_rounded, size: 40, color: theme.colorScheme.outline),
+            Icon(
+              Icons.arrow_back_rounded,
+              size: 40,
+              color: theme.colorScheme.outline,
+            ),
             const SizedBox(height: 12),
             Text(
               '← 左のリストから団体を選択してください',
@@ -841,12 +885,20 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, size: 18, color: Colors.red.shade800),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 18,
+                    color: Colors.red.shade800,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'ID「${g.id}」は既に他の団体で使用されています。一意のIDを指定してください。',
-                      style: TextStyle(color: Colors.red.shade800, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.red.shade800,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -892,17 +944,26 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildFieldHeader('階 (floor)', required: true),
-                    TextField(
-                      controller: _groupFloorCtrl,
-                      keyboardType: TextInputType.number,
+                    DropdownButtonFormField<int>(
+                      value: g.floor.clamp(1, 4),
                       decoration: const InputDecoration(
                         isDense: true,
                         border: OutlineInputBorder(),
-                        hintText: '例: 1, 2, 3',
                       ),
-                      onChanged: (val) {
-                        g.floor = int.tryParse(val) ?? 1;
+                      items:
+                          const [1, 2, 3, 4]
+                              .map(
+                                (floor) => DropdownMenuItem<int>(
+                                  value: floor,
+                                  child: Text(floor == 4 ? 'Stage' : '$floor階'),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        if (value == null) return;
+                        g.floor = value;
                         _markDirty();
+                        setState(() {});
                       },
                     ),
                   ],
@@ -956,7 +1017,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(6),
@@ -967,9 +1031,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                     style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
-                      color: g.imagePath.isEmpty
-                          ? theme.colorScheme.outline
-                          : theme.colorScheme.onSurface,
+                      color:
+                          g.imagePath.isEmpty
+                              ? theme.colorScheme.outline
+                              : theme.colorScheme.onSurface,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -980,9 +1045,14 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               // 画像アップロードボタン
               FilledButton.tonalIcon(
                 onPressed: _isUploadingImage ? null : () => _uploadNewImage(g),
-                icon: _isUploadingImage
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
-                    : const Icon(Icons.cloud_upload_outlined, size: 16),
+                icon:
+                    _isUploadingImage
+                        ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : const Icon(Icons.cloud_upload_outlined, size: 16),
                 label: const Text('新規UP'),
               ),
               const SizedBox(width: 6),
@@ -1013,27 +1083,28 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           Wrap(
             spacing: 12,
             runSpacing: 8,
-            children: _allCategories.map((cat) {
-              final isChecked = g.categories.contains(cat);
-              return FilterChip(
-                label: Text(_categoryLabels[cat] ?? cat.toString()),
-                selected: isChecked,
-                selectedColor: const Color(0xFF7C3AED).withOpacity(0.18),
-                checkmarkColor: const Color(0xFF7C3AED),
-                onSelected: (selected) {
-                  setState(() {
-                    if (selected) {
-                      if (!g.categories.contains(cat)) {
-                        g.categories.add(cat);
-                      }
-                    } else {
-                      g.categories.remove(cat);
-                    }
-                    _hasUnsavedChanges = true;
-                  });
-                },
-              );
-            }).toList(),
+            children:
+                _allCategories.map((cat) {
+                  final isChecked = g.categories.contains(cat);
+                  return FilterChip(
+                    label: Text(_categoryLabels[cat] ?? cat.toString()),
+                    selected: isChecked,
+                    selectedColor: const Color(0xFF7C3AED).withOpacity(0.18),
+                    checkmarkColor: const Color(0xFF7C3AED),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          if (!g.categories.contains(cat)) {
+                            g.categories.add(cat);
+                          }
+                        } else {
+                          g.categories.remove(cat);
+                        }
+                        _hasUnsavedChanges = true;
+                      });
+                    },
+                  );
+                }).toList(),
           ),
           const SizedBox(height: 40),
         ],
@@ -1074,28 +1145,35 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('団体の削除'),
-        content: Text('団体「${g.name}（ID: ${g.id}）」を削除しますか？\nこの操作は「変更を保存」を押すまで Firestore には反映されません。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('キャンセル'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('団体の削除'),
+            content: Text(
+              '団体「${g.name}（ID: ${g.id}）」を削除しますか？\nこの操作は「変更を保存」を押すまで Firestore には反映されません。',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('キャンセル'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red.shade700,
+                ),
+                child: const Text('削除'),
+              ),
+            ],
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700),
-            child: const Text('削除'),
-          ),
-        ],
-      ),
     ).then((confirmed) {
       if (confirmed == true && mounted) {
         setState(() {
-          final removedId = g.id;
           _groups.removeAt(_selectedGroupIndex!);
           for (final cat in _categories) {
-            cat.groupIds.remove(removedId);
+            cat.eligibleCategories.removeWhere(
+              (category) =>
+                  !_groups.any((group) => group.categories.contains(category)),
+            );
           }
           if (_groups.isEmpty) {
             _selectedGroupIndex = null;
@@ -1140,7 +1218,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         _statusMessage = 'Cloud Storage に画像をアップロードしています...';
       });
 
-      final targetId = group.id.trim().isNotEmpty ? group.id.trim() : 'temp_${DateTime.now().millisecondsSinceEpoch}';
+      final targetId =
+          group.id.trim().isNotEmpty
+              ? group.id.trim()
+              : 'temp_${DateTime.now().millisecondsSinceEpoch}';
       final storagePath = await ConfigService.uploadGroupImage(
         groupId: targetId,
         fileName: file.name,
@@ -1160,17 +1241,21 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         _isUploadingImage = false;
         _statusMessage = '画像アップロード失敗: $e';
       });
-      _showSnackbar('画像アップロード失敗: $e\n（Storage の権限・ルールを確認してください）', isError: true);
+      _showSnackbar(
+        '画像アップロード失敗: $e\n（Storage の権限・ルールを確認してください）',
+        isError: true,
+      );
     }
   }
 
   Future<void> _openImageSelectDialog(_EditableGroup group) async {
     // 既存のアップロード済み画像リストと、ローカル assets/ 候補を収集
-    final existingPathsInUse = _groups
-        .map((g) => g.imagePath.trim())
-        .where((p) => p.isNotEmpty)
-        .toSet()
-        .toList();
+    final existingPathsInUse =
+        _groups
+            .map((g) => g.imagePath.trim())
+            .where((p) => p.isNotEmpty)
+            .toSet()
+            .toList();
 
     showDialog<String>(
       context: context,
@@ -1180,7 +1265,8 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           future: ConfigService.listUploadedImages(),
           builder: (context, snapshot) {
             final storageImages = snapshot.data ?? [];
-            final allCandidates = {...existingPathsInUse, ...storageImages}.toList();
+            final allCandidates =
+                {...existingPathsInUse, ...storageImages}.toList();
 
             return AlertDialog(
               title: const Text('画像パスの選択・指定'),
@@ -1190,7 +1276,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('パスを直接入力、または一覧から選択してください:', style: TextStyle(fontSize: 13)),
+                    const Text(
+                      'パスを直接入力、または一覧から選択してください:',
+                      style: TextStyle(fontSize: 13),
+                    ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: manualPathCtrl,
@@ -1201,17 +1290,28 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text('登録済み・利用中の画像一覧:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                    const Text(
+                      '登録済み・利用中の画像一覧:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     if (snapshot.connectionState == ConnectionState.waiting)
                       const Padding(
                         padding: EdgeInsets.all(16.0),
-                        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       )
                     else if (allCandidates.isEmpty)
                       const Padding(
                         padding: EdgeInsets.all(12.0),
-                        child: Text('利用可能な画像パスがありません。「新規UP」から画像をアップロードしてください。', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                        child: Text(
+                          '利用可能な画像パスがありません。「新規UP」から画像をアップロードしてください。',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
                       )
                     else
                       Container(
@@ -1227,8 +1327,17 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                             final path = allCandidates[idx];
                             return ListTile(
                               dense: true,
-                              title: Text(path, style: const TextStyle(fontSize: 12, fontFamily: 'monospace')),
-                              leading: const Icon(Icons.image_outlined, size: 18),
+                              title: Text(
+                                path,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'monospace',
+                                ),
+                              ),
+                              leading: const Icon(
+                                Icons.image_outlined,
+                                size: 18,
+                              ),
                               onTap: () {
                                 Navigator.of(ctx).pop(path);
                               },
@@ -1245,7 +1354,8 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                   child: const Text('キャンセル'),
                 ),
                 FilledButton(
-                  onPressed: () => Navigator.of(ctx).pop(manualPathCtrl.text.trim()),
+                  onPressed:
+                      () => Navigator.of(ctx).pop(manualPathCtrl.text.trim()),
                   child: const Text('確定'),
                 ),
               ],
@@ -1273,29 +1383,22 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     return isCompact
         ? Column(
-            children: [
-              SizedBox(
-                height: 220,
-                child: _buildCategoryListPanel(theme, isDark),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: _buildCategoryDetailPanel(theme, isDark),
-              ),
-            ],
-          )
+          children: [
+            SizedBox(
+              height: 220,
+              child: _buildCategoryListPanel(theme, isDark),
+            ),
+            const Divider(height: 1),
+            Expanded(child: _buildCategoryDetailPanel(theme, isDark)),
+          ],
+        )
         : Row(
-            children: [
-              SizedBox(
-                width: 340,
-                child: _buildCategoryListPanel(theme, isDark),
-              ),
-              VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
-              Expanded(
-                child: _buildCategoryDetailPanel(theme, isDark),
-              ),
-            ],
-          );
+          children: [
+            SizedBox(width: 340, child: _buildCategoryListPanel(theme, isDark)),
+            VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
+            Expanded(child: _buildCategoryDetailPanel(theme, isDark)),
+          ],
+        );
   }
 
   Widget _buildCategoryListPanel(ThemeData theme, bool isDark) {
@@ -1319,7 +1422,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 ),
                 const SizedBox(width: 8),
                 IconButton.outlined(
-                  onPressed: _selectedCategoryIndex != null ? _removeSelectedCategory : null,
+                  onPressed:
+                      _selectedCategoryIndex != null
+                          ? _removeSelectedCategory
+                          : null,
                   tooltip: '選択中の賞を削除',
                   icon: const Icon(Icons.delete_outline_rounded, size: 18),
                   style: IconButton.styleFrom(
@@ -1331,106 +1437,143 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const Divider(height: 1),
           Expanded(
-            child: _categories.isEmpty
-                ? const Center(child: Text('賞が登録されていません'))
-                : ListView.separated(
-                    itemCount: _categories.length,
-                    separatorBuilder: (_, __) => Divider(
-                      height: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
-                    ),
-                    itemBuilder: (ctx, index) {
-                      final c = _categories[index];
-                      final isSelected = _selectedCategoryIndex == index;
-                      final isDuplicate = _isCategoryIdDuplicate(c.id, index);
+            child:
+                _categories.isEmpty
+                    ? const Center(child: Text('賞が登録されていません'))
+                    : ListView.separated(
+                      itemCount: _categories.length,
+                      separatorBuilder:
+                          (_, __) => Divider(
+                            height: 1,
+                            indent: 16,
+                            endIndent: 16,
+                            color: theme.colorScheme.outlineVariant.withOpacity(
+                              0.5,
+                            ),
+                          ),
+                      itemBuilder: (ctx, index) {
+                        final c = _categories[index];
+                        final isSelected = _selectedCategoryIndex == index;
+                        final isDuplicate = _isCategoryIdDuplicate(c.id, index);
 
-                      return Material(
-                        color: isSelected
-                            ? const Color(0xFF7C3AED).withOpacity(0.12)
-                            : Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            if (_selectedCategoryIndex != index) {
-                              setState(() {
-                                _selectedCategoryIndex = index;
-                                _syncCategoryControllers();
-                              });
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 14,
-                                  backgroundColor: isSelected
-                                      ? const Color(0xFF7C3AED)
-                                      : theme.colorScheme.surfaceContainerHighest,
-                                  child: Icon(
-                                    Icons.emoji_events_rounded,
-                                    size: 14,
-                                    color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+                        return Material(
+                          color:
+                              isSelected
+                                  ? const Color(0xFF7C3AED).withOpacity(0.12)
+                                  : Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              if (_selectedCategoryIndex != index) {
+                                setState(() {
+                                  _selectedCategoryIndex = index;
+                                  _syncCategoryControllers();
+                                });
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor:
+                                        isSelected
+                                            ? const Color(0xFF7C3AED)
+                                            : theme
+                                                .colorScheme
+                                                .surfaceContainerHighest,
+                                    child: Icon(
+                                      Icons.emoji_events_rounded,
+                                      size: 14,
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : theme.colorScheme.onSurface,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              c.name.isEmpty ? '(無名の賞)' : c.name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                                color: isSelected ? const Color(0xFF7C3AED) : null,
-                                              ),
-                                            ),
-                                          ),
-                                          if (isDuplicate)
-                                            Container(
-                                              margin: const EdgeInsets.only(left: 4),
-                                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                              decoration: BoxDecoration(
-                                                color: Colors.red.shade100,
-                                                borderRadius: BorderRadius.circular(4),
-                                                border: Border.all(color: Colors.red.shade400),
-                                              ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
                                               child: Text(
-                                                '⚠️ 重複',
+                                                c.name.isEmpty
+                                                    ? '(無名の賞)'
+                                                    : c.name,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                  color: Colors.red.shade800,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                  fontWeight:
+                                                      isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.w500,
+                                                  color:
+                                                      isSelected
+                                                          ? const Color(
+                                                            0xFF7C3AED,
+                                                          )
+                                                          : null,
                                                 ),
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        'ID: ${c.id.isEmpty ? "-" : c.id}  •  ${c.groupIds.isEmpty ? "全団体対象" : "${c.groupIds.length}団体"}',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: theme.colorScheme.onSurfaceVariant,
+                                            if (isDuplicate)
+                                              Container(
+                                                margin: const EdgeInsets.only(
+                                                  left: 4,
+                                                ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 5,
+                                                      vertical: 1,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.shade100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                  border: Border.all(
+                                                    color: Colors.red.shade400,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  '⚠️ 重複',
+                                                  style: TextStyle(
+                                                    color: Colors.red.shade800,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'ID: ${c.id.isEmpty ? "-" : c.id}  •  ${c.eligibleCategories.isEmpty ? "全カテゴリ対象" : "${c.eligibleCategories.length}カテゴリ"}',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color:
+                                                theme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -1445,7 +1588,11 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_back_rounded, size: 40, color: theme.colorScheme.outline),
+            Icon(
+              Icons.arrow_back_rounded,
+              size: 40,
+              color: theme.colorScheme.outline,
+            ),
             const SizedBox(height: 12),
             Text(
               '← 左のリストから賞を選択してください',
@@ -1488,12 +1635,20 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, size: 18, color: Colors.red.shade800),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 18,
+                    color: Colors.red.shade800,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'ID「${c.id}」は既に他の賞で使用されています。一意のIDを指定してください。',
-                      style: TextStyle(color: Colors.red.shade800, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.red.shade800,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -1591,8 +1746,17 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('この賞の投票をスキップ可能にする (canSkip)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                        Text('チェックを入れると、投票者が未選択のまま次の賞へ進むことができます', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        Text(
+                          'この賞の投票をスキップ可能にする (canSkip)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
+                        Text(
+                          'チェックを入れると、投票者が未選択のまま次の賞へ進むことができます',
+                          style: TextStyle(fontSize: 11, color: Colors.grey),
+                        ),
                       ],
                     ),
                   ),
@@ -1602,10 +1766,15 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const SizedBox(height: 20),
 
-          _buildFieldHeader('対象団体 (${c.groupIds.isEmpty ? "未選択: すべての団体が対象" : "${c.groupIds.length} 団体選択中"})'),
+          _buildFieldHeader(
+            '含めるカテゴリ (${c.eligibleCategories.isEmpty ? "すべてのカテゴリ" : "${c.eligibleCategories.length}カテゴリ選択中"})',
+          ),
           Text(
-            'チェックを入れた団体のみがこの賞の投票候補になります。何も選択しない場合は全団体が対象になります。',
-            style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
+            '選択したカテゴリに属する団体がこの賞の投票候補になります。何も選択しない場合は全団体が対象になります。',
+            style: TextStyle(
+              fontSize: 12,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 8),
 
@@ -1614,60 +1783,50 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
               TextButton.icon(
                 onPressed: () {
                   setState(() {
-                    c.groupIds = _groups.map((g) => g.id).toList();
+                    c.eligibleCategories = List.of(_allCategories);
                     _hasUnsavedChanges = true;
                   });
                 },
                 icon: const Icon(Icons.select_all_rounded, size: 16),
-                label: const Text('全団体を選択'),
+                label: const Text('全カテゴリを選択'),
               ),
               const SizedBox(width: 8),
               TextButton.icon(
                 onPressed: () {
                   setState(() {
-                    c.groupIds.clear();
+                    c.eligibleCategories.clear();
                     _hasUnsavedChanges = true;
                   });
                 },
                 icon: const Icon(Icons.deselect_rounded, size: 16),
-                label: const Text('選択をクリア (全対象)'),
+                label: const Text('選択をクリア (全カテゴリ)'),
               ),
             ],
           ),
           const SizedBox(height: 8),
 
-          // 高速仮想化スクロール付き団体選択リスト
-          Container(
-            height: 260,
-            decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outlineVariant),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: ListView.separated(
-              itemCount: _groups.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (ctx, idx) {
-                final g = _groups[idx];
-                final isSelected = c.groupIds.contains(g.id);
-                return CheckboxListTile(
-                  dense: true,
-                  value: isSelected,
-                  activeColor: const Color(0xFF7C3AED),
-                  title: Text('${g.name} (${g.id})', style: const TextStyle(fontSize: 13)),
-                  subtitle: Text('${g.groupName} • ${g.floor}F', style: const TextStyle(fontSize: 11)),
-                  onChanged: (val) {
-                    setState(() {
-                      if (val == true) {
-                        c.groupIds.add(g.id);
-                      } else {
-                        c.groupIds.remove(g.id);
-                      }
-                      _hasUnsavedChanges = true;
-                    });
-                  },
-                );
-              },
-            ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children:
+                _allCategories
+                    .map(
+                      (category) => FilterChip(
+                        label: Text(_categoryLabels[category] ?? category.name),
+                        selected: c.eligibleCategories.contains(category),
+                        onSelected:
+                            (selected) => setState(() {
+                              if (selected) {
+                                if (!c.eligibleCategories.contains(category))
+                                  c.eligibleCategories.add(category);
+                              } else {
+                                c.eligibleCategories.remove(category);
+                              }
+                              _hasUnsavedChanges = true;
+                            }),
+                      ),
+                    )
+                    .toList(),
           ),
           const SizedBox(height: 40),
         ],
@@ -1685,7 +1844,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         shortHelpText: '',
         helpUrl: '',
         canSkip: false,
-        groupIds: [],
+        eligibleCategories: [],
       );
       _categories.add(newCat);
       _selectedCategoryIndex = _categories.length - 1;
@@ -1700,21 +1859,26 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('賞の削除'),
-        content: Text('賞「${c.name}（ID: ${c.id}）」を削除しますか？\nこの操作は「変更を保存」を押すまで Firestore には反映されません。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('キャンセル'),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('賞の削除'),
+            content: Text(
+              '賞「${c.name}（ID: ${c.id}）」を削除しますか？\nこの操作は「変更を保存」を押すまで Firestore には反映されません。',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('キャンセル'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red.shade700,
+                ),
+                child: const Text('削除'),
+              ),
+            ],
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700),
-            child: const Text('削除'),
-          ),
-        ],
-      ),
     ).then((confirmed) {
       if (confirmed == true && mounted) {
         setState(() {
@@ -1752,12 +1916,22 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 OutlinedButton.icon(
                   onPressed: () => _pickDate(isStart: true),
                   icon: const Icon(Icons.calendar_today_rounded, size: 16),
-                  label: Text(DateFormat('yyyy/MM/dd').format(_periodConfig.startDate)),
+                  label: Text(
+                    DateFormat('yyyy/MM/dd').format(_periodConfig.startDate),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 DropdownButton<int>(
                   value: _periodConfig.startDate.hour,
-                  items: hours.map((h) => DropdownMenuItem(value: h, child: Text(h.toString().padLeft(2, '0')))).toList(),
+                  items:
+                      hours
+                          .map(
+                            (h) => DropdownMenuItem(
+                              value: h,
+                              child: Text(h.toString().padLeft(2, '0')),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (newHour) {
                     if (newHour == null) return;
                     setState(() {
@@ -1777,7 +1951,15 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 const Text(' 時 '),
                 DropdownButton<int>(
                   value: _periodConfig.startDate.minute,
-                  items: minutes.map((m) => DropdownMenuItem(value: m, child: Text(m.toString().padLeft(2, '0')))).toList(),
+                  items:
+                      minutes
+                          .map(
+                            (m) => DropdownMenuItem(
+                              value: m,
+                              child: Text(m.toString().padLeft(2, '0')),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (newMin) {
                     if (newMin == null) return;
                     setState(() {
@@ -1805,12 +1987,22 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 OutlinedButton.icon(
                   onPressed: () => _pickDate(isStart: false),
                   icon: const Icon(Icons.calendar_today_rounded, size: 16),
-                  label: Text(DateFormat('yyyy/MM/dd').format(_periodConfig.endDate)),
+                  label: Text(
+                    DateFormat('yyyy/MM/dd').format(_periodConfig.endDate),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 DropdownButton<int>(
                   value: _periodConfig.endDate.hour,
-                  items: hours.map((h) => DropdownMenuItem(value: h, child: Text(h.toString().padLeft(2, '0')))).toList(),
+                  items:
+                      hours
+                          .map(
+                            (h) => DropdownMenuItem(
+                              value: h,
+                              child: Text(h.toString().padLeft(2, '0')),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (newHour) {
                     if (newHour == null) return;
                     setState(() {
@@ -1830,7 +2022,15 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                 const Text(' 時 '),
                 DropdownButton<int>(
                   value: _periodConfig.endDate.minute,
-                  items: minutes.map((m) => DropdownMenuItem(value: m, child: Text(m.toString().padLeft(2, '0')))).toList(),
+                  items:
+                      minutes
+                          .map(
+                            (m) => DropdownMenuItem(
+                              value: m,
+                              child: Text(m.toString().padLeft(2, '0')),
+                            ),
+                          )
+                          .toList(),
                   onChanged: (newMin) {
                     if (newMin == null) return;
                     setState(() {
@@ -1884,8 +2084,17 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('定期メンテナンスを有効にする', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                          Text('毎日決まった時間帯に投票受付を一時停止します', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                          Text(
+                            '定期メンテナンスを有効にする',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Text(
+                            '毎日決まった時間帯に投票受付を一時停止します',
+                            style: TextStyle(fontSize: 11, color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -1909,11 +2118,23 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                         children: [
                           DropdownButton<int>(
                             value: _periodConfig.maintenanceStartHour,
-                            items: hours.map((h) => DropdownMenuItem(value: h, child: Text(h.toString().padLeft(2, '0')))).toList(),
+                            items:
+                                hours
+                                    .map(
+                                      (h) => DropdownMenuItem(
+                                        value: h,
+                                        child: Text(
+                                          h.toString().padLeft(2, '0'),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (h) {
                               if (h == null) return;
                               setState(() {
-                                _periodConfig = _periodConfig.copyWith(maintenanceStartHour: h);
+                                _periodConfig = _periodConfig.copyWith(
+                                  maintenanceStartHour: h,
+                                );
                                 _hasUnsavedChanges = true;
                               });
                             },
@@ -1921,11 +2142,23 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                           const Text(' 時 '),
                           DropdownButton<int>(
                             value: _periodConfig.maintenanceStartMinute,
-                            items: minutes.map((m) => DropdownMenuItem(value: m, child: Text(m.toString().padLeft(2, '0')))).toList(),
+                            items:
+                                minutes
+                                    .map(
+                                      (m) => DropdownMenuItem(
+                                        value: m,
+                                        child: Text(
+                                          m.toString().padLeft(2, '0'),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (m) {
                               if (m == null) return;
                               setState(() {
-                                _periodConfig = _periodConfig.copyWith(maintenanceStartMinute: m);
+                                _periodConfig = _periodConfig.copyWith(
+                                  maintenanceStartMinute: m,
+                                );
                                 _hasUnsavedChanges = true;
                               });
                             },
@@ -1940,11 +2173,23 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                         children: [
                           DropdownButton<int>(
                             value: _periodConfig.maintenanceEndHour,
-                            items: hours.map((h) => DropdownMenuItem(value: h, child: Text(h.toString().padLeft(2, '0')))).toList(),
+                            items:
+                                hours
+                                    .map(
+                                      (h) => DropdownMenuItem(
+                                        value: h,
+                                        child: Text(
+                                          h.toString().padLeft(2, '0'),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (h) {
                               if (h == null) return;
                               setState(() {
-                                _periodConfig = _periodConfig.copyWith(maintenanceEndHour: h);
+                                _periodConfig = _periodConfig.copyWith(
+                                  maintenanceEndHour: h,
+                                );
                                 _hasUnsavedChanges = true;
                               });
                             },
@@ -1952,11 +2197,23 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                           const Text(' 時 '),
                           DropdownButton<int>(
                             value: _periodConfig.maintenanceEndMinute,
-                            items: minutes.map((m) => DropdownMenuItem(value: m, child: Text(m.toString().padLeft(2, '0')))).toList(),
+                            items:
+                                minutes
+                                    .map(
+                                      (m) => DropdownMenuItem(
+                                        value: m,
+                                        child: Text(
+                                          m.toString().padLeft(2, '0'),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (m) {
                               if (m == null) return;
                               setState(() {
-                                _periodConfig = _periodConfig.copyWith(maintenanceEndMinute: m);
+                                _periodConfig = _periodConfig.copyWith(
+                                  maintenanceEndMinute: m,
+                                );
                                 _hasUnsavedChanges = true;
                               });
                             },
@@ -2028,9 +2285,14 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       child: Row(
         children: [
           Icon(
-            _hasUnsavedChanges ? Icons.info_outline_rounded : Icons.check_circle_outline_rounded,
+            _hasUnsavedChanges
+                ? Icons.info_outline_rounded
+                : Icons.check_circle_outline_rounded,
             size: 16,
-            color: _hasUnsavedChanges ? Colors.amber.shade700 : Colors.green.shade600,
+            color:
+                _hasUnsavedChanges
+                    ? Colors.amber.shade700
+                    : Colors.green.shade600,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -2068,7 +2330,10 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           if (required) ...[
             const SizedBox(width: 4),
-            const Text('*', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            const Text(
+              '*',
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
           ],
         ],
       ),
@@ -2109,7 +2374,7 @@ class _EditableCategory {
   String shortHelpText;
   String helpUrl;
   bool canSkip;
-  List<String> groupIds;
+  List<GroupCategory> eligibleCategories;
 
   _EditableCategory({
     required this.id,
@@ -2118,6 +2383,6 @@ class _EditableCategory {
     required this.shortHelpText,
     required this.helpUrl,
     required this.canSkip,
-    required this.groupIds,
+    required this.eligibleCategories,
   });
 }

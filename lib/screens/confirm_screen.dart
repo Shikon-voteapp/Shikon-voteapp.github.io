@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/storage_image.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import '../models/vote_category.dart';
@@ -187,8 +188,8 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    group.imagePath,
+                  child: StorageImage(
+                    path: group.imagePath,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,

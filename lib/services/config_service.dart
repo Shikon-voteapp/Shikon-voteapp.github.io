@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,15 +25,72 @@ class ConfigService {
   }
 
   // ─────────────────────────────────────────
+  /// Loads the authoritative voting configuration from Firestore.
+  static Future<void> loadRuntimeConfiguration() async {
+    final period = await loadVotingPeriod();
+    final groups = await loadGroups();
+    if (period == null) throw StateError('Firestore に投票期間設定がありません。');
+    if (groups.isEmpty) throw StateError('Firestore に投票団体がありません。');
+    final categories = await loadVoteCategories(groups);
+    if (categories.isEmpty) throw StateError('Firestore に投票カテゴリがありません。');
+    defaultVotingPeriod = period;
+    allGroups
+      ..clear()
+      ..addAll(groups);
+    voteCategories
+      ..clear()
+      ..addAll(categories);
+    final namesDoc =
+        await _firestore.collection('app_config').doc('category_names').get();
+    final names = Map<String, dynamic>.from(namesDoc.data()?['names'] ?? {});
+    groupCategoryNames
+      ..clear()
+      ..addEntries(
+        names.entries.map((entry) {
+          final category = GroupCategory.values.firstWhere(
+            (value) => value.name == entry.key,
+            orElse: () => GroupCategory.other,
+          );
+          return MapEntry(category, entry.value.toString());
+        }),
+      );
+    // Use cloud-provided labels when present; older projects may not have this
+    // optional document yet. Fill missing labels from category metadata.
+    for (final category in GroupCategory.values) {
+      groupCategoryNames.putIfAbsent(
+        category,
+        () => switch (category) {
+          GroupCategory.Tenji => '教室展示',
+          GroupCategory.Moyoshi => '教室催し物',
+          GroupCategory.Gakunen => '学年展示',
+          GroupCategory.Roten => '露店',
+          GroupCategory.Stage => '部活ステージ',
+          GroupCategory.Performance => 'パフォーマンス',
+          GroupCategory.Band => 'バンド',
+          GroupCategory.other => 'その他',
+        },
+      );
+    }
+    final flowDoc =
+        await _firestore
+            .collection('app_config')
+            .doc('student_verification')
+            .get();
+    final flow = flowDoc.data() ?? const <String, dynamic>{};
+    studentVerification = VoteCategory(
+      id: 'student_verification',
+      name: flow['name'] ?? '投票券情報入力',
+      description: flow['description'] ?? '投票券に記載されている番号を入力してください。',
+      groups: const [],
+    );
+  }
   // VotingPeriodConfig
   // ─────────────────────────────────────────
 
   static Future<VotingPeriodConfig?> loadVotingPeriod() async {
     try {
-      final doc = await _firestore
-          .collection('app_config')
-          .doc('voting_period')
-          .get();
+      final doc =
+          await _firestore.collection('app_config').doc('voting_period').get();
       if (!doc.exists) return null;
       final data = doc.data()!;
       return VotingPeriodConfig(
@@ -62,27 +120,41 @@ class ConfigService {
     });
   }
 
+  static Future<void> saveRuntimeLabels() async {
+    await _firestore.collection('app_config').doc('category_names').set({
+      'names': {
+        for (final entry in groupCategoryNames.entries)
+          entry.key.name: entry.value,
+      },
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+    await _firestore.collection('app_config').doc('student_verification').set({
+      'name': studentVerification.name,
+      'description': studentVerification.description,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   // ─────────────────────────────────────────
   // Groups
   // ─────────────────────────────────────────
 
   static Future<List<Group>> loadGroups() async {
     try {
-      final snapshot = await _firestore
-          .collection('groups')
-          .orderBy('order')
-          .get();
+      final snapshot =
+          await _firestore.collection('groups').orderBy('order').get();
       if (snapshot.docs.isEmpty) return [];
       return snapshot.docs.map((doc) {
         final data = doc.data();
         List<GroupCategory> categories = [];
         if (data['categories'] != null) {
-          categories = (data['categories'] as List).map((c) {
-            return GroupCategory.values.firstWhere(
-              (e) => e.toString().split('.').last == c,
-              orElse: () => GroupCategory.other,
-            );
-          }).toList();
+          categories =
+              (data['categories'] as List).map((c) {
+                return GroupCategory.values.firstWhere(
+                  (e) => e.toString().split('.').last == c,
+                  orElse: () => GroupCategory.other,
+                );
+              }).toList();
         }
         return Group(
           id: doc.id,
@@ -150,16 +222,27 @@ class ConfigService {
     List<Group> allGroups,
   ) async {
     try {
-      final snapshot = await _firestore
-          .collection('vote_categories')
-          .orderBy('order')
-          .get();
+      final snapshot =
+          await _firestore.collection('vote_categories').orderBy('order').get();
       if (snapshot.docs.isEmpty) return [];
       return snapshot.docs.map((doc) {
         final data = doc.data();
-        final groupIds = List<String>.from(data['groupIds'] ?? []);
-        final groups =
-            allGroups.where((g) => groupIds.contains(g.id)).toList();
+        final legacyGroupIds = List<String>.from(data['groupIds'] ?? []);
+        final eligibleCategories =
+            (data['eligibleCategories'] as List?)
+                ?.map(
+                  (value) => GroupCategory.values.firstWhere(
+                    (category) => category.name == value,
+                    orElse: () => GroupCategory.other,
+                  ),
+                )
+                .toList();
+        final oldGroups =
+            legacyGroupIds.isEmpty
+                ? allGroups
+                : allGroups
+                    .where((g) => legacyGroupIds.contains(g.id))
+                    .toList();
         return VoteCategory(
           id: doc.id,
           name: data['name'] ?? '',
@@ -167,7 +250,20 @@ class ConfigService {
           shortHelpText: data['shortHelpText'],
           helpUrl: data['helpUrl'],
           canSkip: data['canSkip'] ?? false,
-          groups: groups,
+          groups: allGroups,
+          // New records include category filters; old group IDs are converted
+          // to their current categories during load.
+          eligibleCategories:
+              eligibleCategories ??
+              (legacyGroupIds.isEmpty
+                  ? null
+                  : GroupCategory.values
+                      .where(
+                        (category) => oldGroups.any(
+                          (group) => group.hasCategory(category),
+                        ),
+                      )
+                      .toList()),
         );
       }).toList();
     } catch (e) {
@@ -188,12 +284,94 @@ class ConfigService {
         'shortHelpText': cat.shortHelpText ?? '',
         'helpUrl': cat.helpUrl ?? '',
         'canSkip': cat.canSkip,
-        'groupIds': cat.groups.map((g) => g.id).toList(),
+        'eligibleCategories':
+            cat.eligibleCategories?.map((c) => c.name).toList() ?? [],
         'order': i,
         'updatedAt': FieldValue.serverTimestamp(),
       });
     }
     await batch.commit();
+  }
+
+  static Future<int> uploadBundledAssets({
+    void Function(int, int)? onProgress,
+  }) async {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final paths =
+        manifest
+            .listAssets()
+            .where((path) => path.startsWith('assets/'))
+            .toList();
+    var uploaded = 0;
+    for (final assetPath in paths) {
+      final data = await rootBundle.load(assetPath);
+      // Keep uploads under the path granted by the deployed Storage rules.
+      final storagePath =
+          'groups/legacy_assets/${assetPath.substring('assets/'.length)}';
+      final ext = assetPath.split('.').last.toLowerCase();
+      final contentType = switch (ext) {
+        'jpg' || 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+        'webp' => 'image/webp',
+        'txt' => 'text/plain',
+        _ => 'application/octet-stream',
+      };
+      await _storage
+          .ref(storagePath)
+          .putData(
+            data.buffer.asUint8List(),
+            SettableMetadata(contentType: contentType),
+          );
+      onProgress?.call(++uploaded, paths.length);
+    }
+    // Move configured group artwork references to the uploaded Storage objects.
+    final uploadedPaths =
+        paths
+            .where(
+              (path) => RegExp(
+                r'\.(jpe?g|png|gif|webp)$',
+                caseSensitive: false,
+              ).hasMatch(path),
+            )
+            .map((path) => 'groups/legacy_assets/${path.substring('assets/'.length)}')
+            .toSet();
+    final groups = await loadGroups();
+    final replacements = <String, Group>{};
+    final updatedGroups =
+        groups.map((group) {
+          final basename =
+              group.imagePath.replaceAll('\\', '/').split('/').last;
+          final match =
+              uploadedPaths
+                  .where((path) => path.split('/').last == basename)
+                  .firstOrNull;
+          if (match == null) return group;
+          final updated = Group(
+            id: group.id,
+            name: group.name,
+            groupName: group.groupName,
+            description: group.description,
+            imagePath: match,
+            floor: group.floor,
+            pamphletPage: group.pamphletPage,
+            categories: group.categories,
+          );
+          replacements[group.id] = updated;
+          return updated;
+        }).toList();
+    await saveAllGroups(updatedGroups);
+    allGroups
+      ..clear()
+      ..addAll(updatedGroups);
+    for (final category in voteCategories) {
+      category.groups
+        ..clear()
+        ..addAll(
+          category.groups.map((group) => replacements[group.id] ?? group),
+        );
+    }
+    return uploaded;
   }
 
   static Future<void> deleteVoteCategory(String categoryId) async {
@@ -274,86 +452,4 @@ class ConfigService {
   }
 
   // ─────────────────────────────────────────
-  // Migration: vote_options.dart → Firestore
-  // ─────────────────────────────────────────
-
-  /// 既存データがない場合のみ vote_options.dart の内容を Firestore に投入する
-  static Future<MigrationResult> migrateFromVoteOptions({
-    required List<Group> sourceGroups,
-    required List<VoteCategory> sourceCategories,
-    required VotingPeriodConfig sourcePeriod,
-    bool overwrite = false,
-  }) async {
-    int groupsAdded = 0;
-    int categoriesAdded = 0;
-    bool periodSet = false;
-
-    // 投票期間
-    final existingPeriod = await _firestore
-        .collection('app_config')
-        .doc('voting_period')
-        .get();
-    if (!existingPeriod.exists || overwrite) {
-      await saveVotingPeriod(sourcePeriod);
-      periodSet = true;
-    }
-
-    // 団体
-    for (int i = 0; i < sourceGroups.length; i++) {
-      final group = sourceGroups[i];
-      final existing = await _firestore
-          .collection('groups')
-          .doc(group.id)
-          .get();
-      if (!existing.exists || overwrite) {
-        await saveGroup(group, order: i);
-        groupsAdded++;
-      }
-    }
-
-    // 賞カテゴリ
-    for (int i = 0; i < sourceCategories.length; i++) {
-      final cat = sourceCategories[i];
-      final existing = await _firestore
-          .collection('vote_categories')
-          .doc(cat.id)
-          .get();
-      if (!existing.exists || overwrite) {
-        final ref = _firestore.collection('vote_categories').doc(cat.id);
-        await ref.set({
-          'name': cat.name,
-          'description': cat.description,
-          'shortHelpText': cat.shortHelpText ?? '',
-          'helpUrl': cat.helpUrl ?? '',
-          'canSkip': cat.canSkip,
-          'groupIds': cat.groups.map((g) => g.id).toList(),
-          'order': i,
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
-        categoriesAdded++;
-      }
-    }
-
-    return MigrationResult(
-      groupsAdded: groupsAdded,
-      categoriesAdded: categoriesAdded,
-      periodSet: periodSet,
-    );
-  }
-}
-
-class MigrationResult {
-  final int groupsAdded;
-  final int categoriesAdded;
-  final bool periodSet;
-
-  const MigrationResult({
-    required this.groupsAdded,
-    required this.categoriesAdded,
-    required this.periodSet,
-  });
-
-  @override
-  String toString() =>
-      '団体: $groupsAdded件, 賞: $categoriesAdded件, 投票期間: ${periodSet ? "設定済" : "スキップ"}';
 }

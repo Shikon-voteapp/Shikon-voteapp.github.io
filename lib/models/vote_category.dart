@@ -6,6 +6,7 @@ class VoteCategory {
   final String name;
   final String description;
   final List<Group> groups;
+  final List<GroupCategory>? _eligibleCategories;
   final bool canSkip;
   final String? helpUrl;
   final String? shortHelpText;
@@ -15,10 +16,21 @@ class VoteCategory {
     required this.name,
     required this.description,
     required this.groups,
+    List<GroupCategory>? eligibleCategories,
     this.canSkip = false,
     this.helpUrl,
     this.shortHelpText,
-  });
+  }) : _eligibleCategories = eligibleCategories;
+
+  List<GroupCategory>? get eligibleCategories => _eligibleCategories;
+
+  List<Group> getFilteredGroups() {
+    if (_eligibleCategories == null || _eligibleCategories!.isEmpty)
+      return groups;
+    return groups
+        .where((group) => _eligibleCategories!.any(group.hasCategory))
+        .toList();
+  }
 
   // 既存のVoteCategoryから新しいVoteCategoryを作成
   factory VoteCategory.fromVoteCategory(dynamic oldCategory) {
@@ -30,6 +42,7 @@ class VoteCategory {
       canSkip: oldCategory.canSkip,
       helpUrl: oldCategory.helpUrl,
       shortHelpText: oldCategory.shortHelpText,
+      eligibleCategories: oldCategory.eligibleCategories,
     );
   }
 
@@ -43,6 +56,8 @@ class VoteCategory {
       'canSkip': canSkip,
       'helpUrl': helpUrl,
       'shortHelpText': shortHelpText,
+      'eligibleCategories':
+          _eligibleCategories?.map((category) => category.name).toList(),
     };
   }
 
@@ -63,6 +78,15 @@ class VoteCategory {
       canSkip: json['canSkip'] ?? false,
       helpUrl: json['helpUrl'],
       shortHelpText: json['shortHelpText'],
+      eligibleCategories:
+          (json['eligibleCategories'] as List?)
+              ?.map(
+                (value) => GroupCategory.values.firstWhere(
+                  (category) => category.name == value,
+                  orElse: () => GroupCategory.other,
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -75,6 +99,7 @@ class VoteCategory {
     bool? canSkip,
     String? helpUrl,
     String? shortHelpText,
+    List<GroupCategory>? eligibleCategories,
   }) {
     return VoteCategory(
       id: id ?? this.id,
@@ -84,6 +109,7 @@ class VoteCategory {
       canSkip: canSkip ?? this.canSkip,
       helpUrl: helpUrl ?? this.helpUrl,
       shortHelpText: shortHelpText ?? this.shortHelpText,
+      eligibleCategories: eligibleCategories ?? _eligibleCategories,
     );
   }
 }

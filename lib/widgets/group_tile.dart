@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'storage_image.dart';
 import 'neumorphic_wrappers.dart';
 import '../models/group.dart';
 import './group_selection_area.dart'; // group_selection_area.dart をインポート
@@ -43,8 +44,8 @@ class GroupTile extends StatelessWidget {
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.all(8),
-                      child: Image.asset(
-                        group.imagePath,
+                      child: StorageImage(
+                        path: group.imagePath,
                         fit: BoxFit.fitHeight,
                       ),
                     ),

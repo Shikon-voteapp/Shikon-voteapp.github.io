@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../widgets/main_layout.dart';
 import 'scanner_screen.dart';
 import '../platform/platform_utils.dart';
-import '../widgets/custom_dialog.dart';
-import '../config/vote_options.dart';
 import '../widgets/liquid_glass.dart';
 
 class SelectionScreen extends StatelessWidget {
@@ -16,9 +12,10 @@ class SelectionScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bool isDark = theme.brightness == Brightness.dark;
-    final glassColor = isDark
-        ? Colors.black.withValues(alpha: 0.15)
-        : Colors.white.withValues(alpha: 0.25);
+    final glassColor =
+        isDark
+            ? Colors.black.withValues(alpha: 0.15)
+            : Colors.white.withValues(alpha: 0.25);
 
     return MainLayout(
       title: 'ようこそ',
@@ -27,40 +24,9 @@ class SelectionScreen extends StatelessWidget {
       helpTitle: '投票について',
       helpContent: '「投票を開始する」ボタンを押して、投票を開始してください。パンフレットに同封された投票券をご準備ください。',
       onNext: () {
-        final now = DateTime.now();
-        final isOutdated = now.difference(dataUpdateDate).inDays >= 180;
-        if (isOutdated) {
-          bool didReload = false;
-          showCustomDialog(
-            context: context,
-            title: '再読み込みをしてください',
-            content:
-                'このアプリのデータが古い可能性があります。最新のデータを取得するため、キャッシュを破棄して再読み込みを行ってください。\n3秒後に再読み込みをします...',
-            closeButtonText: null,
-            primaryActionText: 'キャッシュを破棄して再読み込み',
-            enablePrimaryLoading: true,
-            minLoadingMs: 800,
-            maxLoadingMs: 1400,
-            onPrimaryAction: () {
-              if (!didReload) {
-                didReload = true;
-                PlatformUtils.clearCacheAndReload();
-              }
-            },
-          );
-          Timer(const Duration(seconds: 3), () {
-            if (!didReload) {
-              didReload = true;
-              PlatformUtils.clearCacheAndReload();
-            }
-          });
-          return;
-        }
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const ScannerScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const ScannerScreen()),
         );
       },
       nextLabel: '投票を開始する',
@@ -78,11 +44,12 @@ class SelectionScreen extends StatelessWidget {
                   blur: 20.0,
                 ),
                 child: LiquidGlass(
-                  shape: LiquidRoundedRectangle(
-                    borderRadius: 24.0,
-                  ),
+                  shape: LiquidRoundedRectangle(borderRadius: 24.0),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 32.0,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -151,4 +118,3 @@ class SelectionScreen extends StatelessWidget {
     );
   }
 }
-

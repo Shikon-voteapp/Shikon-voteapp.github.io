@@ -6,6 +6,7 @@ import 'confirm_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../services/accessibility_service.dart';
 import 'package:flutter/material.dart';
+import '../widgets/storage_image.dart';
 import '../widgets/neumorphic_wrappers.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
@@ -54,7 +55,7 @@ class _VoteScreenState extends State<VoteScreen> {
     _returnToConfirm = widget.returnToConfirm;
 
     // 初期グループリストを設定
-    _filteredGroups = category.groups;
+    _filteredGroups = category.getFilteredGroups();
 
     // 画面復元時に選択状態を復元するかどうか
     if (widget.restoreSelection) {
@@ -159,11 +160,12 @@ class _VoteScreenState extends State<VoteScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ConfirmScreen(
-                    uuid: widget.uuid,
-                    selections: currentSelections,
-                    isGridView: _isGridView,
-                  ),
+                  builder:
+                      (context) => ConfirmScreen(
+                        uuid: widget.uuid,
+                        selections: currentSelections,
+                        isGridView: _isGridView,
+                      ),
                 ),
               );
             },
@@ -184,11 +186,12 @@ class _VoteScreenState extends State<VoteScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ConfirmScreen(
-                    uuid: widget.uuid,
-                    selections: currentSelections,
-                    isGridView: _isGridView,
-                  ),
+                  builder:
+                      (context) => ConfirmScreen(
+                        uuid: widget.uuid,
+                        selections: currentSelections,
+                        isGridView: _isGridView,
+                      ),
                 ),
               );
             },
@@ -246,16 +249,10 @@ class _VoteScreenState extends State<VoteScreen> {
         ),
         children: [
           const TextSpan(text: '投票画面 '),
-          gakNumSpan(
-            '$displayIndex',
-            style: const TextStyle(fontSize: 14.5),
-          ),
+          gakNumSpan('$displayIndex', style: const TextStyle(fontSize: 14.5)),
           const TextSpan(
             text: '/',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           gakNumSpan(
             '$totalCategories',
@@ -281,9 +278,13 @@ class _VoteScreenState extends State<VoteScreen> {
       nextLabel: voteButtonText,
       extendBehindBottomBar: false,
       responsiveRail: true,
-      child: isWide
-          ? _buildWideTwoPaneLayout(isCompact: isCompact, isZoomed: isZoomed)
-          : _buildMobileLayout(isCompact: isCompact, isZoomed: isZoomed),
+      child:
+          isWide
+              ? _buildWideTwoPaneLayout(
+                isCompact: isCompact,
+                isZoomed: isZoomed,
+              )
+              : _buildMobileLayout(isCompact: isCompact, isZoomed: isZoomed),
     );
   }
 
@@ -295,16 +296,17 @@ class _VoteScreenState extends State<VoteScreen> {
         _buildGroupDetailHeader(isCompact: isCompact),
         _buildControlsToolbar(isCompact: isCompact, isZoomed: isZoomed),
         Expanded(
-          child: _buildAnimatedGroupView(
-            forceList: isCompact || isZoomed,
-          ),
+          child: _buildAnimatedGroupView(forceList: isCompact || isZoomed),
         ),
       ],
     );
   }
 
   // ─── Fold・タブレット・PC用 2ペインレイアウト ─────────────────────────
-  Widget _buildWideTwoPaneLayout({required bool isCompact, required bool isZoomed}) {
+  Widget _buildWideTwoPaneLayout({
+    required bool isCompact,
+    required bool isZoomed,
+  }) {
     final width = MediaQuery.of(context).size.width;
     final double leftPaneWidth = (width * 0.33).clamp(320.0, 420.0);
 
@@ -314,16 +316,16 @@ class _VoteScreenState extends State<VoteScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // ─ 左ペイン：投票先詳細ウィンドウ ─────────────────
-          SizedBox(
-            width: leftPaneWidth,
-            child: _buildLeftDetailPane(),
-          ),
+          SizedBox(width: leftPaneWidth, child: _buildLeftDetailPane()),
 
           const SizedBox(width: 16.0),
 
           // ─ 右ペイン：投票先一覧 ─────────────────────────
           Expanded(
-            child: _buildRightCandidatePane(isCompact: isCompact, isZoomed: isZoomed),
+            child: _buildRightCandidatePane(
+              isCompact: isCompact,
+              isZoomed: isZoomed,
+            ),
           ),
         ],
       ),
@@ -388,196 +390,227 @@ class _VoteScreenState extends State<VoteScreen> {
 
         // 投票先詳細ウィンドウ
         Expanded(
-          child: _selectedGroup == null
-              ? M3ECard(
-                  variant: M3ECardVariant.elevated,
-                  elevation: 1.0,
-                  borderRadius: BorderRadius.circular(20.0),
-                  padding: const EdgeInsets.all(24.0),
-                  child: Center(
+          child:
+              _selectedGroup == null
+                  ? M3ECard(
+                    variant: M3ECardVariant.elevated,
+                    elevation: 1.0,
+                    borderRadius: BorderRadius.circular(20.0),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondaryContainer.withValues(
+                                alpha: 0.5,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.touch_app_outlined,
+                              size: 32,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            '投票先が未選択です',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '右側の一覧から投票したい団体をクリックすると、ここに詳細が表示されます。',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: colorScheme.onSurfaceVariant,
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          M3EButton(
+                            onPressed: () => _showInitialHelp(context),
+                            style: M3EButtonStyle.tonal,
+                            size: M3EButtonSize.sm,
+                            shape: M3EButtonShape.round,
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.info_outline, size: 16),
+                                SizedBox(width: 6),
+                                Text(
+                                  'この賞の説明を見る',
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  : M3ECard(
+                    variant: M3ECardVariant.elevated,
+                    elevation: 2.0,
+                    borderRadius: BorderRadius.circular(20.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // ステータスバー（選択中 + 選択解除ボタン）
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    size: 14,
+                                    color: colorScheme.onPrimaryContainer,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '選択中',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onPrimaryContainer,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            TextButton.icon(
+                              onPressed:
+                                  () => setState(() => _selectedGroup = null),
+                              icon: const Icon(Icons.close, size: 16),
+                              label: const Text(
+                                '選択解除',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              style: TextButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 画像（トリミングせず拡大縮小のみで表示）
                         Container(
-                          width: 64,
-                          height: 64,
+                          height: 200,
+                          width: double.infinity,
                           decoration: BoxDecoration(
-                            color: colorScheme.secondaryContainer.withValues(alpha: 0.5),
-                            shape: BoxShape.circle,
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(14.0),
                           ),
-                          child: Icon(
-                            Icons.touch_app_outlined,
-                            size: 32,
-                            color: colorScheme.primary,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(14.0),
+                            child: StorageImage(
+                              path: _selectedGroup!.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder:
+                                  (context, error, stackTrace) => Container(
+                                    color: colorScheme.secondaryContainer,
+                                    child: const Center(
+                                      child: Icon(Icons.broken_image, size: 40),
+                                    ),
+                                  ),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
+
+                        // 団体名 & 企画名
                         Text(
-                          '投票先が未選択です',
-                          style: TextStyle(
-                            fontSize: 16,
+                          _selectedGroup!.name,
+                          style: const TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 2),
                         Text(
-                          '右側の一覧から投票したい団体をクリックすると、ここに詳細が表示されます。',
-                          textAlign: TextAlign.center,
+                          _selectedGroup!.groupName,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                             color: colorScheme.onSurfaceVariant,
-                            height: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        M3EButton(
-                          onPressed: () => _showInitialHelp(context),
-                          style: M3EButtonStyle.tonal,
-                          size: M3EButtonSize.sm,
-                          shape: M3EButtonShape.round,
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.info_outline, size: 16),
-                              SizedBox(width: 6),
-                              Text('この賞の説明を見る', style: TextStyle(fontSize: 13)),
-                            ],
+                        const SizedBox(height: 10),
+
+                        // チップ（階数、部門、パンフレット）
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            _buildDetailTag(
+                              icon: Icons.location_on_outlined,
+                              label:
+                                  _selectedGroup!.floor == 4
+                                      ? 'ステージ'
+                                      : '${_selectedGroup!.floor}階',
+                            ),
+                            _buildDetailTag(
+                              icon: Icons.category_outlined,
+                              label:
+                                  groupCategoryNames[_selectedGroup!
+                                      .categories
+                                      .first]!,
+                            ),
+                            if (_selectedGroup!.pamphletPage != null)
+                              _buildDetailTag(
+                                icon: Icons.menu_book_outlined,
+                                label: 'P${_selectedGroup!.pamphletPage}',
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Divider(height: 1),
+                        const SizedBox(height: 12),
+
+                        // 説明文（スクロール可能）
+                        Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Text(
+                              _selectedGroup!.description,
+                              style: TextStyle(
+                                fontSize: 14,
+                                height: 1.6,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.85,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                )
-              : M3ECard(
-                  variant: M3ECardVariant.elevated,
-                  elevation: 2.0,
-                  borderRadius: BorderRadius.circular(20.0),
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ステータスバー（選択中 + 選択解除ボタン）
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.check_circle, size: 14, color: colorScheme.onPrimaryContainer),
-                                const SizedBox(width: 6),
-                                Text(
-                                  '選択中',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.onPrimaryContainer,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          TextButton.icon(
-                            onPressed: () => setState(() => _selectedGroup = null),
-                            icon: const Icon(Icons.close, size: 16),
-                            label: const Text('選択解除', style: TextStyle(fontSize: 12)),
-                            style: TextButton.styleFrom(
-                              visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // 画像（トリミングせず拡大縮小のみで表示）
-                      Container(
-                        height: 200,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-                          borderRadius: BorderRadius.circular(14.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14.0),
-                          child: Image.asset(
-                            _selectedGroup!.imagePath,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: colorScheme.secondaryContainer,
-                              child: const Center(child: Icon(Icons.broken_image, size: 40)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // 団体名 & 企画名
-                      Text(
-                        _selectedGroup!.name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _selectedGroup!.groupName,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // チップ（階数、部門、パンフレット）
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: [
-                          _buildDetailTag(
-                            icon: Icons.location_on_outlined,
-                            label: _selectedGroup!.floor == 4 ? 'ステージ' : '${_selectedGroup!.floor}階',
-                          ),
-                          _buildDetailTag(
-                            icon: Icons.category_outlined,
-                            label: groupCategoryNames[_selectedGroup!.categories.first]!,
-                          ),
-                          if (_selectedGroup!.pamphletPage != null)
-                            _buildDetailTag(
-                              icon: Icons.menu_book_outlined,
-                              label: 'P${_selectedGroup!.pamphletPage}',
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      const Divider(height: 1),
-                      const SizedBox(height: 12),
-
-                      // 説明文（スクロール可能）
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Text(
-                            _selectedGroup!.description,
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.6,
-                              color: colorScheme.onSurface.withValues(alpha: 0.85),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
         ),
       ],
     );
@@ -610,7 +643,10 @@ class _VoteScreenState extends State<VoteScreen> {
   }
 
   // ─── 右ペイン：投票先一覧（2ペイン用） ─────────────────────────────
-  Widget _buildRightCandidatePane({required bool isCompact, required bool isZoomed}) {
+  Widget _buildRightCandidatePane({
+    required bool isCompact,
+    required bool isZoomed,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -682,9 +718,10 @@ class _VoteScreenState extends State<VoteScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: theme.brightness == Brightness.dark
-                              ? theme.colorScheme.onSurface
-                              : theme.colorScheme.primary,
+                          color:
+                              theme.brightness == Brightness.dark
+                                  ? theme.colorScheme.onSurface
+                                  : theme.colorScheme.primary,
                         ),
                       ),
                       TextSpan(
@@ -692,7 +729,9 @@ class _VoteScreenState extends State<VoteScreen> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.75),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.75,
+                          ),
                         ),
                       ),
                     ],
@@ -754,7 +793,9 @@ class _VoteScreenState extends State<VoteScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                           ),
                         ],
@@ -763,7 +804,10 @@ class _VoteScreenState extends State<VoteScreen> {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(6),
@@ -771,7 +815,11 @@ class _VoteScreenState extends State<VoteScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check, size: 12, color: theme.colorScheme.onPrimaryContainer),
+                        Icon(
+                          Icons.check,
+                          size: 12,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           '詳細を見る',
@@ -794,13 +842,14 @@ class _VoteScreenState extends State<VoteScreen> {
                     height: 48,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        _selectedGroup!.imagePath,
+                      child: StorageImage(
+                        path: _selectedGroup!.imagePath,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: colorScheme.secondaryContainer,
-                          child: const Icon(Icons.broken_image, size: 24),
-                        ),
+                        errorBuilder:
+                            (context, error, stackTrace) => Container(
+                              color: colorScheme.secondaryContainer,
+                              child: const Icon(Icons.broken_image, size: 24),
+                            ),
                       ),
                     ),
                   ),
@@ -832,7 +881,7 @@ class _VoteScreenState extends State<VoteScreen> {
                         ),
                         const SizedBox(height: 1),
                         Text(
-                          '${_selectedGroup!.floor == 4 ? 'ステージ' : '${_selectedGroup!.floor}階'}・${groupCategoryNames[_selectedGroup!.categories.first]!}'
+                          '${_selectedGroup!.floor == 4 ? 'Stage' : '${_selectedGroup!.floor}階'}・${groupCategoryNames[_selectedGroup!.categories.first]!}'
                           '${_selectedGroup!.pamphletPage != null ? '・P${_selectedGroup!.pamphletPage}' : ''}',
                           style: TextStyle(
                             fontSize: 10.5,
@@ -856,9 +905,10 @@ class _VoteScreenState extends State<VoteScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: GestureDetector(
-        onTap: _selectedGroup == null
-            ? null
-            : () => _showGroupDetailDialog(_selectedGroup!),
+        onTap:
+            _selectedGroup == null
+                ? null
+                : () => _showGroupDetailDialog(_selectedGroup!),
         behavior: HitTestBehavior.opaque,
         child: M3ECard(
           variant: M3ECardVariant.elevated,
@@ -871,7 +921,10 @@ class _VoteScreenState extends State<VoteScreen> {
     );
   }
 
-  Widget _buildControlsToolbar({required bool isCompact, required bool isZoomed}) {
+  Widget _buildControlsToolbar({
+    required bool isCompact,
+    required bool isZoomed,
+  }) {
     final floors = [1, 2, 3, 4]; // 1,2,3階とステージ(4)
     final floorLabels = {1: '1階', 2: '2階', 3: '3階', 4: 'ステージ'};
 
@@ -920,12 +973,14 @@ class _VoteScreenState extends State<VoteScreen> {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    final Color bg = isSelected
-        ? theme.colorScheme.primaryContainer
-        : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
-    final Color fg = isSelected
-        ? theme.colorScheme.onPrimaryContainer
-        : theme.colorScheme.onSurfaceVariant;
+    final Color bg =
+        isSelected
+            ? theme.colorScheme.primaryContainer
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4);
+    final Color fg =
+        isSelected
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -987,15 +1042,16 @@ class _VoteScreenState extends State<VoteScreen> {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    final Color bg = isSelected
-        ? theme.colorScheme.primaryContainer
-        : Colors.transparent;
-    final Color textColor = isSelected
-        ? theme.colorScheme.onPrimaryContainer
-        : theme.colorScheme.onSurfaceVariant;
-    final Color iconColor = isSelected
-        ? theme.colorScheme.onPrimaryContainer
-        : theme.colorScheme.onSurfaceVariant;
+    final Color bg =
+        isSelected ? theme.colorScheme.primaryContainer : Colors.transparent;
+    final Color textColor =
+        isSelected
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onSurfaceVariant;
+    final Color iconColor =
+        isSelected
+            ? theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onPressed,
@@ -1046,10 +1102,16 @@ class _VoteScreenState extends State<VoteScreen> {
       builder: (context, constraints) {
         // 横幅に応じて動的に列数を決定（画面横幅が小さくても最低3列以上表示）
         const double horizontalPadding = 24.0; // 左右12px
-        final double availableWidth = (constraints.maxWidth - horizontalPadding).clamp(100.0, 5000.0);
-        final int crossAxisCount = (availableWidth / 115.0).floor().clamp(3, 10);
+        final double availableWidth = (constraints.maxWidth - horizontalPadding)
+            .clamp(100.0, 5000.0);
+        final int crossAxisCount = (availableWidth / 115.0).floor().clamp(
+          3,
+          10,
+        );
         final double itemWidth = availableWidth / crossAxisCount;
-        final double childAspectRatio = (itemWidth / (itemWidth + (itemWidth < 125 ? 38.0 : 44.0))).clamp(0.68, 0.85);
+        final double childAspectRatio = (itemWidth /
+                (itemWidth + (itemWidth < 125 ? 38.0 : 44.0)))
+            .clamp(0.68, 0.85);
 
         return AnimationLimiter(
           child: Scrollbar(
@@ -1119,7 +1181,12 @@ class _VoteScreenState extends State<VoteScreen> {
                             foregroundDecoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withValues(alpha: 0.6),
+                                color:
+                                    isSelected
+                                        ? theme.colorScheme.primary
+                                        : theme.dividerColor.withValues(
+                                          alpha: 0.6,
+                                        ),
                                 width: isSelected ? 2.5 : 1.0,
                               ),
                             ),
@@ -1127,38 +1194,48 @@ class _VoteScreenState extends State<VoteScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Expanded(
-                                  child: Image.asset(
-                                    group.imagePath,
+                                  child: StorageImage(
+                                    path: group.imagePath,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     errorBuilder:
-                                        (context, error, stackTrace) => Container(
-                                          color: theme.colorScheme.secondaryContainer,
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            Icons.error_outline,
-                                            color:
-                                                theme
-                                                    .colorScheme
-                                                    .onSecondaryContainer,
-                                          ),
-                                        ),
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                              color:
+                                                  theme
+                                                      .colorScheme
+                                                      .secondaryContainer,
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons.error_outline,
+                                                color:
+                                                    theme
+                                                        .colorScheme
+                                                        .onSecondaryContainer,
+                                              ),
+                                            ),
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 7),
-                                  color: isSelected
-                                      ? theme.colorScheme.primaryContainer.withValues(alpha: 0.25)
-                                      : theme.colorScheme.surface,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 7,
+                                  ),
+                                  color:
+                                      isSelected
+                                          ? theme.colorScheme.primaryContainer
+                                              .withValues(alpha: 0.25)
+                                          : theme.colorScheme.surface,
                                   alignment: Alignment.center,
                                   child: Text(
                                     group.name,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: itemWidth < 120 ? 11 : 12.5,
-                                      color: isSelected
-                                          ? theme.colorScheme.primary
-                                          : theme.colorScheme.onSurface,
+                                      color:
+                                          isSelected
+                                              ? theme.colorScheme.primary
+                                              : theme.colorScheme.onSurface,
                                     ),
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
@@ -1170,10 +1247,10 @@ class _VoteScreenState extends State<VoteScreen> {
                           ),
                         ),
                       ),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
             ),
           ),
         );
@@ -1259,91 +1336,97 @@ class _VoteScreenState extends State<VoteScreen> {
                           foregroundDecoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: isSelected ? colorScheme.primary : theme.dividerColor.withValues(alpha: 0.6),
+                              color:
+                                  isSelected
+                                      ? colorScheme.primary
+                                      : theme.dividerColor.withValues(
+                                        alpha: 0.6,
+                                      ),
                               width: isSelected ? 2.5 : 1.0,
                             ),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  group.imagePath,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) => Container(
-                                        color: colorScheme.secondaryContainer,
-                                      ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: StorageImage(
+                                      path: group.imagePath,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                color:
+                                                    colorScheme
+                                                        .secondaryContainer,
+                                              ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    group.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    group.groupName,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface.withValues(
-                                        alpha: 0.6,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        group.name,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    group.description,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${group.floor == 4 ? '' : '${group.floor}階・'}${groupCategoryNames[group.categories.first]!}'
-                                    '${group.pamphletPage != null ? '・パンフレット P${group.pamphletPage}' : ''}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface.withValues(
-                                        alpha: 0.6,
+                                      Text(
+                                        group.groupName,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: colorScheme.onSurface
+                                              .withValues(alpha: 0.6),
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        group.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${group.floor == 4 ? 'Stage' : '${group.floor}階'}・${groupCategoryNames[group.categories.first]!}'
+                                        '${group.pamphletPage != null ? '・パンフレット P${group.pamphletPage}' : ''}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: colorScheme.onSurface
+                                              .withValues(alpha: 0.6),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
         ),
       ),
     );
   }
-
 
   void _showGroupDetailDialog(Group group) {
     final theme = Theme.of(context);

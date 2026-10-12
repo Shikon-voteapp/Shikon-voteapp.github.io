@@ -16,6 +16,8 @@ import 'utils/version_info.dart';
 import 'utils/cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'services/accessibility_service.dart';
+import 'services/config_service.dart';
+import 'config/vote_options.dart';
 
 // Import navigatorKey from desktop implementation if on desktop
 import 'platform/platform_utils_web_key.dart'
@@ -34,7 +36,6 @@ void main() async {
   await CacheManager.clearAllCache();
 
   final dateRangeService = DateRangeService();
-  await dateRangeService.initialize();
 
   // バージョン情報の初期化
   await VersionInfo.initialize();
@@ -43,6 +44,9 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    await ConfigService.loadRuntimeConfiguration();
+    dateRangeService.initialize(defaultVotingPeriod);
 
     // 学生マッピングの初期化
     final studentMappingInitializer = StudentMappingInitializer();
@@ -62,7 +66,9 @@ void main() async {
   }
 }
 
-final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.system);
+final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier<ThemeMode>(
+  ThemeMode.system,
+);
 
 class MyApp extends StatelessWidget {
   final DateRangeService dateRangeService;
@@ -87,32 +93,33 @@ class MyApp extends StatelessWidget {
               navigatorKey: navigatorKey,
               home: SplashScreen(dateRangeService: dateRangeService),
               routes: {'/admin': (context) => AdminScreen()},
-          builder: (context, child) {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            final m3eThemeData = isDark
-                ? M3EThemeData.dark(seedColor: shikonPurple)
-                : M3EThemeData.light(seedColor: shikonPurple);
+              builder: (context, child) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                final m3eThemeData =
+                    isDark
+                        ? M3EThemeData.dark(seedColor: shikonPurple)
+                        : M3EThemeData.light(seedColor: shikonPurple);
 
-            return M3ETheme(
-              data: m3eThemeData,
-              child: ValueListenableBuilder<bool>(
-                valueListenable: AccessibilityService.isZoomed,
-                builder: (context, isZoomed, _) {
-                  final media = MediaQuery.of(context);
-                  return MediaQuery(
-                    data: media.copyWith(
-                      textScaler: TextScaler.linear(isZoomed ? 1.5 : 1.0),
-                    ),
-                    child: child!,
-                  );
-                },
-              ),
+                return M3ETheme(
+                  data: m3eThemeData,
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: AccessibilityService.isZoomed,
+                    builder: (context, isZoomed, _) {
+                      final media = MediaQuery.of(context);
+                      return MediaQuery(
+                        data: media.copyWith(
+                          textScaler: TextScaler.linear(isZoomed ? 1.5 : 1.0),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  ),
+                );
+              },
             );
           },
         );
       },
     );
-  },
-);
   }
 }

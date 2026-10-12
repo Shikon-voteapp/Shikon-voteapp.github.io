@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'group.dart' hide VoteCategory;
 import 'vote_category.dart';
-import '../config/vote_options.dart';
+import '../config/vote_options.dart' show VotingPeriodConfig;
 
 // 投票設定全体を管理するクラス
 class VoteConfig {
@@ -16,17 +16,6 @@ class VoteConfig {
     required this.groups,
     required this.categoryNames,
   });
-
-  // デフォルト設定を作成
-  factory VoteConfig.createDefault() {
-    return VoteConfig(
-      votingPeriod: defaultVotingPeriod,
-      categories:
-          voteCategories.map((c) => VoteCategory.fromVoteCategory(c)).toList(),
-      groups: allGroups,
-      categoryNames: groupCategoryNames,
-    );
-  }
 
   // JSONシリアライゼーション
   Map<String, dynamic> toJson() {
