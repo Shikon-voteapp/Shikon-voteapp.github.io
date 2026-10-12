@@ -8,6 +8,7 @@ import '../config/vote_options.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import '../services/config_service.dart';
+import 'storage_image.dart';
 
 /// 管理者パネル「設定管理モード」
 /// C# GUI ツール (ShikonSettingApp) の3タブ構成・UIを踏襲した高速Web版エディター
@@ -1235,6 +1236,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
         bytes: bytes,
         mimeType: mime,
       );
+      await StorageImage.invalidate(storagePath);
 
       setState(() {
         group.imagePath = storagePath;

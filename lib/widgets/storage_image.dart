@@ -25,6 +25,7 @@ class StorageImage extends StatelessWidget {
     if (path.isEmpty) return SizedBox(width: width, height: height);
     final url = _downloadUrl(path);
     return FutureBuilder<String>(
+      key: ValueKey(path),
       future: url,
       builder: (context, snapshot) {
         if (snapshot.hasError || !snapshot.hasData) {
@@ -38,7 +39,6 @@ class StorageImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
-          webHtmlElementStrategy: WebHtmlElementStrategy.prefer,
           errorBuilder: errorBuilder,
         );
       },
@@ -66,5 +66,16 @@ class StorageImage extends StatelessWidget {
         });
     _downloadUrls[path] = cachedFuture;
     return cachedFuture;
+  }
+
+  static Future<void> invalidate(String path) async {
+    final cachedUrl = _downloadUrls.remove(path);
+    if (cachedUrl == null) return;
+    try {
+      final url = await cachedUrl;
+      await PaintingBinding.instance.imageCache.evict(NetworkImage(url));
+    } catch (_) {
+      // A failed download URL is removed from the URL cache above already.
+    }
   }
 }
