@@ -2,8 +2,8 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class VersionInfo {
-  static String _version = '5.1.3';
-  static String _buildNumber = '100';
+  static String _version = '5.1.4';
+  static String _buildNumber = '101';
   static bool _initialized = false;
 
   static Future<void> initialize() async {
@@ -12,8 +12,8 @@ class VersionInfo {
     if (kIsWeb) {
       // Webプラットフォームでは、直接バージョン情報を設定
       // pubspec.yamlの読み取りは信頼性が低いため、ハードコードされたバージョンを使用
-      _version = '5.1.3';
-      _buildNumber = '100';
+      _version = '5.1.4';
+      _buildNumber = '101';
       print('Web環境のため、バージョン情報を直接設定します: $_version.$_buildNumber');
     } else {
       try {
@@ -23,8 +23,8 @@ class VersionInfo {
       } catch (e) {
         print('非Webプラットフォームでのバージョン情報の取得に失敗しました: $e');
         print('デフォルトバージョン情報を使用します');
-        _version = '5.1.3';
-        _buildNumber = '100';
+        _version = '5.1.4';
+        _buildNumber = '101';
       }
     }
 

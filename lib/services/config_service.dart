@@ -459,18 +459,24 @@ class ConfigService {
     return deleted;
   }
 
-  /// Deletes all editable runtime configuration documents, leaving admin
-  /// account records and vote history untouched.
+  /// Deletes the known runtime settings only, leaving other app_config
+  /// documents, admin accounts, and vote history untouched.
   static Future<int> clearAllRuntimeConfig() async {
-    final snapshot = await _firestore.collection('app_config').get();
-    for (var offset = 0; offset < snapshot.docs.length; offset += 450) {
-      final batch = _firestore.batch();
-      for (final doc in snapshot.docs.skip(offset).take(450)) {
-        batch.delete(doc.reference);
-      }
-      await batch.commit();
+    const runtimeConfigDocumentIds = ['category_names', 'voting_period'];
+    final runtimeConfigRefs =
+        runtimeConfigDocumentIds
+            .map((id) => _firestore.collection('app_config').doc(id))
+            .toList();
+    final snapshots = await Future.wait(runtimeConfigRefs.map((ref) => ref.get()));
+    final batch = _firestore.batch();
+    var deleted = 0;
+    for (var index = 0; index < snapshots.length; index++) {
+      if (!snapshots[index].exists) continue;
+      batch.delete(runtimeConfigRefs[index]);
+      deleted++;
     }
-    return snapshot.docs.length;
+    if (deleted > 0) await batch.commit();
+    return deleted;
   }
 
   // ─────────────────────────────────────────

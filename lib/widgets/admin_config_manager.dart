@@ -38,6 +38,8 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
   List<_EditableCategory> _categories = [];
   int? _selectedCategoryIndex;
+  bool _showGroupDetailOnMobile = false;
+  bool _showCategoryDetailOnMobile = false;
 
   late VotingPeriodConfig _periodConfig;
 
@@ -477,6 +479,125 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   // ─────────────────────────────────────────
 
   Widget _buildTopToolbar(ThemeData theme, bool isDark) {
+    if (MediaQuery.sizeOf(context).width < 960) {
+      final actionsBlocked = _isSaving || _isMigrating || _isUploadingAssets;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          border: Border(
+            bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: 1),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C3AED).withOpacity(0.12),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.tune_rounded,
+                color: Color(0xFF7C3AED),
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      '設定管理',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  if (_hasUnsavedChanges) ...[
+                    const SizedBox(width: 5),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade700,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '未保存',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            IconButton(
+              tooltip: 'リロード',
+              onPressed: actionsBlocked ? null : _loadData,
+              icon: const Icon(Icons.refresh_rounded),
+              visualDensity: VisualDensity.compact,
+            ),
+            PopupMenuButton<String>(
+              tooltip: 'その他の操作',
+              enabled: !actionsBlocked,
+              onSelected: (action) {
+                if (action == 'upload') {
+                  _uploadAssets();
+                } else {
+                  _clearFirestoreData();
+                }
+              },
+              itemBuilder:
+                  (context) => const [
+                    PopupMenuItem(
+                      value: 'upload',
+                      child: Text('assets をStorageへ'),
+                    ),
+                    PopupMenuItem(
+                      value: 'clear',
+                      child: Text('クラウド設定・画像を全削除'),
+                    ),
+                  ],
+            ),
+            M3EButton(
+              onPressed: actionsBlocked ? null : _saveAll,
+              style: M3EButtonStyle.filled,
+              size: M3EButtonSize.sm,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_isSaving)
+                    const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  else
+                    const Icon(Icons.save_rounded, size: 16),
+                  const SizedBox(width: 4),
+                  const Text('保存'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
@@ -634,24 +755,32 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   // ─────────────────────────────────────────
 
   Widget _buildGroupsTab(ThemeData theme, bool isDark) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isCompact = screenWidth < 768;
-
-    return isCompact
-        ? Column(
-          children: [
-            SizedBox(height: 220, child: _buildGroupListPanel(theme, isDark)),
-            const Divider(height: 1),
-            Expanded(child: _buildGroupDetailPanel(theme, isDark)),
-          ],
-        )
-        : Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        if (MediaQuery.sizeOf(context).width < 720) {
+          return _showGroupDetailOnMobile
+              ? _buildGroupDetailPanel(theme, isDark)
+              : _buildGroupListPanel(theme, isDark);
+        }
+        if (width < 768) {
+          return Column(
+            children: [
+              SizedBox(height: 220, child: _buildGroupListPanel(theme, isDark)),
+              const Divider(height: 1),
+              Expanded(child: _buildGroupDetailPanel(theme, isDark)),
+            ],
+          );
+        }
+        return Row(
           children: [
             SizedBox(width: 340, child: _buildGroupListPanel(theme, isDark)),
             VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
             Expanded(child: _buildGroupDetailPanel(theme, isDark)),
           ],
         );
+      },
+    );
   }
 
   Widget _buildGroupListPanel(ThemeData theme, bool isDark) {
@@ -718,10 +847,15 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                                   : Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              if (_selectedGroupIndex != index) {
+                              if (_selectedGroupIndex != index ||
+                                  (MediaQuery.sizeOf(context).width < 720 &&
+                                      !_showGroupDetailOnMobile)) {
                                 setState(() {
                                   _selectedGroupIndex = index;
                                   _syncGroupControllers();
+                                  if (MediaQuery.sizeOf(context).width < 720) {
+                                    _showGroupDetailOnMobile = true;
+                                  }
                                 });
                               }
                             },
@@ -863,12 +997,118 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
     final g = _groups[_selectedGroupIndex!];
     final isDuplicate = _isGroupIdDuplicate(g.id, _selectedGroupIndex!);
+    final isMobile = MediaQuery.sizeOf(context).width < 720;
+
+    Widget buildFloorField() => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldHeader('階 (floor)', required: true),
+        DropdownButtonFormField<int>(
+          value: g.floor.clamp(1, 4),
+          decoration: const InputDecoration(
+            isDense: true,
+            border: OutlineInputBorder(),
+          ),
+          items:
+              const [1, 2, 3, 4]
+                  .map(
+                    (floor) => DropdownMenuItem<int>(
+                      value: floor,
+                      child: Text(floor == 4 ? 'Stage' : '$floor階'),
+                    ),
+                  )
+                  .toList(),
+          onChanged: (value) {
+            if (value == null) return;
+            g.floor = value;
+            _markDirty();
+            setState(() {});
+          },
+        ),
+      ],
+    );
+
+    Widget buildPamphletField() => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFieldHeader('パンフレットページ (pamphletPage)'),
+        TextField(
+          controller: _groupPamphletCtrl,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            isDense: true,
+            border: OutlineInputBorder(),
+            hintText: '例: 12 (任意)',
+          ),
+          onChanged: (val) {
+            g.pamphletPage = int.tryParse(val);
+            _markDirty();
+          },
+        ),
+      ],
+    );
+
+    final imagePathPreview = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Text(
+        g.imagePath.isEmpty ? '（画像未設定）' : g.imagePath,
+        style: TextStyle(
+          fontFamily: 'monospace',
+          fontSize: 12,
+          color: g.imagePath.isEmpty
+              ? theme.colorScheme.outline
+              : theme.colorScheme.onSurface,
+        ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+    final uploadImageButton = FilledButton.tonalIcon(
+      onPressed: _isUploadingImage ? null : () => _uploadNewImage(g),
+      icon: _isUploadingImage
+          ? const SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.cloud_upload_outlined, size: 16),
+      label: const Text('新規UP'),
+    );
+    final selectImageButton = OutlinedButton.icon(
+      onPressed: () => _openImageSelectDialog(g),
+      icon: const Icon(Icons.photo_library_outlined, size: 16),
+      label: const Text('選択'),
+    );
+    final clearImageButton = IconButton(
+      tooltip: '画像クリア',
+      icon: const Icon(Icons.clear_rounded, size: 18),
+      onPressed: () {
+        setState(() {
+          g.imagePath = '';
+          _hasUnsavedChanges = true;
+        });
+      },
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (isMobile)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => setState(() => _showGroupDetailOnMobile = false),
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: const Text('団体一覧へ'),
+              ),
+            ),
           _buildFieldHeader('ID', required: true),
           TextField(
             controller: _groupIdCtrl,
@@ -945,62 +1185,18 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const SizedBox(height: 16),
 
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFieldHeader('階 (floor)', required: true),
-                    DropdownButtonFormField<int>(
-                      value: g.floor.clamp(1, 4),
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        border: OutlineInputBorder(),
-                      ),
-                      items:
-                          const [1, 2, 3, 4]
-                              .map(
-                                (floor) => DropdownMenuItem<int>(
-                                  value: floor,
-                                  child: Text(floor == 4 ? 'Stage' : '$floor階'),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-                        g.floor = value;
-                        _markDirty();
-                        setState(() {});
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildFieldHeader('パンフレットページ (pamphletPage)'),
-                    TextField(
-                      controller: _groupPamphletCtrl,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        border: OutlineInputBorder(),
-                        hintText: '例: 12 (任意)',
-                      ),
-                      onChanged: (val) {
-                        g.pamphletPage = int.tryParse(val);
-                        _markDirty();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          if (isMobile) ...[
+            buildFloorField(),
+            const SizedBox(height: 12),
+            buildPamphletField(),
+          ] else
+            Row(
+              children: [
+                Expanded(child: buildFloorField()),
+                const SizedBox(width: 16),
+                Expanded(child: buildPamphletField()),
+              ],
+            ),
           const SizedBox(height: 16),
 
           _buildFieldHeader('説明 (description)'),
@@ -1021,70 +1217,37 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
 
           // 画像設定（アップロードと選択を分離）
           _buildFieldHeader('画像 (imagePath)'),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: Text(
-                    g.imagePath.isEmpty ? '（画像未設定）' : g.imagePath,
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                      color:
-                          g.imagePath.isEmpty
-                              ? theme.colorScheme.outline
-                              : theme.colorScheme.onSurface,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              // 画像アップロードボタン
-              FilledButton.tonalIcon(
-                onPressed: _isUploadingImage ? null : () => _uploadNewImage(g),
-                icon:
-                    _isUploadingImage
-                        ? const SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                        : const Icon(Icons.cloud_upload_outlined, size: 16),
-                label: const Text('新規UP'),
-              ),
-              const SizedBox(width: 6),
-              // 既存画像から選択ボタン
-              OutlinedButton.icon(
-                onPressed: () => _openImageSelectDialog(g),
-                icon: const Icon(Icons.photo_library_outlined, size: 16),
-                label: const Text('選択'),
-              ),
-              if (g.imagePath.isNotEmpty) ...[
-                const SizedBox(width: 6),
-                IconButton(
-                  tooltip: '画像クリア',
-                  icon: const Icon(Icons.clear_rounded, size: 18),
-                  onPressed: () {
-                    setState(() {
-                      g.imagePath = '';
-                      _hasUnsavedChanges = true;
-                    });
-                  },
+          if (isMobile)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                imagePathPreview,
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    uploadImageButton,
+                    selectImageButton,
+                    if (g.imagePath.isNotEmpty) clearImageButton,
+                  ],
                 ),
               ],
-            ],
-          ),
+            )
+          else
+            Row(
+              children: [
+                Expanded(child: imagePathPreview),
+                const SizedBox(width: 8),
+                uploadImageButton,
+                const SizedBox(width: 6),
+                selectImageButton,
+                if (g.imagePath.isNotEmpty) ...[
+                  const SizedBox(width: 6),
+                  clearImageButton,
+                ],
+              ],
+            ),
           const SizedBox(height: 20),
 
           _buildFieldHeader('カテゴリ (categories)'),
@@ -1142,6 +1305,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       );
       _groups.add(newGroup);
       _selectedGroupIndex = _groups.length - 1;
+      if (MediaQuery.sizeOf(context).width < 720) {
+        _showGroupDetailOnMobile = true;
+      }
       _syncGroupControllers();
       _hasUnsavedChanges = true;
     });
@@ -1280,7 +1446,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
             return AlertDialog(
               title: const Text('画像パスの選択・指定'),
               content: SizedBox(
-                width: 520,
+                width: (MediaQuery.sizeOf(ctx).width - 48)
+                    .clamp(0.0, 520.0)
+                    .toDouble(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1387,27 +1555,35 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
   // ─────────────────────────────────────────
 
   Widget _buildCategoriesTab(ThemeData theme, bool isDark) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isCompact = screenWidth < 768;
-
-    return isCompact
-        ? Column(
-          children: [
-            SizedBox(
-              height: 220,
-              child: _buildCategoryListPanel(theme, isDark),
-            ),
-            const Divider(height: 1),
-            Expanded(child: _buildCategoryDetailPanel(theme, isDark)),
-          ],
-        )
-        : Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        if (MediaQuery.sizeOf(context).width < 720) {
+          return _showCategoryDetailOnMobile
+              ? _buildCategoryDetailPanel(theme, isDark)
+              : _buildCategoryListPanel(theme, isDark);
+        }
+        if (width < 768) {
+          return Column(
+            children: [
+              SizedBox(
+                height: 220,
+                child: _buildCategoryListPanel(theme, isDark),
+              ),
+              const Divider(height: 1),
+              Expanded(child: _buildCategoryDetailPanel(theme, isDark)),
+            ],
+          );
+        }
+        return Row(
           children: [
             SizedBox(width: 340, child: _buildCategoryListPanel(theme, isDark)),
             VerticalDivider(width: 1, color: theme.colorScheme.outlineVariant),
             Expanded(child: _buildCategoryDetailPanel(theme, isDark)),
           ],
         );
+      },
+    );
   }
 
   Widget _buildCategoryListPanel(ThemeData theme, bool isDark) {
@@ -1472,10 +1648,15 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
                                   : Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              if (_selectedCategoryIndex != index) {
+                              if (_selectedCategoryIndex != index ||
+                                  (MediaQuery.sizeOf(context).width < 720 &&
+                                      !_showCategoryDetailOnMobile)) {
                                 setState(() {
                                   _selectedCategoryIndex = index;
                                   _syncCategoryControllers();
+                                  if (MediaQuery.sizeOf(context).width < 720) {
+                                    _showCategoryDetailOnMobile = true;
+                                  }
                                 });
                               }
                             },
@@ -1620,6 +1801,16 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (MediaQuery.sizeOf(context).width < 720)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed:
+                    () => setState(() => _showCategoryDetailOnMobile = false),
+                icon: const Icon(Icons.arrow_back_rounded),
+                label: const Text('賞一覧へ'),
+              ),
+            ),
           _buildFieldHeader('ID', required: true),
           TextField(
             controller: _catIdCtrl,
@@ -1787,7 +1978,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           ),
           const SizedBox(height: 8),
 
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
             children: [
               TextButton.icon(
                 onPressed: () {
@@ -1857,6 +2050,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       );
       _categories.add(newCat);
       _selectedCategoryIndex = _categories.length - 1;
+      if (MediaQuery.sizeOf(context).width < 720) {
+        _showCategoryDetailOnMobile = true;
+      }
       _syncCategoryControllers();
       _hasUnsavedChanges = true;
     });
@@ -1920,7 +2116,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildFieldHeader('投票開始日時', required: true),
-            Row(
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
               children: [
                 OutlinedButton.icon(
                   onPressed: () => _pickDate(isStart: true),
@@ -1991,7 +2189,9 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
             const SizedBox(height: 24),
 
             _buildFieldHeader('投票終了日時', required: true),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 OutlinedButton.icon(
                   onPressed: () => _pickDate(isStart: false),

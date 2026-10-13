@@ -144,14 +144,23 @@ class DatabaseService {
         return;
       }
 
-      // バッチでFirebaseに送信（一度に送信して転送量を削減）
+      // ローカルの投票記録を、UUID単位でFirebaseへ同期する。
       Map<String, dynamic> data = {};
       for (var voteJson in localVotes) {
         Map<String, dynamic> voteMap = json.decode(voteJson);
         data[voteMap['uuid']] = voteMap;
       }
 
-      await _database.ref(_votesPath).set(data);
+      // Merge each cached vote by UUID. Replacing the whole `votes` node here
+      // could erase votes submitted from other devices while this device was
+      // offline.
+      for (final entry in data.entries) {
+        final voteRef = _database.ref('$_votesPath/${entry.key}');
+        final snapshot = await voteRef.get();
+        if (!snapshot.exists) {
+          await voteRef.set(entry.value);
+        }
+      }
     } catch (e) {
       print('Firebaseへの同期エラー: $e');
     }
