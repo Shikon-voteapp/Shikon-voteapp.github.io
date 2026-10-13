@@ -152,7 +152,7 @@ class AdminBatchVoteEntryState extends State<AdminBatchVoteEntry> {
         seenInBatch.add(rawNumber);
 
         // 3. 有効UUID範囲チェック（一般向けUIと同等）
-        if (!_rangeService.isInValidRange(rawNumber)) {
+        if (!await _rangeService.isInValidRange(rawNumber)) {
           col.errorNotifier.value = '番号範囲外';
           rejectedMessages.add('列 ${col.index + 1} ($rawNumber): 有効な投票番号範囲外です');
           continue;

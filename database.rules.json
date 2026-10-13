@@ -10,6 +10,12 @@
         ".write": "!data.exists()",
         ".validate": "newData.hasChildren(['uuid','selections','timestamp']) && newData.child('uuid').val() == $uuid"
       }
+    },
+    "valid_uuids": {
+      "$uuid": {
+        ".read": true,
+        ".write": false
+      }
     }
   }
 }

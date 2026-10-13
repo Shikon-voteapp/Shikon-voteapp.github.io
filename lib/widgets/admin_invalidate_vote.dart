@@ -85,16 +85,28 @@ class _AdminInvalidateVoteState extends State<AdminInvalidateVote> {
       return;
     }
 
-    if (!_rangeService.isInValidRange(id)) {
-      setState(() {
-        _checkedStatus = 'out_of_range';
-      });
-      return;
-    }
-
     setState(() {
       _isCheckingStatus = true;
     });
+    final bool isInRange;
+    try {
+      isInRange = await _rangeService.isInValidRange(id);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _checkedStatus = 'unknown';
+          _isCheckingStatus = false;
+        });
+      }
+      return;
+    }
+    if (!isInRange) {
+      setState(() {
+        _checkedStatus = 'out_of_range';
+        _isCheckingStatus = false;
+      });
+      return;
+    }
 
     try {
       final status = await _dbService.checkUuidStatus(id);
@@ -149,7 +161,19 @@ class _AdminInvalidateVoteState extends State<AdminInvalidateVote> {
       return;
     }
 
-    if (!_rangeService.isInValidRange(id)) {
+    final bool isInRange;
+    try {
+      isInRange = await _rangeService.isInValidRange(id);
+    } catch (_) {
+      showCustomDialog(
+        context: context,
+        title: '番号を確認できません',
+        content: 'クラウドから有効番号を読み込めませんでした。通信状態を確認して、もう一度お試しください。',
+        closeButtonText: '閉じる',
+      );
+      return;
+    }
+    if (!isInRange) {
       showCustomDialog(
         context: context,
         title: '範囲外エラー',

@@ -11,6 +11,8 @@ enum UuidValidationResult {
   invalidFormat,
   /// 無効 - 発行された番号の範囲外
   outOfRange,
+  /// 有効番号一覧をクラウドから確認できなかった
+  verificationUnavailable,
   /// 無効 - 管理者により無効化された番号
   invalidated,
   /// すでに投票済み（有効な番号だが既に使用済み）
@@ -40,7 +42,14 @@ class UuidService {
       }
 
       // 範囲チェック
-      if (!_rangeService.isInValidRange(uuid)) {
+      final bool isIssuedNumber;
+      try {
+        isIssuedNumber = await _rangeService.isInValidRange(uuid);
+      } catch (e) {
+        print('有効投票番号のクラウド確認エラー: $e');
+        return UuidValidationResult.verificationUnavailable;
+      }
+      if (!isIssuedNumber) {
         return UuidValidationResult.outOfRange;
       }
 
@@ -76,16 +85,5 @@ class UuidService {
     // 特別IDは学生認証不要
     if (uuid == specialBypassUuid) return false;
     return _rangeService.requiresStudentVerification(uuid);
-  }
-
-  void setValidRanges(List<UuidRange> ranges) {
-    _rangeService.clearRanges();
-    for (var range in ranges) {
-      _rangeService.addRange(range.start, range.end);
-    }
-  }
-
-  void addValidRange(int start, int end) {
-    _rangeService.addRange(start, end);
   }
 }

@@ -348,6 +348,26 @@ class _ScannerScreenState extends State<ScannerScreen>
           ],
         );
         break;
+      case UuidValidationResult.verificationUnavailable:
+        title = '番号を確認できません';
+        contentWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildErrorBadge(
+              icon: Icons.cloud_off_rounded,
+              label: 'クラウド確認エラー',
+              color: theme.colorScheme.error,
+              theme: theme,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '有効な投票番号をクラウドから確認できませんでした。通信状態を確認して、もう一度お試しください。',
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        );
+        break;
       case UuidValidationResult.invalidated:
         title = 'この番号は無効化されています';
         contentWidget = Column(
