@@ -83,6 +83,7 @@ class ConfigService {
         maintenanceEndMinute: data['maintenanceEndMinute'] ?? 0,
       );
     } catch (e) {
+      print('投票期間設定の読み込みに失敗しました: $e');
       return null;
     }
   }

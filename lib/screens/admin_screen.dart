@@ -23,6 +23,7 @@ import '../main.dart' show themeModeNotifier;
 import '../widgets/custom_dialog.dart';
 // import 'config_editor_screen.dart';
 import '../services/export_service.dart';
+import '../services/config_service.dart';
 import '../platform/platform_utils.dart';
 import '../widgets/liquid_glass.dart';
 import '../widgets/gaknum_text.dart';
@@ -115,11 +116,45 @@ class _AdminScreenState extends State<AdminScreen>
     });
   }
 
+  void _selectMode(AdminMode mode) {
+    setState(() {
+      _currentMode = mode;
+      if (mode == AdminMode.results) {
+        _detailedCategoryIndex = null;
+      }
+    });
+    if (mode == AdminMode.results || mode == AdminMode.batchVote) {
+      _loadAllData();
+    }
+  }
+
   Future<void> _loadAllData() async {
     if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
+    // The admin panels use the cloud-loaded group/category catalog. Refresh it
+    // when reloading votes so edits made in Firestore or the config editor are
+    // reflected by result lists and batch-entry dropdowns.
+    try {
+      await ConfigService.loadRuntimeConfiguration();
+    } catch (e) {
+      // Keep the last successfully loaded catalog available if a refresh is
+      // temporarily unavailable; vote loading can still complete.
+      print('管理画面のFirestore設定再読み込みエラー: $e');
+    }
+    // Keep the tab controller aligned even if a later optional config read
+    // failed after the group/category lists had already been refreshed.
+    if (voteCategories.isNotEmpty &&
+        _categoryTabController.length != voteCategories.length) {
+      final selectedIndex = _selectedCategoryIndex;
+      _categoryTabController.dispose();
+      _initializeControllers();
+      _selectedCategoryIndex =
+          selectedIndex.clamp(0, voteCategories.length - 1).toInt();
+      _categoryTabController.index = _selectedCategoryIndex;
+      _detailedCategoryIndex = null;
+    }
     await Future.wait([_loadVotes(), _loadAdminUsers()]);
     if (mounted) {
       setState(() {
@@ -212,10 +247,14 @@ class _AdminScreenState extends State<AdminScreen>
   Map<String, int> _getCategoryResults(String categoryId) {
     Map<String, int> results = {};
     if (_votes == null) return results;
+    final category = voteCategories.firstWhere((c) => c.id == categoryId);
+    final eligibleGroupIds =
+        category.getFilteredGroups().map((group) => group.id).toSet();
 
     for (var vote in _votes!) {
       if (vote.selections.containsKey(categoryId)) {
         String groupId = vote.selections[categoryId]!;
+        if (!eligibleGroupIds.contains(groupId)) continue;
         results[groupId] = (results[groupId] ?? 0) + 1;
       }
     }
@@ -224,9 +263,15 @@ class _AdminScreenState extends State<AdminScreen>
 
   int _getTotalCategoryVotes(String categoryId) {
     if (_votes == null) return 0;
+    final category = voteCategories.firstWhere((c) => c.id == categoryId);
+    final eligibleGroupIds =
+        category.getFilteredGroups().map((group) => group.id).toSet();
     int count = 0;
     for (var vote in _votes!) {
-      if (vote.selections.containsKey(categoryId) && vote.selections[categoryId]!.isNotEmpty) {
+      final groupId = vote.selections[categoryId];
+      if (groupId != null &&
+          groupId.isNotEmpty &&
+          eligibleGroupIds.contains(groupId)) {
         count++;
       }
     }
@@ -241,7 +286,7 @@ class _AdminScreenState extends State<AdminScreen>
       orElse: () => voteCategories.first,
     );
     List<MapEntry<Group, int>> shikonSorted = [];
-    for (var group in shikonCat.groups) {
+    for (var group in shikonCat.getFilteredGroups()) {
       shikonSorted.add(MapEntry(group, results[group.id] ?? 0));
     }
     shikonSorted.sort((a, b) => b.value.compareTo(a.value));
@@ -262,7 +307,7 @@ class _AdminScreenState extends State<AdminScreen>
     final results = _getCategoryResults(categoryId);
     final category = voteCategories.firstWhere((c) => c.id == categoryId);
     List<MapEntry<Group, int>> sortedResults = [];
-    for (var group in category.groups) {
+    for (var group in category.getFilteredGroups()) {
       sortedResults.add(MapEntry(group, results[group.id] ?? 0));
     }
     sortedResults.sort((a, b) => b.value.compareTo(a.value));
@@ -311,14 +356,7 @@ class _AdminScreenState extends State<AdminScreen>
     switch (_currentMode) {
       case AdminMode.menu:
         return AdminModeSelection(
-          onSelectMode: (mode) {
-            setState(() {
-              _currentMode = mode;
-              if (mode == AdminMode.results) {
-                _detailedCategoryIndex = null;
-              }
-            });
-          },
+          onSelectMode: _selectMode,
           voteCount: _votes?.length ?? 0,
           adminUserCount: _adminUsers.length,
         );
@@ -343,7 +381,7 @@ class _AdminScreenState extends State<AdminScreen>
       case AdminMode.documents:
         return const AdminDocumentsView();
       case AdminMode.configManager:
-        return const AdminConfigManager();
+        return AdminConfigManager(onDataChanged: _loadAllData);
     }
   }
 
@@ -373,14 +411,7 @@ class _AdminScreenState extends State<AdminScreen>
             // ─ 左：管理者サイドバー ─────────────────
             AdminSidebar(
               currentMode: _currentMode,
-              onSelectMode: (mode) {
-                setState(() {
-                  _currentMode = mode;
-                  if (mode == AdminMode.results) {
-                    _detailedCategoryIndex = null;
-                  }
-                });
-              },
+              onSelectMode: _selectMode,
               onRefresh: _loadAllData,
               onToggleTheme: () {
                 final isCurrentDark = Theme.of(context).brightness == Brightness.dark;
@@ -557,10 +588,7 @@ class _AdminScreenState extends State<AdminScreen>
                   isSelected: _currentMode == AdminMode.results,
                   onTap: () {
                     Navigator.of(sheetContext).pop();
-                    setState(() {
-                      _currentMode = AdminMode.results;
-                      _detailedCategoryIndex = null;
-                    });
+                    _selectMode(AdminMode.results);
                   },
                 ),
                 _buildMenuModeTile(
@@ -571,7 +599,7 @@ class _AdminScreenState extends State<AdminScreen>
                   isSelected: _currentMode == AdminMode.batchVote,
                   onTap: () {
                     Navigator.of(sheetContext).pop();
-                    setState(() => _currentMode = AdminMode.batchVote);
+                    _selectMode(AdminMode.batchVote);
                   },
                 ),
                 _buildMenuModeTile(

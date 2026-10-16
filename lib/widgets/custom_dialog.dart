@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'storage_image.dart';
 import 'package:flutter/services.dart';
 import 'package:material_3_expressive/material_3_expressive.dart';
 import '../platform/platform_utils.dart';
@@ -466,20 +467,32 @@ class _CustomDialogWidgetState extends State<CustomDialogWidget> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.imagePath != null && !isSmallHeight) ...[
+          if (widget.imagePath != null && widget.imagePath!.isNotEmpty) ...[
             Center(
               child: SizedBox(
-                height: 120,
+                height: isSmallHeight ? 80 : 120,
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: Image.asset(
-                    widget.imagePath!,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: theme.colorScheme.secondaryContainer,
-                    ),
-                  ),
+                  child:
+                      widget.imagePath!.startsWith('assets/') ||
+                              widget.imagePath!.startsWith('resources/')
+                          ? Image.asset(
+                            widget.imagePath!,
+                            fit: BoxFit.contain,
+                            errorBuilder:
+                                (context, error, stackTrace) => Container(
+                                  color: theme.colorScheme.secondaryContainer,
+                                ),
+                          )
+                          : StorageImage(
+                            path: widget.imagePath!,
+                            fit: BoxFit.contain,
+                            errorBuilder:
+                                (context, error, stackTrace) => Container(
+                                  color: theme.colorScheme.secondaryContainer,
+                                ),
+                          ),
                 ),
               ),
             ),

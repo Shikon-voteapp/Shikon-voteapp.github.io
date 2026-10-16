@@ -30,9 +30,10 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
   @override
   void initState() {
     super.initState();
+    final eligibleGroups = widget.category.getFilteredGroups();
     selectedFloor =
-        widget.category.groups.isNotEmpty
-            ? widget.category.groups
+        eligibleGroups.isNotEmpty
+            ? eligibleGroups
                 .map((group) => group.floor)
                 .reduce((a, b) => a < b ? a : b)
             : 1;
@@ -40,14 +41,14 @@ class _GroupSelectionAreaState extends State<GroupSelectionArea> {
 
   @override
   Widget build(BuildContext context) {
+    final eligibleGroups = widget.category.getFilteredGroups();
     List<Group> filteredGroups =
         showAllGroups
-            ? widget.category.groups
-            : widget.category.groups
+            ? eligibleGroups
+            : eligibleGroups
                 .where((group) => group.floor == selectedFloor)
                 .toList();
-    Set<int> allFloors =
-        widget.category.groups.map((group) => group.floor).toSet();
+    Set<int> allFloors = eligibleGroups.map((group) => group.floor).toSet();
     final screenWidth = MediaQuery.of(context).size.width;
     final availableWidth = screenWidth;
     const minItemWidth = 115.0;

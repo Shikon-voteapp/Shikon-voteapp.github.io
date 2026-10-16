@@ -64,12 +64,13 @@ class _VoteScreenState extends State<VoteScreen> {
       String? selectedId = currentSelections[category.id];
       if (selectedId != null) {
         try {
-          _selectedGroup = category.groups.firstWhere(
+          _selectedGroup = category.getFilteredGroups().firstWhere(
             (g) => g.id == selectedId,
           );
         } catch (e) {
           // IDに対応するグループがない場合
           _selectedGroup = null;
+          currentSelections.remove(category.id);
         }
       }
     }
@@ -103,11 +104,12 @@ class _VoteScreenState extends State<VoteScreen> {
     setState(() {
       _selectedFloor = floor;
       final category = voteCategories[currentCategoryIndex];
+      final eligibleGroups = category.getFilteredGroups();
       if (floor == null) {
-        _filteredGroups = category.groups;
+        _filteredGroups = eligibleGroups;
       } else {
         _filteredGroups =
-            category.groups.where((g) => g.floor == floor).toList();
+            eligibleGroups.where((g) => g.floor == floor).toList();
       }
       // フィルタリングで選択中のグループが消えた場合は選択を解除
       if (_selectedGroup != null &&

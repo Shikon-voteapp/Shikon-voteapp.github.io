@@ -13,7 +13,9 @@ import 'storage_image.dart';
 /// 管理者パネル「設定管理モード」
 /// C# GUI ツール (ShikonSettingApp) の3タブ構成・UIを踏襲した高速Web版エディター
 class AdminConfigManager extends StatefulWidget {
-  const AdminConfigManager({super.key});
+  final Future<void> Function()? onDataChanged;
+
+  const AdminConfigManager({super.key, this.onDataChanged});
 
   @override
   State<AdminConfigManager> createState() => _AdminConfigManagerState();
@@ -125,6 +127,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       final effectiveCategories = loadedCategories;
       final effectivePeriod =
           loadedPeriod ?? (throw StateError('Firestore の投票期間設定がありません。'));
+      defaultVotingPeriod = effectivePeriod;
 
       setState(() {
         _groups =
@@ -302,6 +305,8 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
       await ConfigService.saveAllVoteCategories(categoriesToSave);
 
       await ConfigService.saveVotingPeriod(_periodConfig);
+      // Reflect the saved cloud period immediately in scanners already open.
+      defaultVotingPeriod = _periodConfig;
       await ConfigService.saveRuntimeLabels();
 
       setState(() {
@@ -311,6 +316,7 @@ class _AdminConfigManagerState extends State<AdminConfigManager>
             'すべての設定を Firestore に保存しました（${DateFormat('HH:mm:ss').format(DateTime.now())}）';
       });
       _showSnackbar('設定を正常に保存しました');
+      await widget.onDataChanged?.call();
     } catch (e) {
       setState(() {
         _isSaving = false;

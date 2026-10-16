@@ -10,6 +10,7 @@ import 'student_verification_screen.dart';
 import '../widgets/custom_dialog.dart';
 import '../config/special_ids.dart';
 import '../config/vote_options.dart';
+import '../services/config_service.dart';
 import '../models/group.dart' hide VoteCategory;
 import '../models/vote_category.dart';
 import 'package:flutter/material.dart';
@@ -798,6 +799,17 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
+  Future<void> _showPeriodConfigLoadErrorDialog() async {
+    await showCustomDialog(
+      context: context,
+      title: '投票期間設定を読み込めません',
+      contentWidget: const Text(
+        'Firestore から投票期間を取得できなかったため、ログインを停止しました。通信状態を確認して再度お試しください。',
+      ),
+      closeButtonText: '閉じる',
+    );
+  }
+
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.year}年${dateTime.month}月${dateTime.day}日 ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
@@ -829,6 +841,15 @@ class _ScannerScreenState extends State<ScannerScreen>
         }
         return;
       }
+
+      // Read the authoritative period for each login attempt so changes made
+      // in the admin console or another device take effect without restarting.
+      final latestPeriod = await ConfigService.loadVotingPeriod();
+      if (latestPeriod == null) {
+        if (mounted) await _showPeriodConfigLoadErrorDialog();
+        return;
+      }
+      _dateRangeService.updateConfig(latestPeriod);
 
       if (!_isWithinValidPeriod()) {
         await _showOutOfPeriodDialog();

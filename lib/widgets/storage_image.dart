@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 class StorageImage extends StatelessWidget {
   static final Map<String, Future<String>> _downloadUrls =
       <String, Future<String>>{};
+  static final Map<String, Set<({int? width, int? height})>> _decodeSizes =
+      <String, Set<({int? width, int? height})>>{};
   final String path;
   final BoxFit? fit;
   final double? width;
@@ -34,12 +36,27 @@ class StorageImage extends StatelessWidget {
           }
           return SizedBox(width: width, height: height);
         }
-        return Image.network(
-          snapshot.data!,
-          fit: fit,
-          width: width,
-          height: height,
-          errorBuilder: errorBuilder,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+            int? decodeDimension(double dimension) {
+              if (!dimension.isFinite || dimension <= 0) return null;
+              return (dimension * devicePixelRatio).ceil();
+            }
+
+            final cacheWidth = decodeDimension(constraints.maxWidth);
+            final cacheHeight = decodeDimension(constraints.maxHeight);
+            _rememberDecodeSize(path, cacheWidth, cacheHeight);
+            return Image.network(
+              snapshot.data!,
+              fit: fit,
+              width: width,
+              height: height,
+              cacheWidth: cacheWidth,
+              cacheHeight: cacheHeight,
+              errorBuilder: errorBuilder,
+            );
+          },
         );
       },
     );
@@ -52,7 +69,9 @@ class StorageImage extends StatelessWidget {
 
     // Keep the URL cache bounded during long-running sessions.
     if (_downloadUrls.length >= 400) {
-      _downloadUrls.remove(_downloadUrls.keys.first);
+      final oldestPath = _downloadUrls.keys.first;
+      _downloadUrls.remove(oldestPath);
+      _decodeSizes.remove(oldestPath);
     }
     late final Future<String> cachedFuture;
     cachedFuture = FirebaseStorage.instance
@@ -70,12 +89,37 @@ class StorageImage extends StatelessWidget {
 
   static Future<void> invalidate(String path) async {
     final cachedUrl = _downloadUrls.remove(path);
-    if (cachedUrl == null) return;
+    final decodeSizes = _decodeSizes.remove(path) ?? const {};
+    if (cachedUrl == null && !path.startsWith('https://')) return;
     try {
-      final url = await cachedUrl;
-      await PaintingBinding.instance.imageCache.evict(NetworkImage(url));
+      final url = cachedUrl == null ? path : await cachedUrl;
+      final imageCache = PaintingBinding.instance.imageCache;
+      for (final size in decodeSizes) {
+        await imageCache.evict(
+          ResizeImage(
+            NetworkImage(url),
+            width: size.width,
+            height: size.height,
+          ),
+        );
+      }
+      await imageCache.evict(NetworkImage(url));
     } catch (_) {
       // A failed download URL is removed from the URL cache above already.
     }
+  }
+
+  static void _rememberDecodeSize(
+    String path,
+    int? width,
+    int? height,
+  ) {
+    if (width == null && height == null) return;
+    if (_decodeSizes.length >= 400 && !_decodeSizes.containsKey(path)) {
+      _decodeSizes.remove(_decodeSizes.keys.first);
+    }
+    _decodeSizes
+        .putIfAbsent(path, () => <({int? width, int? height})>{})
+        .add((width: width, height: height));
   }
 }

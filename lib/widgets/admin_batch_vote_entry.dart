@@ -537,7 +537,7 @@ class _LightweightDropdownCell extends StatelessWidget {
     if (selectedId == null || selectedId.isEmpty) {
       return '(未選択)';
     }
-    for (final g in category.groups) {
+    for (final g in category.getFilteredGroups()) {
       if (g.id == selectedId) {
         return g.name;
       }
@@ -559,7 +559,7 @@ class _LightweightDropdownCell extends StatelessWidget {
         ),
       ),
       const PopupMenuDivider(height: 1),
-      ...category.groups.map((group) {
+      ...category.getFilteredGroups().map((group) {
         final isSelected = selectionNotifier.value == group.id;
         return PopupMenuItem<String?>(
           value: group.id,

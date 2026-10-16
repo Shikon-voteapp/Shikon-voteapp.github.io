@@ -42,7 +42,8 @@ class VotingPeriodConfig {
       }
     }
 
-    return dateTime.isAfter(startDate) && dateTime.isBefore(endDate);
+    // The configured start minute is inclusive; the end remains exclusive.
+    return !dateTime.isBefore(startDate) && dateTime.isBefore(endDate);
   }
 
   // 現在の設定を文字列で取得（表示用）

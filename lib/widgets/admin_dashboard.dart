@@ -112,10 +112,14 @@ class AdminDashboard extends StatelessWidget {
 
   Map<String, int> _getCategoryResults(String categoryId) {
     Map<String, int> results = {};
+    final category = voteCategories.firstWhere((c) => c.id == categoryId);
+    final eligibleGroupIds =
+        category.getFilteredGroups().map((group) => group.id).toSet();
 
     for (var vote in votes) {
       if (vote.selections.containsKey(categoryId)) {
         String groupId = vote.selections[categoryId]!;
+        if (!eligibleGroupIds.contains(groupId)) continue;
         results[groupId] = (results[groupId] ?? 0) + 1;
       }
     }
@@ -139,7 +143,7 @@ class AdminDashboard extends StatelessWidget {
     if (topGroupId == null) return null;
 
     try {
-      return category.groups.firstWhere((g) => g.id == topGroupId);
+      return category.getFilteredGroups().firstWhere((g) => g.id == topGroupId);
     } catch (e) {
       return null;
     }
@@ -147,8 +151,12 @@ class AdminDashboard extends StatelessWidget {
 
   int _getTotalVotesForCategory(String categoryId) {
     int total = 0;
+    final category = voteCategories.firstWhere((c) => c.id == categoryId);
+    final eligibleGroupIds =
+        category.getFilteredGroups().map((group) => group.id).toSet();
     for (var vote in votes) {
-      if (vote.selections.containsKey(categoryId)) {
+      final groupId = vote.selections[categoryId];
+      if (groupId != null && eligibleGroupIds.contains(groupId)) {
         total++;
       }
     }
